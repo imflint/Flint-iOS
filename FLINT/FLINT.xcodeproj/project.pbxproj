@@ -14,7 +14,16 @@
 		B0E5932E2F0A427C009D7980 /* Exceptions for "FLINT" folder in "FLINT" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Core/Network/API/.gitkeep,
+				Core/Network/DTO/.gitkeep,
+				Core/Network/Error/.gitkeep,
+				Data/Repository/.gitkeep,
+				Domain/Entity/.gitkeep,
+				Domain/Interface/.gitkeep,
+				Domain/UseCase/.gitkeep,
 				Info.plist,
+				Presentation/Common/Components/.gitkeep,
+				Presentation/Common/Extensions/.gitkeep,
 			);
 			target = B0E5931B2F0A427A009D7980 /* FLINT */;
 		};
