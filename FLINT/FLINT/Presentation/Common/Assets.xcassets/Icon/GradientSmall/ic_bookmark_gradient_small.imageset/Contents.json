@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "ic_bookmark_gradient_small.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
