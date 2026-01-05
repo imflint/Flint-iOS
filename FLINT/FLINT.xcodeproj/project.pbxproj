@@ -6,6 +6,17 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B0E593912F0BFB1C009D7980 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = B0E593902F0BFB1C009D7980 /* SnapKit */; };
+		B0E593942F0BFB28009D7980 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = B0E593932F0BFB28009D7980 /* Then */; };
+		B0E593972F0BFB32009D7980 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = B0E593962F0BFB32009D7980 /* Kingfisher */; };
+		B0E5939A2F0BFB88009D7980 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B0E593992F0BFB88009D7980 /* CombineMoya */; };
+		B0E5939C2F0BFB88009D7980 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = B0E5939B2F0BFB88009D7980 /* Moya */; };
+		B0E5939E2F0BFB88009D7980 /* ReactiveMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B0E5939D2F0BFB88009D7980 /* ReactiveMoya */; };
+		B0E593A02F0BFB88009D7980 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B0E5939F2F0BFB88009D7980 /* RxMoya */; };
+		B0E593A32F0BFC56009D7980 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = B0E593A22F0BFC56009D7980 /* Lottie */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B0E5931C2F0A427A009D7980 /* FLINT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FLINT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -45,6 +56,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0E593972F0BFB32009D7980 /* Kingfisher in Frameworks */,
+				B0E593912F0BFB1C009D7980 /* SnapKit in Frameworks */,
+				B0E5939A2F0BFB88009D7980 /* CombineMoya in Frameworks */,
+				B0E5939C2F0BFB88009D7980 /* Moya in Frameworks */,
+				B0E593A02F0BFB88009D7980 /* RxMoya in Frameworks */,
+				B0E593942F0BFB28009D7980 /* Then in Frameworks */,
+				B0E5939E2F0BFB88009D7980 /* ReactiveMoya in Frameworks */,
+				B0E593A32F0BFC56009D7980 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +106,14 @@
 			);
 			name = FLINT;
 			packageProductDependencies = (
+				B0E593902F0BFB1C009D7980 /* SnapKit */,
+				B0E593932F0BFB28009D7980 /* Then */,
+				B0E593962F0BFB32009D7980 /* Kingfisher */,
+				B0E593992F0BFB88009D7980 /* CombineMoya */,
+				B0E5939B2F0BFB88009D7980 /* Moya */,
+				B0E5939D2F0BFB88009D7980 /* ReactiveMoya */,
+				B0E5939F2F0BFB88009D7980 /* RxMoya */,
+				B0E593A22F0BFC56009D7980 /* Lottie */,
 			);
 			productName = FLINT;
 			productReference = B0E5931C2F0A427A009D7980 /* FLINT.app */;
@@ -116,6 +143,13 @@
 			);
 			mainGroup = B0E593132F0A427A009D7980;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B0E5938F2F0BFB1C009D7980 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				B0E593922F0BFB28009D7980 /* XCRemoteSwiftPackageReference "Then" */,
+				B0E593952F0BFB32009D7980 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				B0E593982F0BFB88009D7980 /* XCRemoteSwiftPackageReference "Moya" */,
+				B0E593A12F0BFC56009D7980 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B0E5931D2F0A427A009D7980 /* Products */;
 			projectDirPath = "";
@@ -352,6 +386,92 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B0E5938F2F0BFB1C009D7980 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		B0E593922F0BFB28009D7980 /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+		B0E593952F0BFB32009D7980 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.2;
+			};
+		};
+		B0E593982F0BFB88009D7980 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
+		B0E593A12F0BFC56009D7980 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B0E593902F0BFB1C009D7980 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B0E5938F2F0BFB1C009D7980 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		B0E593932F0BFB28009D7980 /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B0E593922F0BFB28009D7980 /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
+		};
+		B0E593962F0BFB32009D7980 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B0E593952F0BFB32009D7980 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		B0E593992F0BFB88009D7980 /* CombineMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B0E593982F0BFB88009D7980 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = CombineMoya;
+		};
+		B0E5939B2F0BFB88009D7980 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B0E593982F0BFB88009D7980 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		B0E5939D2F0BFB88009D7980 /* ReactiveMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B0E593982F0BFB88009D7980 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = ReactiveMoya;
+		};
+		B0E5939F2F0BFB88009D7980 /* RxMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B0E593982F0BFB88009D7980 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = RxMoya;
+		};
+		B0E593A22F0BFC56009D7980 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B0E593A12F0BFC56009D7980 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B0E593142F0A427A009D7980 /* Project object */;
 }
