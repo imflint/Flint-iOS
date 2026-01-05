@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "ic_messages_gradient.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
