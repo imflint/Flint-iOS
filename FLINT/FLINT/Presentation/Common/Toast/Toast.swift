@@ -24,17 +24,17 @@ public class Toast {
     public private(set) var config: ToastConfiguration
     
     public static func success(
-        title: String,
+        _ text: String,
         config: ToastConfiguration = ToastConfiguration()
     ) -> Toast {
-        return `default`(image: .icCheck, title: title)
+        return `default`(image: .icCheck, title: text)
     }
     
     public static func failure(
-        title: String,
+        _ text: String,
         config: ToastConfiguration = ToastConfiguration()
     ) -> Toast {
-        return `default`(image: .icX, title: title)
+        return `default`(image: .icX, title: text)
     }
     
     /// Creates a new Toast with the default Apple style layout with an icon, title and optional subtitle.
