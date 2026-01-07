@@ -8,36 +8,64 @@
 import UIKit
 
 final class MainTabBarController: UITabBarController {
-
     // MARK: - Properties
-
+    
     private let tabBarBackgroundView = UIView()
     private let tabBarCornerRadius: CGFloat = 12
-    private let backgroundLift: CGFloat = 10
+    private let topBackgroundExtra: CGFloat = 12
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = UIColor.flintGray800
-
         configureTabBarAppearance()
-        configureTabBarBackground()
         configureTabs()
+        configureTabBarBackground()
+        tabBarBackgroundView.frame = tabBar.frame
     }
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        var frame = tabBar.frame
-        frame.origin.y -= backgroundLift
-        frame.size.height += backgroundLift
+        var bgFrame = tabBar.frame
+        bgFrame.origin.y -= topBackgroundExtra
+        bgFrame.size.height = tabBar.frame.height + topBackgroundExtra
 
-        tabBarBackgroundView.frame = frame
+        tabBarBackgroundView.frame = bgFrame
+        tabBarBackgroundView.layer.cornerRadius = tabBarCornerRadius
+        tabBarBackgroundView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        tabBarBackgroundView.layer.masksToBounds = true
     }
 
+
     // MARK: - Configuration
+
+    private func configureTabs() {
+        let controllers = MainTabBar.allCases.map { tab -> UIViewController in
+            let vc = tab.viewController
+
+            let icon = tab.icon?.withRenderingMode(.alwaysTemplate)
+
+            vc.tabBarItem = UITabBarItem(
+                title: tab.title,
+                image: icon,
+                selectedImage: icon
+            )
+
+            vc.tabBarItem.setTitleTextAttributes(
+                [.font: TypographyStyle.micro1_m_10.font],
+                for: .normal
+            )
+            vc.tabBarItem.setTitleTextAttributes(
+                [.font: TypographyStyle.micro1_m_10.font],
+                for: .selected
+            )
+
+            return vc
+        }
+
+        viewControllers = controllers
+    }
 
     private func configureTabBarAppearance() {
         tabBar.tintColor = UIColor.flintGray100
@@ -45,18 +73,9 @@ final class MainTabBarController: UITabBarController {
 
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
-
-        let itemAppearance = UITabBarItemAppearance()
-
-        itemAppearance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -3)
-        itemAppearance.selected.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -3)
-
-        itemAppearance.normal.iconColor = UIColor.flintGray600
-        itemAppearance.selected.iconColor = UIColor.flintGray100
-
-        appearance.stackedLayoutAppearance = itemAppearance
-        appearance.inlineLayoutAppearance = itemAppearance
-        appearance.compactInlineLayoutAppearance = itemAppearance
+        appearance.backgroundColor = .clear
+        appearance.backgroundEffect = nil
+        appearance.shadowColor = .clear
 
         tabBar.standardAppearance = appearance
         
@@ -64,11 +83,11 @@ final class MainTabBarController: UITabBarController {
             tabBar.scrollEdgeAppearance = appearance
         }
     }
-
+    
     private func configureTabBarBackground() {
         tabBar.backgroundImage = UIImage()
         tabBar.shadowImage = UIImage()
-        tabBar.backgroundColor = .clear
+        tabBar.backgroundColor = UIColor.clear
         tabBar.isTranslucent = true
 
         tabBarBackgroundView.backgroundColor = UIColor.flintGray800
@@ -79,33 +98,5 @@ final class MainTabBarController: UITabBarController {
         if tabBarBackgroundView.superview == nil {
             view.insertSubview(tabBarBackgroundView, belowSubview: tabBar)
         }
-    }
-
-    private func configureTabs() {
-        let home = HomeViewController()
-        home.tabBarItem = makeTabItem(title: "홈", imageName: "ic_home_empty")
-
-        let explore = ExploreViewController()
-        explore.tabBarItem = makeTabItem(title: "탐색", imageName: "ic_explore_empty")
-
-        let my = MyViewController()
-        my.tabBarItem = makeTabItem(title: "MY", imageName: "ic_my_empty")
-
-        viewControllers = [
-            UINavigationController(rootViewController: home),
-            UINavigationController(rootViewController: explore),
-            UINavigationController(rootViewController: my)
-        ]
-
-    }
-
-
-    // MARK: - Helpers
-
-    private func makeTabItem(title: String, imageName: String) -> UITabBarItem {
-        let image = UIImage(named: imageName)?
-            .withRenderingMode(.alwaysTemplate)
-        
-        return UITabBarItem(title: title, image: image, selectedImage: image)
     }
 }
