@@ -7,10 +7,12 @@
 
 import UIKit
 
-public class Toast {
+import SnapKit
+
+class Toast {
     private static var activeToasts: [Toast] = []
     
-    public let view: ToastView
+    let view: ToastView
     private var backgroundView: UIView?
     
     private var closeTimer: Timer?
@@ -21,47 +23,53 @@ public class Toast {
 
     private var multicast = MulticastDelegate<ToastDelegate>()
     
-    public private(set) var config: ToastConfiguration
+    private(set) var config: ToastConfiguration
     
     // MARK: - Flint Toasts
-    public static func success(
+    
+    static func success(
         _ text: String,
-        config: ToastConfiguration = ToastConfiguration()
+        config: ToastConfiguration = ToastConfiguration(),
+        customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
     ) -> Toast {
-        return plain(image: .icCheck, title: text)
+        return plain(image: .icCheck, title: text, customConstraints: customConstraints)
     }
     
-    public static func failure(
+    static func failure(
         _ text: String,
-        config: ToastConfiguration = ToastConfiguration()
+        config: ToastConfiguration = ToastConfiguration(),
+        customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
     ) -> Toast {
-        return plain(image: .icX, title: text)
+        return plain(image: .icX, title: text, customConstraints: customConstraints)
     }
     
-    public static func text(
+    static func text(
         _ text: String,
-        config: ToastConfiguration = ToastConfiguration()
+        config: ToastConfiguration = ToastConfiguration(),
+        customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
     ) -> Toast {
-        return plain(title: text)
+        return plain(title: text, customConstraints: customConstraints)
     }
     
-    public static func plain(
+    static func plain(
         image: UIImage? = nil,
         title: String,
-        config: ToastConfiguration = ToastConfiguration()
+        config: ToastConfiguration = ToastConfiguration(),
+        customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
     ) -> Toast {
-        let view = PlainToastView(image: image, title: title)
+        let view = PlainToastView(image: image, title: title, customConstraints: customConstraints)
         return self.init(view: view, config: config)
     }
     
-    public static func action(
+    static func action(
         image: UIImage,
         title: String,
         actionTitle: String,
         action: @escaping (UIAction) -> Void,
-        config: ToastConfiguration = ToastConfiguration()
+        config: ToastConfiguration = ToastConfiguration(),
+        customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
     ) -> Toast {
-        let view = ActionToastView(image: image, title: title, actionTitle: actionTitle, action: action)
+        let view = ActionToastView(image: image, title: title, actionTitle: actionTitle, action: action, customConstraints: customConstraints)
         return self.init(view: view, config: config)
     }
     
@@ -70,7 +78,7 @@ public class Toast {
     ///   - view: A view which is displayed when the toast is shown
     ///   - config: Configuration options
     /// - Returns: A new Toast view with the configured layout
-    public static func custom(
+    static func custom(
         view: ToastView,
         config: ToastConfiguration = ToastConfiguration()
     ) -> Toast {
@@ -82,7 +90,7 @@ public class Toast {
     ///   - view: A view which is displayed when the toast is shown
     ///   - config: Configuration options
     /// - Returns: A new Toast view with the configured layout
-    public required init(view: ToastView, config: ToastConfiguration) {
+    required init(view: ToastView, config: ToastConfiguration) {
         self.config = config
         self.view = view
         
@@ -104,14 +112,14 @@ public class Toast {
     /// - Parameters:
     ///   - type: Haptic feedback type
     ///   - time: Time after which the toast is shown
-    public func show(haptic type: UINotificationFeedbackGenerator.FeedbackType, after time: TimeInterval = 0) {
+    func show(haptic type: UINotificationFeedbackGenerator.FeedbackType, after time: TimeInterval = 0) {
         UINotificationFeedbackGenerator().notificationOccurred(type)
         show(after: time)
     }
     
     /// Show the toast
     /// - Parameter delay: Time after which the toast is shown
-    public func show(after delay: TimeInterval = 0) {
+    func show(after delay: TimeInterval = 0) {
         UIView.performWithoutAnimation {
             config.view?.addSubview(view) ?? ToastHelper.topController()?.view.addSubview(view)
             view.createView(for: self)
@@ -148,7 +156,7 @@ public class Toast {
     /// - Parameters:
     ///   - completion: A completion handler which is invoked after the toast is hidden
     ///   - animated: A Boolean value that determines whether to apply animation.
-    public func close(animated: Bool = true, completion: (() -> Void)? = nil) {
+    func close(animated: Bool = true, completion: (() -> Void)? = nil) {
         multicast.invoke { $0.willCloseToast(self) }
 
         closeTimer?.invalidate()
@@ -172,7 +180,7 @@ public class Toast {
         })
     }
     
-    public func addDelegate(delegate: ToastDelegate) -> Void {
+    func addDelegate(delegate: ToastDelegate) -> Void {
         multicast.add(delegate)
     }
     
@@ -181,7 +189,7 @@ public class Toast {
     }
 }
 
-public extension Toast {
+extension Toast {
     private func enablePanToClose() {
         let pan = UIPanGestureRecognizer(target: self, action: #selector(toastOnPan(_:)))
         self.view.addGestureRecognizer(pan)
@@ -259,7 +267,7 @@ public extension Toast {
 }
 
 extension Toast {
-    public enum Dismissable: Equatable {
+    enum Dismissable: Equatable {
         case tap,
              longPress,
              time(time: TimeInterval),
@@ -268,7 +276,7 @@ extension Toast {
 }
 
 extension Toast: Equatable {
-    public static func == (lhs: Toast, rhs: Toast) -> Bool {
+    static func == (lhs: Toast, rhs: Toast) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
 }

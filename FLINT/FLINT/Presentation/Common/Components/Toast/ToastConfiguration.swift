@@ -7,16 +7,16 @@
 
 import UIKit
 
-public struct ToastConfiguration {
-    public let direction: Toast.Direction
-    public let dismissables: [Toast.Dismissable]
-    public let animationTime: TimeInterval
-    public let enteringAnimation: Toast.AnimationType
-    public let exitingAnimation: Toast.AnimationType
-    public let allowToastOverlap: Bool
-    public let fixedSize: CGSize?
+struct ToastConfiguration {
+    let direction: Toast.Direction
+    let dismissables: [Toast.Dismissable]
+    let animationTime: TimeInterval
+    let enteringAnimation: Toast.AnimationType
+    let exitingAnimation: Toast.AnimationType
+    let allowToastOverlap: Bool
+    let fixedSize: CGSize?
 
-    public let view: UIView?
+    let view: UIView?
 
     /// Creates a new Toast configuration object.
     /// - Parameters:
@@ -28,12 +28,12 @@ public struct ToastConfiguration {
     ///   - attachTo: The view on which the toast view will be attached.
     ///   - allowToastOverlap: Allows new toasts to appear over existing ones.
     ///   - fixedSize: Exact toast size in points
-    public init(
+    init(
         direction: Toast.Direction = .bottom,
         dismissBy: [Toast.Dismissable] = [.time(time: 4.0), .swipe(direction: .natural)],
         animationTime: TimeInterval = 0.2,
-        enteringAnimation: Toast.AnimationType = .default,
-        exitingAnimation: Toast.AnimationType = .default,
+        enteringAnimation: Toast.AnimationType = .fade(alpha: 0),
+        exitingAnimation: Toast.AnimationType = .fade(alpha: 0),
         attachTo view: UIView? = nil,
         allowToastOverlap: Bool = true,
         fixedSize: CGSize? = nil

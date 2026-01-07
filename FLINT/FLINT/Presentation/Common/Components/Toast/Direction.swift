@@ -10,11 +10,11 @@ import Foundation
 extension Toast {
     
     /// The direction where the toast will be displayed
-    public enum Direction {
+    enum Direction {
         case top, bottom, center
     }
     
-    public enum DismissSwipeDirection: Equatable {
+    enum DismissSwipeDirection: Equatable {
         case toTop,
              toBottom,
              natural

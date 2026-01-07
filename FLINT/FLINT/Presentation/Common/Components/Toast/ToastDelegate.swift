@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol ToastDelegate: AnyObject {
+protocol ToastDelegate: AnyObject {
 
     /// Delegate function that will be called before the Toast is shown.
     /// - Parameters:

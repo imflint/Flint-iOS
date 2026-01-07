@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol ToastQueueDelegate: AnyObject {
+protocol ToastQueueDelegate: AnyObject {
     
     func willShowAnyToast(_ toast: Toast, queuedToasts: [Toast]) -> Void
     
@@ -17,8 +17,8 @@ public protocol ToastQueueDelegate: AnyObject {
 
 extension ToastQueueDelegate {
     
-    public func willShowAnyToast(toast: Toast, queuedToasts: [Toast]) {}
+    func willShowAnyToast(toast: Toast, queuedToasts: [Toast]) {}
     
-    public func didShowAnyToast(toast: Toast, queuedToasts: [Toast]) {}
+    func didShowAnyToast(toast: Toast, queuedToasts: [Toast]) {}
     
 }

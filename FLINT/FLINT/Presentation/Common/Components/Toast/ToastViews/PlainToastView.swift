@@ -10,12 +10,15 @@ import UIKit
 import SnapKit
 import Then
 
-public class PlainToastView: UIView, ToastView {
+final class PlainToastView: BaseView, ToastView {
     
     // MARK: - Property
+    
     private var toast: Toast?
+    private var customConstraints: ((_ make: ConstraintMaker) -> Void)?
     
     // MARK: - Component
+    
     private var mainStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
@@ -34,13 +37,13 @@ public class PlainToastView: UIView, ToastView {
     }
     
     // MARK: - Basic
-    public init(image: UIImage? = nil, title: String) {
+    
+    init(image: UIImage? = nil, title: String, customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil) {
         super.init(frame: .zero)
-        
-        setupUI()
         
         imageView.image = image
         titleLabel.text = title
+        self.customConstraints = customConstraints
         titleLabel.applyFontStyle(.body2_r_14)
         
         imageView.isHidden = image == nil
@@ -50,23 +53,19 @@ public class PlainToastView: UIView, ToastView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func removeFromSuperview() {
+    override func removeFromSuperview() {
       super.removeFromSuperview()
       self.toast = nil
     }
     
     // MARK: - Setup
-    private func setupUI() {
-        setupHierarchy()
-        setupLayout()
-    }
     
-    private func setupHierarchy() {
+    override func setHierarchy() {
         addSubview(mainStackView)
         mainStackView.addArrangedSubviews(imageView, titleLabel)
     }
     
-    private func setupLayout() {
+    override func setLayout() {
         mainStackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(12)
             $0.verticalEdges.equalToSuperview().inset(9)
@@ -77,34 +76,33 @@ public class PlainToastView: UIView, ToastView {
     }
     
     // MARK: - Function
-    public func createView(for toast: Toast) {
+    func createView(for toast: Toast) {
         self.toast = toast
-        guard let superview = superview else { return }
-        translatesAutoresizingMaskIntoConstraints = false
-        
-        let constraints: [NSLayoutConstraint] = [
-            leadingAnchor.constraint(greaterThanOrEqualTo: superview.leadingAnchor, constant: 10),
-            trailingAnchor.constraint(lessThanOrEqualTo: superview.trailingAnchor, constant: -10),
-            centerXAnchor.constraint(equalTo: superview.centerXAnchor)
-        ]
-        
-        
-        switch toast.config.direction {
-        case .bottom:
-            bottomAnchor.constraint(equalTo: superview.layoutMarginsGuide.bottomAnchor, constant: -64).isActive = true
-        case .top:
-            topAnchor.constraint(equalTo: superview.layoutMarginsGuide.topAnchor, constant: 0).isActive = true
-        case .center:
-            centerYAnchor.constraint(equalTo: superview.layoutMarginsGuide.centerYAnchor, constant: 0).isActive = true
+        snp.makeConstraints {
+            $0.leading.greaterThanOrEqualToSuperview().inset(10)
+            $0.trailing.lessThanOrEqualToSuperview().inset(10)
+            $0.centerX.equalToSuperview()
         }
+        snp.makeConstraints(customConstraints ?? basicConstraints(_:))
         
-        NSLayoutConstraint.activate(constraints)
         DispatchQueue.main.async {
             self.style()
         }
     }
     
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    private func basicConstraints(_ make: ConstraintMaker) {
+        guard let toast else { return }
+        switch toast.config.direction {
+        case .bottom:
+            make.bottom.equalToSuperview().inset(64)
+        case .top:
+            make.top.equalToSuperview()
+        case .center:
+            make.centerY.equalToSuperview()
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         UIView.animate(withDuration: 0.5) {
             self.style()
         }

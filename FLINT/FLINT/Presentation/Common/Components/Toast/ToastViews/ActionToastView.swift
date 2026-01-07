@@ -10,12 +10,15 @@ import UIKit
 import SnapKit
 import Then
 
-public class ActionToastView: UIView, ToastView {
+final class ActionToastView: BaseView, ToastView {
     
     // MARK: - Property
+    
     private var toast: Toast?
+    private var customConstraints: ((_ make: ConstraintMaker) -> Void)?
     
     // MARK: - Component
+    
     private var mainStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 16
@@ -50,40 +53,36 @@ public class ActionToastView: UIView, ToastView {
     }
     
     // MARK: - Basic
-    public init(image: UIImage, title: String, actionTitle: String, action: @escaping (UIAction) -> Void) {
+    
+    init(image: UIImage, title: String, actionTitle: String, action: @escaping (UIAction) -> Void, customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil) {
         super.init(frame: .zero)
-        
-        setupUI()
         
         imageView.image = image
         titleLabel.text = title
         titleLabel.applyFontStyle(.body1_sb_16)
         actionButton.configuration?.setTitle(title, style: .body2_r_14)
         actionButton.addAction(UIAction(handler: action), for: .touchUpInside)
+        self.customConstraints = customConstraints
     }
     
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func removeFromSuperview() {
+    override func removeFromSuperview() {
       super.removeFromSuperview()
       self.toast = nil
     }
     
     // MARK: - Setup
-    private func setupUI() {
-        setupHierarchy()
-        setupLayout()
-    }
     
-    private func setupHierarchy() {
+    override func setHierarchy() {
         addSubview(mainStackView)
         mainStackView.addArrangedSubviews(imageView, infoStackView)
         infoStackView.addArrangedSubviews(titleLabel, actionButton)
     }
     
-    private func setupLayout() {
+    override func setLayout() {
         mainStackView.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(12)
         }
@@ -93,34 +92,33 @@ public class ActionToastView: UIView, ToastView {
     }
     
     // MARK: - Function
-    public func createView(for toast: Toast) {
+    
+    func createView(for toast: Toast) {
         self.toast = toast
-        guard let superview = superview else { return }
-        translatesAutoresizingMaskIntoConstraints = false
-        
-        let constraints: [NSLayoutConstraint] = [
-            leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 11),
-            trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -11),
-            centerXAnchor.constraint(equalTo: superview.centerXAnchor)
-        ]
-        
-        
-        switch toast.config.direction {
-        case .bottom:
-            bottomAnchor.constraint(equalTo: superview.layoutMarginsGuide.bottomAnchor, constant: -64).isActive = true
-        case .top:
-            topAnchor.constraint(equalTo: superview.layoutMarginsGuide.topAnchor, constant: 0).isActive = true
-        case .center:
-            centerYAnchor.constraint(equalTo: superview.layoutMarginsGuide.centerYAnchor, constant: 0).isActive = true
+        snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(11)
+            $0.centerX.equalToSuperview()
         }
+        snp.makeConstraints(customConstraints ?? basicConstraints(_:))
         
-        NSLayoutConstraint.activate(constraints)
         DispatchQueue.main.async {
             self.style()
         }
     }
     
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    private func basicConstraints(_ make: ConstraintMaker) {
+        guard let toast else { return }
+        switch toast.config.direction {
+        case .bottom:
+            make.bottom.equalToSuperview().inset(64)
+        case .top:
+            make.top.equalToSuperview()
+        case .center:
+            make.centerY.equalToSuperview()
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         UIView.animate(withDuration: 0.5) {
             self.style()
         }

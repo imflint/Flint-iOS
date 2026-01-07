@@ -9,7 +9,7 @@ import UIKit
 
 extension Toast {
     /// Built-in animations for your toast
-    public enum AnimationType {
+    enum AnimationType {
         /// Use this type for fading in/out animations.
         case slide(x: CGFloat, y: CGFloat)
 

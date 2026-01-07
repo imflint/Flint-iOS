@@ -7,22 +7,22 @@
 
 import Foundation
 
-public class ToastQueue {
+final class ToastQueue {
     
     private var queue: [Toast]
     private var multicast = MulticastDelegate<ToastQueueDelegate>()
     private var isShowing = false
     
-    public init(toasts: [Toast] = [], delegates: [ToastQueueDelegate] = []) {
+    init(toasts: [Toast] = [], delegates: [ToastQueueDelegate] = []) {
         self.queue = toasts
         delegates.forEach(multicast.add)
     }
     
-    public func enqueue(_ toast: Toast) -> Void {
+    func enqueue(_ toast: Toast) -> Void {
         queue.append(toast)
     }
     
-    public func enqueue(_ toasts: [Toast]) -> Void {
+    func enqueue(_ toasts: [Toast]) -> Void {
         let size = queue.count
         toasts.forEach({ queue.append($0) })
         
@@ -31,7 +31,7 @@ public class ToastQueue {
         }
     }
     
-    public func dequeue(_ toastToDequeue: Toast) -> Void {
+    func dequeue(_ toastToDequeue: Toast) -> Void {
         let index: Int? = queue.firstIndex { $0 === toastToDequeue }
         
         if let index {
@@ -39,11 +39,11 @@ public class ToastQueue {
         }
     }
     
-    public func size() -> Int {
+    func size() -> Int {
         return queue.count
     }
     
-    public func show() -> Void {
+    func show() -> Void {
         show(index: 0)
     }
     
@@ -62,20 +62,17 @@ public class ToastQueue {
         toast.show(after: after)
     }
     
-    
     private class QueuedToastDelegate: ToastDelegate {
         
         private var queue: ToastQueue
         
-        public init(queue: ToastQueue) {
+        init(queue: ToastQueue) {
             self.queue = queue
         }
         
-        public func didCloseToast(_ toast: Toast) {
+        func didCloseToast(_ toast: Toast) {
             queue.multicast.invoke { $0.didShowAnyToast(toast, queuedToasts: queue.queue) }
             queue.show(index: 0, after: 0.5)
         }
-        
     }
-    
 }
