@@ -27,14 +27,25 @@ final class MainTabBarController: UITabBarController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        var bgFrame = tabBar.frame
-        bgFrame.origin.y -= topBackgroundExtra
-        bgFrame.size.height = tabBar.frame.height + topBackgroundExtra
+        let isSE = view.safeAreaInsets.bottom == 0
+        let seBottomExtra: CGFloat = isSE ? 10 : 0
 
+        var tabFrame = tabBar.frame
+        tabFrame.origin.y -= seBottomExtra
+        tabBar.frame = tabFrame
+
+        var bgFrame = tabFrame
+        bgFrame.origin.y -= topBackgroundExtra
+        bgFrame.size.height += topBackgroundExtra + seBottomExtra
         tabBarBackgroundView.frame = bgFrame
+
         tabBarBackgroundView.layer.cornerRadius = tabBarCornerRadius
         tabBarBackgroundView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tabBarBackgroundView.layer.masksToBounds = true
+        
+        tabBar.itemPositioning = .centered
+        tabBar.itemWidth = 56
+        tabBar.itemSpacing = 0
     }
 
 
