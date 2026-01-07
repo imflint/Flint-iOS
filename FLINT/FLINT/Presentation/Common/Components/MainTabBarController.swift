@@ -20,7 +20,7 @@ final class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor(named: "flint_gray_800")
+        view.backgroundColor = UIColor.flintGray800
 
         configureTabBarAppearance()
         configureTabBarBackground()
@@ -40,8 +40,8 @@ final class MainTabBarController: UITabBarController {
     // MARK: - Configuration
 
     private func configureTabBarAppearance() {
-        tabBar.tintColor = UIColor(named: "flint_gray_100")
-        tabBar.unselectedItemTintColor = UIColor(named: "flint_gray_600")
+        tabBar.tintColor = UIColor.flintGray100
+        tabBar.unselectedItemTintColor = UIColor.flintGray600
 
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
@@ -51,8 +51,8 @@ final class MainTabBarController: UITabBarController {
         itemAppearance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -3)
         itemAppearance.selected.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -3)
 
-        itemAppearance.normal.iconColor = UIColor(named: "flint_gray_600")
-        itemAppearance.selected.iconColor = UIColor(named: "flint_gray_100")
+        itemAppearance.normal.iconColor = UIColor.flintGray600
+        itemAppearance.selected.iconColor = UIColor.flintGray100
 
         appearance.stackedLayoutAppearance = itemAppearance
         appearance.inlineLayoutAppearance = itemAppearance
@@ -71,7 +71,7 @@ final class MainTabBarController: UITabBarController {
         tabBar.backgroundColor = .clear
         tabBar.isTranslucent = true
 
-        tabBarBackgroundView.backgroundColor = UIColor(named: "flint_gray_800")
+        tabBarBackgroundView.backgroundColor = UIColor.flintGray800
         tabBarBackgroundView.layer.cornerRadius = tabBarCornerRadius
         tabBarBackgroundView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tabBarBackgroundView.layer.masksToBounds = false
