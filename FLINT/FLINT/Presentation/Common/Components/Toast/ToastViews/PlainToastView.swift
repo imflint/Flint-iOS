@@ -76,6 +76,7 @@ final class PlainToastView: BaseView, ToastView {
     }
     
     // MARK: - Function
+    
     func createView(for toast: Toast) {
         self.toast = toast
         snp.makeConstraints {
