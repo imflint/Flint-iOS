@@ -23,34 +23,45 @@ public class Toast {
     
     public private(set) var config: ToastConfiguration
     
+    // MARK: - Flint Toasts
     public static func success(
         _ text: String,
         config: ToastConfiguration = ToastConfiguration()
     ) -> Toast {
-        return `default`(image: .icCheck, title: text)
+        return plain(image: .icCheck, title: text)
     }
     
     public static func failure(
         _ text: String,
         config: ToastConfiguration = ToastConfiguration()
     ) -> Toast {
-        return `default`(image: .icX, title: text)
+        return plain(image: .icX, title: text)
     }
     
-    /// Creates a new Toast with the default Apple style layout with an icon, title and optional subtitle.
-    /// - Parameters:
-    ///   - image: Image which is displayed in the toast view
-    ///   - imageTint: Tint of the image
-    ///   - title: Attributed title which is displayed in the toast view
-    ///   - subtitle: Optional attributed subtitle which is displayed in the toast view
-    ///   - config: Configuration options
-    /// - Returns: A new Toast view with the configured layout
-    public static func `default`(
+    public static func text(
+        _ text: String,
+        config: ToastConfiguration = ToastConfiguration()
+    ) -> Toast {
+        return plain(title: text)
+    }
+    
+    public static func plain(
         image: UIImage? = nil,
         title: String,
         config: ToastConfiguration = ToastConfiguration()
     ) -> Toast {
-        let view = FlintToastView(child: ToastContentsView(image: image, title: title))
+        let view = PlainToastView(image: image, title: title)
+        return self.init(view: view, config: config)
+    }
+    
+    public static func action(
+        image: UIImage,
+        title: String,
+        actionTitle: String,
+        action: @escaping (UIAction) -> Void,
+        config: ToastConfiguration = ToastConfiguration()
+    ) -> Toast {
+        let view = ActionToastView(image: image, title: title, actionTitle: actionTitle, action: action)
         return self.init(view: view, config: config)
     }
     

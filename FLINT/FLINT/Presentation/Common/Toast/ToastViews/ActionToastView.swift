@@ -1,0 +1,136 @@
+//
+//  ActionToastView.swift
+//  Toast
+//
+//  Created by Bastiaan Jansen on 30/06/2021.
+//
+
+import UIKit
+
+import SnapKit
+import Then
+
+public class ActionToastView: UIView, ToastView {
+    
+    // MARK: - Property
+    private var toast: Toast?
+    
+    // MARK: - Component
+    private var mainStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 16
+        $0.alignment = .center
+        $0.distribution = .fill
+    }
+    
+    private var infoStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 4
+        $0.alignment = .leading
+        $0.distribution = .equalSpacing
+    }
+    
+    private var imageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+    }
+    
+    private var titleLabel = UILabel().then {
+        $0.numberOfLines = 1
+        $0.textColor = .flintWhite
+    }
+    
+    private var actionButton = UIButton().then {
+        var config: UIButton.Configuration = $0.configuration ?? .plain()
+        config.image = .icMore.withTintColor(.flintGray200).resized(to: CGSize(width: 16, height: 16))
+        config.imagePadding = 0
+        config.imagePlacement = .trailing
+        config.baseForegroundColor = .flintGray200
+        config.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+        $0.configuration = config
+    }
+    
+    // MARK: - Basic
+    public init(image: UIImage, title: String, actionTitle: String, action: @escaping (UIAction) -> Void) {
+        super.init(frame: .zero)
+        
+        setupUI()
+        
+        imageView.image = image
+        titleLabel.text = title
+        titleLabel.applyFontStyle(.body1_sb_16)
+        actionButton.configuration?.setTitle(title, style: .body2_r_14)
+        actionButton.addAction(UIAction(handler: action), for: .touchUpInside)
+    }
+    
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public override func removeFromSuperview() {
+      super.removeFromSuperview()
+      self.toast = nil
+    }
+    
+    // MARK: - Setup
+    private func setupUI() {
+        setupHierarchy()
+        setupLayout()
+    }
+    
+    private func setupHierarchy() {
+        addSubview(mainStackView)
+        mainStackView.addArrangedSubviews(imageView, infoStackView)
+        infoStackView.addArrangedSubviews(titleLabel, actionButton)
+    }
+    
+    private func setupLayout() {
+        mainStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(12)
+        }
+        imageView.snp.makeConstraints {
+            $0.size.equalTo(48)
+        }
+    }
+    
+    // MARK: - Function
+    public func createView(for toast: Toast) {
+        self.toast = toast
+        guard let superview = superview else { return }
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraints: [NSLayoutConstraint] = [
+            leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 11),
+            trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -11),
+            centerXAnchor.constraint(equalTo: superview.centerXAnchor)
+        ]
+        
+        
+        switch toast.config.direction {
+        case .bottom:
+            bottomAnchor.constraint(equalTo: superview.layoutMarginsGuide.bottomAnchor, constant: -64).isActive = true
+        case .top:
+            topAnchor.constraint(equalTo: superview.layoutMarginsGuide.topAnchor, constant: 0).isActive = true
+        case .center:
+            centerYAnchor.constraint(equalTo: superview.layoutMarginsGuide.centerYAnchor, constant: 0).isActive = true
+        }
+        
+        NSLayoutConstraint.activate(constraints)
+        DispatchQueue.main.async {
+            self.style()
+        }
+    }
+    
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        UIView.animate(withDuration: 0.5) {
+            self.style()
+        }
+    }
+    
+    private func style() {
+        layoutIfNeeded()
+        clipsToBounds = true
+        layer.zPosition = 999
+        layer.cornerRadius = 12
+        backgroundColor = .flintGray700
+    }
+}
