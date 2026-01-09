@@ -33,7 +33,6 @@
 				Domain/Interface/.gitkeep,
 				Domain/UseCase/.gitkeep,
 				Info.plist,
-				Presentation/Common/Components/.gitkeep,
 			);
 			target = B0E5931B2F0A427A009D7980 /* FLINT */;
 		};

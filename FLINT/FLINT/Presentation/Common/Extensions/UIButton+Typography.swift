@@ -33,3 +33,15 @@ extension UIButton {
         setAttributedTitle(NSAttributedString(string: title, attributes: attrs), for: state)
     }
 }
+
+extension UIButton.Configuration {
+    mutating func setTitle(
+        _ title: String,
+        style: TypographyStyle,
+        textColor: UIColor? = nil,
+        alignment: NSTextAlignment = .center
+    ) {
+        let attrs = style.attributes(textColor: nil, alignment: alignment)
+        attributedTitle = AttributedString(NSAttributedString(string: title, attributes: attrs))
+    }
+}
