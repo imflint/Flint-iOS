@@ -79,8 +79,8 @@ final class MainTabBarController: UITabBarController {
     }
 
     private func configureTabBarAppearance() {
-        tabBar.tintColor = UIColor.flintGray100
-        tabBar.unselectedItemTintColor = UIColor.flintGray600
+        tabBar.tintColor = .flintGray100
+        tabBar.unselectedItemTintColor = .flintGray600
 
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
