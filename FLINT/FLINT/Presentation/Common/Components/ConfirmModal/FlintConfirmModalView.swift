@@ -128,7 +128,6 @@ final class FlintConfirmModalView: BaseView {
         containerView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.width.equalTo(328)
-            $0.height.equalTo(290)
         }
 
         backgroundView.snp.makeConstraints {
