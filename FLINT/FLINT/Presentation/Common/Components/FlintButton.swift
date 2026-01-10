@@ -9,7 +9,7 @@ import UIKit
 
 import Then
 
-class FlintButton: UIButton {
+final class FlintButton: UIButton {
     
     enum Style {
         case able
