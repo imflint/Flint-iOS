@@ -41,7 +41,8 @@ extension UIButton.Configuration {
         textColor: UIColor? = nil,
         alignment: NSTextAlignment = .center
     ) {
-        let attrs = style.attributes(textColor: nil, alignment: alignment)
+        var attrs = style.attributes(textColor: nil, alignment: alignment)
+        attrs[.foregroundColor] = textColor
         attributedTitle = AttributedString(NSAttributedString(string: title, attributes: attrs))
     }
 }
