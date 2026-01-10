@@ -1,0 +1,32 @@
+//
+//  ExampleRepositoryImpl.swift
+//  FLINT
+//
+//  Created by 진소은 on 1/9/26.
+//
+
+import Combine
+
+public final class ExampleRepositoryImpl: ExampleRepository {
+    
+    private let service: ExampleService
+    private let mapper: ExampleMapper
+
+    init(service: ExampleService, mapper: ExampleMapper) {
+        self.service = service
+        self.mapper = mapper
+    }
+
+    func fetchExample() -> AnyPublisher<ExampleEntity, AppError> {
+        return service.fetchExample()
+            .mapError { _ in AppError.network }
+            .tryMap { [mapper] dto -> ExampleEntity in
+                try mapper.toDomain(dto)
+            }
+            .mapError { error in
+                if let app = error as? AppError { return app }
+                return .unknown
+            }
+            .eraseToAnyPublisher()
+    }
+}

@@ -15,13 +15,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        let viewController = UINavigationController(rootViewController: ViewController())
         
-        viewController.setNavigationBarHidden(true, animated: false)
-        
-        window.rootViewController = viewController
+        let container = AppDIContainer.shared
+        container.configureNetworking()
+        let factory = ViewControllerFactoryImpl(container: container)
+
+        let rootVC = factory.makeExampleViewController()
+        window.rootViewController = UINavigationController(rootViewController: rootVC)
         self.window = window
         window.makeKeyAndVisible()
+//
+//        let viewController = UINavigationController(rootViewController: ViewController())
+//        
+//        viewController.setNavigationBarHidden(true, animated: false)
+//        
+//        window.rootViewController = viewController
+//        self.window = window
+//        window.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
