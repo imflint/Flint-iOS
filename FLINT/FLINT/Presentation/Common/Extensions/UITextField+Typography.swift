@@ -25,4 +25,15 @@ extension UITextField {
             attributedText = NSAttributedString(string: t, attributes: attrs)
         }
     }
+    
+    func applyPlaceholderFontStyle(
+        _ style: TypographyStyle,
+        textColor: UIColor? = nil,
+        alignment: NSTextAlignment = .natural
+    ) {
+        guard let placeholder else { return }
+        var attrs = style.attributes(textColor: textColor, alignment: alignment)
+        attrs[.foregroundColor] = textColor
+        attributedPlaceholder = NSAttributedString(string: placeholder, attributes: attrs)
+    }
 }
