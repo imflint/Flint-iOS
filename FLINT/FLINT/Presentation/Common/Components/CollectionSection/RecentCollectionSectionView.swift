@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 import SnapKit
 import Then
 import Combine
@@ -19,24 +20,22 @@ final class RecentCollectionSectionView: BaseView {
 
     // MARK: - UI
 
-    private let titleLabel = UILabel().then {
-        $0.textColor = .flintWhite
-        $0.applyFontStyle(.head3_sb_18)
-    }
+    private let headerContainerView = UIView()
 
-    private let subtitleLabel = UILabel().then {
-        $0.textColor = .flintGray100
-        $0.applyFontStyle(.body2_r_14)
-    }
+    private let titleHeaderView = TitleHeaderView()
 
     private let chevronButton = UIButton(type: .system).then {
         var config = UIButton.Configuration.plain()
         config.image = UIImage.icMore
+        config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
         $0.configuration = config
         $0.tintColor = .flintWhite
     }
 
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout()).then {
+    private lazy var collectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: makeLayout()
+    ).then {
         $0.backgroundColor = .clear
         $0.showsHorizontalScrollIndicator = false
         $0.dataSource = self
@@ -73,13 +72,14 @@ final class RecentCollectionSectionView: BaseView {
         self.output = output
 
         output.titleText
+            .combineLatest(output.subtitleText)
             .receive(on: RunLoop.main)
-            .assign(to: \.text, on: titleLabel)
-            .store(in: &cancellables)
-
-        output.subtitleText
-            .receive(on: RunLoop.main)
-            .assign(to: \.text, on: subtitleLabel)
+            .sink { [weak self] title, subtitle in
+                self?.titleHeaderView.configure(
+                    title: title ?? "",
+                    subtitle: subtitle ?? ""
+                )
+            }
             .store(in: &cancellables)
 
         output.items
@@ -90,7 +90,6 @@ final class RecentCollectionSectionView: BaseView {
             }
             .store(in: &cancellables)
 
-        //TODO: - > 이거 어디로 갈지 연결 
         output.chevronTap
             .sink { [weak self] in
                 self?.onTapMore?()
@@ -109,39 +108,39 @@ final class RecentCollectionSectionView: BaseView {
     }
 
     func setHeader(title: String, subtitle: String) {
-        titleLabel.text = title
-        subtitleLabel.text = subtitle
+        titleHeaderView.configure(title: title, subtitle: subtitle)
     }
 
     // MARK: - BaseView
 
     override func setUI() {
-        addSubview(titleLabel)
-        addSubview(subtitleLabel)
-        addSubview(chevronButton)
+        addSubview(headerContainerView)
+        headerContainerView.addSubview(titleHeaderView)
+        headerContainerView.addSubview(chevronButton)
+
         addSubview(collectionView)
     }
 
     override func setLayout() {
-        titleLabel.snp.makeConstraints {
+        headerContainerView.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.leading.equalToSuperview().inset(20)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        titleHeaderView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+            $0.leading.equalToSuperview()
+            $0.trailing.lessThanOrEqualTo(chevronButton.snp.leading).offset(-8)
         }
 
         chevronButton.snp.makeConstraints {
-            $0.centerY.equalTo(titleLabel)
+            $0.top.equalToSuperview()
             $0.trailing.equalToSuperview().inset(12)
             $0.size.equalTo(36)
         }
 
-        subtitleLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(6)
-            $0.leading.equalTo(titleLabel)
-            $0.trailing.lessThanOrEqualTo(chevronButton.snp.leading).offset(-8)
-        }
-
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(subtitleLabel.snp.bottom).offset(14)
+            $0.top.equalTo(headerContainerView.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(195)
             $0.bottom.equalToSuperview()
@@ -171,7 +170,10 @@ final class RecentCollectionSectionView: BaseView {
             widthDimension: .absolute(260),
             heightDimension: .absolute(200)
         )
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitems: [item]
+        )
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 12
