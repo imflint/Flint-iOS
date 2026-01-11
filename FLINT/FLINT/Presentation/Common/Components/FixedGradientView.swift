@@ -185,10 +185,6 @@ extension FixedGradientView {
         
         /// y-p.y = m(x-p.x)
         init(m: CGFloat, p: CGPoint) {
-            // y = m(x-x1) + y1
-            // y = mx-mx1 + y1
-            // y = mx + (y1 - mx1)
-            // b = y1 - mx1
             self.m = m
             self.b = p.y - m*p.x
         }
