@@ -47,14 +47,14 @@ final class BasicButton: UIButton {
     private func setAbleUI() {
         var config: UIButton.Configuration = configuration ?? .plain()
         config.background.backgroundColor = .flintPrimary400
-        config.setTitle(title ?? "", style: .body1_m_16, textColor: .flintWhite)
+        config.attributedTitle = .pretendard(.body1_m_16, text: title ?? "", color: .flintWhite)
         configuration = config
     }
     
     private func setDisableUI() {
         var config: UIButton.Configuration = configuration ?? .plain()
         config.background.backgroundColor = .flintGray700
-        config.setTitle(title ?? "", style: .body1_m_16, textColor: .flintGray400)
+        config.attributedTitle = .pretendard(.body1_m_16, text: title ?? "", color: .flintGray400)
         configuration = config
     }
 }

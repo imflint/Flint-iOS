@@ -12,9 +12,8 @@ import Then
 final class MyViewController: BaseViewController {
 
     private let titleLabel = UILabel().then {
-        $0.text = "My"
+        $0.attributedText = .pretendard(.head1_sb_22, text: "My")
         $0.textAlignment = .center
-        $0.applyFontStyle(.head1_sb_22)
     }
 
     override func setUI() {

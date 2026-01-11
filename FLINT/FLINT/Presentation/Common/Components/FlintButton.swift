@@ -87,7 +87,7 @@ final class FlintButton: UIButton {
         config.background.strokeColor = nil
         config.background.strokeWidth = 0
         config.image = image?.withTintColor(.flintWhite).resized(to: CGSize(width: 24, height: 24))
-        config.setTitle(title ?? "", style: .body1_sb_16, textColor: .flintWhite)
+        config.attributedTitle = .pretendard(.body1_sb_16, text: title ?? "", color: .flintWhite)
         
         configuration = config
     }
@@ -100,7 +100,7 @@ final class FlintButton: UIButton {
         config.background.strokeColor = nil
         config.background.strokeWidth = 0
         config.image = image?.withTintColor(.flintGray400).resized(to: CGSize(width: 24, height: 24))
-        config.setTitle(title ?? "", style: .body1_sb_16, textColor: .flintGray400)
+        config.attributedTitle = .pretendard(.body1_sb_16, text: title ?? "", color: .flintGray400)
         
         configuration = config
     }
@@ -113,7 +113,7 @@ final class FlintButton: UIButton {
         config.background.strokeColor = .flintGray500
         config.background.strokeWidth = 2
         config.image = image?.withTintColor(.flintWhite).resized(to: CGSize(width: 24, height: 24))
-        config.setTitle(title ?? "", style: .body1_sb_16, textColor: .flintWhite)
+        config.attributedTitle = .pretendard(.body1_sb_16, text: title ?? "", color: .flintWhite)
         
         configuration = config
     }
@@ -126,19 +126,30 @@ final class FlintButton: UIButton {
         config.background.strokeColor = .flintPrimary400
         config.background.strokeWidth = 2
         config.image = image?.withTintColor(.flintWhite).resized(to: CGSize(width: 24, height: 24))
-        config.setTitle(title ?? "", style: .body1_sb_16, textColor: .flintWhite)
+        config.attributedTitle = .pretendard(.body1_sb_16, text: title ?? "", color: .flintWhite)
         
         configuration = config
     }
     
     private func applyTitleMinWidth(_ widthGuideTitle: String) {
-        let titleMinWidth = NSAttributedString(
-            string: widthGuideTitle,
-            attributes: TypographyStyle.body1_sb_16.attributes(textColor: nil, alignment: .center)
-        ).boundingRect(with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: .zero), options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil).width
+        let titleMinWidth = NSAttributedString
+            .pretendard(.body1_sb_16, text: widthGuideTitle)
+            .boundingRect(
+                with: CGSize(
+                    width: CGFloat.greatestFiniteMagnitude,
+                    height: .zero
+                ),
+                options: [.usesFontLeading, .usesLineFragmentOrigin],
+                context: nil
+            ).width
         
         guard let attributedTitle = configuration?.attributedTitle else { return }
-        let width = NSAttributedString(attributedTitle).boundingRect(with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: .zero), options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil).width
+        let width = NSAttributedString(attributedTitle).boundingRect(
+            with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: .zero),
+            options: [.usesFontLeading, .usesLineFragmentOrigin],
+            context: nil
+        ).width
+        
         let inset = (titleMinWidth - width) / 2
         
         var config: UIButton.Configuration = configuration ?? .plain()

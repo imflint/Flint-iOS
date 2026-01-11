@@ -64,11 +64,11 @@ final class MainTabBarController: UITabBarController {
             )
 
             vc.tabBarItem.setTitleTextAttributes(
-                [.font: TypographyStyle.micro1_m_10.font],
+                [.font: UIFont.pretendard(.micro1_m_10)],
                 for: .normal
             )
             vc.tabBarItem.setTitleTextAttributes(
-                [.font: TypographyStyle.micro1_m_10.font],
+                [.font: UIFont.pretendard(.micro1_m_10)],
                 for: .selected
             )
 
