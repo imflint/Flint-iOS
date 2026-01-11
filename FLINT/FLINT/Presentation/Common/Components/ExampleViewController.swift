@@ -24,7 +24,7 @@ final class ExampleViewController: UIViewController {
             $0.leading.trailing.equalToSuperview()
         }
 
-        let viewModel = RecentCollectionSectionViewModel(useCase: MockRecentCollectionUseCase())
+        let viewModel = RecentCollectionSectionViewModel(useCase: RecentCollectionUseCase())
         collectionSectionView.bind(viewModel: viewModel)
 
         collectionSectionView.onTapMore = { [weak self] in

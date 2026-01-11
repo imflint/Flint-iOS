@@ -20,21 +20,19 @@ final class RecentCollectionSectionView: BaseView {
     // MARK: - UI
 
     private let titleLabel = UILabel().then {
-        $0.applyFontStyle(.head3_sb_18)
         $0.textColor = .flintWhite
+        $0.applyFontStyle(.head3_sb_18)
     }
 
     private let subtitleLabel = UILabel().then {
-        $0.applyFontStyle(.body2_r_14)
         $0.textColor = .flintGray100
+        $0.applyFontStyle(.body2_r_14)
     }
 
     private let chevronButton = UIButton(type: .system).then {
         var config = UIButton.Configuration.plain()
         config.image = UIImage.icMore
-        config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
         $0.configuration = config
-
         $0.tintColor = .flintWhite
     }
 
@@ -145,7 +143,7 @@ final class RecentCollectionSectionView: BaseView {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(subtitleLabel.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(210)
+            $0.height.equalTo(195)
             $0.bottom.equalToSuperview()
         }
     }

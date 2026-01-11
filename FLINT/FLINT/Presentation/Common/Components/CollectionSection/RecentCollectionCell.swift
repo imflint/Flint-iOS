@@ -20,7 +20,7 @@ final class RecentCollectionCell: UICollectionViewCell {
     }
 
     private let bottomOverlayView = UIView().then {
-        $0.backgroundColor = .flintBackground.withAlphaComponent(0.4)
+        $0.backgroundColor = .flintOverlay
     }
 
     private let profileImageView = UIImageView().then {
@@ -30,15 +30,15 @@ final class RecentCollectionCell: UICollectionViewCell {
     }
 
     private let titleLabel = UILabel().then {
-        $0.applyFontStyle(.body2_m_14)
         $0.textColor = .flintGray50
         $0.numberOfLines = 1
+        $0.applyFontStyle(.body2_m_14)
     }
 
     private let userNameLabel = UILabel().then {
-        $0.applyFontStyle(.caption1_r_12)
         $0.textColor = .flintGray200
         $0.numberOfLines = 1
+        $0.applyFontStyle(.caption1_r_12)
     }
 
     override init(frame: CGRect) {

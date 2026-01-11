@@ -1,4 +1,13 @@
+
+//
+//  ExampleViewController.swift
+//  FLINT
+//
+//  Created by 소은 on 1/11/26.
+//
+
 import UIKit
+
 import SnapKit
 import Then
 import Combine
@@ -13,13 +22,12 @@ final class CollectionSectionView: BaseView {
     // MARK: - UI
 
     private let titleLabel = UILabel().then {
-        $0.applyFontStyle(.head3_sb_18)
         $0.textColor = .flintGray100
         $0.text = "눈여겨보고 있는 컬렉션"
+        $0.applyFontStyle(.head3_sb_18)
     }
 
     private let subtitleLabel = UILabel().then {
-        $0.applyFontStyle(.body2_r_14)
         $0.textColor = .flintGray400
         $0.text = "키키님이 최근 살펴본 컬렉션이에요"
     }
