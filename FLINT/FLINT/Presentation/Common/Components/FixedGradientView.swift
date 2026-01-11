@@ -1,13 +1,13 @@
 //
-//  GradientView.swift
-//  PresentationLayer
+//  FixedGradientView.swift
+//  Flint
 //
 //  Created by 김호성 on 2025.03.12.
 //
 
 import UIKit
 
-final class GradientView: UIView {
+final class FixedGradientView: UIView {
     
     override class var layerClass: AnyClass {
         return CAGradientLayer.self
@@ -54,9 +54,9 @@ final class GradientView: UIView {
     }
 }
 
-extension GradientView {
-    // 대각선 Gradient 구현을 위한 값 보정 함수
-    // See https://stackoverflow.com/a/43176174 for more information.
+extension FixedGradientView {
+    /// 대각선 Gradient 구현을 위한 값 보정 함수
+    /// See https://stackoverflow.com/a/43176174 for more information.
     func fixPoints() {
         if startPoint.x == endPoint.x || startPoint.y == endPoint.y {
             // Apple's implementation of horizontal and vertical gradients works just fine
@@ -108,7 +108,7 @@ extension GradientView {
     }
 }
 
-extension GradientView {
+extension FixedGradientView {
     private func calculateMultipliers(bounds: CGSize) -> (x: CGFloat, y: CGFloat) {
         if bounds.height <= bounds.width {
             return (x: 1, y: bounds.width/bounds.height)
@@ -183,7 +183,7 @@ extension GradientView {
             self.b = b
         }
         
-        /// y-y1 = m(x-x1)
+        /// y-p.y = m(x-p.x)
         init(m: CGFloat, p: CGPoint) {
             // y = m(x-x1) + y1
             // y = mx-mx1 + y1
@@ -208,10 +208,6 @@ extension GradientView {
         func intersection(with line: Line) -> CGPoint? {
             // Line 1: y = mx + b
             // Line 2: y = nx + c
-            // mx+b = nx+c
-            // mx-nx = c-b
-            // x(m-n) = c-b
-            // x = (c-b)/(m-n)
             let n = line.m
             let c = line.b
             if m-n == 0 {

@@ -77,7 +77,7 @@ final class FlintButton: UIButton {
     private func setAbleUI() {
         var config: UIButton.Configuration = configuration ?? .plain()
         
-        let gradientView = GradientView().then {
+        let gradientView = FixedGradientView().then {
             $0.colors = [.flintPrimary200, .flintPrimary400]
             $0.locations = [0, 1]
             $0.startPoint = .init(x: 0, y: 0)
