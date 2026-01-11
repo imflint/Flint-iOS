@@ -13,6 +13,16 @@ final class BasicButton: UIButton {
     var titleColor: UIColor
     var buttonColor: UIColor
     
+    override var isEnabled: Bool {
+        didSet {
+            if isEnabled {
+                setAbleUI()
+            } else {
+                setDisableUI()
+            }
+        }
+    }
+    
     init(title: String? = nil, titleColor: UIColor = .flintWhite, buttonColor: UIColor = .flintPrimary400) {
         self.title = title
         self.titleColor = titleColor
@@ -32,16 +42,6 @@ final class BasicButton: UIButton {
         configuration = config
         
         setAbleUI()
-        
-        configurationUpdateHandler = { [weak self] button in
-            guard let self else { return }
-            switch button.state {
-            case .disabled:
-                setDisableUI()
-            default:
-                setAbleUI()
-            }
-        }
     }
     
     private func setAbleUI() {

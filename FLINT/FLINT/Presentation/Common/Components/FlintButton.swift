@@ -22,6 +22,16 @@ final class FlintButton: UIButton {
     var title: String?
     var image: UIImage?
     
+    override var isEnabled: Bool {
+        didSet {
+            if isEnabled {
+                applyStyle(style: style)
+            } else {
+                applyStyle(style: .disable)
+            }
+        }
+    }
+    
     init(style: Style, title: String? = nil, image: UIImage? = nil, equalTitleWidthWith widthGuideTitle: String? = nil) {
         self.style = style
         self.title = title
@@ -49,16 +59,6 @@ final class FlintButton: UIButton {
         configuration = config
         
         applyStyle(style: style)
-        
-        configurationUpdateHandler = { [weak self] button in
-            guard let self else { return }
-            switch button.state {
-            case .disabled:
-                applyStyle(style: .disable)
-            default:
-                applyStyle(style: style)
-            }
-        }
     }
     
     private func applyStyle(style: Style) {
