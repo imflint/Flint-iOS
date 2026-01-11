@@ -14,10 +14,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
+        let container = AppDIContainer.shared
+        container.configureNetworking()
 
         window.rootViewController = MainTabBarController()
         self.window = window
         window.makeKeyAndVisible()
+//
+//        let viewController = UINavigationController(rootViewController: ViewController())
+//        
+//        viewController.setNavigationBarHidden(true, animated: false)
+//        
+//        window.rootViewController = viewController
+//        self.window = window
+//        window.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
