@@ -37,18 +37,11 @@ final class AppDIContainer {
          return ExampleServiceImpl()
     }
 
-    // MARK: - Mapper
-    
-    func makeExampleMapper() -> ExampleMapper {
-        ExampleMapperImpl()
-    }
-
     // MARK: - Repository
     
     func makeExampleRepository() -> ExampleRepository {
         ExampleRepositoryImpl(
-            service: makeExampleService(),
-            mapper: makeExampleMapper()
+            service: makeExampleService()
         )
     }
 

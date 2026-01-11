@@ -2,7 +2,7 @@
 //  ExampleRepositoryImpl.swift
 //  FLINT
 //
-//  Created by 진소은 on 1/9/26.
+//  Created by 김호성 on 2026.01.11.
 //
 
 import Combine
@@ -10,18 +10,16 @@ import Combine
 public final class ExampleRepositoryImpl: ExampleRepository {
     
     private let service: ExampleService
-    private let mapper: ExampleMapper
 
-    init(service: ExampleService, mapper: ExampleMapper) {
+    init(service: ExampleService) {
         self.service = service
-        self.mapper = mapper
     }
 
     func fetchExample() -> AnyPublisher<ExampleEntity, AppError> {
         return service.fetchExample()
             .mapError { _ in AppError.network }
-            .tryMap { [mapper] dto -> ExampleEntity in
-                try mapper.toDomain(dto)
+            .tryMap { dto -> ExampleEntity in
+                try dto.toDomain()
             }
             .mapError { error in
                 if let app = error as? AppError { return app }
