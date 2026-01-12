@@ -123,8 +123,8 @@ class Modal: BaseView {
     
     init(
         image: UIImage,
-        title: String,
-        caption: String? = nil,
+        title: String? = nil,
+        caption: String,
         leftButtonTitle: String? = nil,
         rightButtonTitle: String,
         rightButtonColor: UIColor? = .flintPrimary400,
@@ -144,15 +144,18 @@ class Modal: BaseView {
         super.init(frame: .zero)
         
         imageView.image = image
-        titleLabel.attributedText = NSAttributedString.pretendard(.head1_sb_22, text: title)
         
-        if let caption {
-            captionLabel.isHidden = false
-            captionLabel.attributedText = NSAttributedString.pretendard(.body1_m_16, text: caption)
+        if let title {
+            titleLabel.isHidden = false
+            titleLabel.attributedText = NSAttributedString.pretendard(.head1_sb_22, text: title)
         } else {
-            captionLabel.isHidden = true
-            captionLabel.text = nil
+            titleLabel.isHidden = true
+            titleLabel.text = nil
         }
+        
+        captionLabel.attributedText = NSAttributedString.pretendard(.body1_m_16, text: caption)
+        
+        
         
         if let leftButtonTitle {
             leftButton.isHidden = false
