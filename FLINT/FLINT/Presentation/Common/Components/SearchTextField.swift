@@ -40,11 +40,6 @@ final class SearchTextField: UITextField {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        layer.cornerRadius = bounds.height / 2
-    }
-    
     override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
         var padding = super.rightViewRect(forBounds: bounds)
         padding.origin.x -= 12
@@ -57,6 +52,7 @@ final class SearchTextField: UITextField {
         backgroundColor = .flintGray700
         tintColor = .flintGray300
         textColor = .flintWhite
+        layer.cornerRadius = 22
         
         spellCheckingType = .no
         autocapitalizationType = .none

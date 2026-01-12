@@ -16,7 +16,9 @@ final class ProfileImageSettingView: BaseView {
     
     let profileImageView = UIImageView().then {
         $0.image = .imgProfileGray
+        $0.clipsToBounds = true
         $0.contentMode = .scaleAspectFill
+        $0.layer.cornerRadius = 60
     }
     
     let settingButton = UIButton().then {
@@ -30,7 +32,7 @@ final class ProfileImageSettingView: BaseView {
     // MARK: - Setup
     
     override func setUI() {
-        
+//        profileImageView.layer.cornerRadius = 60
     }
     
     override func setHierarchy() {
