@@ -21,9 +21,10 @@ final class RecentCollectionCell: BaseCollectionViewCell {
         $0.clipsToBounds = true
     }
 
-    private let backOverlayView = UIView().then {
-        $0.backgroundColor = .flintOverlay
-    }
+    private let overlayContainerView = UIView()
+
+    private let highGradientLayer = HighGradientView()
+    private let bottomGradientLayer = BottomFadeGradientView()
 
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -50,11 +51,15 @@ final class RecentCollectionCell: BaseCollectionViewCell {
 
     override func setHierarchy() {
         contentView.addSubview(imageView)
-        contentView.addSubview(backOverlayView)
 
-        backOverlayView.addSubview(profileImageView)
-        backOverlayView.addSubview(titleLabel)
-        backOverlayView.addSubview(userNameLabel)
+        contentView.addSubview(overlayContainerView)
+
+        overlayContainerView.addSubview(highGradientLayer)
+        overlayContainerView.addSubview(bottomGradientLayer)
+
+        overlayContainerView.addSubview(profileImageView)
+        overlayContainerView.addSubview(titleLabel)
+        overlayContainerView.addSubview(userNameLabel)
     }
 
     override func setLayout() {
@@ -62,7 +67,15 @@ final class RecentCollectionCell: BaseCollectionViewCell {
             $0.edges.equalToSuperview()
         }
 
-        backOverlayView.snp.makeConstraints {
+        overlayContainerView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        highGradientLayer.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        bottomGradientLayer.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
 
