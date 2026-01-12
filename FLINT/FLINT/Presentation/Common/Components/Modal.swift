@@ -23,12 +23,13 @@ class Modal: BaseView {
         $0.backgroundColor = .flintOverlay
     }
     
-    private let backgroundView = UIImageView().then {
-        $0.image = .imgBackgroundGradiantMiddle
-        $0.contentMode = .scaleAspectFill
+    private let backgroundView = FixedGradientView().then {
+        $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
-        $0.layer.masksToBounds = true
-        $0.isUserInteractionEnabled = true
+        $0.colors = [.flintGray600, .flintGray700]
+        $0.locations = [0, 1]
+        $0.startPoint = .init(x: 0, y: 0)
+        $0.endPoint = .init(x: 0.4, y: 0.4)
     }
     
     private let contentStackView = UIStackView().then {
