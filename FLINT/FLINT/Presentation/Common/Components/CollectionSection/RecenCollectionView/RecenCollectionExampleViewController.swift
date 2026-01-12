@@ -1,5 +1,5 @@
 //
-//  ExampleViewController.swift
+//  RecenCollectionExampleViewController.swift
 //  FLINT
 //
 //  Created by 소은 on 1/11/26.
@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-final class ExampleViewController: BaseViewController {
+final class RecenCollectionExampleViewController: BaseViewController {
     
     private let stackView = UIStackView()
     

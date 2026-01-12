@@ -50,8 +50,8 @@ final class TitleHeaderView: BaseView {
             moreButton.isHidden = true
         }
        
-        titleLabel.applyFontStyle(.head3_sb_18)
-        subtitleLabel.applyFontStyle(.body2_r_14)
+        titleLabel.attributedText = NSAttributedString.pretendard(.head3_sb_18, text: title)
+        subtitleLabel.attributedText = NSAttributedString.pretendard(.body2_r_14,text: title)
     }
 
     // MARK: - override

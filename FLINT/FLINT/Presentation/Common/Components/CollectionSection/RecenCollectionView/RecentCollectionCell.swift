@@ -100,7 +100,7 @@ final class RecentCollectionCell: BaseCollectionViewCell {
         titleLabel.text = item.title
         userNameLabel.text = item.userName
         
-        titleLabel.applyFontStyle(.body2_m_14)
-        userNameLabel.applyFontStyle(.caption1_r_12)
+        titleLabel.font = UIFont.pretendard(.body2_m_14)
+        userNameLabel.font = UIFont.pretendard(.caption1_r_12)
     }
 }
