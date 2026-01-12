@@ -12,13 +12,19 @@ import Then
 
 final class CapsuleButton: UIButton {
     
+    // MARK: - Enum
+    
     enum Style {
         case plain
         case outline
     }
     
+    // MARK: - Property
+    
     var style: Style
     var title: String?
+    
+    // MARK: - Component
     
     private lazy var plainGradientBackgroundView = FixedGradientView().then {
         $0.colors = [.flintPrimary200, .flintPrimary400]
@@ -47,6 +53,8 @@ final class CapsuleButton: UIButton {
         }
     }
     
+    // MARK: - Basic
+    
     init(style: Style, title: String? = nil) {
         self.style = style
         self.title = title
@@ -69,6 +77,8 @@ final class CapsuleButton: UIButton {
             outlineGradientBackgroundView.layer.cornerRadius = bounds.height / 2
         }
     }
+    
+    // MARK: - Setup
     
     private func setUI() {
         var config: UIButton.Configuration = configuration ?? .plain()
