@@ -23,8 +23,8 @@ final class RecentCollectionCell: BaseCollectionViewCell {
 
     private let overlayContainerView = UIView()
 
-    private let highGradientLayer = HighGradientView()
-    private let bottomGradientLayer = BottomFadeGradientView()
+    private let highGradientLayer = UpFadeGradientView()
+    private let bottomGradientLayer = downFadeGradientView()
 
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill

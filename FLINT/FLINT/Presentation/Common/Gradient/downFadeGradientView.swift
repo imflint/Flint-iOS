@@ -1,5 +1,5 @@
 //
-//  HighGradientView.swift
+//  downFadeGradientView.swift
 //  FLINT
 //
 //  Created by 소은 on 1/12/26.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class HighGradientView: UIView {
+final class downFadeGradientView: UIView {
 
     private let gradientLayer = CAGradientLayer()
 
@@ -30,8 +30,8 @@ final class HighGradientView: UIView {
         backgroundColor = .clear
 
         gradientLayer.colors = [
-            UIColor.black.withAlphaComponent(0.4).cgColor,
-            UIColor.black.withAlphaComponent(0.0).cgColor
+            UIColor.black.withAlphaComponent(0.0).cgColor,
+            UIColor.black.withAlphaComponent(0.8).cgColor
         ]
         gradientLayer.locations = [0.0, 1.0]
 
