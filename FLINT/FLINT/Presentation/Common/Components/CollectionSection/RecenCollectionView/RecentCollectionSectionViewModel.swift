@@ -23,7 +23,6 @@ final class RecentCollectionSectionViewModel {
 
     struct Output {
         let items: AnyPublisher<[RecentCollectionItemViewData], Never>
-
         let moreTap: AnyPublisher<Void, Never>
         let itemSelect: AnyPublisher<UUID, Never>
     }

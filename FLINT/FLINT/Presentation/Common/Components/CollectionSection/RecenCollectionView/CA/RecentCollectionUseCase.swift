@@ -20,7 +20,7 @@ final class RecentCollectionUseCase: RecentCollectionUseCaseProtocol {
                 id: UUID(),
                 title: "한번 보면 못 빠져나오는 사랑이야기",
                 userName: "사용자 이름",
-                imageName: "sample_collection_1",
+                imageName: "img_background_gradiant_large",
                 imageURL: nil,
                 profileImageName: "img_profile_gray",
                 profileImageURL: nil
@@ -29,7 +29,7 @@ final class RecentCollectionUseCase: RecentCollectionUseCaseProtocol {
                 id: UUID(),
                 title: "사랑에 빠지기 10초전",
                 userName: "사용자 이름",
-                imageName: "sample_collection_1",
+                imageName: "img_background_gradiant_large",
                 imageURL: nil,
                 profileImageName: "img_profile_gray",
                 profileImageURL: nil
@@ -38,7 +38,7 @@ final class RecentCollectionUseCase: RecentCollectionUseCaseProtocol {
                 id: UUID(),
                 title: "사랑에 빠지기 10초전",
                 userName: "사용자 이름",
-                imageName: "sample_collection_1",
+                imageName: "img_background_gradiant_large",
                 imageURL: nil,
                 profileImageName: "img_profile_gray",
                 profileImageURL: nil
