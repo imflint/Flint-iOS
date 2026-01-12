@@ -35,7 +35,6 @@ final class CapsuleButton: UIButton {
     }
     
     private lazy var outlineGradientBackgroundView = FixedGradientView().then {
-        Log.d("dd")
         $0.colors = [.flintGray600, .flintGray700]
         $0.locations = [0, 1]
         $0.startPoint = .init(x: 0, y: 0)
