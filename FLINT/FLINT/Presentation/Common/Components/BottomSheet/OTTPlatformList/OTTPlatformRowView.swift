@@ -30,6 +30,8 @@ final class OTTPlatformRowView: BaseView {
         $0.numberOfLines = 1
     }
 
+    //TODO: - 폰트 설정 바꾸기
+    
     private let openButton = BasicButton(title: "바로 보러가기")
 
     // MARK: - Public API
