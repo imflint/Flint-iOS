@@ -15,10 +15,17 @@ final class SavedUsersListView: BaseView {
     // MARK: - Layout
 
     private let rowSpacing: CGFloat = 8
+    private let maxVisibleCount: Int = 10
+    private let rowHeight: CGFloat = 56
 
     // MARK: - UI
 
-    private let stackView = UIStackView().then {
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = true
+        $0.alwaysBounceVertical = true
+    }
+
+    private let contentStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 8
     }
@@ -32,29 +39,55 @@ final class SavedUsersListView: BaseView {
     func configure(users: [SavedUserRowItem]) {
         self.users = users
         rebuild()
+
+        scrollView.isScrollEnabled = users.count > maxVisibleCount
+        scrollView.alwaysBounceVertical = users.count > maxVisibleCount
+
+        let visibleCount = min(users.count, maxVisibleCount)
+        let visibleHeight =
+            CGFloat(visibleCount) * rowHeight
+            + CGFloat(max(visibleCount - 1, 0)) * rowSpacing
+
+        snp.updateConstraints {
+            $0.height.equalTo(visibleHeight).priority(.required)
+        }
+
+        setNeedsLayout()
+        layoutIfNeeded()
     }
 
     // MARK: - BaseView
 
     override func setUI() {
-        addSubview(stackView)
+        addSubview(scrollView)
+        scrollView.addSubview(contentStackView)
     }
 
     override func setLayout() {
-        stackView.snp.makeConstraints {
+        scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+
+        contentStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
         }
     }
 
     // MARK: - Private
 
     private func rebuild() {
-        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        contentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
         users.forEach { user in
             let row = SavedUserRowView()
             row.configure(user: user)
-            stackView.addArrangedSubview(row)
+
+            row.snp.makeConstraints {
+                $0.height.equalTo(rowHeight)
+            }
+
+            contentStackView.addArrangedSubview(row)
         }
     }
 }

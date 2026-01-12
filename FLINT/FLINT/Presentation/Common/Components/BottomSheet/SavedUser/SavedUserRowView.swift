@@ -36,7 +36,6 @@ final class SavedUserRowView: BaseView {
 
     override func setLayout() {
         profileImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(32)
             $0.centerY.equalToSuperview()
             $0.size.equalTo(44)
         }

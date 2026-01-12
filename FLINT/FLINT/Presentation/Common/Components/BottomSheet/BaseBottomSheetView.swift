@@ -41,6 +41,12 @@ final class BaseBottomSheetView: BaseView {
         $0.layer.cornerRadius = 4
     }
 
+    private let titleStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+        $0.alignment = .center
+    }
+
     private let titleLabel = UILabel().then {
         $0.textColor = .flintWhite
         $0.font = UIFont.pretendard(.head3_sb_18)
@@ -104,7 +110,11 @@ final class BaseBottomSheetView: BaseView {
         addSubview(containerView)
 
         containerView.addSubview(grabberView)
-        containerView.addSubviews(titleLabel, countSaveUser)
+        
+        containerView.addSubview(titleStackView)
+        titleStackView.addArrangedSubview(titleLabel)
+        titleStackView.addArrangedSubview(countSaveUser)
+        
         containerView.addSubview(contentContainerView)
 
         setAction()
@@ -126,29 +136,27 @@ final class BaseBottomSheetView: BaseView {
             $0.height.equalTo(4)
         }
 
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(grabberView.snp.bottom).offset(12)
-            $0.leading.equalToSuperview().inset(20)
-            $0.trailing.lessThanOrEqualTo(countSaveUser.snp.leading).offset(-4)
+        titleStackView.snp.makeConstraints {
+            $0.top.equalTo(grabberView.snp.bottom).offset(16)
+            $0.centerX.equalToSuperview()
         }
-
-        countSaveUser.snp.makeConstraints {
-            $0.leading.equalTo(titleLabel.snp.trailing).offset(4)
-            $0.centerY.equalTo(titleLabel.snp.centerY)
-            $0.trailing.lessThanOrEqualToSuperview().inset(20)
-        }
+        
+        countSaveUser.setContentHuggingPriority(.required, for: .horizontal)
+        countSaveUser.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         contentContainerView.snp.makeConstraints {
             $0.bottom.equalToSuperview()
             
-            contentTopToGrabber = $0.top.equalTo(grabberView.snp.bottom).offset(12).constraint
+            contentTopToGrabber = $0.top.equalTo(grabberView.snp.bottom).offset(16).constraint
                 $0.leading.equalToSuperview().inset(32)
                 $0.trailing.equalToSuperview().inset(24)
-            contentTopToTitle = $0.top.equalTo(titleLabel.snp.bottom).offset(16).constraint
+            contentTopToTitle   = $0.top.equalTo(titleStackView.snp.bottom).offset(16).constraint
+                $0.leading.trailing.equalToSuperview().inset(32)
         }
         
         contentTopToTitle?.isActive = false
         contentTopToGrabber?.isActive = true
+        
     }
 
     // MARK: - Action
