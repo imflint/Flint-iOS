@@ -32,9 +32,8 @@ final class SearchTextField: UITextField {
         setLayout()
         setAction()
         
-        applyFontStyle(.body1_r_16, textColor: .flintWhite)
-        self.placeholder = placeholder
-        applyPlaceholderFontStyle(.body1_r_16, textColor: .flintGray300)
+        attributedText = .pretendard(.body1_r_16, text: text ?? "")
+        attributedPlaceholder = .pretendard(.body1_r_16, text: placeholder, color: .flintGray300)
     }
     
     required init?(coder: NSCoder) {
@@ -57,6 +56,7 @@ final class SearchTextField: UITextField {
     private func setUI() {
         backgroundColor = .flintGray700
         tintColor = .flintGray300
+        textColor = .flintWhite
         
         spellCheckingType = .no
         autocapitalizationType = .none

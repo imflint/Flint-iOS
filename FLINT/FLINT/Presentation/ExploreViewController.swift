@@ -13,9 +13,8 @@ import Then
 final class ExploreViewController: BaseViewController {
 
     private let titleLabel = UILabel().then {
-        $0.text = "explore"
+        $0.attributedText = .pretendard(.head1_sb_22, text: "explore")
         $0.textAlignment = .center
-        $0.applyFontStyle(.head1_sb_22)
     }
 
     override func setUI() {

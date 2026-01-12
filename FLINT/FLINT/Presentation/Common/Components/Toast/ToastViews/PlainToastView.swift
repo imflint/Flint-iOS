@@ -32,7 +32,6 @@ final class PlainToastView: BaseView, ToastView {
     
     private var titleLabel = UILabel().then {
         $0.numberOfLines = 1
-        $0.applyFontStyle(.body2_r_14)
         $0.textColor = .flintWhite
     }
     
@@ -42,9 +41,8 @@ final class PlainToastView: BaseView, ToastView {
         super.init(frame: .zero)
         
         imageView.image = image
-        titleLabel.text = title
+        titleLabel.attributedText = .pretendard(.body2_r_14, text: title)
         self.customConstraints = customConstraints
-        titleLabel.applyFontStyle(.body2_r_14)
         
         imageView.isHidden = image == nil
     }
