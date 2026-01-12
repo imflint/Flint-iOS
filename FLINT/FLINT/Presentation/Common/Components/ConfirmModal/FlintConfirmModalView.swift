@@ -17,7 +17,7 @@ final class FlintConfirmModalView: BaseView {
     // MARK: - UI Components
 
     private let dimView = UIView().then {
-        $0.backgroundColor = UIColor.flintBackground.withAlphaComponent(0.55)
+        $0.backgroundColor = .flintOverlay
         $0.alpha = 0
     }
 
