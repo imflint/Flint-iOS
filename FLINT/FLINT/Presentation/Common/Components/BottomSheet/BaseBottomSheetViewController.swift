@@ -11,8 +11,6 @@ import SnapKit
 
 final class BaseBottomSheetViewController: BaseViewController {
     
-    // MARK: - Input
-    
     private let content: BottomSheetContent
     private let titleText: String?
     private let titleCount: Int?
@@ -147,16 +145,16 @@ final class BaseBottomSheetViewController: BaseViewController {
             let contentHeight = CGFloat(count) * rowHeight + CGFloat(max(count - 1, 0)) * spacing
             return grabberTop + grabberHeight + titleAreaHeight + contentHeight + bottomPadding
 
+       
         case .savedUsers(let users):
-            let rowHeight: CGFloat = 56
+            let rowHeight: CGFloat = 44
             let spacing: CGFloat = 8
-            
-            let visibleCount = min(users.count, 10) 
+
+            let visibleCount = min(users.count, 9)
             let contentHeight = CGFloat(visibleCount) * rowHeight
-            + CGFloat(max(visibleCount - 1, 0)) * spacing
-            
+                + CGFloat(max(visibleCount - 1, 0)) * spacing
+
             return grabberTop + grabberHeight + titleAreaHeight + contentHeight + bottomPadding
-            
         }
     }
 }

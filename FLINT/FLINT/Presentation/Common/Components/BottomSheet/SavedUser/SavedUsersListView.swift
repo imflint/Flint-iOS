@@ -12,11 +12,11 @@ import Then
 
 final class SavedUsersListView: BaseView {
 
-    // MARK: - Layout
-
     private let rowSpacing: CGFloat = 8
-    private let maxVisibleCount: Int = 10
-    private let rowHeight: CGFloat = 56
+    private let maxVisibleCount: CGFloat = 9
+    private let rowHeight: CGFloat = 44
+
+    private var maxHeightConstraint: Constraint?
 
     // MARK: - UI
 
@@ -39,18 +39,15 @@ final class SavedUsersListView: BaseView {
     func configure(users: [SavedUserRowItem]) {
         self.users = users
         rebuild()
+        
+        let maxHeight =
+            maxVisibleCount * rowHeight
+            + (maxVisibleCount - 1) * rowSpacing
 
-        scrollView.isScrollEnabled = users.count > maxVisibleCount
-        scrollView.alwaysBounceVertical = users.count > maxVisibleCount
+        maxHeightConstraint?.update(offset: maxHeight)
 
-        let visibleCount = min(users.count, maxVisibleCount)
-        let visibleHeight =
-            CGFloat(visibleCount) * rowHeight
-            + CGFloat(max(visibleCount - 1, 0)) * rowSpacing
-
-        snp.updateConstraints {
-            $0.height.equalTo(visibleHeight).priority(.required)
-        }
+        scrollView.isScrollEnabled = users.count > Int(maxVisibleCount)
+        scrollView.alwaysBounceVertical = users.count > Int(maxVisibleCount)
 
         setNeedsLayout()
         layoutIfNeeded()
@@ -65,7 +62,10 @@ final class SavedUsersListView: BaseView {
 
     override func setLayout() {
         scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
+
+            maxHeightConstraint = $0.height.lessThanOrEqualTo(0).constraint
         }
 
         contentStackView.snp.makeConstraints {

@@ -73,7 +73,9 @@ final class BaseBottomSheetView: BaseView {
     
     // MARK: - Public API
     
-    func configure(title: String?, count: Int? = nil) {
+    func configure(title: String?,
+                   count: Int? = nil
+    ) {
         let hasTitle = (title != nil)
 
         titleLabel.text = title

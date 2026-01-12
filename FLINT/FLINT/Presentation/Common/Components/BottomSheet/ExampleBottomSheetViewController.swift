@@ -62,9 +62,13 @@ final class ExampleBottomSheetViewController: BaseViewController {
             .init(id: UUID(), profileImage: .imgProfileBlue, nickname: "닉네임", isVerified: true),
             .init(id: UUID(), profileImage: .imgProfileBlue, nickname: "안비", isVerified: false),
             .init(id: UUID(), profileImage: .imgProfileBlue, nickname: "오리너구리", isVerified: false),
-            .init(id: UUID(), profileImage: .imgProfileBlue, nickname: "아이스티", isVerified: true)
+            .init(id: UUID(), profileImage: .imgProfileBlue, nickname: "아이스티", isVerified: true),
+            .init(id: UUID(), profileImage: .imgProfileBlue, nickname: "키카", isVerified: true),
+            .init(id: UUID(), profileImage: .imgProfileBlue, nickname: "닉네임", isVerified: true),
+            .init(id: UUID(), profileImage: .imgProfileBlue, nickname: "안비", isVerified: false),
+            .init(id: UUID(), profileImage: .imgProfileBlue, nickname: "오리너구리", isVerified: false),
+            .init(id: UUID(), profileImage: .imgProfileBlue, nickname: "아이스티", isVerified: true),
         ]
-
         let sheet = BaseBottomSheetViewController(
             title: "이 컬렉션을 저장한 사람들",
             content: .savedUsers(users: users)
