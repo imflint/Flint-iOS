@@ -1,8 +1,9 @@
+
 //
-//  RecentCollectionSectionView.swift
+//  RecommendCollectionView.swift
 //  FLINT
 //
-//  Created by 소은 on 1/11/26.
+//  Created by 소은 on 1/12/26.
 //
 
 import UIKit
@@ -11,7 +12,7 @@ import SnapKit
 import Then
 import Combine
 
-final class RecentCollectionSectionView: BaseView {
+final class RecommendCollectionView: BaseView {
 
     // MARK: - Public Event
 
@@ -20,17 +21,7 @@ final class RecentCollectionSectionView: BaseView {
 
     // MARK: - UI
 
-    private let headerContainerView = UIView()
-
     private let titleHeaderView = TitleHeaderView()
-
-    private let chevronButton = UIButton(type: .system).then {
-        var config = UIButton.Configuration.plain()
-        config.image = UIImage.icMore
-        config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
-        $0.configuration = config
-        $0.tintColor = .flintWhite
-    }
 
     private lazy var collectionView = UICollectionView(
         frame: .zero,
@@ -50,10 +41,9 @@ final class RecentCollectionSectionView: BaseView {
     // MARK: - MVVM
 
     private let viewDidLoadSubject = PassthroughSubject<Void, Never>()
-    private let chevronTapSubject = PassthroughSubject<Void, Never>()
+    private let moreTapSubject = PassthroughSubject<Void, Never>()
     private let itemSelectSubject = PassthroughSubject<UUID, Never>()
 
-    private var output: RecentCollectionSectionViewModel.Output?
     private var cancellables = Set<AnyCancellable>()
     private var items: [RecentCollectionItemViewData] = []
 
@@ -64,23 +54,11 @@ final class RecentCollectionSectionView: BaseView {
 
         let input = RecentCollectionSectionViewModel.Input(
             viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher(),
-            chevronTap: chevronTapSubject.eraseToAnyPublisher(),
+            moreTap: moreTapSubject.eraseToAnyPublisher(),
             itemSelect: itemSelectSubject.eraseToAnyPublisher()
         )
 
         let output = viewModel.transform(input: input)
-        self.output = output
-
-        output.titleText
-            .combineLatest(output.subtitleText)
-            .receive(on: RunLoop.main)
-            .sink { [weak self] title, subtitle in
-                self?.titleHeaderView.configure(
-                    title: title ?? "",
-                    subtitle: subtitle ?? ""
-                )
-            }
-            .store(in: &cancellables)
 
         output.items
             .receive(on: RunLoop.main)
@@ -90,7 +68,7 @@ final class RecentCollectionSectionView: BaseView {
             }
             .store(in: &cancellables)
 
-        output.chevronTap
+        output.moreTap
             .sink { [weak self] in
                 self?.onTapMore?()
             }
@@ -108,53 +86,38 @@ final class RecentCollectionSectionView: BaseView {
     }
 
     func setHeader(title: String, subtitle: String) {
-        titleHeaderView.configure(title: title, subtitle: subtitle)
+        titleHeaderView.configure(style: .normal, title: title, subtitle: subtitle)
     }
 
     // MARK: - BaseView
 
     override func setUI() {
-        addSubview(headerContainerView)
-        headerContainerView.addSubview(titleHeaderView)
-        headerContainerView.addSubview(chevronButton)
-
+        addSubview(titleHeaderView)
         addSubview(collectionView)
+
+        setAction()
     }
 
     override func setLayout() {
-        headerContainerView.snp.makeConstraints {
+        titleHeaderView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
-        }
-
-        titleHeaderView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
-            $0.leading.equalToSuperview()
-            $0.trailing.lessThanOrEqualTo(chevronButton.snp.leading).offset(-8)
-        }
-
-        chevronButton.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(12)
-            $0.size.equalTo(36)
         }
 
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(headerContainerView.snp.bottom).offset(14)
+            $0.top.equalTo(titleHeaderView.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(195)
+            $0.height.equalTo(210)
             $0.bottom.equalToSuperview()
         }
     }
 
-    private func setAction() {
-        chevronButton.addTarget(self, action: #selector(didTapChevron), for: .touchUpInside)
-    }
-
     // MARK: - Action
 
-    @objc private func didTapChevron() {
-        chevronTapSubject.send(())
+    private func setAction() {
+        titleHeaderView.onTapMore = { [weak self] in
+            self?.moreTapSubject.send(())
+        }
     }
 
     // MARK: - Layout
@@ -162,18 +125,15 @@ final class RecentCollectionSectionView: BaseView {
     private func makeLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .absolute(260),
-            heightDimension: .absolute(200)
+            heightDimension: .absolute(180)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .absolute(260),
-            heightDimension: .absolute(200)
+            heightDimension: .absolute(180)
         )
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 12
@@ -186,7 +146,7 @@ final class RecentCollectionSectionView: BaseView {
 
 // MARK: - UICollectionViewDataSource
 
-extension RecentCollectionSectionView: UICollectionViewDataSource {
+extension RecommendCollectionView: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         items.count
@@ -210,7 +170,7 @@ extension RecentCollectionSectionView: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 
-extension RecentCollectionSectionView: UICollectionViewDelegate {
+extension RecommendCollectionView: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard items.indices.contains(indexPath.item) else { return }

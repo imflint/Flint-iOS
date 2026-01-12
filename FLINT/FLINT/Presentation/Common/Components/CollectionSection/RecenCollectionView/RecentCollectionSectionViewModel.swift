@@ -15,19 +15,16 @@ final class RecentCollectionSectionViewModel {
 
     struct Input {
         let viewDidLoad: AnyPublisher<Void, Never>
-        let chevronTap: AnyPublisher<Void, Never>
+        let moreTap: AnyPublisher<Void, Never>
         let itemSelect: AnyPublisher<UUID, Never>
     }
 
     // MARK: - Output
 
     struct Output {
-        let titleText: AnyPublisher<String?, Never>
-        let subtitleText: AnyPublisher<String?, Never>
         let items: AnyPublisher<[RecentCollectionItemViewData], Never>
 
-        //TODO: - 화면 전환을 VC에서 처리하고 싶으면 이 이벤트들을 구독해서 사용
-        let chevronTap: AnyPublisher<Void, Never>
+        let moreTap: AnyPublisher<Void, Never>
         let itemSelect: AnyPublisher<UUID, Never>
     }
 
@@ -55,17 +52,9 @@ final class RecentCollectionSectionViewModel {
             }
             .store(in: &cancellables)
 
-        let title = Just<String?>("눈여겨보고 있는 컬렉션")
-            .eraseToAnyPublisher()
-
-        let subtitle = Just<String?>("키키님이 최근 살펴본 컬렉션이에요")
-            .eraseToAnyPublisher()
-
         return Output(
-            titleText: title,
-            subtitleText: subtitle,
             items: itemsSubject.eraseToAnyPublisher(),
-            chevronTap: input.chevronTap,
+            moreTap: input.moreTap,
             itemSelect: input.itemSelect
         )
     }

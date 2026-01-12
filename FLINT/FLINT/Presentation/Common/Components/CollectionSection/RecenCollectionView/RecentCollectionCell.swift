@@ -10,16 +10,18 @@ import UIKit
 import SnapKit
 import Then
 
-final class RecentCollectionCell: UICollectionViewCell {
+final class RecentCollectionCell: BaseCollectionViewCell {
 
     static let reuseIdentifier = "RecentCollectionCell"
+
+    // MARK: - UI
 
     private let imageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
     }
 
-    private let bottomOverlayView = UIView().then {
+    private let backOverlayView = UIView().then {
         $0.backgroundColor = .flintOverlay
     }
 
@@ -32,42 +34,36 @@ final class RecentCollectionCell: UICollectionViewCell {
     private let titleLabel = UILabel().then {
         $0.textColor = .flintGray50
         $0.numberOfLines = 1
-        $0.applyFontStyle(.body2_m_14)
     }
 
     private let userNameLabel = UILabel().then {
         $0.textColor = .flintGray200
         $0.numberOfLines = 1
-        $0.applyFontStyle(.caption1_r_12)
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setUI()
-        setLayout()
-    }
+    // MARK: - Override Points
 
-    required init?(coder: NSCoder) { fatalError() }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override func setStyle() {
         contentView.layer.cornerRadius = 12
         contentView.clipsToBounds = true
     }
 
-    private func setUI() {
+    override func setHierarchy() {
         contentView.addSubview(imageView)
-        contentView.addSubview(bottomOverlayView)
-        bottomOverlayView.addSubview(profileImageView)
-        bottomOverlayView.addSubview(titleLabel)
-        bottomOverlayView.addSubview(userNameLabel)
+        contentView.addSubview(backOverlayView)
+
+        backOverlayView.addSubview(profileImageView)
+        backOverlayView.addSubview(titleLabel)
+        backOverlayView.addSubview(userNameLabel)
     }
 
-    private func setLayout() {
-        imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+    override func setLayout() {
+        imageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
 
-        bottomOverlayView.snp.makeConstraints {
-            $0.top.leading.trailing.bottom.equalToSuperview()
+        backOverlayView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
 
         profileImageView.snp.makeConstraints {
@@ -84,14 +80,27 @@ final class RecentCollectionCell: UICollectionViewCell {
 
         userNameLabel.snp.makeConstraints {
             $0.leading.trailing.equalTo(titleLabel)
-            $0.top.equalTo(profileImageView.snp.centerY).offset(1) 
+            $0.top.equalTo(profileImageView.snp.centerY).offset(1)
         }
     }
 
+    override func prepare() {
+        imageView.image = nil
+        profileImageView.image = nil
+        titleLabel.text = nil
+        userNameLabel.text = nil
+    }
+
+    // MARK: - Configure
+
     func configure(with item: RecentCollectionItemViewData) {
         imageView.image = item.image
+        profileImageView.image = item.profileImage
+
         titleLabel.text = item.title
         userNameLabel.text = item.userName
-        profileImageView.image = item.profileImage
+        
+        titleLabel.applyFontStyle(.body2_m_14)
+        userNameLabel.applyFontStyle(.caption1_r_12)
     }
 }

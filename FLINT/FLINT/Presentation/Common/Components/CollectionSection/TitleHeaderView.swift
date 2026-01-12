@@ -11,36 +11,53 @@ import SnapKit
 import Then
 
 final class TitleHeaderView: BaseView {
-
+    
+    // MARK: - Type
+    
+    enum HeaderStyle {
+        case normal
+        case more
+    }
+    
+    // MARK: - Public Event
+    
+    var onTapMore: (() -> Void)?
+    
     // MARK: - UI
     
-    private let titleHeaderView = TitleHeaderView()
 
     private let titleLabel = UILabel().then {
         $0.textColor = .flintWhite
-        $0.applyFontStyle(.head3_sb_18)
         $0.numberOfLines = 1
     }
 
     private let subtitleLabel = UILabel().then {
         $0.textColor = .flintGray200
-        $0.applyFontStyle(.body2_r_14)
         $0.numberOfLines = 1
     }
-
-    func configure(title: String, subtitle: String) {
+    
+    private let moreButton = UIButton().then {
+        $0.setImage(.icMore, for: .normal)
+    }
+    
+    func configure(style: HeaderStyle, title: String, subtitle: String) {
         titleLabel.text = title
-        titleLabel.applyFontStyle(.head3_sb_18)
-        
         subtitleLabel.text = subtitle
+        
+        if style == .more {
+            moreButton.isHidden = false
+        } else {
+            moreButton.isHidden = true
+        }
+       
+        titleLabel.applyFontStyle(.head3_sb_18)
         subtitleLabel.applyFontStyle(.body2_r_14)
     }
 
     // MARK: - override
 
     override func setUI() {
-        addSubview(titleLabel)
-        addSubview(subtitleLabel)
+        addSubviews(titleLabel, subtitleLabel, moreButton)
     }
 
     override func setLayout() {
@@ -54,5 +71,18 @@ final class TitleHeaderView: BaseView {
             $0.leading.trailing.equalTo(titleLabel)
             $0.bottom.equalToSuperview()
         }
+        
+        moreButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(12)
+        }
+    }
+    
+    private func setAction() {
+        moreButton.addTarget(self, action: #selector(didTapMore), for: .touchUpInside)
+    }
+    
+    @objc private func didTapMore() {
+        onTapMore?()
     }
 }
