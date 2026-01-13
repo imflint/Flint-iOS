@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class SavedContentHorizontalListView: BaseView {
+final class RecentSavedContentHorizontalListView: BaseView {
     
     //MARK: - UI
     
@@ -29,7 +29,7 @@ final class SavedContentHorizontalListView: BaseView {
     
     //MARK: - Data
     
-    private var items : [SavedContentItem] = []
+    private var items : [RecentSavedContentItem] = []
     
     //MARK: override
     
@@ -49,7 +49,7 @@ final class SavedContentHorizontalListView: BaseView {
 
     //MARK: - configure
     
-    func configure(items: [SavedContentItem]) {
+    func configure(items: [RecentSavedContentItem]) {
         self.items = items
         collectionView.reloadData()
     }
@@ -57,15 +57,15 @@ final class SavedContentHorizontalListView: BaseView {
     private func setCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(SavedContentCardCollectionViewCell.self,
-                                forCellWithReuseIdentifier: SavedContentCardCollectionViewCell.reuseIdentifier
+        collectionView.register(RecentSavedContentCardCollectionViewCell.self,
+                                forCellWithReuseIdentifier: RecentSavedContentCardCollectionViewCell.reuseIdentifier
         )
     }
 }
 
 //MARK: - extension
 
-extension SavedContentHorizontalListView: UICollectionViewDataSource {
+extension RecentSavedContentHorizontalListView: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         items.count
@@ -77,9 +77,9 @@ extension SavedContentHorizontalListView: UICollectionViewDataSource {
        ) -> UICollectionViewCell {
            
            guard let cell = collectionView.dequeueReusableCell(
-               withReuseIdentifier: SavedContentCardCollectionViewCell.reuseIdentifier,
+               withReuseIdentifier: RecentSavedContentCardCollectionViewCell.reuseIdentifier,
                for: indexPath
-           ) as? SavedContentCardCollectionViewCell else {
+           ) as? RecentSavedContentCardCollectionViewCell else {
                return UICollectionViewCell()
            }
 
@@ -88,7 +88,7 @@ extension SavedContentHorizontalListView: UICollectionViewDataSource {
        }
 }
 
-extension SavedContentHorizontalListView: UICollectionViewDelegateFlowLayout {
+extension RecentSavedContentHorizontalListView: UICollectionViewDelegateFlowLayout {
 
     func collectionView(
         _ collectionView: UICollectionView,

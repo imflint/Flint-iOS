@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class SavedContentCardCollectionViewCell: BaseCollectionViewCell {
+final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewCell {
     
     //MARK: - UI
     
@@ -77,7 +77,7 @@ final class SavedContentCardCollectionViewCell: BaseCollectionViewCell {
     
     //MARK: - configure
     
-    func configure(with item: SavedContentItem) {
+    func configure(with item: RecentSavedContentItem) {
 
         posterImageView.image = UIImage(named: item.posterImageName)
         

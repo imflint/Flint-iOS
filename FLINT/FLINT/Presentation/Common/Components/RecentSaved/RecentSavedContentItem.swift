@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SavedContentItem: Hashable {
+struct RecentSavedContentItem: Hashable {
     let id: UUID = UUID()
     let posterImageName: String
     let title: String

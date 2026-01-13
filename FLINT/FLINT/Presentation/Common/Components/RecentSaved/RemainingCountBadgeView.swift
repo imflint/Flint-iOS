@@ -12,6 +12,8 @@ import Then
 
 final class RemainingCountBadgeView: BaseView {
     
+    //MARK: - private
+    
     private enum Metric {
         static let size: CGFloat = 28
     }
@@ -19,6 +21,8 @@ final class RemainingCountBadgeView: BaseView {
     private let label = UILabel().then {
         $0.textAlignment = .center
     }
+    
+    //MARK: - override
     
     override func setUI() {
         backgroundColor = .flintGray500
@@ -45,6 +49,8 @@ final class RemainingCountBadgeView: BaseView {
         layer.cornerRadius = bounds.height / 2
     }
 
+    //MARK: - configure
+    
     func configure(count: Int) {
         let text = "+\(count)"
         label.attributedText = .pretendard(.body2_m_14, text: text, color: .flintWhite)

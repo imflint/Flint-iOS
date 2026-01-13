@@ -12,7 +12,7 @@ import Then
 
 final class OTTLogoStripeView: BaseView {
 
-    // MARK: - overlay
+    // MARK: - private
 
     private enum Metric {
         static let size: CGFloat = 26
@@ -39,7 +39,7 @@ final class OTTLogoStripeView: BaseView {
         $0.isHidden = true
     }
 
-    // MARK: - BaseView
+    // MARK: - override
 
     override func setUI() {
         isUserInteractionEnabled = false
