@@ -39,8 +39,6 @@ final class FlintTextView: BaseView {
         
         $0.textContainer.lineFragmentPadding = 0
         $0.contentInset = .zero
-        // TEMP: 원래는 top: 10 이어야 하는데 system 기본 padding 때문인지 5 더해줘야 딱 맞음. 추후 해결책 강구해보겠음.
-//        $0.textContainerInset = .init(top: 10 + 5, left: 12, bottom: 10, right: 12)
         $0.textContainerInset = .init(top: 10, left: 12, bottom: 10, right: 12)
         $0.layer.cornerRadius = 8
         
@@ -99,6 +97,8 @@ final class FlintTextView: BaseView {
         textView.typingAttributes = NSAttributedString.pretendard(.body1_m_16, text: " ", color: .flintWhite).attributes(at: 0, effectiveRange: nil)
     }
 }
+
+// MARK: - UITextViewDelegate
 
 extension FlintTextView: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
