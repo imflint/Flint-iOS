@@ -16,8 +16,7 @@ final class OTTLogoStripeView: BaseView {
 
     private enum Metric {
         static let size: CGFloat = 26
-        //TODO: - 이거 겹치는거몇이지?
-        static let overlap: CGFloat = 14
+        static let overlap: CGFloat = 16
     }
 
     // MARK: - UI
@@ -52,6 +51,12 @@ final class OTTLogoStripeView: BaseView {
         addSubview(secondLogoImageView)
         addSubview(remainingBadgeView)
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        applyShadowIfNeeded(to: remainingBadgeView)
+        applyShadowIfNeeded(to: secondLogoImageView)
+    }
 
     override func setLayout() {
         firstLogoImageView.snp.makeConstraints {
@@ -68,7 +73,6 @@ final class OTTLogoStripeView: BaseView {
         remainingBadgeView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.equalTo(secondLogoImageView.snp.leading).offset(Metric.overlap)
-            $0.size.equalTo(Metric.size)
         }
 
         snp.makeConstraints {
@@ -110,15 +114,26 @@ final class OTTLogoStripeView: BaseView {
             remainingBadgeView.isHidden = true
         }
     }
+    
+    private func applyShadowIfNeeded(to view: UIView) {
+        view.layer.masksToBounds = false
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.35
+        view.layer.shadowOffset = CGSize(width: -4, height: 0)
+        view.layer.shadowRadius = 6
+        view.layer.shadowPath = UIBezierPath(
+            roundedRect: view.bounds,
+            cornerRadius: view.bounds.height / 2
+        ).cgPath
+    }
 }
 
-// MARK: - Private
+// MARK: - RemainingCountBadgeView
 
 private final class RemainingCountBadgeView: BaseView {
     
     private enum Metric {
         static let size: CGFloat = 28
-        static let inset = UIEdgeInsets(top: 2, left: 8, bottom: 2, right: 8)
     }
     
     private let label = UILabel().then {
@@ -136,7 +151,9 @@ private final class RemainingCountBadgeView: BaseView {
     
     override func setLayout() {
         label.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(Metric.inset)
+            $0.center.equalToSuperview()
+            $0.leading.equalToSuperview().inset(5)
+            $0.trailing.equalToSuperview().inset(6)
         }
 
         snp.makeConstraints {

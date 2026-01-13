@@ -30,8 +30,8 @@ final class ExampleSavedContentViewController: UIViewController {
                 posterImageName: "poster",
                 title: "드라마 제목이 아주 길어질 때 말줄임표 처리 확인용",
                 year: 2021,
-                availableOn: [.netflix, .wave],
-                subscribedOn: [.netflix, .tving, .wave]
+                availableOn: [.netflix],
+                subscribedOn: [.netflix]
             ),
             .init(
                 posterImageName: "poster",
