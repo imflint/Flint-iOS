@@ -50,23 +50,29 @@ final class RecentCollectionCell: BaseCollectionViewCell {
     }
 
     override func setHierarchy() {
-        contentView.addSubview(imageView)
-        contentView.addSubview(overlayContainerView)
+        contentView.addSubviews(imageView, overlayContainerView)
 
-        overlayContainerView.addSubview(highGradientLayer)
-        overlayContainerView.addSubview(bottomGradientLayer)
+        overlayContainerView.addSubviews(highGradientLayer, bottomGradientLayer)
 
-        overlayContainerView.addSubview(profileImageView)
-        overlayContainerView.addSubview(titleLabel)
-        overlayContainerView.addSubview(userNameLabel)
+        overlayContainerView.addSubviews(profileImageView, titleLabel, userNameLabel)
     }
-
+    
     override func setLayout() {
-        imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        overlayContainerView.snp.makeConstraints { $0.edges.equalToSuperview() }
-
-        highGradientLayer.snp.makeConstraints { $0.edges.equalToSuperview() }
-        bottomGradientLayer.snp.makeConstraints { $0.edges.equalToSuperview() }
+        imageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        overlayContainerView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        highGradientLayer.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        bottomGradientLayer.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
 
         profileImageView.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(15)

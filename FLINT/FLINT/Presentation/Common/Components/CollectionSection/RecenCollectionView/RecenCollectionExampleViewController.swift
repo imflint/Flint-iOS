@@ -32,9 +32,8 @@ final class RecenCollectionExampleViewController: BaseViewController {
             subtitle: "콘텐츠에 진심인 큐레이터들의 추천이에요"
         )
 
-        recentSectionView.onTapMore = { print("recent more tapped") }
-        recommendSectionView.onTapMore = { print("recommend more tapped") }
-
+        recentSectionView.onTapMore = { print("> 탭") }
+        
         recentSectionView.onSelectItem = { id in print("recent selected:", id) }
         recommendSectionView.onSelectItem = { id in print("recommend selected:", id) }
 
