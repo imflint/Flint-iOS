@@ -20,16 +20,16 @@ final class ExampleView: BaseView {
     
     private let titleLabel = UILabel().then {
         $0.text = "요기 타이틀"
-        $0.applyFontStyle(.head1_m_22, textColor: .black)
+  //      $0.applyFontStyle(.head1_m_22, textColor: .black)
     }
     
     private let teamLabel = UILabel().then {
         $0.text = "파트 이름 나올 예정"
-        $0.applyFontStyle(.body2_r_14, textColor: .flintError500)
+  //      $0.applyFontStyle(.body2_r_14, textColor: .flintError500)
     }
     
     private var button = UIButton().then {
-        $0.setTitle("눌러보쇼 ㅋ", style: .body1_r_16)
+ //       $0.setTitle("눌러보쇼 ㅋ", style: .body1_r_16)
         $0.backgroundColor = .flintPrimary300
     }
     

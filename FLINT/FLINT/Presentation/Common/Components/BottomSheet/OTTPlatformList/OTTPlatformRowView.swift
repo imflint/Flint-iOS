@@ -32,7 +32,11 @@ final class OTTPlatformRowView: BaseView {
 
     //TODO: - 폰트 설정 바꾸기
     
-    private let openButton = BasicButton(title: "바로 보러가기")
+    private let openButton = BasicButton(
+        title: "바로 보러가기",
+        titleStyle: .body2_m_14
+    )
+
 
     // MARK: - Public API
 
