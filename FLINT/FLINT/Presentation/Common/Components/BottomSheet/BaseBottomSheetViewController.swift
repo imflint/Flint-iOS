@@ -129,7 +129,7 @@ final class BaseBottomSheetViewController: BaseViewController {
     private func calculateHeight() -> CGFloat {
         let grabberTop: CGFloat = 10
         let grabberHeight: CGFloat = 4
-        let bottomPadding: CGFloat = 12
+        let bottomPadding: CGFloat = 32
 
         let hasTitle = (titleText != nil)
 
