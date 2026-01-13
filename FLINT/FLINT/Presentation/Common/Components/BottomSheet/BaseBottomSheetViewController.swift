@@ -87,6 +87,7 @@ final class BaseBottomSheetViewController: BaseViewController {
     override func setLayout() {
         sheetView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+            $0.bottom.equalToSuperview()
         }
         
         let height = calculateHeight()
@@ -127,7 +128,7 @@ final class BaseBottomSheetViewController: BaseViewController {
     // MARK: - Height
     
     private func calculateHeight() -> CGFloat {
-        let grabberTop: CGFloat = 10
+        let grabberTop: CGFloat = 12
         let grabberHeight: CGFloat = 4
         let bottomPadding: CGFloat = 32
 

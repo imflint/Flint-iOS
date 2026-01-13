@@ -23,7 +23,7 @@ final class OTTListView: BaseView {
 
     private let stackView = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 8
+        $0.spacing = rowSpacing
     }
 
     // MARK: - Data

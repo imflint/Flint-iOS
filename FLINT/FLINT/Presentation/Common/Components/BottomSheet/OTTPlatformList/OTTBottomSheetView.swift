@@ -27,14 +27,8 @@ final class OTTBottomSheetView: BaseView {
 
     let containerView = UIView().then {
         $0.backgroundColor = .flintGray800
-        $0.layer.cornerRadius = 20
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         $0.clipsToBounds = true
-    }
-
-    private let grabberView = UIView().then {
-        $0.backgroundColor = .flintGray500
-        $0.layer.cornerRadius = 4
     }
 
     private let stackView = UIStackView().then {
@@ -42,12 +36,12 @@ final class OTTBottomSheetView: BaseView {
         $0.spacing = 8
     }
 
-    // MARK: - Layout Metric
+    // MARK: - Layout
 
     private let rowHeight: CGFloat = 48
     private let rowSpacing: CGFloat = 8
     private let sheetTopInset: CGFloat = 36
-    private let sheetBottomInset: CGFloat = 12
+    private let sheetBottomInset: CGFloat = 32
 
     private var platforms: [OTTPlatform] = []
 
@@ -74,8 +68,7 @@ final class OTTBottomSheetView: BaseView {
     override func setUI() {
         addSubview(dimView)
         addSubview(containerView)
-
-        containerView.addSubview(grabberView)
+        
         containerView.addSubview(stackView)
 
         setAction()
@@ -91,17 +84,10 @@ final class OTTBottomSheetView: BaseView {
             $0.height.equalTo(sheetHeight)
         }
 
-        grabberView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(10)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(52)
-            $0.height.equalTo(4)
-        }
-
         stackView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(sheetTopInset)
-            $0.leading.equalToSuperview().inset(32)
-            $0.trailing.equalToSuperview().inset(24)
+            $0.leading.equalToSuperview()
+            $0.trailing.equalToSuperview()
             $0.bottom.equalToSuperview().inset(sheetBottomInset)
         }
     }

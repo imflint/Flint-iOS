@@ -38,7 +38,7 @@ final class BaseBottomSheetView: BaseView {
 
     private let grabberView = UIView().then {
         $0.backgroundColor = .flintGray500
-        $0.layer.cornerRadius = 4
+        $0.layer.cornerRadius = 2
     }
 
     private let titleStackView = UIStackView().then {
@@ -134,7 +134,7 @@ final class BaseBottomSheetView: BaseView {
         grabberView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(52)
+            $0.width.equalTo(60)
             $0.height.equalTo(4)
         }
 

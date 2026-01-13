@@ -21,16 +21,12 @@ final class OTTPlatformRowView: BaseView {
     private let iconImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.clipsToBounds = true
-        $0.layer.cornerRadius = 18
+        $0.layer.cornerRadius = 22
     }
 
     private let titleLabel = UILabel().then {
-        $0.textColor = .flintWhite
-        $0.font = .pretendard(.body1_sb_16)
         $0.numberOfLines = 1
     }
-
-    //TODO: - 폰트 설정 바꾸기
     
     private let openButton = BasicButton(
         title: "바로 보러가기",
@@ -42,8 +38,7 @@ final class OTTPlatformRowView: BaseView {
 
     func configure(platform: OTTPlatform) {
         iconImageView.image = platform.icon
-        titleLabel.text = platform.title
-        titleLabel.font = .pretendard(.body1_sb_16)
+        titleLabel.attributedText = .pretendard(.body1_sb_16, text: platform.title , color: .flintWhite)
     }
 
     // MARK: - BaseView
@@ -58,20 +53,21 @@ final class OTTPlatformRowView: BaseView {
 
     override func setLayout() {
         iconImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(20)
+            $0.leading.equalToSuperview()
             $0.centerY.equalToSuperview()
-            $0.size.equalTo(36)
+            $0.size.equalTo(44)
         }
 
         titleLabel.snp.makeConstraints {
             $0.leading.equalTo(iconImageView.snp.trailing).offset(12)
             $0.centerY.equalToSuperview()
-            $0.trailing.lessThanOrEqualTo(openButton.snp.leading).offset(-12)
+
         }
 
         openButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(20)
+            $0.trailing.equalToSuperview()
             $0.centerY.equalToSuperview()
+            $0.width.equalTo(98)
             $0.height.equalTo(32)
         }
         snp.makeConstraints {

@@ -29,12 +29,12 @@ enum OTTPlatform: String, CaseIterable, Hashable {
 
     var icon: UIImage? {
         switch self {
-        case .netflix: return UIImage.imgNetflix
-        case .tving: return UIImage.imgTving
-        case .wave: return UIImage.imgWave
-        case .coupangPlay: return UIImage.imgCoupang
-        case .watcha: return UIImage.imgWatcha
-        case .disneyPlus: return UIImage.imgDisney
+        case .netflix: return UIImage.imgSmallNetflix1
+        case .tving: return UIImage.imgSmallTving1
+        case .wave: return UIImage.imgSmallWave1
+        case .coupangPlay: return UIImage.imgSmallCoupang1
+        case .watcha: return UIImage.imgSmallWatcha1
+        case .disneyPlus: return UIImage.imgSmallDisney1
         }
     }
 
