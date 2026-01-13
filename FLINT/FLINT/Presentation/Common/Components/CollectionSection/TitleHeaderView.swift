@@ -44,6 +44,7 @@ final class TitleHeaderView: BaseView {
 
     override func setUI() {
         addSubviews(titleLabel, subtitleLabel, moreButton)
+        setAction()
     }
 
     override func setLayout() {
@@ -85,6 +86,6 @@ final class TitleHeaderView: BaseView {
         }
        
         titleLabel.attributedText = NSAttributedString.pretendard(.head3_sb_18, text: title)
-        subtitleLabel.attributedText = NSAttributedString.pretendard(.body2_r_14,text: title)
+        subtitleLabel.attributedText = NSAttributedString.pretendard(.body2_r_14, text: subtitle)
     }
 }
