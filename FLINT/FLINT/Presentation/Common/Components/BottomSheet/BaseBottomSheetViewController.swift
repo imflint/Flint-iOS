@@ -108,7 +108,7 @@ final class BaseBottomSheetViewController: BaseViewController {
         let height = calculateHeight()
         sheetView.containerView.transform = CGAffineTransform(translationX: 0, y: height)
         
-        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut) {
+        UIView.animate(withDuration: 0.2, delay: 0.1, options: .curveEaseInOut) {
             self.sheetView.dimView.alpha = 1
             self.sheetView.containerView.transform = .identity
         }
@@ -117,7 +117,7 @@ final class BaseBottomSheetViewController: BaseViewController {
     private func hide() {
         let height = calculateHeight()
         
-        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: 0.3, delay: 0.1, options: .curveEaseInOut, animations: {
             self.sheetView.dimView.alpha = 0
             self.sheetView.containerView.transform = CGAffineTransform(translationX: 0, y: height)
         }) { _ in
