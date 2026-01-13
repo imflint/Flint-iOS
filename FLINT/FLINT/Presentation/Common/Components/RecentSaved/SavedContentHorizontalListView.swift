@@ -95,7 +95,6 @@ extension SavedContentHorizontalListView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        // 카드 높이 = 포스터(180) + 제목 top(14) + 제목 라인 + 연도 top(8) + 연도 라인
         return CGSize(width: 120, height: 180 + 14 + 18 + 8 + 15)
     }
 }
