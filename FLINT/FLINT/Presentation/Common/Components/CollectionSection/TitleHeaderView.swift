@@ -39,20 +39,6 @@ final class TitleHeaderView: BaseView {
     private let moreButton = UIButton().then {
         $0.setImage(.icMore, for: .normal)
     }
-    
-    func configure(style: HeaderStyle, title: String, subtitle: String) {
-        titleLabel.text = title
-        subtitleLabel.text = subtitle
-        
-        if style == .more {
-            moreButton.isHidden = false
-        } else {
-            moreButton.isHidden = true
-        }
-       
-        titleLabel.attributedText = NSAttributedString.pretendard(.head3_sb_18, text: title)
-        subtitleLabel.attributedText = NSAttributedString.pretendard(.body2_r_14,text: title)
-    }
 
     // MARK: - override
 
@@ -84,5 +70,21 @@ final class TitleHeaderView: BaseView {
     
     @objc private func didTapMore() {
         onTapMore?()
+    }
+    
+    //MARK: - configure
+    
+    func configure(style: HeaderStyle, title: String, subtitle: String) {
+        titleLabel.text = title
+        subtitleLabel.text = subtitle
+        
+        if style == .more {
+            moreButton.isHidden = false
+        } else {
+            moreButton.isHidden = true
+        }
+       
+        titleLabel.attributedText = NSAttributedString.pretendard(.head3_sb_18, text: title)
+        subtitleLabel.attributedText = NSAttributedString.pretendard(.body2_r_14,text: title)
     }
 }
