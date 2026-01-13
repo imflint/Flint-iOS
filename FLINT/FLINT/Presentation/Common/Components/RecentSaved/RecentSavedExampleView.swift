@@ -11,7 +11,7 @@ import SnapKit
 import Then
 
 final class ExampleSavedContentViewController: UIViewController {
-
+    
     private let listView = SavedContentHorizontalListView()
 
     override func viewDidLoad() {
