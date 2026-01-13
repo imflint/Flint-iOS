@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class SavedUsersListView: BaseView {
+final class SavedUserListView: BaseView {
 
     private let rowSpacing: CGFloat = 8
     private let maxVisibleCount: CGFloat = 9

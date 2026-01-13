@@ -71,7 +71,7 @@ final class BaseBottomSheetViewController: BaseViewController {
             sheetView.setContentView(ottListView)
             
         case .savedUsers(let users):
-            let usersView = SavedUsersListView()
+            let usersView = SavedUserListView()
             usersView.configure(users: users)
             sheetView.setContentView(usersView)
         }
