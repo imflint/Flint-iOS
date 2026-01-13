@@ -69,14 +69,14 @@ final class RecentCollectionCell: BaseCollectionViewCell {
         bottomGradientLayer.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         profileImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(14)
-            $0.bottom.equalToSuperview().inset(12)
+            $0.leading.equalToSuperview().inset(15)
+            $0.bottom.equalToSuperview().inset(14)
             $0.size.equalTo(32)
         }
 
         titleLabel.snp.makeConstraints {
-            $0.leading.equalTo(profileImageView.snp.trailing).offset(10)
-            $0.trailing.equalToSuperview().inset(14)
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(12)
+            $0.trailing.equalToSuperview().inset(20)
             $0.bottom.equalTo(profileImageView.snp.centerY).offset(-1)
         }
 

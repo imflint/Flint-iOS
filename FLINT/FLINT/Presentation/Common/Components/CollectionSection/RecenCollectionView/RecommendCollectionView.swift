@@ -70,7 +70,7 @@ final class RecommendCollectionView: BaseView {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(titleHeaderView.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(210)
+            $0.height.equalTo(180)
             $0.bottom.equalToSuperview()
         }
     }
@@ -107,7 +107,7 @@ final class RecommendCollectionView: BaseView {
     }
 }
 
-// MARK: - UICollectionViewDataSource
+// MARK: - extension
 
 extension RecommendCollectionView: UICollectionViewDataSource {
 
@@ -130,8 +130,6 @@ extension RecommendCollectionView: UICollectionViewDataSource {
         return cell
     }
 }
-
-// MARK: - UICollectionViewDelegate
 
 extension RecommendCollectionView: UICollectionViewDelegate {
 
