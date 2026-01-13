@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct RecentCollectionItemViewData: Hashable {
+struct RecentCollectionItem: Hashable {
     let id: UUID
     let image: UIImage?
     let title: String

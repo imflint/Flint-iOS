@@ -24,7 +24,7 @@ final class RecentCollectionCell: BaseCollectionViewCell {
     private let overlayContainerView = UIView()
 
     private let highGradientLayer = UpFadeGradientView()
-    private let bottomGradientLayer = downFadeGradientView()
+    private let bottomGradientLayer = DownFadeGradientView()
 
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -42,7 +42,7 @@ final class RecentCollectionCell: BaseCollectionViewCell {
         $0.numberOfLines = 1
     }
 
-    // MARK: - Override Points
+    // MARK: - override
 
     override func setStyle() {
         contentView.layer.cornerRadius = 12
@@ -51,7 +51,6 @@ final class RecentCollectionCell: BaseCollectionViewCell {
 
     override func setHierarchy() {
         contentView.addSubview(imageView)
-
         contentView.addSubview(overlayContainerView)
 
         overlayContainerView.addSubview(highGradientLayer)
@@ -63,21 +62,11 @@ final class RecentCollectionCell: BaseCollectionViewCell {
     }
 
     override func setLayout() {
-        imageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
+        imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        overlayContainerView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
-        overlayContainerView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-
-        highGradientLayer.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-
-        bottomGradientLayer.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
+        highGradientLayer.snp.makeConstraints { $0.edges.equalToSuperview() }
+        bottomGradientLayer.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         profileImageView.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(14)
@@ -105,15 +94,21 @@ final class RecentCollectionCell: BaseCollectionViewCell {
     }
 
     // MARK: - Configure
-
-    func configure(with item: RecentCollectionItemViewData) {
+    func configure(with item: RecentCollectionItem) {
         imageView.image = item.image
         profileImageView.image = item.profileImage
 
-        titleLabel.text = item.title
-        userNameLabel.text = item.userName
-        
-        titleLabel.font = UIFont.pretendard(.body2_m_14)
-        userNameLabel.font = UIFont.pretendard(.caption1_r_12)
+        titleLabel.attributedText = .pretendard(
+            .body2_m_14,
+            text: item.title,
+            color: .flintGray50
+        )
+
+        userNameLabel.attributedText = .pretendard(
+            .caption1_r_12,
+            text: item.userName,
+            color: .flintGray200
+        )
     }
+
 }

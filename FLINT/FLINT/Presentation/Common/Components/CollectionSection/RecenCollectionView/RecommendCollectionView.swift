@@ -10,7 +10,6 @@ import UIKit
 
 import SnapKit
 import Then
-import Combine
 
 final class RecommendCollectionView: BaseView {
 
@@ -38,55 +37,19 @@ final class RecommendCollectionView: BaseView {
         )
     }
 
-    // MARK: - MVVM
+    // MARK: - Data
 
-    private let viewDidLoadSubject = PassthroughSubject<Void, Never>()
-    private let moreTapSubject = PassthroughSubject<Void, Never>()
-    private let itemSelectSubject = PassthroughSubject<UUID, Never>()
-
-    private var cancellables = Set<AnyCancellable>()
-    private var items: [RecentCollectionItemViewData] = []
+    private var items: [RecentCollectionItem] = []
 
     // MARK: - Public API
 
-    func bind(viewModel: RecentCollectionSectionViewModel) {
-        cancellables.removeAll()
-
-        let input = RecentCollectionSectionViewModel.Input(
-            viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher(),
-            moreTap: moreTapSubject.eraseToAnyPublisher(),
-            itemSelect: itemSelectSubject.eraseToAnyPublisher()
-        )
-
-        let output = viewModel.transform(input: input)
-
-        output.items
-            .receive(on: RunLoop.main)
-            .sink { [weak self] newItems in
-                self?.items = newItems
-                self?.collectionView.reloadData()
-            }
-            .store(in: &cancellables)
-
-        output.moreTap
-            .sink { [weak self] in
-                self?.onTapMore?()
-            }
-            .store(in: &cancellables)
-
-        output.itemSelect
-            .sink { [weak self] id in
-                self?.onSelectItem?(id)
-            }
-            .store(in: &cancellables)
-    }
-
-    func start() {
-        viewDidLoadSubject.send(())
-    }
-
     func setHeader(title: String, subtitle: String) {
         titleHeaderView.configure(style: .normal, title: title, subtitle: subtitle)
+    }
+
+    func update(items: [RecentCollectionItem]) {
+        self.items = items
+        collectionView.reloadData()
     }
 
     // MARK: - BaseView
@@ -116,7 +79,7 @@ final class RecommendCollectionView: BaseView {
 
     private func setAction() {
         titleHeaderView.onTapMore = { [weak self] in
-            self?.moreTapSubject.send(())
+            self?.onTapMore?()
         }
     }
 
@@ -174,6 +137,7 @@ extension RecommendCollectionView: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard items.indices.contains(indexPath.item) else { return }
-        itemSelectSubject.send(items[indexPath.item].id)
+        onSelectItem?(items[indexPath.item].id)
     }
 }
+

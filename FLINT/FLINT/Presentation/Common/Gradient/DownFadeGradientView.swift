@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class downFadeGradientView: UIView {
+final class DownFadeGradientView: UIView {
 
     private let gradientLayer = CAGradientLayer()
 
