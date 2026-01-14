@@ -68,10 +68,9 @@ final class SearchResultWorkItemExampleViewController: BaseViewController {
             $0.bottom.equalToSuperview().inset(24)
         }
 
-        // 각 아이템 뷰의 안정적으로 보이도록 최소 높이만 보장
         [version1View, version3View, version2View].forEach {
             $0.snp.makeConstraints { make in
-                make.height.greaterThanOrEqualTo(152) // 여유길이인데 이거 조정 필요함 !!
+                make.height.greaterThanOrEqualTo(152)
             }
         }
     }
@@ -85,7 +84,7 @@ final class SearchResultWorkItemExampleViewController: BaseViewController {
             director: "가스 제닝스",
             year: "2005",
             bookmarkCount: 123,
-            leadingPlatforms: [.netflix, .coupangPlay],
+            leadingPlatforms: [.coupangPlay, .disneyPlus],
             remainingPlatformCount: 0
         )
 

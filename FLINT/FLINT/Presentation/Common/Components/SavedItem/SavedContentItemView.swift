@@ -72,16 +72,17 @@ final class SavedContentItemView: BaseView {
     private let shortcutButton = UIButton(type: .system).then {
         $0.contentHorizontalAlignment = .leading
         $0.isHidden = true
+
+//        $0.contentEdgeInsets = .zero
+//        $0.titleEdgeInsets = .zero
+
+        if #available(iOS 15.0, *) {
+            $0.configuration = nil
+        }
     }
 
-    private let bookmarkButton = UIButton(type: .system).then {
-        $0.tintColor = .clear
-        $0.setImage(UIImage.icBookmarkFillWhite.withRenderingMode(.alwaysOriginal), for: .normal)
-        $0.isHidden = true
-    }
-    
-    private let bookmarkCountLabel = UILabel().then {
-        $0.numberOfLines = 1
+
+    private let bookmarkView = BookmarkView().then {
         $0.isHidden = true
     }
 
@@ -94,16 +95,20 @@ final class SavedContentItemView: BaseView {
     // MARK: - BaseView
 
     override func setUI() {
+        //TODO: - 지워
+        self.backgroundColor = .flintError500
         addSubviews(posterImageView, infoContainerView)
 
         infoContainerView.addSubviews(titleLabel, directorLabel, yearLabel, shortcutButton)
 
-        addSubviews(bookmarkButton,bookmarkCountLabel,checkboxButton)
-        self.backgroundColor = .red
+        addSubviews(bookmarkView,checkboxButton)
 
         posterImageView.addSubview(ottLogoStripeView)
-
-        bookmarkButton.addTarget(self, action: #selector(didTapBookmark), for: .touchUpInside)
+        
+        bookmarkView.onTap = { [weak self] isBookmarked in
+            // 필요하면 viewModel 업데이트/콜백
+            self?.onTapBookmark?()
+        }
         shortcutButton.addTarget(self, action: #selector(didTapShortcut), for: .touchUpInside)
         checkboxButton.addTarget(self, action: #selector(didTapCheckbox), for: .touchUpInside)
     }
@@ -122,7 +127,7 @@ final class SavedContentItemView: BaseView {
         infoContainerView.snp.makeConstraints {
             $0.top.equalTo(posterImageView.snp.top)
             $0.leading.equalTo(posterImageView.snp.trailing).offset(12)
-            $0.bottom.equalTo(posterImageView.snp.bottom)
+            $0.bottom.equalToSuperview()
 
             infoTrailingConstraint = $0.trailing.equalToSuperview().inset(12).constraint
         }
@@ -145,22 +150,15 @@ final class SavedContentItemView: BaseView {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
-
-        bookmarkButton.snp.makeConstraints {
+        
+        bookmarkView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.top)
-            $0.leading.equalTo(titleLabel.snp.trailing).offset(16)
             $0.trailing.equalToSuperview().inset(12)
-            $0.size.equalTo(24)
-        }
-
-        bookmarkCountLabel.snp.makeConstraints {
-            $0.top.equalTo(bookmarkButton.snp.bottom).offset(6)
-            $0.centerX.equalTo(bookmarkButton.snp.centerX)
         }
 
         checkboxButton.snp.remakeConstraints {
             $0.centerY.equalTo(posterImageView.snp.centerY)
-            $0.leading.equalTo(infoContainerView.snp.trailing).inset(12)
+            $0.trailing.equalToSuperview().inset(12)
             $0.size.equalTo(48)
         }
     }
@@ -172,19 +170,20 @@ final class SavedContentItemView: BaseView {
         let title: String
         let director: String
         let year: String
+        let isOTTDisplayEligible: Bool
+
 
         let isBookmarked: Bool
         let bookmarkCount: Int?
         let leadingPlatforms: [CircleOTTPlatform]?
         let remainingPlatformCount: Int?
-        
-        
 
         init(
             posterImage: UIImage?,
             title: String,
             director: String,
             year: String,
+            isOTTDisplayEligible: Bool = true,
             isBookmarked: Bool = false,
             bookmarkCount: Int? = nil,
             leadingPlatforms: [CircleOTTPlatform]? = nil,
@@ -194,17 +193,18 @@ final class SavedContentItemView: BaseView {
             self.title = title
             self.director = director
             self.year = year
+            self.isOTTDisplayEligible = isOTTDisplayEligible
             self.isBookmarked = isBookmarked
             self.bookmarkCount = bookmarkCount
             self.leadingPlatforms = leadingPlatforms
             self.remainingPlatformCount = remainingPlatformCount
         }
     }
+    
+    // MARK: - Configure
 
     func configure(model: ViewModel, mode: Mode) {
         self.mode = mode
-        
- 
         
         posterImageView.image = model.posterImage
 
@@ -235,11 +235,10 @@ final class SavedContentItemView: BaseView {
             for: .normal
         )
 
-        if let count = model.bookmarkCount {
-            bookmarkCountLabel.attributedText = .pretendard(.caption1_r_12, text: "\(count)", color: .flintWhite)
-        } else {
-            bookmarkCountLabel.attributedText = nil
-        }
+        bookmarkView.configure(
+            isBookmarked: model.isBookmarked,
+            countText: model.bookmarkCount.map { "\($0)" }
+        )
 
         if let platforms = model.leadingPlatforms {
             let remaining = model.remainingPlatformCount ?? 0
@@ -247,7 +246,8 @@ final class SavedContentItemView: BaseView {
         } else {
             ottLogoStripeView.isHidden = true
         }
-
+        
+        updateShortcutAvailability(model: model)
         applyMode(mode)
     }
 
@@ -256,22 +256,21 @@ final class SavedContentItemView: BaseView {
     private func applyMode(_ mode: Mode) {
         ottLogoStripeView.isHidden = true
         shortcutButton.isHidden = true
-
-        bookmarkButton.isHidden = true
-        bookmarkCountLabel.isHidden = true
+        bookmarkView.isHidden = true
         checkboxButton.isHidden = true
 
         switch mode {
         case .ottShortcutBookmark:
             ottLogoStripeView.isHidden = false
             shortcutButton.isHidden = false
-
-            bookmarkButton.isHidden = false
-            bookmarkCountLabel.isHidden = false
+            bookmarkView.isHidden = false
 
             infoTrailingConstraint?.deactivate()
             infoContainerView.snp.makeConstraints {
-                infoTrailingConstraint = $0.trailing.equalTo(bookmarkButton.snp.leading).offset(-4).constraint
+                infoTrailingConstraint = $0.trailing
+                    .equalTo(bookmarkView.snp.leading)
+                    .offset(-4)
+                    .constraint
             }
 
         case let .selectable(isSelected):
@@ -292,24 +291,22 @@ final class SavedContentItemView: BaseView {
             }
         }
     }
-    
-    private func updateBookmark(isBookmarked: Bool) {
-        let image = isBookmarked ? UIImage.icBookmarkFill : UIImage.icBookmarkFillWhite
-        bookmarkButton.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
-    }
 
     private func updateCheckbox(isSelected: Bool) {
         let image = isSelected ? UIImage.icCheckboxFill : UIImage.icCheckboxEmpty
         checkboxButton.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
     }
+    
+    private func updateShortcutAvailability(model: ViewModel) {
+        let hasOTT = !(model.leadingPlatforms?.isEmpty ?? true) || (model.remainingPlatformCount ?? 0) > 0
+        let isEnabled = hasOTT && model.isOTTDisplayEligible
+
+        shortcutButton.isEnabled = isEnabled
+        shortcutButton.alpha = isEnabled ? 1.0 : 0
+    }
+
 
     // MARK: - Actions
-
-    @objc private func didTapBookmark() {
-        isBookmarked.toggle()
-        updateBookmark(isBookmarked: isBookmarked)
-        onTapBookmark?()
-    }
 
     @objc private func didTapShortcut() {
         onTapShortcut?()
