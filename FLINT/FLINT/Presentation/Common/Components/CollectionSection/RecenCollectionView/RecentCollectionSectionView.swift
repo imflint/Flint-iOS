@@ -24,7 +24,7 @@ final class RecentCollectionSectionView: BaseView {
 
     private lazy var collectionView = UICollectionView(
         frame: .zero,
-        collectionViewLayout: makeLayout()
+        collectionViewLayout: UICollectionViewCompositionalLayout(section: makeSectionLayout())
     ).then {
         $0.backgroundColor = .clear
         $0.showsHorizontalScrollIndicator = false
@@ -37,16 +37,29 @@ final class RecentCollectionSectionView: BaseView {
         )
     }
 
-    // MARK: - Data
+    // MARK: - State
 
+    private var configuration: Configuration?
     private var items: [RecentCollectionItem] = []
 
-    func setHeader(title: String, subtitle: String) {
-        titleHeaderView.configure(style: .more, title: title, subtitle: subtitle)
-    }
+    // MARK: - Public Configure
 
-    func update(items: [RecentCollectionItem]) {
-        self.items = items
+    func configure(_ configuration: Configuration) {
+        self.configuration = configuration
+
+        titleHeaderView.configure(
+            style: configuration.headerStyle,
+            title: configuration.title,
+            subtitle: configuration.subtitle
+        )
+
+        items = configuration.items
+
+        collectionView.setCollectionViewLayout(
+            UICollectionViewCompositionalLayout(section: makeSectionLayout()),
+            animated: false
+        )
+
         collectionView.reloadData()
     }
 
@@ -55,7 +68,6 @@ final class RecentCollectionSectionView: BaseView {
     override func setUI() {
         addSubview(titleHeaderView)
         addSubview(collectionView)
-
         setAction()
     }
 
@@ -83,25 +95,62 @@ final class RecentCollectionSectionView: BaseView {
 
     // MARK: - Layout
 
-    private func makeLayout() -> UICollectionViewLayout {
+    private func makeSectionLayout() -> NSCollectionLayoutSection {
+        let config = configuration
+
+        let itemSizeValue = config?.itemSize ?? CGSize(width: 260, height: 180)
+        let sectionInset = config?.sectionInset ?? .init(top: 0, leading: 16, bottom: 0, trailing: 16)
+        let interGroupSpacing = config?.interGroupSpacing ?? 12
+
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(260),
-            heightDimension: .absolute(180)
+            widthDimension: .absolute(itemSizeValue.width),
+            heightDimension: .absolute(itemSizeValue.height)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(260),
-            heightDimension: .absolute(180)
+            widthDimension: .absolute(itemSizeValue.width),
+            heightDimension: .absolute(itemSizeValue.height)
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 12
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+        section.interGroupSpacing = interGroupSpacing
+        section.contentInsets = sectionInset
         section.orthogonalScrollingBehavior = .continuous
+        return section
+    }
+}
 
-        return UICollectionViewCompositionalLayout(section: section)
+// MARK: - Configuration
+
+extension RecentCollectionSectionView {
+
+    struct Configuration: Equatable {
+        let headerStyle: TitleHeaderView.HeaderStyle
+        let title: String
+        let subtitle: String
+        let items: [RecentCollectionItem]
+        let sectionInset: NSDirectionalEdgeInsets
+        let interGroupSpacing: CGFloat
+        let itemSize: CGSize
+
+        static func `default`(
+            headerStyle: TitleHeaderView.HeaderStyle = .more,
+            title: String,
+            subtitle: String,
+            items: [RecentCollectionItem]
+        ) -> Configuration {
+            .init(
+                headerStyle: headerStyle,
+                title: title,
+                subtitle: subtitle,
+                items: items,
+                sectionInset: .init(top: 0, leading: 16, bottom: 0, trailing: 16),
+                interGroupSpacing: 12,
+                itemSize: .init(width: 260, height: 180)
+            )
+        }
     }
 }
 
