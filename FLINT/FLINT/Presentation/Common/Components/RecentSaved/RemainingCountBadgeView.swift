@@ -12,17 +12,19 @@ import Then
 
 final class RemainingCountBadgeView: BaseView {
     
-    //MARK: - private
+    //MARK: - Property
     
     private enum Metric {
         static let size: CGFloat = 28
     }
     
+    //MARK: - Component
+    
     private let label = UILabel().then {
         $0.textAlignment = .center
     }
     
-    //MARK: - override
+    //MARK: - Setup
     
     override func setUI() {
         backgroundColor = .flintGray500

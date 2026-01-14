@@ -47,7 +47,7 @@ final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewCell {
     
     override func setLayout() {
         posterImageView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
+            $0.top.horizontalEdges.equalToSuperview()
             $0.height.equalTo(180)
         }
         

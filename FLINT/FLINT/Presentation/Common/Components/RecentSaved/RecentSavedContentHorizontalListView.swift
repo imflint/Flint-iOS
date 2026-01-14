@@ -12,7 +12,7 @@ import Then
 
 final class RecentSavedContentHorizontalListView: BaseView {
     
-    //MARK: - UI
+    //MARK: - Component
     
     private let collectionView: UICollectionView =  {
         let layout = UICollectionViewFlowLayout()
@@ -27,11 +27,11 @@ final class RecentSavedContentHorizontalListView: BaseView {
         }
     }()
     
-    //MARK: - Data
+    //MARK: - Component
     
     private var items : [RecentSavedContentItem] = []
     
-    //MARK: override
+    //MARK: - Setup
     
     override func setUI() {
         setCollectionView()
