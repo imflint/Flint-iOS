@@ -30,6 +30,7 @@ final class ExampleView: BaseView {
     
     private var button = UIButton().then {
         $0.setAttributedTitle(.pretendard(.body1_r_16, text: "눌러보쇼 ㅋ"), for: .normal)
+        $0.backgroundColor = .flintPrimary300
     }
     
     // MARK: - Setup
