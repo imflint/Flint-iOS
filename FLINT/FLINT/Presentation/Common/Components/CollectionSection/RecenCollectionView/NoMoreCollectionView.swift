@@ -1,9 +1,8 @@
-
 //
-//  CollectionSectionView.swift
+//  NoMoreCollectionView.swift
 //  FLINT
 //
-//  Created by 소은 on 1/11/26.
+//  Created by 소은 on 1/12/26.
 //
 
 import UIKit
@@ -11,11 +10,10 @@ import UIKit
 import SnapKit
 import Then
 
-final class RecentCollectionSectionView: BaseView {
+final class NoMoreCollectionView: BaseView {
 
     // MARK: - Public Event
 
-    var onTapMore: (() -> Void)?
     var onSelectItem: ((UUID) -> Void)?
 
     // MARK: - UI
@@ -42,33 +40,12 @@ final class RecentCollectionSectionView: BaseView {
     private var configuration: Configuration?
     private var items: [RecentCollectionItem] = []
 
-    // MARK: - Public Configure
 
-    func configure(_ configuration: Configuration) {
-        self.configuration = configuration
-
-        titleHeaderView.configure(
-            style: configuration.headerStyle,
-            title: configuration.title,
-            subtitle: configuration.subtitle
-        )
-
-        items = configuration.items
-
-        collectionView.setCollectionViewLayout(
-            UICollectionViewCompositionalLayout(section: makeSectionLayout()),
-            animated: false
-        )
-
-        collectionView.reloadData()
-    }
-
-    // MARK: - BaseView
+    // MARK: - override
 
     override func setUI() {
         addSubview(titleHeaderView)
         addSubview(collectionView)
-        setAction()
     }
 
     override func setLayout() {
@@ -84,13 +61,31 @@ final class RecentCollectionSectionView: BaseView {
             $0.bottom.equalToSuperview()
         }
     }
+    
+    // MARK: - Configure
 
-    // MARK: - Action
+    func configure(title: String, subtitle: String, items: [RecentCollectionItem]) {
+        let configuration = Configuration(title: title, subtitle: subtitle, items: items)
+        configure(configuration)
+    }
 
-    private func setAction() {
-        titleHeaderView.onTapMore = { [weak self] in
-            self?.onTapMore?()
-        }
+    func configure(_ configuration: Configuration) {
+        self.configuration = configuration
+
+        titleHeaderView.configure(
+            style: .normal,
+            title: configuration.title,
+            subtitle: configuration.subtitle
+        )
+
+        items = configuration.items
+
+        collectionView.setCollectionViewLayout(
+            UICollectionViewCompositionalLayout(section: makeSectionLayout()),
+            animated: false
+        )
+
+        collectionView.reloadData()
     }
 
     // MARK: - Layout
@@ -99,7 +94,7 @@ final class RecentCollectionSectionView: BaseView {
         let config = configuration
 
         let itemSizeValue = config?.itemSize ?? CGSize(width: 260, height: 180)
-        let sectionInset = config?.sectionInset ?? .init(top: 0, leading: 16, bottom: 0, trailing: 16)
+        let sectionInset = config?.sectionInset ?? .init(top: 0, leading: 20, bottom: 0, trailing: 20)
         let interGroupSpacing = config?.interGroupSpacing ?? 12
 
         let itemSize = NSCollectionLayoutSize(
@@ -124,10 +119,9 @@ final class RecentCollectionSectionView: BaseView {
 
 // MARK: - Configuration
 
-extension RecentCollectionSectionView {
+extension NoMoreCollectionView {
 
     struct Configuration: Equatable {
-        let headerStyle: TitleHeaderView.HeaderStyle
         let title: String
         let subtitle: String
         let items: [RecentCollectionItem]
@@ -135,28 +129,27 @@ extension RecentCollectionSectionView {
         let interGroupSpacing: CGFloat
         let itemSize: CGSize
 
-        static func `default`(
-            headerStyle: TitleHeaderView.HeaderStyle = .more,
+        init(
             title: String,
             subtitle: String,
-            items: [RecentCollectionItem]
-        ) -> Configuration {
-            .init(
-                headerStyle: headerStyle,
-                title: title,
-                subtitle: subtitle,
-                items: items,
-                sectionInset: .init(top: 0, leading: 16, bottom: 0, trailing: 16),
-                interGroupSpacing: 12,
-                itemSize: .init(width: 260, height: 180)
-            )
+            items: [RecentCollectionItem],
+            sectionInset: NSDirectionalEdgeInsets = .init(top: 0, leading: 20, bottom: 0, trailing: 20),
+            interGroupSpacing: CGFloat = 12,
+            itemSize: CGSize = .init(width: 260, height: 180)
+        ) {
+            self.title = title
+            self.subtitle = subtitle
+            self.items = items
+            self.sectionInset = sectionInset
+            self.interGroupSpacing = interGroupSpacing
+            self.itemSize = itemSize
         }
     }
 }
 
 // MARK: - UICollectionViewDataSource
 
-extension RecentCollectionSectionView: UICollectionViewDataSource {
+extension NoMoreCollectionView: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         items.count
@@ -180,7 +173,7 @@ extension RecentCollectionSectionView: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 
-extension RecentCollectionSectionView: UICollectionViewDelegate {
+extension NoMoreCollectionView: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard items.indices.contains(indexPath.item) else { return }

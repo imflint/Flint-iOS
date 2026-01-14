@@ -1,76 +1,120 @@
 //
-//  RecentCollectionSectionExampleViewController.swift
+//  RecenCollectionExampleViewController.swift
 //  FLINT
 //
-//  Created by 소은 on 1/14/26.
+//  Created by 소은 on 1/11/26.
 //
 
 import UIKit
 
 import SnapKit
 
-final class RecentCollectionSectionExampleViewController: BaseViewController {
+final class RecenCollectionExampleViewController: BaseViewController {
 
-    // MARK: - UI
+    private let stackView = UIStackView()
 
-    private let recentSectionView = RecentCollectionSectionView()
-
-    // MARK: - LifeCycle
+    private let moreCollectionView = MoreCollectionView()
+    private let noMoreCollectionView = NoMoreCollectionView()
 
     override func setUI() {
         view.backgroundColor = .flintBackground
-        view.addSubview(recentSectionView)
 
-        bind()
-        configureDummy()
+        stackView.axis = .vertical
+        stackView.spacing = 16
+
+        // MARK: - MoreCollectionView (.more 고정)
+
+        moreCollectionView.configure(
+            title: "눈여겨보고 있는 컬렉션",
+            subtitle: "키키님이 최근 살펴본 컬렉션이에요",
+            items: makeRecentMockItems()
+        )
+
+        moreCollectionView.onTapMore = { print("> 탭") }
+        moreCollectionView.onSelectItem = { id in print("more selected:", id) }
+
+        // MARK: - RecommendCollectionView (기존 사용 방식 유지)
+
+        noMoreCollectionView.configure(
+            title: "Fliner의 추천 컬렉션",
+            subtitle: "콘텐츠에 진심인 큐레이터들의 추천이에요",
+            items: makeRecommendMockItems()
+        )
+
+        noMoreCollectionView.onSelectItem = { id in
+            print("recommend selected:", id)
+        }
+
+    }
+
+    override func setHierarchy() {
+        view.addSubview(stackView)
+
+        stackView.addArrangedSubview(moreCollectionView)
+        stackView.addArrangedSubview(noMoreCollectionView)
     }
 
     override func setLayout() {
-        recentSectionView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(24)
+        stackView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(20)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(260)
         }
     }
+}
 
-    // MARK: - Bind
+// MARK: - Mock
 
-    private func bind() {
-        recentSectionView.onTapMore = { [weak self] in
-            guard let self else { return }
-            print("✅ onTapMore")
-        }
+private extension RecenCollectionExampleViewController {
 
-        recentSectionView.onSelectItem = { [weak self] id in
-            guard let self else { return }
-            print("✅ onSelectItem: \(id)")
-        }
-    }
-
-    // MARK: - Dummy
-
-    private func configureDummy() {
-        let items: [RecentCollectionItem] = makeDummyItems()
-
-        recentSectionView.configure(
-            .default(
-                headerStyle: .normal,
-                title: "눈여겨보고 있는 컬렉션",
-                subtitle: "키키님이 최근 살펴본 컬렉션이에요",
-                items: items
-            )
-        )
-    }
-
-    private func makeDummyItems() -> [RecentCollectionItem] {
-        return (0..<10).map { index in
+    func makeRecentMockItems() -> [RecentCollectionItem] {
+        [
             RecentCollectionItem(
                 id: UUID(),
-                image: UIImage(named: "img_background_gradiant_middle"),
-                title: "비 오는 날 보기 좋은 영화",
+                image: UIImage(named: "img_background_gradiant_large"),
+                title: "주말에 보기 좋은 영화 모음",
+                userName: "키키",
+                profileImage: UIImage(named: "img_profile_blue")
+            ),
+            RecentCollectionItem(
+                id: UUID(),
+                image: UIImage(named: "img_background_gradiant_large"),
+                title: "정주행 추천 드라마",
+                userName: "키키",
+                profileImage: UIImage(named: "img_profile_blue")
+            ),
+            RecentCollectionItem(
+                id: UUID(),
+                image: UIImage(named: "img_background_gradiant_large"),
+                title: "감성 애니 컬렉션",
                 userName: "키키",
                 profileImage: UIImage(named: "img_profile_blue")
             )
-        }
+        ]
+    }
+
+    func makeRecommendMockItems() -> [RecentCollectionItem] {
+        [
+            RecentCollectionItem(
+                id: UUID(),
+                image: UIImage(named: "img_background_gradiant_large"),
+                title: "이 주의 신작 TOP",
+                userName: "Fliner",
+                profileImage: UIImage(named: "img_profile_blue")
+            ),
+            RecentCollectionItem(
+                id: UUID(),
+                image: UIImage(named: "img_background_gradiant_large"),
+                title: "숨겨진 명작 다큐",
+                userName: "Fliner",
+                profileImage: UIImage(named: "img_profile_blue")
+            ),
+            RecentCollectionItem(
+                id: UUID(),
+                image: UIImage(named: "img_background_gradiant_large"),
+                title: "퇴근길에 가볍게",
+                userName: "Fliner",
+                profileImage: UIImage(named: "img_profile_blue")
+            )
+        ]
     }
 }
