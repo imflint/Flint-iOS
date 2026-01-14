@@ -95,8 +95,6 @@ final class SavedContentItemView: BaseView {
     // MARK: - BaseView
 
     override func setUI() {
-        //TODO: - 지워
-        self.backgroundColor = .flintError500
         addSubviews(posterImageView, infoContainerView)
 
         infoContainerView.addSubviews(titleLabel, directorLabel, yearLabel, shortcutButton)
@@ -106,7 +104,6 @@ final class SavedContentItemView: BaseView {
         posterImageView.addSubview(ottLogoStripeView)
         
         bookmarkView.onTap = { [weak self] isBookmarked in
-            // 필요하면 viewModel 업데이트/콜백
             self?.onTapBookmark?()
         }
         shortcutButton.addTarget(self, action: #selector(didTapShortcut), for: .touchUpInside)
