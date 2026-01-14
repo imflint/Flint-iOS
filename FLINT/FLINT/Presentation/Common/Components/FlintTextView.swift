@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class FlintTextView: BaseView {
+final class FlintTextView: UITextView {
     
     // MARK: - Property
     
@@ -29,41 +29,19 @@ final class FlintTextView: BaseView {
         $0.attributedText = .pretendard(.body1_m_16, text: "", color: .flintGray300)
     }
     
-    private let textView = UITextView().then {
-        $0.backgroundColor = .flintGray800
-        $0.tintColor = .flintGray300
-        $0.textColor = .flintWhite
-        
-        $0.font = .pretendard(.body1_m_16)
-        $0.attributedText = .pretendard(.body1_m_16, text: "")
-        
-        $0.textContainer.lineFragmentPadding = 0
-        $0.contentInset = .zero
-        $0.textContainerInset = .init(top: 10, left: 12, bottom: 10, right: 12)
-        $0.layer.cornerRadius = 8
-        
-        $0.spellCheckingType = .no
-        $0.autocapitalizationType = .none
-        $0.autocorrectionType = .no
-        $0.smartDashesType = .no
-        $0.smartQuotesType = .no
-        $0.smartInsertDeleteType = .no
-        if #available(iOS 17.0, *) {
-            $0.inlinePredictionType = .no
-        }
-        
-        $0.isScrollEnabled = false
-    }
-    
     // MARK: - Basic
      
     init(placeholder: String, maxLength: Int? = nil) {
         self.placeholder = placeholder
         self.maxLength = maxLength
-        super.init(frame: .zero)
+        super.init(frame: .zero, textContainer: nil)
+        
+        setUI()
+        setHierarchy()
+        setLayout()
         
         placeholderLabel.attributedText = .pretendard(.body1_m_16, text: placeholder, color: .flintGray300)
-        textView.delegate = self
+        delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -72,29 +50,42 @@ final class FlintTextView: BaseView {
     
     // MARK: - Setup
     
-    override func setUI() {
-        textView.attributedText = .pretendard(.body1_m_16, text: "")
-        setTypingAttributes()
-    }
-    
-    override func setHierarchy() {
-        addSubviews(textView, placeholderLabel)
-    }
-    
-    override func setLayout() {
-        textView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+    private func setUI() {
+        backgroundColor = .flintGray800
+        tintColor = .flintGray300
+        textColor = .flintWhite
+        
+        font = .pretendard(.body1_m_16)
+        attributedText = .pretendard(.body1_m_16, text: "", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
+        typingAttributes = NSAttributedString.pretendard(.body1_m_16, text: " ", color: .flintWhite, lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority).attributes(at: 0, effectiveRange: nil)
+        
+        textContainer.lineFragmentPadding = 0
+        contentInset = .zero
+        textContainerInset = .init(top: 10, left: 12, bottom: 10, right: 12)
+        layer.cornerRadius = 8
+        
+        spellCheckingType = .no
+        autocapitalizationType = .none
+        autocorrectionType = .no
+        smartDashesType = .no
+        smartQuotesType = .no
+        smartInsertDeleteType = .no
+        if #available(iOS 17.0, *) {
+            inlinePredictionType = .no
         }
+        
+        isScrollEnabled = false
+    }
+    
+    private func setHierarchy() {
+        addSubview(placeholderLabel)
+    }
+    
+    private func setLayout() {
         placeholderLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
             $0.horizontalEdges.equalToSuperview().inset(12)
         }
-    }
-    
-    // MARK: - Private Function
-    
-    private func setTypingAttributes() {
-        textView.typingAttributes = NSAttributedString.pretendard(.body1_m_16, text: " ", color: .flintWhite).attributes(at: 0, effectiveRange: nil)
     }
 }
 
