@@ -11,6 +11,7 @@ final class BasicButton: UIButton {
     
     var title: String?
     var titleColor: UIColor
+    var titleStyle: UIFont.PretendardStyle
     var buttonColor: UIColor
     
     override var isEnabled: Bool {
@@ -23,9 +24,10 @@ final class BasicButton: UIButton {
         }
     }
     
-    init(title: String? = nil, titleColor: UIColor = .flintWhite, buttonColor: UIColor = .flintPrimary400) {
+    init(title: String? = nil, titleColor: UIColor = .flintWhite, titleStyle: UIFont.PretendardStyle = .body1_m_16, buttonColor: UIColor = .flintPrimary400) {
         self.title = title
         self.titleColor = titleColor
+        self.titleStyle = titleStyle
         self.buttonColor = buttonColor
         super.init(frame: .zero)
         
@@ -46,15 +48,15 @@ final class BasicButton: UIButton {
     
     private func setAbleUI() {
         var config: UIButton.Configuration = configuration ?? .plain()
-        config.background.backgroundColor = .flintPrimary400
-        config.attributedTitle = .pretendard(.body1_m_16, text: title ?? "", color: .flintWhite)
+        config.background.backgroundColor = buttonColor
+        config.attributedTitle = .pretendard(titleStyle, text: title ?? "", color: titleColor)
         configuration = config
     }
     
     private func setDisableUI() {
         var config: UIButton.Configuration = configuration ?? .plain()
         config.background.backgroundColor = .flintGray700
-        config.attributedTitle = .pretendard(.body1_m_16, text: title ?? "", color: .flintGray400)
+        config.attributedTitle = .pretendard(titleStyle, text: title ?? "", color: .flintGray400)
         configuration = config
     }
 }

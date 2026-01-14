@@ -18,20 +18,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let container = AppDIContainer.shared
         container.configureNetworking()
 
-        let viewController = UINavigationController(rootViewController: RecenCollectionExampleViewController())
+        let viewController = UINavigationController(rootViewController: SearchResultWorkItemExampleViewController())
         viewController.setNavigationBarHidden(true, animated: false)
         window.rootViewController = viewController
 
         self.window = window
         window.makeKeyAndVisible()
-//
-//        let viewController = UINavigationController(rootViewController: ViewController())
-//        
-//        viewController.setNavigationBarHidden(true, animated: false)
-//        
-//        window.rootViewController = viewController
-//        self.window = window
-//        window.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -172,14 +172,11 @@ final class FlintConfirmModalView: BaseView {
     private func apply(type: ConfirmModalType) {
         iconImageView.image = type.icon
 
-        titleLabel.text = type.title
-        //titleLabel.text = .pretendard(.body1_b_16)
-        titleLabel.textAlignment = .center
+        titleLabel.attributedText = .pretendard(.body1_b_16, text: type.title, alignment: .center)
 
-        cancelButton.setTitle(type.cancelTitle, for: .normal)
-        cancelButton.titleLabel?.applyFontStyle(.body1_b_16)
-        confirmButton.setTitle(type.confirmTitle, for: .normal)
-        confirmButton.titleLabel?.applyFontStyle(.body1_b_16)
+        cancelButton.setAttributedTitle(.pretendard(.body1_b_16, text: type.cancelTitle), for: .normal)
+
+        confirmButton.setAttributedTitle(.pretendard(.body1_b_16, text: type.confirmTitle), for: .normal)
         confirmButton.backgroundColor = type.confirmButtonColor
     }
 

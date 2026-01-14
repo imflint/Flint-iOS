@@ -1,0 +1,78 @@
+//
+//  BookmarkView.swift
+//  FLINT
+//
+//  Created by 소은 on 1/14/26.
+//
+
+import UIKit
+
+import SnapKit
+import Then
+
+final class BookmarkView: BaseView {
+    
+    //MARK: - Event
+    var onTap: ((Bool) -> Void)?
+    
+    //MARK: -  State
+    private var isBookmarked: Bool = false
+    
+    //MARK: - UI
+    
+    private let bookmarkButton = UIButton(type: .system).then {
+        $0.setImage(.icBookmarkEmpty, for: .normal)
+    }
+    private let countLabel = UILabel().then {
+        $0.numberOfLines = 1
+    }
+    
+    //MARK: - Override
+    
+    override func setUI() {
+        addSubviews(bookmarkButton, countLabel)
+        bookmarkButton.addTarget(self, action: #selector(didTap), for: .touchUpInside)
+    }
+    
+    override func setLayout() {
+        bookmarkButton.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.size.equalTo(24)
+        }
+        
+        countLabel.snp.makeConstraints {
+            $0.top.equalTo(bookmarkButton.snp.bottom).offset(4)
+            $0.centerX.equalTo(bookmarkButton.snp.centerX)
+            $0.bottom.equalToSuperview()
+        }
+    }
+    
+    // MARK: - Private
+
+    private func updateIcon(isBookmarked: Bool) {
+        let image = isBookmarked ? UIImage.icBookmarkFill : UIImage.icBookmarkFillWhite
+        bookmarkButton.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+
+    @objc private func didTap() {
+        isBookmarked.toggle()
+        updateIcon(isBookmarked: isBookmarked)
+        onTap?(isBookmarked)
+    }
+    
+    // MARK: - Configure
+
+    func configure(isBookmarked: Bool, countText: String?) {
+        self.isBookmarked = isBookmarked
+        updateIcon(isBookmarked: isBookmarked)
+
+        if let countText, !countText.isEmpty {
+            countLabel.isHidden = false
+            countLabel.attributedText = .pretendard(.caption1_r_12, text: countText, color: .flintWhite)
+        } else {
+            countLabel.isHidden = true
+            countLabel.attributedText = nil
+        }
+    }
+
+}
