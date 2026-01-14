@@ -63,7 +63,7 @@ final class EmptyStateView: BaseView {
         imageView.image = type.image
 
         titleLabel.text = type.title
-     //   titleLabel.applyFontStyle(.body1_b_16)
+        titleLabel.applyFontStyle(.body1_b_16)
         titleLabel.textAlignment = .center
     }
 }

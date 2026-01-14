@@ -16,37 +16,37 @@ enum BottomSheetContent {
 }
 
 final class BaseBottomSheetView: BaseView {
-
+    
     // MARK: - Public Event
-
+    
     var onTapDim: (() -> Void)?
-
+    
     // MARK: - UI
-
+    
     let dimView = UIView().then {
         $0.backgroundColor = .flintOverlay
         $0.alpha = 0
         $0.isUserInteractionEnabled = true
     }
-
+    
     let containerView = UIView().then {
         $0.backgroundColor = .flintGray800
         $0.layer.cornerRadius = 20
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         $0.clipsToBounds = true
     }
-
+    
     private let grabberView = UIView().then {
         $0.backgroundColor = .flintGray500
         $0.layer.cornerRadius = 2
     }
-
+    
     private let titleStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 4
         $0.alignment = .center
     }
-
+    
     private let titleLabel = UILabel().then {
         $0.textColor = .flintWhite
         $0.font = UIFont.pretendard(.head3_sb_18)
@@ -60,13 +60,13 @@ final class BaseBottomSheetView: BaseView {
         $0.numberOfLines = 1
         $0.isHidden = true
     }
-
+    
     private let contentContainerView = UIView()
-
+    
     // MARK: - State
-
+    
     private var titleText: String?
-
+    
     
     private var contentTopToGrabber: Constraint?
     private var contentTopToTitle: Constraint?
@@ -77,10 +77,10 @@ final class BaseBottomSheetView: BaseView {
                    count: Int? = nil
     ) {
         let hasTitle = (title != nil)
-
+        
         titleLabel.text = title
         titleLabel.isHidden = !hasTitle
-
+        
         if let count {
             countSaveUser.text = "\(count)"
             countSaveUser.isHidden = !hasTitle
@@ -88,29 +88,29 @@ final class BaseBottomSheetView: BaseView {
             countSaveUser.text = nil
             countSaveUser.isHidden = true
         }
-
+        
         contentTopToGrabber?.isActive = !hasTitle
         contentTopToTitle?.isActive = hasTitle
-
+        
         setNeedsLayout()
         layoutIfNeeded()
     }
-
+    
     func setContentView(_ view: UIView) {
         contentContainerView.subviews.forEach { $0.removeFromSuperview() }
         contentContainerView.addSubview(view)
-
+        
         view.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
-
+    
     // MARK: - BaseView
-
+    
     override func setUI() {
         addSubview(dimView)
         addSubview(containerView)
-
+        
         containerView.addSubview(grabberView)
         
         containerView.addSubview(titleStackView)
@@ -118,26 +118,26 @@ final class BaseBottomSheetView: BaseView {
         titleStackView.addArrangedSubview(countSaveUser)
         
         containerView.addSubview(contentContainerView)
-
+        
         setAction()
     }
-
+    
     override func setLayout() {
         dimView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
+        
         containerView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
         }
-
+        
         grabberView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(60)
             $0.height.equalTo(4)
         }
-
+        
         titleStackView.snp.makeConstraints {
             $0.top.equalTo(grabberView.snp.bottom).offset(16)
             $0.centerX.equalToSuperview()
@@ -150,24 +150,24 @@ final class BaseBottomSheetView: BaseView {
             $0.bottom.equalToSuperview().inset(32)
             
             contentTopToGrabber = $0.top.equalTo(grabberView.snp.bottom).offset(16).constraint
-                $0.leading.equalToSuperview().inset(32)
-                $0.trailing.equalToSuperview().inset(24)
+            $0.leading.equalToSuperview().inset(32)
+            $0.trailing.equalToSuperview().inset(24)
             contentTopToTitle   = $0.top.equalTo(titleStackView.snp.bottom).offset(16).constraint
-                $0.leading.trailing.equalToSuperview().inset(32)
+            $0.leading.trailing.equalToSuperview().inset(32)
         }
         
         contentTopToTitle?.isActive = false
         contentTopToGrabber?.isActive = true
         
     }
-
+    
     // MARK: - Action
-
+    
     private func setAction() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapDim))
         dimView.addGestureRecognizer(tap)
     }
-
+    
     @objc private func didTapDim() {
         onTapDim?()
     }
