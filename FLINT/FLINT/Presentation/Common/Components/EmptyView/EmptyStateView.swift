@@ -61,9 +61,7 @@ final class EmptyStateView: BaseView {
 
     func apply(type: EmptyStateType) {
         imageView.image = type.image
-
-        titleLabel.text = type.title
-        titleLabel.applyFontStyle(.body1_b_16)
-        titleLabel.textAlignment = .center
+        
+        titleLabel.attributedText = .pretendard(.body1_b_16, text: type.title, alignment: .center)
     }
 }
