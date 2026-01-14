@@ -31,15 +31,15 @@ final class MoreCollectionView: BaseView {
         $0.delegate = self
 
         $0.register(
-            RecentCollectionCell.self,
-            forCellWithReuseIdentifier: RecentCollectionCell.reuseIdentifier
+            MoreNoMoreCollectionViewCell.self,
+            forCellWithReuseIdentifier: MoreNoMoreCollectionViewCell.reuseIdentifier
         )
     }
 
     // MARK: - State
 
     private var configuration: Configuration?
-    private var items: [RecentCollectionItem] = []
+    private var items: [MoreNoMoreCollectionView] = []
 
 
     // MARK: - override
@@ -66,7 +66,7 @@ final class MoreCollectionView: BaseView {
 
     // MARK: - Configure
 
-    func configure(title: String, subtitle: String, items: [RecentCollectionItem]) {
+    func configure(title: String, subtitle: String, items: [MoreNoMoreCollectionView]) {
         let configuration = Configuration(title: title, subtitle: subtitle, items: items)
         configure(configuration)
     }
@@ -133,7 +133,7 @@ extension MoreCollectionView {
     struct Configuration: Equatable {
         let title: String
         let subtitle: String
-        let items: [RecentCollectionItem]
+        let items: [MoreNoMoreCollectionView]
         let sectionInset: NSDirectionalEdgeInsets
         let interGroupSpacing: CGFloat
         let itemSize: CGSize
@@ -141,7 +141,7 @@ extension MoreCollectionView {
         init(
             title: String,
             subtitle: String,
-            items: [RecentCollectionItem],
+            items: [MoreNoMoreCollectionView],
             sectionInset: NSDirectionalEdgeInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16),
             interGroupSpacing: CGFloat = 12,
             itemSize: CGSize = .init(width: 260, height: 180)
@@ -169,9 +169,9 @@ extension MoreCollectionView: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: RecentCollectionCell.reuseIdentifier,
+            withReuseIdentifier: MoreNoMoreCollectionViewCell.reuseIdentifier,
             for: indexPath
-        ) as? RecentCollectionCell else {
+        ) as? MoreNoMoreCollectionViewCell else {
             return UICollectionViewCell()
         }
 

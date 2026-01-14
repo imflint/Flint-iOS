@@ -30,15 +30,15 @@ final class NoMoreCollectionView: BaseView {
         $0.delegate = self
 
         $0.register(
-            RecentCollectionCell.self,
-            forCellWithReuseIdentifier: RecentCollectionCell.reuseIdentifier
+            MoreNoMoreCollectionViewCell.self,
+            forCellWithReuseIdentifier: MoreNoMoreCollectionViewCell.reuseIdentifier
         )
     }
 
     // MARK: - State
 
     private var configuration: Configuration?
-    private var items: [RecentCollectionItem] = []
+    private var items: [MoreNoMoreCollectionView] = []
 
 
     // MARK: - override
@@ -57,6 +57,7 @@ final class NoMoreCollectionView: BaseView {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(titleHeaderView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview()
+            $0.width.equalTo(260)
             $0.height.equalTo(180)
             $0.bottom.equalToSuperview()
         }
@@ -64,7 +65,7 @@ final class NoMoreCollectionView: BaseView {
     
     // MARK: - Configure
 
-    func configure(title: String, subtitle: String, items: [RecentCollectionItem]) {
+    func configure(title: String, subtitle: String, items: [MoreNoMoreCollectionView]) {
         let configuration = Configuration(title: title, subtitle: subtitle, items: items)
         configure(configuration)
     }
@@ -124,7 +125,7 @@ extension NoMoreCollectionView {
     struct Configuration: Equatable {
         let title: String
         let subtitle: String
-        let items: [RecentCollectionItem]
+        let items: [MoreNoMoreCollectionView]
         let sectionInset: NSDirectionalEdgeInsets
         let interGroupSpacing: CGFloat
         let itemSize: CGSize
@@ -132,7 +133,7 @@ extension NoMoreCollectionView {
         init(
             title: String,
             subtitle: String,
-            items: [RecentCollectionItem],
+            items: [MoreNoMoreCollectionView],
             sectionInset: NSDirectionalEdgeInsets = .init(top: 0, leading: 20, bottom: 0, trailing: 20),
             interGroupSpacing: CGFloat = 12,
             itemSize: CGSize = .init(width: 260, height: 180)
@@ -160,9 +161,9 @@ extension NoMoreCollectionView: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: RecentCollectionCell.reuseIdentifier,
+            withReuseIdentifier: MoreNoMoreCollectionViewCell.reuseIdentifier,
             for: indexPath
-        ) as? RecentCollectionCell else {
+        ) as? MoreNoMoreCollectionViewCell else {
             return UICollectionViewCell()
         }
 

@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class RecentCollectionCell: BaseCollectionViewCell {
+final class MoreNoMoreCollectionViewCell: BaseCollectionViewCell {
 
     static let reuseIdentifier = "RecentCollectionCell"
 
@@ -29,12 +29,13 @@ final class RecentCollectionCell: BaseCollectionViewCell {
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
-        $0.layer.cornerRadius = 16
+        $0.layer.cornerRadius = 14
     }
 
     private let titleLabel = UILabel().then {
         $0.textColor = .flintGray50
         $0.numberOfLines = 1
+        $0.lineBreakMode = .byTruncatingTail
     }
 
     private let userNameLabel = UILabel().then {
@@ -77,18 +78,19 @@ final class RecentCollectionCell: BaseCollectionViewCell {
         profileImageView.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(15)
             $0.bottom.equalToSuperview().inset(14)
-            $0.size.equalTo(32)
+            $0.size.equalTo(28)
         }
 
         titleLabel.snp.makeConstraints {
             $0.leading.equalTo(profileImageView.snp.trailing).offset(12)
-            $0.trailing.equalToSuperview().inset(20)
+            $0.trailing.equalToSuperview().inset(14)
             $0.bottom.equalTo(profileImageView.snp.centerY).offset(-1)
         }
 
         userNameLabel.snp.makeConstraints {
             $0.leading.trailing.equalTo(titleLabel)
             $0.top.equalTo(profileImageView.snp.centerY).offset(1)
+            $0.bottom.equalToSuperview().inset(11)
         }
     }
 
@@ -100,13 +102,15 @@ final class RecentCollectionCell: BaseCollectionViewCell {
     }
 
     // MARK: - Configure
-    func configure(with item: RecentCollectionItem) {
+    func configure(with item: MoreNoMoreCollectionView) {
         imageView.image = item.image
         profileImageView.image = item.profileImage
 
+        let title = truncated(item.title, limit: 15)
+
         titleLabel.attributedText = .pretendard(
             .body2_m_14,
-            text: item.title,
+            text: title,
             color: .flintGray50
         )
 
@@ -116,5 +120,12 @@ final class RecentCollectionCell: BaseCollectionViewCell {
             color: .flintGray200
         )
     }
+    
+    private func truncated(_ text: String, limit: Int) -> String {
+        guard text.count > limit else { return text }
+        let prefix = text.prefix(limit)
+        return "\(prefix)…"
+    }
+
 
 }

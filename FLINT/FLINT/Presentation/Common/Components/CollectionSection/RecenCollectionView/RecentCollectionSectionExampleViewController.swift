@@ -22,10 +22,10 @@ final class RecenCollectionExampleViewController: BaseViewController {
         stackView.axis = .vertical
         stackView.spacing = 16
 
-        // MARK: - MoreCollectionView (.more 고정)
+        // MARK: - MoreCollectionView
 
         moreCollectionView.configure(
-            title: "눈여겨보고 있는 컬렉션",
+            title: "눈여겨보고 있는 ",
             subtitle: "키키님이 최근 살펴본 컬렉션이에요",
             items: makeRecentMockItems()
         )
@@ -33,7 +33,7 @@ final class RecenCollectionExampleViewController: BaseViewController {
         moreCollectionView.onTapMore = { print("> 탭") }
         moreCollectionView.onSelectItem = { id in print("more selected:", id) }
 
-        // MARK: - RecommendCollectionView (기존 사용 방식 유지)
+        // MARK: - RecommendCollectionView 
 
         noMoreCollectionView.configure(
             title: "Fliner의 추천 컬렉션",
@@ -66,23 +66,23 @@ final class RecenCollectionExampleViewController: BaseViewController {
 
 private extension RecenCollectionExampleViewController {
 
-    func makeRecentMockItems() -> [RecentCollectionItem] {
+    func makeRecentMockItems() -> [MoreNoMoreCollectionView] {
         [
-            RecentCollectionItem(
+            MoreNoMoreCollectionView(
                 id: UUID(),
                 image: UIImage(named: "img_background_gradiant_large"),
-                title: "주말에 보기 좋은 영화 모음",
+                title: "주말에보기좋은영화모음주말에 보기 좋은 영화 모음주말에 보기 좋은 영화 모음주말에 보기 좋은 영화 모음",
                 userName: "키키",
                 profileImage: UIImage(named: "img_profile_blue")
             ),
-            RecentCollectionItem(
+            MoreNoMoreCollectionView(
                 id: UUID(),
                 image: UIImage(named: "img_background_gradiant_large"),
                 title: "정주행 추천 드라마",
                 userName: "키키",
                 profileImage: UIImage(named: "img_profile_blue")
             ),
-            RecentCollectionItem(
+            MoreNoMoreCollectionView(
                 id: UUID(),
                 image: UIImage(named: "img_background_gradiant_large"),
                 title: "감성 애니 컬렉션",
@@ -92,23 +92,23 @@ private extension RecenCollectionExampleViewController {
         ]
     }
 
-    func makeRecommendMockItems() -> [RecentCollectionItem] {
+    func makeRecommendMockItems() -> [MoreNoMoreCollectionView] {
         [
-            RecentCollectionItem(
+            MoreNoMoreCollectionView(
                 id: UUID(),
                 image: UIImage(named: "img_background_gradiant_large"),
                 title: "이 주의 신작 TOP",
                 userName: "Fliner",
                 profileImage: UIImage(named: "img_profile_blue")
             ),
-            RecentCollectionItem(
+            MoreNoMoreCollectionView(
                 id: UUID(),
                 image: UIImage(named: "img_background_gradiant_large"),
                 title: "숨겨진 명작 다큐",
                 userName: "Fliner",
                 profileImage: UIImage(named: "img_profile_blue")
             ),
-            RecentCollectionItem(
+            MoreNoMoreCollectionView(
                 id: UUID(),
                 image: UIImage(named: "img_background_gradiant_large"),
                 title: "퇴근길에 가볍게",
