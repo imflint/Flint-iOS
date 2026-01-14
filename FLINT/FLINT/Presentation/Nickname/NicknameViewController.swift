@@ -21,10 +21,17 @@ class NicknameViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        rootView.profileImageSettingView.settingButton.addAction(UIAction(handler: showProfileImageSettingAlert(_:)), for: .touchUpInside)
+        hideKeyboardWhenTappedAround()
+        addActions()
     }
     
     // MARK: - Private Function
+    
+    private func addActions() {
+        rootView.profileImageSettingView.settingButton.addAction(UIAction(handler: showProfileImageSettingAlert(_:)), for: .touchUpInside)
+        rootView.verifyButton.addAction(UIAction(handler: verifyNickname(_:)), for: .touchUpInside)
+        rootView.nextButton.addAction(UIAction(handler: nextButtonTapped(_:)), for: .touchUpInside)
+    }
     
     private func showProfileImageSettingAlert(_ action: UIAction) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -50,7 +57,6 @@ class NicknameViewController: BaseViewController {
     
     private func getAlbumAuthorization() {
         let authStatus: PHAuthorizationStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
-        Log.d(authStatus.rawValue)
         switch authStatus {
         case .notDetermined:
             PHPhotoLibrary.requestAuthorization(for: .readWrite, handler: { [weak self] status in
@@ -96,6 +102,15 @@ class NicknameViewController: BaseViewController {
         if let openSettingsURL = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(openSettingsURL, options: [:], completionHandler: nil)
         }
+    }
+    
+    private func verifyNickname(_ action: UIAction) {
+        // TODO: - Verify Nickname Logic
+        rootView.nextButton.isEnabled = true
+    }
+    
+    private func nextButtonTapped(_ action: UIAction) {
+        // TODO: - Next Button Tapped
     }
 }
 
