@@ -177,9 +177,9 @@ final class FlintConfirmModalView: BaseView {
         titleLabel.textAlignment = .center
 
         cancelButton.setTitle(type.cancelTitle, for: .normal)
-        //cancelButton.titleLabel?.applyFontStyle(.body1_b_16)
+        cancelButton.titleLabel?.applyFontStyle(.body1_b_16)
         confirmButton.setTitle(type.confirmTitle, for: .normal)
-        //confirmButton.titleLabel?.applyFontStyle(.body1_b_16)
+        confirmButton.titleLabel?.applyFontStyle(.body1_b_16)
         confirmButton.backgroundColor = type.confirmButtonColor
     }
 
