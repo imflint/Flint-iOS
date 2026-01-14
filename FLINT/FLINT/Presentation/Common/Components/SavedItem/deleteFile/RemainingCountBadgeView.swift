@@ -14,10 +14,6 @@ final class RemainingCountBadgeView: BaseView {
 
     //MARK: - private
 
-    private enum Metric {
-        static let size: CGFloat = 28
-    }
-
     private let label = UILabel().then {
         $0.textAlignment = .center
     }
@@ -40,7 +36,7 @@ final class RemainingCountBadgeView: BaseView {
             $0.trailing.equalToSuperview().inset(6)
         }
         snp.makeConstraints {
-            $0.height.equalTo(Metric.size)
+            $0.height.equalTo(28)
         }
     }
 

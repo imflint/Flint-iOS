@@ -12,13 +12,13 @@ import Then
 
 final class BookmarkView: BaseView {
     
-    //MARK: - Event
+    //MARK: - Property
+    
     var onTap: ((Bool) -> Void)?
     
-    //MARK: -  State
     private var isBookmarked: Bool = false
     
-    //MARK: - UI
+    //MARK: - Component
     
     private let bookmarkButton = UIButton(type: .system).then {
         $0.setImage(.icBookmarkEmpty, for: .normal)
@@ -27,7 +27,7 @@ final class BookmarkView: BaseView {
         $0.numberOfLines = 1
     }
     
-    //MARK: - Override
+    //MARK: - Setup
     
     override func setUI() {
         addSubviews(bookmarkButton, countLabel)
@@ -47,7 +47,7 @@ final class BookmarkView: BaseView {
         }
     }
     
-    // MARK: - Private
+    // MARK: - Custom Method
 
     private func updateIcon(isBookmarked: Bool) {
         let image = isBookmarked ? UIImage.icBookmarkFill : UIImage.icBookmarkFillWhite
