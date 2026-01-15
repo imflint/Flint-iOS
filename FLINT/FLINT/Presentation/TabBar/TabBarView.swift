@@ -22,11 +22,11 @@ class TabBarView: BaseView {
         var icon: UIImage {
             switch self {
             case .home:
-                return .icHomeEmpty
+                return .icHomeEmpty.resized(to: CGSize(width: 24, height: 24))
             case .explore:
-                return .icExploreEmpty
+                return .icExploreEmpty.resized(to: CGSize(width: 24, height: 24))
             case .my:
-                return .icMyEmpty
+                return .icMyEmpty.resized(to: CGSize(width: 24, height: 24))
             }
         }
         
@@ -133,11 +133,12 @@ extension UIButton {
             var config: UIButton.Configuration = button.configuration ?? .plain()
             if button.state == .selected {
                 config.attributedTitle = .pretendard(.micro1_m_10, text: tab.title, color: .flintGray100)
-                config.image = tab.icon.withTintColor(.flintGray50).resized(to: CGSize(width: 24, height: 24))
+                button.tintColor = .flintGray50
             } else {
                 config.attributedTitle = .pretendard(.micro1_m_10, text: tab.title, color: .flintGray500)
-                config.image = tab.icon.withTintColor(.flintGray500).resized(to: CGSize(width: 24, height: 24))
+                button.tintColor = .flintGray500
             }
+            config.image = tab.icon.withRenderingMode(.alwaysTemplate)
             config.background.backgroundColor = .clear
             config.imagePadding = 0
             config.imagePlacement = .top

@@ -66,7 +66,6 @@ class TabBarViewController: BaseViewController {
     }
     
     private func switchTab(to tab: TabBarView.Tab) {
-        
         containerViewController?.willMove(toParent: nil)
         containerViewController?.removeFromParent()
         containerViewController?.view.removeFromSuperview()
