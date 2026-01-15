@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-class TabBarViewController: BaseViewController {
+class TabBarViewController: UIViewController {
     
     // MARK: - Child ViewController
     
@@ -34,6 +34,9 @@ class TabBarViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setHierarchy()
+        setLayout()
+        
         switchTab(to: .home)
         
         containerViewController = homeViewController
@@ -51,11 +54,11 @@ class TabBarViewController: BaseViewController {
     
     // MARK: - Setup
     
-    override func setHierarchy() {
+    private func setHierarchy() {
         view.addSubviews(containerView, tabBarView)
     }
     
-    override func setLayout() {
+    private func setLayout() {
         tabBarView.snp.makeConstraints {
             $0.horizontalEdges.bottom.equalToSuperview()
         }

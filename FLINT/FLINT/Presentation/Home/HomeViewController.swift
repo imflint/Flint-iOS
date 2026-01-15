@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class HomeViewController: BaseViewController {
+final class HomeViewController: BaseViewController<UIView> {
 
     private let titleLabel = UILabel().then {
         $0.attributedText = .pretendard(.head1_sb_22, text: "Home")
