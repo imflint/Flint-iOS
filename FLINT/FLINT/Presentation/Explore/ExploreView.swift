@@ -14,6 +14,13 @@ class ExploreView: BaseView {
     
     // MARK: - Component
     
+    let gradientBackgroundView = FixedGradientView().then {
+        $0.colors = [.flintGray600, .flintGray700]
+        $0.locations = [0, 1]
+        $0.startPoint = .init(x: 0.1, y: 0)
+        $0.endPoint = .init(x: 0.5, y: 0.6)
+    }
+    
     let mainCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout().then {
@@ -22,6 +29,8 @@ class ExploreView: BaseView {
             $0.minimumLineSpacing = 0
         }
     ).then {
+        $0.backgroundColor = .clear
+        $0.contentInsetAdjustmentBehavior = .never
         $0.isPagingEnabled = true
         $0.decelerationRate = .fast
         $0.showsHorizontalScrollIndicator = false
@@ -48,10 +57,13 @@ class ExploreView: BaseView {
     }
     
     override func setHierarchy() {
-        addSubviews(mainCollectionView)
+        addSubviews(gradientBackgroundView, mainCollectionView)
     }
     
     override func setLayout() {
+        gradientBackgroundView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
         mainCollectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
