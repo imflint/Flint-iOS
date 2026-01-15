@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 import SnapKit
 import Then
 
@@ -18,7 +19,9 @@ final class HomeViewController: BaseViewController {
     }
 
     override func setUI() {
-        view.backgroundColor = .flintBackground
+        view.backgroundColor = .flintError200
+        
+        setNavigationBar(.init(left: .logo, title: "asdf", right: .text(title: "건너뛰기", color: .flintError500), backgroundStyle: .clear))
     }
 
     override func setHierarchy() {
