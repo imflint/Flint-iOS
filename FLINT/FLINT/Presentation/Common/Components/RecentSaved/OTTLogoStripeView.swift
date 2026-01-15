@@ -2,7 +2,7 @@
 //  OTTLogoStripeView.swift
 //  FLINT
 //
-//  Created by 소은 on 1/14/26.
+//  Created by 소은 on 1/13/26.
 //
 
 import UIKit
@@ -12,14 +12,10 @@ import Then
 
 final class OTTLogoStripeView: BaseView {
 
-    // MARK: - private
-
     private enum Metric {
         static let size: CGFloat = 26
         static let overlap: CGFloat = 16
     }
-
-    // MARK: - UI
 
     private let firstLogoImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
@@ -39,7 +35,7 @@ final class OTTLogoStripeView: BaseView {
         $0.isHidden = true
     }
 
-    // MARK: - override
+    // MARK: - Setup
 
     override func setUI() {
         isUserInteractionEnabled = false
@@ -47,11 +43,9 @@ final class OTTLogoStripeView: BaseView {
     }
 
     override func setHierarchy() {
-        addSubview(firstLogoImageView)
-        addSubview(secondLogoImageView)
-        addSubview(remainingBadgeView)
+        addSubviews(firstLogoImageView, secondLogoImageView, remainingBadgeView)
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         applyShadowIfNeeded(to: remainingBadgeView)
@@ -114,7 +108,7 @@ final class OTTLogoStripeView: BaseView {
             remainingBadgeView.isHidden = true
         }
     }
-
+    
     private func applyShadowIfNeeded(to view: UIView) {
         view.layer.masksToBounds = false
         view.layer.shadowColor = UIColor.black.cgColor

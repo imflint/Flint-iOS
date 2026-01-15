@@ -1,8 +1,8 @@
 //
-//  RemainingCountBadgeView.swift
+//  RemaingCountBadgeView.swift
 //  FLINT
 //
-//  Created by 소은 on 1/14/26.
+//  Created by 소은 on 1/13/26.
 //
 
 import UIKit
@@ -11,19 +11,21 @@ import SnapKit
 import Then
 
 final class RemainingCountBadgeView: BaseView {
-
-    //MARK: - private
-
+    
+    //MARK: - Property
+    
     private enum Metric {
         static let size: CGFloat = 28
     }
-
+    
+    //MARK: - Component
+    
     private let label = UILabel().then {
         $0.textAlignment = .center
     }
-
-    //MARK: - override
-
+    
+    //MARK: - Setup
+    
     override func setUI() {
         backgroundColor = .flintGray500
         layer.masksToBounds = true
@@ -32,7 +34,7 @@ final class RemainingCountBadgeView: BaseView {
     override func setHierarchy() {
         addSubview(label)
     }
-
+    
     override func setLayout() {
         label.snp.makeConstraints {
             $0.center.equalToSuperview()
@@ -43,14 +45,14 @@ final class RemainingCountBadgeView: BaseView {
             $0.height.equalTo(Metric.size)
         }
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         layer.cornerRadius = bounds.height / 2
     }
 
     //MARK: - configure
-
+    
     func configure(count: Int) {
         let text = "+\(count)"
         label.attributedText = .pretendard(.body2_m_14, text: text, color: .flintWhite)

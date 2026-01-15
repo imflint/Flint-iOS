@@ -12,5 +12,5 @@ protocol ReuseIdentifiable {
 }
 
 extension ReuseIdentifiable {
-    static var reuseIdentifier: String { String(describing: Self.self) }
+    static var reuseIdentifier: String { String(describing: self) }
 }

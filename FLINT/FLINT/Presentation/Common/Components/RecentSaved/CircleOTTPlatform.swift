@@ -1,10 +1,9 @@
 //
-//  CircleOTTPlatForm.swift
+//  CircleOTTPlatform.swift
 //  FLINT
 //
-//  Created by 소은 on 1/14/26.
+//  Created by 소은 on 1/13/26.
 //
-
 
 import UIKit
 
@@ -15,11 +14,11 @@ enum CircleOTTPlatform: CaseIterable, Hashable {
     case wave
     case disneyPlus
     case watcha
-
+    
     static let order: [CircleOTTPlatform] = [
         .netflix, .tving, .coupangPlay, .wave, .disneyPlus, .watcha
     ]
-
+    
     var smallLogoImage: UIImage? {
         switch self {
         case .netflix:     return UIImage.imgSmallNetflix1

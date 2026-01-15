@@ -12,7 +12,7 @@ import Then
 
 final class SavedContentItemView: BaseView {
 
-    // MARK: - Mode
+    // MARK: - Enum
 
     enum Mode: Equatable {
         case ottShortcutBookmark
@@ -20,27 +20,18 @@ final class SavedContentItemView: BaseView {
         case plain
     }
 
-    // MARK: - Event
+    // MARK: - Property
 
     var onTapBookmark: (() -> Void)?
     var onTapShortcut: (() -> Void)?
     var onTapCheckbox: ((Bool) -> Void)?
-
-    // MARK: - Metric
     
     private var isBookmarked: Bool = false
-
-    private enum Metric {
-        static let posterSize = CGSize(width: 100, height: 150)
-        
-    }
-
-    // MARK: - State
 
     private var mode: Mode = .ottShortcutBookmark
     private var infoTrailingConstraint: Constraint?
 
-    // MARK: - UI
+    // MARK: - Component
 
     private let posterImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -73,14 +64,10 @@ final class SavedContentItemView: BaseView {
         $0.contentHorizontalAlignment = .leading
         $0.isHidden = true
 
-//        $0.contentEdgeInsets = .zero
-//        $0.titleEdgeInsets = .zero
-
         if #available(iOS 15.0, *) {
             $0.configuration = nil
         }
     }
-
 
     private let bookmarkView = BookmarkView().then {
         $0.isHidden = true
@@ -162,45 +149,7 @@ final class SavedContentItemView: BaseView {
 
     // MARK: - Configure
 
-    struct ViewModel {
-        let posterImage: UIImage?
-        let title: String
-        let director: String
-        let year: String
-        let isOTTDisplayEligible: Bool
-
-
-        let isBookmarked: Bool
-        let bookmarkCount: Int?
-        let leadingPlatforms: [CircleOTTPlatform]?
-        let remainingPlatformCount: Int?
-
-        init(
-            posterImage: UIImage?,
-            title: String,
-            director: String,
-            year: String,
-            isOTTDisplayEligible: Bool = true,
-            isBookmarked: Bool = false,
-            bookmarkCount: Int? = nil,
-            leadingPlatforms: [CircleOTTPlatform]? = nil,
-            remainingPlatformCount: Int? = nil
-        ) {
-            self.posterImage = posterImage
-            self.title = title
-            self.director = director
-            self.year = year
-            self.isOTTDisplayEligible = isOTTDisplayEligible
-            self.isBookmarked = isBookmarked
-            self.bookmarkCount = bookmarkCount
-            self.leadingPlatforms = leadingPlatforms
-            self.remainingPlatformCount = remainingPlatformCount
-        }
-    }
-    
-    // MARK: - Configure
-
-    func configure(model: ViewModel, mode: Mode) {
+    func configure(model: SavedContentItemViewModel, mode: Mode) {
         self.mode = mode
         
         posterImageView.image = model.posterImage
@@ -294,7 +243,7 @@ final class SavedContentItemView: BaseView {
         checkboxButton.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
     }
     
-    private func updateShortcutAvailability(model: ViewModel) {
+    private func updateShortcutAvailability(model: SavedContentItemViewModel) {
         let hasOTT = !(model.leadingPlatforms?.isEmpty ?? true) || (model.remainingPlatformCount ?? 0) > 0
         let isEnabled = hasOTT && model.isOTTDisplayEligible
 

@@ -18,8 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let container = AppDIContainer.shared
         container.configureNetworking()
 
-        let viewController = UINavigationController(rootViewController: MainTabBarController())
-        viewController.setNavigationBarHidden(true, animated: false)
+        let viewController = TabBarViewController()
         window.rootViewController = viewController
 
         self.window = window
