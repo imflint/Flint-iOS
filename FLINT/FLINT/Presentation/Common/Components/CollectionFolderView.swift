@@ -12,7 +12,7 @@ import Then
 
 final class CollectionFolderView: BaseView {
     
-    //MARK: -
+    //MARK: - Property
     
     var onTapCard: (() -> Void)?
     var onTapBookmark: ((Bool) -> Void)?
@@ -116,7 +116,6 @@ final class CollectionFolderView: BaseView {
     }
     
     override func setLayout() {
-        
 
         cardContainerView.snp.makeConstraints {
             $0.top.leading.equalToSuperview()
@@ -176,7 +175,7 @@ final class CollectionFolderView: BaseView {
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).inset(1)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(0)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
