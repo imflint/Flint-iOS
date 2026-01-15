@@ -41,7 +41,7 @@ final class BookmarkView: BaseView {
         }
         
         countLabel.snp.makeConstraints {
-            $0.top.equalTo(bookmarkButton.snp.bottom).offset(4)
+            $0.top.equalTo(bookmarkButton.snp.bottom).offset(2)
             $0.centerX.equalTo(bookmarkButton.snp.centerX)
             $0.bottom.equalToSuperview()
         }
@@ -50,7 +50,7 @@ final class BookmarkView: BaseView {
     // MARK: - Custom Method
 
     private func updateIcon(isBookmarked: Bool) {
-        let image = isBookmarked ? UIImage.icBookmarkFill : UIImage.icBookmarkFillWhite
+        let image = isBookmarked ? UIImage.icBookmarkFill : UIImage.icBookmarkEmpty
         bookmarkButton.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
     }
 
