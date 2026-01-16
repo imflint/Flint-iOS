@@ -19,13 +19,13 @@ final class HomeViewController: BaseViewController<UIView> {
     }
 
     override func setUI() {
-        view.backgroundColor = .flintError200
+        rootView.backgroundColor = .flintError200
         
-        setNavigationBar(.init(left: .logo, title: "asdf", right: .text(title: "건너뛰기", color: .flintError500), backgroundStyle: .clear))
+        setNavigationBar(.init(left: .logo, title: "asdf", right: .text(title: "건너뛰기", color: .flintError500), backgroundStyle: .solid(.flintBackground)))
     }
 
     override func setHierarchy() {
-        view.addSubview(titleLabel)
+        rootView.addSubview(titleLabel)
     }
 
     override func setLayout() {
