@@ -40,7 +40,7 @@ final class BaseBottomSheetViewController: BaseViewController {
         show()
     }
     
-    // MARK: - BaseViewController
+    // MARK: - Setup
     
     override func setUI() {
         view.backgroundColor = .clear

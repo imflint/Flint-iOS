@@ -48,26 +48,17 @@ final class BaseBottomSheetView: BaseView {
     }
     
     private let titleLabel = UILabel().then {
-        $0.textColor = .flintWhite
-        $0.font = UIFont.pretendard(.head3_sb_18)
         $0.numberOfLines = 1
         $0.isHidden = true
     }
     
     private let countSaveUser = UILabel().then {
-        $0.textColor = .flintWhite
-        $0.font = UIFont.pretendard(.head3_sb_18)
         $0.numberOfLines = 1
         $0.isHidden = true
     }
     
     private let contentContainerView = UIView()
-    
-    // MARK: - State
-    
     private var titleText: String?
-    
-    
     private var contentTopToGrabber: Constraint?
     private var contentTopToTitle: Constraint?
     
@@ -78,11 +69,25 @@ final class BaseBottomSheetView: BaseView {
     ) {
         let hasTitle = (title != nil)
         
-        titleLabel.text = title
-        titleLabel.isHidden = !hasTitle
+        if let title {
+            titleLabel.attributedText = .pretendard(
+                .head3_sb_18,
+                text: title,
+                color: .flintGray50
+            )
+            titleLabel.isHidden = false
+        } else {
+            titleLabel.attributedText = nil
+            titleLabel.isHidden = true
+        }
+
         
         if let count {
-            countSaveUser.text = "\(count)"
+            countSaveUser.attributedText = .pretendard(
+                .head3_sb_18,
+                text: "\(count)",
+                color: .flintWhite
+            )
             countSaveUser.isHidden = !hasTitle
         } else {
             countSaveUser.text = nil
@@ -105,17 +110,12 @@ final class BaseBottomSheetView: BaseView {
         }
     }
     
-    // MARK: - BaseView
+    // MARK: - Setup
     
     override func setUI() {
-        addSubview(dimView)
-        addSubview(containerView)
-        
-        containerView.addSubview(grabberView)
-        
-        containerView.addSubview(titleStackView)
-        titleStackView.addArrangedSubview(titleLabel)
-        titleStackView.addArrangedSubview(countSaveUser)
+        addSubviews(dimView, containerView)
+        containerView.addSubviews(grabberView, titleStackView)
+        titleStackView.addArrangedSubviews(titleLabel, countSaveUser)
         
         containerView.addSubview(contentContainerView)
         
