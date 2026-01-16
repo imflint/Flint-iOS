@@ -80,7 +80,7 @@ final class MoreNoMoreCollectionItemCell: BaseCollectionViewCell {
 
         titleLabel.snp.makeConstraints {
             $0.leading.equalTo(profileImageView.snp.trailing).offset(12)
-            $0.trailing.equalToSuperview().inset(18)
+            $0.trailing.equalToSuperview().inset(32)
             $0.bottom.equalTo(profileImageView.snp.centerY).offset(-1)
         }
 
