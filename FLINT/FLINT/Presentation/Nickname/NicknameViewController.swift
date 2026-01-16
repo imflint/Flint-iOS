@@ -15,6 +15,7 @@ class NicknameViewController: BaseViewController<NicknameView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setNavigationBar(.init(left: .back))
         hideKeyboardWhenTappedAround()
         addActions()
     }
@@ -81,13 +82,13 @@ class NicknameViewController: BaseViewController<NicknameView> {
     }
     
     private func presentAuthAlert() {
-        let alert = UIAlertController(title: "앨범 접근 권한이 없습니다.", message: "설정으로 이동하시겠습니까?", preferredStyle: .alert)
+        let alert = UIAlertController(title: "앨범 접근 권한이 없습니다.", message: "설정에서 Flint의 사진 접근 권한을 허용해 주세요.", preferredStyle: .alert)
         
-        let selectAction = UIAlertAction(title: "설정으로 이동", style: .default, handler: openSettings(_:))
         let deleteAction = UIAlertAction(title: "취소", style: .destructive)
+        let selectAction = UIAlertAction(title: "설정으로 이동", style: .default, handler: openSettings(_:))
         
-        alert.addAction(selectAction)
         alert.addAction(deleteAction)
+        alert.addAction(selectAction)
         
         present(alert, animated: true)
     }

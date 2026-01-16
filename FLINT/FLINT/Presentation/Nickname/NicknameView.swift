@@ -72,7 +72,7 @@ final class NicknameView: BaseView {
     override func setLayout() {
         profileImageSettingView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(100)
+            $0.top.equalToSuperview().inset(12)
         }
         nicknameStackView.snp.makeConstraints {
             $0.top.equalTo(profileImageSettingView.snp.bottom).offset(24)
