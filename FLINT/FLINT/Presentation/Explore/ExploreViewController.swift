@@ -59,7 +59,7 @@ final class ExploreViewController: BaseViewController<ExploreView> {
 
 // MARK: - UICollectionViewDataSource
 
-extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension ExploreViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // TODO: - Logic 연결할 것!!
         return 3 + 1
