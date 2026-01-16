@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let container = AppDIContainer.shared
         container.configureNetworking()
 
-        let viewController = TabBarViewController()
+        let viewController = MoreNoMoreCollectionTableExampleViewController()
         window.rootViewController = viewController
 
         self.window = window
