@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-final class BaseBottomSheetViewController: BaseViewController {
+final class BaseBottomSheetViewController: UIViewController {
     
     private let content: BottomSheetContent
     private let titleText: String?
@@ -37,12 +37,16 @@ final class BaseBottomSheetViewController: BaseViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        setUI()
+        setHierarchy()
+        setLayout()
+        
         show()
     }
     
     // MARK: - Setup
     
-    override func setUI() {
+    private func setUI() {
         view.backgroundColor = .clear
         
         let resolvedCount: Int? = {
@@ -80,11 +84,11 @@ final class BaseBottomSheetViewController: BaseViewController {
         sheetView.layoutIfNeeded()
     }
     
-    override func setHierarchy() {
+    private func setHierarchy() {
         view.addSubview(sheetView)
     }
     
-    override func setLayout() {
+    private func setLayout() {
         sheetView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.bottom.equalToSuperview()
