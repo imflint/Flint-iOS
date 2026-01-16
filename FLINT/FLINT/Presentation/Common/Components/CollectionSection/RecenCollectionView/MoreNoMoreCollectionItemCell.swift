@@ -12,8 +12,6 @@ import Then
 
 final class MoreNoMoreCollectionItemCell: BaseCollectionViewCell {
 
-    static let reuseIdentifier = "MoreNoMoreCollectionItemCell"
-
     private let posterImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
