@@ -9,7 +9,6 @@ import UIKit
 
 import SnapKit
 import Then
-import Network
 
 class ExploreCollectionViewCell: BaseCollectionViewCell {
     
@@ -51,7 +50,7 @@ class ExploreCollectionViewCell: BaseCollectionViewCell {
     // MARK: - Setup
     
     override func setHierarchy() {
-        addSubviews(
+        contentView.addSubviews(
             collectionImageView,
             gradientView,
             collectionDetailButton,

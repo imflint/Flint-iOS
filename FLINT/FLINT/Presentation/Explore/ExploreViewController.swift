@@ -13,8 +13,17 @@ import Then
 
 final class ExploreViewController: BaseViewController<ExploreView> {
     
+    // MARK: - Component
+    
     private let statusBarBackgroundView = UIView().then {
         $0.backgroundColor = .flintBackground
+    }
+    
+    private let gradientBackgroundView = FixedGradientView().then {
+        $0.colors = [.flintGray600, .flintGray700]
+        $0.locations = [0, 1]
+        $0.startPoint = .init(x: 0.1, y: 0)
+        $0.endPoint = .init(x: 0.5, y: 0.6)
     }
     
     // MARK: - Basic
@@ -24,6 +33,7 @@ final class ExploreViewController: BaseViewController<ExploreView> {
         
         navigationBarView.apply(.init(left: .logo))
         rootView.mainCollectionView.register(ExploreCollectionViewCell.self)
+        rootView.mainCollectionView.register(ExploreEmptyCollectionViewCell.self)
         rootView.mainCollectionView.delegate = self
         rootView.mainCollectionView.dataSource = self
     }
@@ -31,12 +41,15 @@ final class ExploreViewController: BaseViewController<ExploreView> {
     // MARK: - Setup
     
     override func setHierarchy() {
+        view.addSubviews(gradientBackgroundView, statusBarBackgroundView)
         super.setHierarchy()
-        view.addSubview(statusBarBackgroundView)
     }
     
     override func setLayout() {
         super.setLayout()
+        gradientBackgroundView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
         statusBarBackgroundView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview()
             $0.bottom.equalTo(navigationBarView.snp.top)
@@ -46,13 +59,19 @@ final class ExploreViewController: BaseViewController<ExploreView> {
 
 // MARK: - UICollectionViewDataSource
 
-extension ExploreViewController: UICollectionViewDataSource {
+extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // TODO: - Logic 연결할 것!!
-        return 3
+        return 3 + 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.row == 3 {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExploreEmptyCollectionViewCell.reuseIdentifier, for: indexPath) as? ExploreEmptyCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            return cell
+        }
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExploreCollectionViewCell.reuseIdentifier, for: indexPath) as? ExploreCollectionViewCell else {
             return UICollectionViewCell()
         }
@@ -72,5 +91,23 @@ extension ExploreViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension ExploreViewController: UIScrollViewDelegate {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        guard let collectionView = scrollView as? UICollectionView else { return }
+        guard let indexPath = collectionView.indexPathForItem(at: CGPoint(x: collectionView.bounds.midX, y: collectionView.bounds.midY)) else { return }
+        UIView.animate(withDuration: 0.25, animations: { [weak self] in
+            if indexPath.row == 3 {
+                self?.navigationBarView.apply(.init(left: .logo, backgroundStyle: .clear))
+                self?.statusBarBackgroundView.backgroundColor = .clear
+            } else {
+                self?.navigationBarView.apply(.init(left: .logo))
+                self?.statusBarBackgroundView.backgroundColor = .flintBackground
+            }
+        })
     }
 }

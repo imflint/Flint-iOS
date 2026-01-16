@@ -14,13 +14,6 @@ class ExploreView: BaseView {
     
     // MARK: - Component
     
-    let gradientBackgroundView = FixedGradientView().then {
-        $0.colors = [.flintGray600, .flintGray700]
-        $0.locations = [0, 1]
-        $0.startPoint = .init(x: 0.1, y: 0)
-        $0.endPoint = .init(x: 0.5, y: 0.6)
-    }
-    
     let mainCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout().then {
@@ -53,17 +46,14 @@ class ExploreView: BaseView {
     // MARK: - Setup
     
     override func setUI() {
-        backgroundColor = .flintBackground
+        backgroundColor = .clear
     }
     
     override func setHierarchy() {
-        addSubviews(gradientBackgroundView, mainCollectionView)
+        addSubviews(mainCollectionView)
     }
     
     override func setLayout() {
-        gradientBackgroundView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
         mainCollectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
