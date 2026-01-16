@@ -6,10 +6,11 @@
 //
 
 import UIKit
+
 import SnapKit
 import Then
 
-final class HomeViewController: BaseViewController {
+final class HomeViewController: BaseViewController<UIView> {
 
     private let titleLabel = UILabel().then {
         $0.attributedText = .pretendard(.head1_sb_22, text: "Home")
@@ -18,7 +19,9 @@ final class HomeViewController: BaseViewController {
     }
 
     override func setUI() {
-        view.backgroundColor = .flintBackground
+        view.backgroundColor = .flintError200
+        
+        setNavigationBar(.init(left: .logo, title: "asdf", right: .text(title: "건너뛰기", color: .flintError500), backgroundStyle: .clear))
     }
 
     override func setHierarchy() {

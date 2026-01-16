@@ -8,15 +8,9 @@
 import PhotosUI
 import UIKit
 
-class NicknameViewController: BaseViewController {
-    
-    private let rootView = NicknameView()
+class NicknameViewController: BaseViewController<NicknameView> {
     
     // MARK: - Basic
-    
-    override func loadView() {
-        view = rootView
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

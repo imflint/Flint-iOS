@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class ExploreViewController: BaseViewController {
+final class ExploreViewController: BaseViewController<UIView> {
 
     private let titleLabel = UILabel().then {
         $0.attributedText = .pretendard(.head1_sb_22, text: "explore")
