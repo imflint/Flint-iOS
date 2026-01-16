@@ -23,6 +23,7 @@ final class ProfileImageSettingView: BaseView {
     
     let settingButton = UIButton().then {
         $0.setImage(.icProfileChange, for: .normal)
+        $0.isHidden = true
     }
     
     // MARK: - Basic
