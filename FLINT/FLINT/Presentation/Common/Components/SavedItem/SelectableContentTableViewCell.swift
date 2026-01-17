@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class SavedContentSelectableTableViewCell: BaseTableViewCell {
+final class SelectableContentTableViewCell: BaseTableViewCell {
 
     // MARK: - Event
     
