@@ -23,8 +23,18 @@ final class MoreNoMoreCollectionItemCell: BaseCollectionViewCell {
         $0.isUserInteractionEnabled = false
     }
 
-    private let highGradientLayer = UpFadeGradientView()
-    private let bottomGradientLayer = DownFadeGradientView()
+    private let highGradientLayer = GradientView().then {
+        $0.colors = [.black.withAlphaComponent(0.4), .black.withAlphaComponent(0.0)]
+        $0.locations = [0.0, 1.0]
+        $0.startPoint = CGPoint(x: 0.5, y: 0.0)
+        $0.endPoint = CGPoint(x: 0.5, y: 1.0)
+    }
+    private let bottomGradientLayer = GradientView().then {
+        $0.colors = [.black.withAlphaComponent(0.0), .black.withAlphaComponent(0.8)]
+        $0.locations = [0.0, 1.0]
+        $0.startPoint = CGPoint(x: 0.5, y: 0.0)
+        $0.endPoint = CGPoint(x: 0.5, y: 1.0)
+    }
 
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
