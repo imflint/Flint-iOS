@@ -14,10 +14,19 @@ final class HomeGreetingTableViewCell: BaseTableViewCell {
     
     // MARK: - UI
     
+    
     private let backgroundImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = false
+    }
+    
+    private let innerShadowLayer = CAShapeLayer()
+    
+    private let innerShadowOverlayView = UIView().then {
+        $0.backgroundColor = .clear
+        $0.isUserInteractionEnabled = false
+        $0.clipsToBounds = true
     }
     
     private let greetingLabel = UILabel().then {
@@ -27,13 +36,15 @@ final class HomeGreetingTableViewCell: BaseTableViewCell {
     // MARK: - Setup
     
     override func setHierarchy() {
-        contentView.addSubviews(backgroundImageView)
-        contentView.addSubviews(greetingLabel)
-        
+        contentView.addSubviews(backgroundImageView, innerShadowOverlayView, greetingLabel)
     }
     
     override func setLayout() {
         backgroundImageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        innerShadowOverlayView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
@@ -47,21 +58,52 @@ final class HomeGreetingTableViewCell: BaseTableViewCell {
     override func setStyle() {
         backgroundColor = .clear
         contentView.backgroundColor = .clear
-        
         backgroundImageView.image = UIImage.imgBackgroundGradiantMiddle
+        
+        innerShadowLayer.shadowColor = UIColor.flintBackground.cgColor
+        innerShadowLayer.shadowOffset = CGSize(width: 0, height: 30)
+        innerShadowLayer.shadowOpacity = 0.35
+        innerShadowLayer.shadowRadius = 40
+        innerShadowLayer.fillRule = .evenOdd
+        innerShadowLayer.fillColor = UIColor.black.cgColor
+        
+        if innerShadowLayer.superlayer == nil {
+            innerShadowOverlayView.layer.addSublayer(innerShadowLayer)
+        }
+    }
+    
+    override func layoutSubviews() {
+            super.layoutSubviews()
+            updateInnerShadowPath()
+        }
+    
+    
+    private func updateInnerShadowPath() {
+        let bounds = innerShadowOverlayView.bounds
+        guard bounds.width > 0, bounds.height > 0 else { return }
+
+        let inset = -innerShadowLayer.shadowRadius * 2.0
+
+        let outerPath = UIBezierPath(rect: bounds.insetBy(dx: inset, dy: inset))
+        let innerPath = UIBezierPath(rect: bounds)
+
+        outerPath.append(innerPath)
+        innerShadowLayer.path = outerPath.cgPath
+        innerShadowLayer.frame = bounds
     }
     
     // MARK: - Configure
     
     func configure(userName: String) {
         greetingLabel.attributedText = .pretendard(
-                    .head1_sb_22,
-                    text: "반가워요, \(userName) 님\n오늘은 어떤 작품이 끌리세요?",
-                    color: .flintWhite
-                )
+            .head1_sb_22,
+            text: "반가워요, \(userName) 님\n오늘은 어떤 작품이 끌리세요?",
+            color: .flintWhite
+        )
     }
     
-    //TODO: - 지워도되려나?!
+    //TODO: - 있어어야하는지없어야하는지 추후에 model만드면서 수정
+    
     override func prepare() {
         greetingLabel.text = nil
     }
