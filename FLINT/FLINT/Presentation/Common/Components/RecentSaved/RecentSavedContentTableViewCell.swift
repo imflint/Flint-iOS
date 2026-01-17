@@ -12,7 +12,7 @@ import Then
 
 final class RecentSavedContentTableViewCell: BaseTableViewCell {
     
-    static let reuseIdentifier = "RecentSavedContentHorizontalListTableViewCell"
+   // static let reuseIdentifier = "RecentSavedContentHorizontalListTableViewCell"
     
     var onTapItem: ((RecentSavedContentItem) -> Void)?
     
