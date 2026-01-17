@@ -61,7 +61,7 @@ final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         type: .primary,
         isOn: false,
         knobSize: 24,
-        contentInset: 3
+        contentInset: 2
     )
     private let textView = FlintTextView(placeholder: "이 작품의 매력 포인트를 적어주세요.")
     
@@ -135,7 +135,7 @@ final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         
         yearLabel.snp.makeConstraints {
             $0.top.equalTo(directorLabel.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview().inset(24)
         }
         
@@ -188,7 +188,7 @@ final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         posterImageView.image = item.posterImage
 
         titleLabel.attributedText = .pretendard(.head3_m_18, text: item.title, color: .flintWhite)
-        directorLabel.attributedText = .pretendard(.body1_b_16, text: item.director, color: .flintGray300)
+        directorLabel.attributedText = .pretendard(.body1_r_16, text: item.director, color: .flintGray300)
         yearLabel.attributedText = .pretendard(.body1_r_16, text: item.year, color: .flintGray300)
 
         sectionTitleLabel.attributedText = .pretendard(.head3_m_18, text: "이 작품을 선택한 이유", color: .flintWhite)
