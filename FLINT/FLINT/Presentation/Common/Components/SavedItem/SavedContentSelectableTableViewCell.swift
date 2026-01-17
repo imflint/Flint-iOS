@@ -11,8 +11,6 @@ import SnapKit
 import Then
 
 final class SavedContentSelectableTableViewCell: BaseTableViewCell {
-    
-    static let reuseIdentifier = "SavedContentSelectableTableViewCell"
 
     // MARK: - Event
     
