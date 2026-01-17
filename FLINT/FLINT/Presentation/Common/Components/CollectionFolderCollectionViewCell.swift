@@ -85,7 +85,7 @@ final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        firstPosterImageView.layer.cornerRadius = 14
+        firstPosterImageView.layer.cornerRadius = 12
         firstPosterImageView.clipsToBounds = true
         
         secondPosterImageView.layer.cornerRadius = 12
@@ -106,7 +106,7 @@ final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
     // MARK: - Setup
     
     override func setStyle() {
-        self.backgroundColor = .red
+        self.backgroundColor = .clear
         
         secondPosterImageView.transform = CGAffineTransform(rotationAngle: .pi / 12)
         
@@ -122,9 +122,8 @@ final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
     override func setHierarchy() {
         contentView.addSubviews(cardContainerView, textContainer)
         
-        cardContainerView.addSubview(firstPosterImageView)
-        cardContainerView.addSubview(secondPosterShadowView)
-        cardContainerView.addSubview(cardContentView)
+        cardContainerView.addSubviews(firstPosterImageView, secondPosterShadowView, cardContentView)
+        
         secondPosterShadowView.addSubview(secondPosterImageView)
         
         cardContentView.addSubviews(
