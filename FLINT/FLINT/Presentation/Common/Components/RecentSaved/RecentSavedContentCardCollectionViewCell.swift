@@ -14,22 +14,24 @@ final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewCell {
     
     //MARK: - UI
     
+    private let posterContainerView = UIView().then {
+        $0.layer.cornerRadius = 12
+        $0.layer.masksToBounds = true
+    }
+
     private let posterImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 12
     }
+
 
     private let logoStripView = OTTLogoStripeView()
     
     private let titleLabel = UILabel().then {
-        $0.textColor = .flintWhite
         $0.numberOfLines = 1
         $0.lineBreakMode = .byTruncatingTail
     }
     
     private let yearLabel = UILabel().then {
-        $0.textColor = .flintWhite
         $0.numberOfLines = 1
     }
     
@@ -40,17 +42,21 @@ final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewCell {
     }
     
     override func setHierarchy() {
-        contentView.addSubviews(posterImageView, titleLabel, yearLabel)
-        
-        posterImageView.addSubview(logoStripView)
+        contentView.addSubviews(posterContainerView, titleLabel, yearLabel)
+        posterContainerView.addSubviews(posterImageView, logoStripView)
     }
     
     override func setLayout() {
-        posterImageView.snp.makeConstraints {
+        posterContainerView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview()
+            $0.width.equalTo(120)
             $0.height.equalTo(180)
         }
-        
+
+        posterImageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
         logoStripView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
             $0.leading.equalToSuperview().inset(8)

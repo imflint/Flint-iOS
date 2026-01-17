@@ -18,18 +18,11 @@ final class FilmPreviewCollectionViewCell: BaseCollectionViewCell {
         $0.clipsToBounds = true
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .flintGray100
+        $0.layer.cornerRadius = 40
     }
      
     let xButton = UIButton().then {
         $0.setImage(.icDeselect, for: .normal)
-    }
-    
-    // MARK: - Basic
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        imageView.layer.cornerRadius = (bounds.height - 12) / 2
     }
     
     // MARK: - Setup
