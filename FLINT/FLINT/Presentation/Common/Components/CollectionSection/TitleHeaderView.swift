@@ -1,0 +1,91 @@
+//
+//  TitleHeader.swift
+//  FLINT
+//
+//  Created by 소은 on 1/11/26.
+//
+
+import UIKit
+
+import SnapKit
+import Then
+
+final class TitleHeaderView: BaseView {
+    
+    // MARK: - Type
+    
+    enum HeaderStyle {
+        case normal
+        case more
+    }
+    
+    // MARK: - Public Event
+    
+    var onTapMore: (() -> Void)?
+    
+    // MARK: - UI
+    
+
+    private let titleLabel = UILabel().then {
+        $0.textColor = .flintWhite
+        $0.numberOfLines = 1
+    }
+
+    private let subtitleLabel = UILabel().then {
+        $0.textColor = .flintGray200
+        $0.numberOfLines = 1
+    }
+    
+    private let moreButton = UIButton().then {
+        $0.setImage(.icMore, for: .normal)
+    }
+
+    // MARK: - override
+
+    override func setUI() {
+        addSubviews(titleLabel, subtitleLabel, moreButton)
+        setAction()
+    }
+
+    override func setLayout() {
+        titleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(16)
+        }
+
+        subtitleLabel.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(4)
+            $0.leading.trailing.equalTo(titleLabel)
+            $0.bottom.equalToSuperview()
+        }
+        
+        moreButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(12)
+        }
+    }
+    
+    private func setAction() {
+        moreButton.addTarget(self, action: #selector(didTapMore), for: .touchUpInside)
+    }
+    
+    @objc private func didTapMore() {
+        onTapMore?()
+    }
+    
+    //MARK: - configure
+    
+    func configure(style: HeaderStyle, title: String, subtitle: String) {
+        titleLabel.text = title
+        subtitleLabel.text = subtitle
+        
+        if style == .more {
+            moreButton.isHidden = false
+        } else {
+            moreButton.isHidden = true
+        }
+       
+        titleLabel.attributedText = NSAttributedString.pretendard(.head3_sb_18, text: title)
+        subtitleLabel.attributedText = NSAttributedString.pretendard(.body2_r_14, text: subtitle)
+    }
+}
