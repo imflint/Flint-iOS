@@ -19,8 +19,6 @@ final class TitleHeaderTableViewCell: BaseTableViewCell {
         case more
     }
 
-    static let reuseIdentifier = "TitleHeaderTableViewCell"
-
     // MARK: - Public Event
 
     var onTapMore: (() -> Void)?
