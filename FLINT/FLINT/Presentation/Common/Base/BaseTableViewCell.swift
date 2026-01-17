@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BaseTableViewCell: UITableViewCell {
+class BaseTableViewCell: UITableViewCell, ReuseIdentifiable {
 
     // MARK: - Init
     

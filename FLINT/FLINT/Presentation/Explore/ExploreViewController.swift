@@ -15,10 +15,6 @@ final class ExploreViewController: BaseViewController<ExploreView> {
     
     // MARK: - Component
     
-    private let statusBarBackgroundView = UIView().then {
-        $0.backgroundColor = .flintBackground
-    }
-    
     private let gradientBackgroundView = FixedGradientView().then {
         $0.colors = [.flintGray600, .flintGray700]
         $0.locations = [0, 1]
@@ -31,7 +27,7 @@ final class ExploreViewController: BaseViewController<ExploreView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationBarView.apply(.init(left: .logo))
+        setNavigationBar(.init(left: .logo))
         rootView.mainCollectionView.register(ExploreCollectionViewCell.self)
         rootView.mainCollectionView.register(ExploreEmptyCollectionViewCell.self)
         rootView.mainCollectionView.delegate = self
@@ -40,19 +36,15 @@ final class ExploreViewController: BaseViewController<ExploreView> {
     
     // MARK: - Setup
     
-    override func setHierarchy() {
-        view.addSubviews(gradientBackgroundView, statusBarBackgroundView)
-        super.setHierarchy()
+    override func setBaseHierarchy() {
+        view.addSubviews(gradientBackgroundView)
+        super.setBaseHierarchy()
     }
     
-    override func setLayout() {
-        super.setLayout()
+    override func setBaseLayout() {
+        super.setBaseLayout()
         gradientBackgroundView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-        }
-        statusBarBackgroundView.snp.makeConstraints {
-            $0.top.horizontalEdges.equalToSuperview()
-            $0.bottom.equalTo(navigationBarView.snp.top)
         }
     }
 }
@@ -102,11 +94,9 @@ extension ExploreViewController: UIScrollViewDelegate {
         guard let indexPath = collectionView.indexPathForItem(at: CGPoint(x: collectionView.bounds.midX, y: collectionView.bounds.midY)) else { return }
         UIView.animate(withDuration: 0.25, animations: { [weak self] in
             if indexPath.row == 3 {
-                self?.navigationBarView.apply(.init(left: .logo, backgroundStyle: .clear))
-                self?.statusBarBackgroundView.backgroundColor = .clear
+                self?.setNavigationBar(.init(left: .logo, backgroundStyle: .clear))
             } else {
-                self?.navigationBarView.apply(.init(left: .logo))
-                self?.statusBarBackgroundView.backgroundColor = .flintBackground
+                self?.setNavigationBar(.init(left: .logo))
             }
         })
     }

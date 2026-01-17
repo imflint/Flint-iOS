@@ -40,15 +40,15 @@ class BaseViewController<RootView: UIView>: UIViewController {
     
     // MARK: - Setup
     
-    private func setBaseUI() {
+    func setBaseUI() {
         
     }
     
-    private func setBaseHierarchy() {
+    func setBaseHierarchy() {
         view.addSubviews(statusBarBackgroundView, navigationBarView, rootView)
     }
     
-    private func setBaseLayout() {
+    func setBaseLayout() {
         statusBarBackgroundView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview()
             $0.bottom.equalTo(navigationBarView.snp.top)
