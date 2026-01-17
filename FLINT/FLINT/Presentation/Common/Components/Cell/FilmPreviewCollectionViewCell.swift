@@ -19,7 +19,7 @@ final class FilmPreviewCollectionViewCell: BaseCollectionViewCell {
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .flintGray100
     }
-    
+     
     let xButton = UIButton().then {
         $0.setImage(.icDeselect, for: .normal)
     }
