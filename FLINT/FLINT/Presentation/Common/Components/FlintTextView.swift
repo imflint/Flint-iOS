@@ -93,17 +93,16 @@ final class FlintTextView: UITextView {
 
 extension FlintTextView: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
+        placeholderLabel.isHidden = !textView.text.isEmpty
         guard let maxLength, let currentText = textView.text else { return }
         if currentText.count > maxLength {
             let newText = currentText.prefix(maxLength)
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
                 textView.text = String(newText)
-                placeholderLabel.isHidden = !textView.text.isEmpty
                 onLengthChanged?(textView.text?.count ?? 0, maxLength)
             }
         }
-        placeholderLabel.isHidden = !textView.text.isEmpty
         onLengthChanged?(textView.text?.count ?? 0, maxLength)
     }
 }
