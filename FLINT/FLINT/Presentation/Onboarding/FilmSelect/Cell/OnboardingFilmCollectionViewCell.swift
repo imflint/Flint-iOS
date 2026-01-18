@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-class OnboardingFilmCollectionViewCell: BaseCollectionViewCell {
+final class OnboardingFilmCollectionViewCell: BaseCollectionViewCell {
     
     let imageView = UIImageView().then {
         $0.backgroundColor = .flintGray100
@@ -44,7 +44,7 @@ class OnboardingFilmCollectionViewCell: BaseCollectionViewCell {
     override func setLayout() {
         imageView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(contentView.snp.width).multipliedBy(3/2)
+            $0.height.equalTo(contentView.snp.width).multipliedBy(3.0 / 2.0)
         }
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(8)

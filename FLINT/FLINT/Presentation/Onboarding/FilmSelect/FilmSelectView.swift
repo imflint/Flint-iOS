@@ -10,7 +10,11 @@ import UIKit
 import SnapKit
 import Then
 
-class FilmSelectView: BaseView {
+final class FilmSelectView: BaseView {
+    
+    // MARK: - Constraint
+    
+    var titleViewTopOffset: CGFloat = 0
     
     // MARK: - Component
     
@@ -26,6 +30,9 @@ class FilmSelectView: BaseView {
         $0.textColor = .flintWhite
     }
     
+    let titleViewBackgroundView = UIView().then {
+        $0.backgroundColor = .flintBackground
+    }
     let titleView = UIView().then {
         $0.backgroundColor = .flintBackground
     }
@@ -67,17 +74,18 @@ class FilmSelectView: BaseView {
     }
     
     let filmCollectionView: UICollectionView = {
+        let uselessHeight: CGFloat = 0
         let item = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1),
-                heightDimension: .fractionalHeight(1)
+                widthDimension: .fractionalWidth(1/3),
+                heightDimension: .estimated(uselessHeight)
             )
         )
         
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .estimated(238)
+                heightDimension: .estimated(uselessHeight)
             ),
             repeatingSubitem: item,
             count: 3
@@ -90,7 +98,10 @@ class FilmSelectView: BaseView {
         
         let layout = UICollectionViewCompositionalLayout(section: section)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        section.contentInsets = .zero
         collectionView.backgroundColor = .flintBackground
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.register(OnboardingFilmCollectionViewCell.self)
         return collectionView
     }()
@@ -117,9 +128,10 @@ class FilmSelectView: BaseView {
     
     override func setHierarchy() {
         addSubviews(
-            progressInfoView,
             filmCollectionView,
+            titleViewBackgroundView,
             titleView,
+            progressInfoView,
             searchView,
             filmPreviewCollectionView,
             nextButton,
@@ -145,8 +157,11 @@ class FilmSelectView: BaseView {
             $0.bottom.equalToSuperview().inset(11)
         }
         titleView.snp.makeConstraints {
-            $0.top.equalTo(progressView.snp.bottom)
+            $0.top.equalTo(progressInfoView.snp.bottom).offset(titleViewTopOffset)
             $0.horizontalEdges.equalToSuperview()
+        }
+        titleViewBackgroundView.snp.makeConstraints {
+            $0.edges.equalTo(titleView)
         }
         titleStackView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
@@ -176,6 +191,15 @@ class FilmSelectView: BaseView {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(48)
             $0.bottom.equalTo(safeAreaLayoutGuide)
+        }
+    }
+    
+    // MARK: - Global Function
+    
+    func updateTopBarViewYPosition(_ y: CGFloat) {
+        titleViewTopOffset = y
+        titleView.snp.updateConstraints {
+            $0.top.equalTo(progressInfoView.snp.bottom).offset(y)
         }
     }
 }
