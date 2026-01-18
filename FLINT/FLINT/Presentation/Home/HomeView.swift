@@ -11,28 +11,49 @@ import SnapKit
 import Then
 
 final class HomeView: BaseView {
-
+    
     // MARK: - UI
-
+    
     let tableView = UITableView(frame: .zero, style: .plain).then {
         $0.backgroundColor = .flintBackground
         $0.separatorStyle = .none
         $0.showsVerticalScrollIndicator = false
-        $0.contentInsetAdjustmentBehavior = .never
-        $0.estimatedRowHeight = 100
-        $0.rowHeight = UITableView.automaticDimension
     }
-
+    
+    let floatingButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "img_fab"), for: .normal)
+    }
+    
     // MARK: - BaseView
-
+    
     override func setUI() {
         backgroundColor = .flintBackground
-        addSubview(tableView)
+        addSubviews(tableView, floatingButton)
+        bringSubviewToFront(floatingButton)
     }
-
+    
     override func setLayout() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        
+        floatingButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(20)
+            $0.size.equalTo(48)
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        floatingButton.layer.applyShadow(
+            color: .black,
+            alpha: 0.3,
+            blur: 16,
+            spread: 0,
+            x: 0,
+            y: 0,
+            cornerRadius: 24
+        )
     }
 }

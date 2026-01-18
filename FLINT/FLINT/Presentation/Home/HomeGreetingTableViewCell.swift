@@ -21,6 +21,12 @@ final class HomeGreetingTableViewCell: BaseTableViewCell {
         $0.isUserInteractionEnabled = false
     }
     
+    private let blackOverlayView = UIView().then {
+        $0.backgroundColor = .black.withAlphaComponent(0.3)
+        $0.isUserInteractionEnabled = false
+        $0.clipsToBounds = true
+    }
+    
     private let innerShadowLayer = CAShapeLayer()
     
     private let innerShadowOverlayView = UIView().then {
@@ -36,11 +42,15 @@ final class HomeGreetingTableViewCell: BaseTableViewCell {
     // MARK: - Setup
     
     override func setHierarchy() {
-        contentView.addSubviews(backgroundImageView, innerShadowOverlayView, greetingLabel)
+        contentView.addSubviews(backgroundImageView,blackOverlayView, innerShadowOverlayView, greetingLabel)
     }
     
     override func setLayout() {
         backgroundImageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        blackOverlayView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
@@ -101,8 +111,6 @@ final class HomeGreetingTableViewCell: BaseTableViewCell {
             color: .flintWhite
         )
     }
-    
-    //TODO: - 있어어야하는지없어야하는지 추후에 model만드면서 수정
     
     override func prepare() {
         greetingLabel.text = nil

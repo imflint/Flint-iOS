@@ -53,6 +53,9 @@ final class RecentSavedContentTableViewCell: BaseTableViewCell {
     override func setLayout() {
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
+            $0.height.equalTo(226)   
         }
     }
     
