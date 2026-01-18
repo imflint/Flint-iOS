@@ -13,70 +13,32 @@ import Then
 
 final class PreferenceExampleView: BaseView {
 
-    private let titleLabel = UILabel().then {
-        $0.attributedText = .pretendard(.head1_sb_22, text: "Preference Chips (Test)", color: .white)
-    }
-
-    private let scrollView = UIScrollView().then {
-        $0.showsHorizontalScrollIndicator = false
-    }
-
-    private let contentView = UIView()
-
-    private let chipStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 12
-        $0.alignment = .center
-    }
+    private let rankedView = PreferenceRankedChipView()
 
     override func setHierarchy() {
-        addSubviews(titleLabel, scrollView)
-        scrollView.addSubview(contentView)
-        contentView.addSubview(chipStackView)
-        
-        let dummyData: [KeywordDTO] = [
-            .init(color: .orange, rank: 1, name: "힐링", percentage: 85, imageUrl: "https://picsum.photos/seed/heal/80"),
-            .init(color: .green,  rank: 2, name: "설레는", percentage: 72, imageUrl: "https://picsum.photos/seed/excite/80"),
-            .init(color: .blue,   rank: 3, name: "잔잔한", percentage: 61, imageUrl: "https://picsum.photos/seed/calm/80"),
-            .init(color: .yellow, rank: 4, name: "디스토피아ㅏㅏㅏㅏㅏ", percentage: 55, imageUrl: "https://picsum.photos/seed/pop/80"),
-            .init(color: .pink,   rank: 5, name: "로맨틱", percentage: 49, imageUrl: "https://picsum.photos/seed/romance/80")
-        ]
-
-        chipStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-
-        dummyData.forEach { dto in
-            let chip = PreferenceChip()
-            chip.configure(dto: dto)
-
-            chipStackView.addArrangedSubview(chip)
-        }
+        addSubview(rankedView)
     }
 
     override func setLayout() {
         backgroundColor = .flintGray500
-        titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(16)
-            $0.leading.trailing.equalToSuperview().inset(16)
+
+        rankedView.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
 
-        scrollView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(50)
-            $0.bottom.equalToSuperview().inset(16)
-        }
+        let dummyData: [KeywordDTO] = [
+            .init(color: .blue, rank: 1, name: "영화", percentage: 0, imageUrl: "https://picsum.photos/seed/1/80"),
+            .init(color: .pink, rank: 2, name: "SF",   percentage: 0, imageUrl: "https://picsum.photos/seed/2/80"),
+            .init(color: .green, rank: 3, name: "슬픈", percentage: 0, imageUrl: "https://picsum.photos/seed/3/80"),
+            .init(color: .orange, rank: 4, name: "슬픈", percentage: 0, imageUrl: "https://picsum.photos/seed/4/80"),
+            .init(color: .yellow, rank: 5, name: "액션", percentage: 0, imageUrl: "https://picsum.photos/seed/5/80"),
+            .init(color: .pink, rank: 6, name: "성장", percentage: 0, imageUrl: "https://picsum.photos/seed/6/80"),
+        ]
 
-        contentView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.height.equalToSuperview()
-        }
-
-        chipStackView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16))
-            $0.height.equalToSuperview()
-        }
+        rankedView.configure(keywords: dummyData)
     }
 }
+
 
 @available(iOS 17.0, *)
 #Preview {

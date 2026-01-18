@@ -12,8 +12,17 @@ import Then
 import Kingfisher
 
 final class PreferenceChip: BaseView {
+    
+    // MARK: - Property
 
-// MARK: - Component
+    private var style: PreferenceChipStyle = .gray {
+        didSet {
+            applyStyleConstraints()
+            invalidateIntrinsicContentSize()
+        }
+    }
+
+    // MARK: - Component
 
     private let backgroundImageView = UIImageView().then {
         $0.contentMode = .scaleToFill
@@ -36,16 +45,7 @@ final class PreferenceChip: BaseView {
         $0.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
 
-    // MARK: - State
-
-    private var style: PreferenceChipStyle = .gray {
-        didSet {
-            applyStyleConstraints()
-            invalidateIntrinsicContentSize()
-        }
-    }
-
-    // MARK: - BaseView
+    // MARK: - Setup
 
     override func setHierarchy() {
         contentStackView.addArrangedSubviews(iconImageView, keywordLabel)

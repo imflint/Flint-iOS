@@ -14,7 +14,7 @@ enum PreferenceChipStyle {
 
     var height: CGFloat {
         switch self {
-        case .colored: return 56
+        case .colored: return 50
         case .gray:    return 34
         }
     }
@@ -35,7 +35,7 @@ enum PreferenceChipStyle {
 
     var iconSize: CGFloat {
         switch self {
-        case .colored: return 32
+        case .colored: return 20
         case .gray:    return 0
         }
     }
