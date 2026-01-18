@@ -12,10 +12,6 @@ import Then
 
 final class FilmSelectView: BaseView {
     
-    // MARK: - Constraint
-    
-    var titleViewTopOffset: CGFloat = 0
-    
     // MARK: - Component
     
     let progressInfoView = UIView().then {
@@ -157,7 +153,7 @@ final class FilmSelectView: BaseView {
             $0.bottom.equalToSuperview().inset(11)
         }
         titleView.snp.makeConstraints {
-            $0.top.equalTo(progressInfoView.snp.bottom).offset(titleViewTopOffset)
+            $0.top.equalTo(progressInfoView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
         }
         titleViewBackgroundView.snp.makeConstraints {
@@ -196,8 +192,7 @@ final class FilmSelectView: BaseView {
     
     // MARK: - Global Function
     
-    func updateTopBarViewYPosition(_ y: CGFloat) {
-        titleViewTopOffset = y
+    func updateTitleViewYOffset(_ y: CGFloat) {
         titleView.snp.updateConstraints {
             $0.top.equalTo(progressInfoView.snp.bottom).offset(y)
         }

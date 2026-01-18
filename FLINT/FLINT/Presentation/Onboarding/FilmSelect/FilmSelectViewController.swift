@@ -75,9 +75,9 @@ final class FilmSelectViewController: BaseViewController<FilmSelectView> {
             offsetCorrection = translationY + rootView.titleView.bounds.height
         }
         
-        let topBarViewOffsetY = translationY - offsetCorrection
-        rootView.updateTopBarViewYPosition(topBarViewOffsetY)
-        rootView.titleView.alpha = 1 + topBarViewOffsetY / rootView.titleView.bounds.height
+        let titleViewYOffset = translationY - offsetCorrection
+        rootView.updateTitleViewYOffset(titleViewYOffset)
+        rootView.titleView.alpha = 1 + titleViewYOffset / rootView.titleView.bounds.height
         
         // Magnetic snapping effect when the gesture ends
         if sender.state == .ended {
@@ -85,13 +85,13 @@ final class FilmSelectViewController: BaseViewController<FilmSelectView> {
                 guard let self else { return }
                 switch ScrollDirection(velocity: velocityY) {
                 case .up:
-//                    rootView.filmCollectionView.contentOffset.y = -rootView.filmCollectionView.contentInset.top + titleViewTopOffset
-                    rootView.updateTopBarViewYPosition(0)
+                    rootView.filmCollectionView.contentOffset.y += titleViewYOffset
+                    rootView.updateTitleViewYOffset(0)
                     offsetCorrection = 0
                     rootView.titleView.alpha = 1
                 case .down:
-//                    rootView.filmCollectionView.contentOffset.y = -rootView.filmCollectionView.contentInset.top + rootView.titleView.bounds.height + titleViewTopOffset
-                    rootView.updateTopBarViewYPosition(-rootView.titleView.bounds.height)
+                    rootView.filmCollectionView.contentOffset.y += rootView.titleView.bounds.height + titleViewYOffset
+                    rootView.updateTitleViewYOffset(-rootView.titleView.bounds.height)
                     offsetCorrection = rootView.titleView.bounds.height
                     rootView.titleView.alpha = 0
                 case nil:
