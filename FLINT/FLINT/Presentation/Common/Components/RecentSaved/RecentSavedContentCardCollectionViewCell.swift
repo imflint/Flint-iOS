@@ -18,12 +18,12 @@ final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewCell {
         $0.layer.cornerRadius = 12
         $0.layer.masksToBounds = true
     }
-
+    
     private let posterImageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
+        $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
     }
-
-
+    
     private let logoStripView = OTTLogoStripeView()
     
     private let titleLabel = UILabel().then {
@@ -48,22 +48,22 @@ final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewCell {
     
     override func setLayout() {
         posterContainerView.snp.makeConstraints {
-            $0.top.horizontalEdges.equalToSuperview()
-            $0.width.equalTo(120)
-            $0.height.equalTo(180)
+            $0.top.equalToSuperview()
+            $0.leading.equalToSuperview()
+            $0.size.equalTo(CGSize(width: 120, height: 180))
         }
-
+        
         posterImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
+        
         logoStripView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
             $0.leading.equalToSuperview().inset(8)
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(posterImageView.snp.bottom).offset(4)
+            $0.top.equalTo(posterContainerView.snp.bottom).offset(4)
             $0.leading.trailing.equalToSuperview()
         }
         
@@ -84,7 +84,7 @@ final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewCell {
     //MARK: - configure
     
     func configure(with item: RecentSavedContentItem) {
-
+        
         posterImageView.image = UIImage(named: item.posterImageName)
         
         titleLabel.attributedText = .pretendard(.body1_b_16,
