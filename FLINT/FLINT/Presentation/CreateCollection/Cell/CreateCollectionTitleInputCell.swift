@@ -60,12 +60,12 @@ final class CreateCollectionTitleInputCell: BaseTableViewCell {
     override func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(36)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
         titleTextView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.greaterThanOrEqualTo(40)
         }
         

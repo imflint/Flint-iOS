@@ -63,7 +63,7 @@ final class CreateCollectionVisibilityCell: BaseTableViewCell {
     override func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(24)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
         buttonStackView.snp.makeConstraints {

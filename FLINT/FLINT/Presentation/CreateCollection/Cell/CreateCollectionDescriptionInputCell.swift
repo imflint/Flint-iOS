@@ -73,7 +73,7 @@ final class CreateCollectionDescriptionInputCell: BaseTableViewCell {
         
         descriptionTextView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.greaterThanOrEqualTo(100)
         }
         
