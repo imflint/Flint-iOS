@@ -55,3 +55,16 @@ enum OTTPlatform: String, CaseIterable, Hashable {
         return URL(string: urlString) ?? URL(string: "https://www.google.com")!
     }
 }
+
+extension OTTPlatform {
+    init(circle: CircleOTTPlatform) {
+        switch circle {
+        case .netflix: self = .netflix
+        case .tving: self = .tving
+        case .wave: self = .wave
+        case .watcha: self = .watcha
+        case .disneyPlus: self = .disneyPlus
+        case .coupangPlay: self = .coupangPlay
+        }
+    }
+}

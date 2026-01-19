@@ -14,6 +14,8 @@ final class RecentSavedContentTableViewCell: BaseTableViewCell {
     
     var onTapItem: ((RecentSavedContentItem) -> Void)?
     
+    private var items: [RecentSavedContentItem] = []
+    
     // MARK: - UI
     
     private let collectionView: UICollectionView = {
@@ -28,10 +30,6 @@ final class RecentSavedContentTableViewCell: BaseTableViewCell {
             $0.showsHorizontalScrollIndicator = false
         }
     }()
-    
-    // MARK: - Data
-    
-    private var items: [RecentSavedContentItem] = []
     
     // MARK: - Override
     
@@ -49,13 +47,12 @@ final class RecentSavedContentTableViewCell: BaseTableViewCell {
         )
     }
     
-    
     override func setLayout() {
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.top.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
-            $0.height.equalTo(226)   
+            $0.height.equalTo(226)
         }
     }
     
@@ -101,10 +98,9 @@ extension RecentSavedContentTableViewCell: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 
 extension RecentSavedContentTableViewCell: UICollectionViewDelegate {
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        onTapItem?(items[indexPath.item])
-    }
+           onTapItem?(items[indexPath.item])
+       }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout

@@ -30,3 +30,10 @@ enum CircleOTTPlatform: CaseIterable, Hashable {
         }
     }
 }
+
+extension Sequence where Element == CircleOTTPlatform {
+    func sortedByOrder() -> [CircleOTTPlatform] {
+        let rank = Dictionary(uniqueKeysWithValues: CircleOTTPlatform.order.enumerated().map { ($0.element, $0.offset) })
+        return self.sorted { (rank[$0] ?? .max) < (rank[$1] ?? .max) }
+    }
+}

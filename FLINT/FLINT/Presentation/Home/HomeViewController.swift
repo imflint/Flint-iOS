@@ -8,7 +8,7 @@
 import UIKit
 
 final class HomeViewController: BaseViewController<HomeView> {
-
+    
     private let viewModel = HomeViewModel(userName: "얀비")
     
     // MARK: - Lifecycle
@@ -59,7 +59,7 @@ final class HomeViewController: BaseViewController<HomeView> {
         print("FAB tapped")
         // TODO: - 플로팅 버튼 탭 버튼 구현
     }
-
+    
 }
 
 
@@ -76,11 +76,11 @@ extension HomeViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
+        
         let row = viewModel.sections[indexPath.section].rows[indexPath.row]
-
+        
         switch row {
-
+            
         case .greeting(let userName):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: HomeGreetingTableViewCell.reuseIdentifier,
@@ -88,7 +88,7 @@ extension HomeViewController: UITableViewDataSource {
             ) as! HomeGreetingTableViewCell
             cell.configure(userName: userName)
             return cell
-
+            
         case .header(let style, let title, let subtitle):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: TitleHeaderTableViewCell.reuseIdentifier,
@@ -96,7 +96,7 @@ extension HomeViewController: UITableViewDataSource {
             ) as! TitleHeaderTableViewCell
             cell.configure(style: style, title: title, subtitle: subtitle)
             return cell
-
+            
         case .fliner(let items):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier,
@@ -104,13 +104,24 @@ extension HomeViewController: UITableViewDataSource {
             ) as! MoreNoMoreCollectionTableViewCell
             cell.configure(items: items)
             return cell
-
+            
         case .recentSaved(let items):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! RecentSavedContentTableViewCell
+            
             cell.configure(items: items)
+            
+            cell.onTapItem = { [weak self] item in
+                let circles = item.availableOn.intersection(item.subscribedOn)
+
+                let platforms = CircleOTTPlatform.order
+                    .filter { circles.contains($0) }
+                    .map { OTTPlatform(circle: $0) }     
+
+                self?.presentOTTBottomSheet(platforms: platforms)
+            }
             return cell
             
         case .ctaButton(let title):
@@ -126,6 +137,12 @@ extension HomeViewController: UITableViewDataSource {
             return cell
             
         }
+    }
+    private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
+        let vc = BaseBottomSheetViewController(
+            content: .ott(platforms: platforms)
+        )
+        present(vc, animated: false)
     }
 }
 
