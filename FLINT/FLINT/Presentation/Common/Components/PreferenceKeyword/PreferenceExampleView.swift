@@ -29,18 +29,12 @@ final class PreferenceExampleView: BaseView {
         let dummyData: [KeywordDTO] = [
             .init(color: .blue, rank: 1, name: "영화", percentage: 0, imageUrl: "https://picsum.photos/seed/1/80"),
             .init(color: .pink, rank: 2, name: "SF",   percentage: 0, imageUrl: "https://picsum.photos/seed/2/80"),
-            .init(color: .green, rank: 3, name: "슬픈", percentage: 0, imageUrl: "https://picsum.photos/seed/3/80"),
-            .init(color: .orange, rank: 4, name: "슬픈", percentage: 0, imageUrl: "https://picsum.photos/seed/4/80"),
+            .init(color: .green, rank: 3, name: "로맨스", percentage: 0, imageUrl: "https://picsum.photos/seed/3/80"),
+            .init(color: .orange, rank: 4, name: "공포", percentage: 0, imageUrl: "https://picsum.photos/seed/4/80"),
             .init(color: .yellow, rank: 5, name: "액션", percentage: 0, imageUrl: "https://picsum.photos/seed/5/80"),
             .init(color: .pink, rank: 6, name: "성장", percentage: 0, imageUrl: "https://picsum.photos/seed/6/80"),
         ]
 
         rankedView.configure(keywords: dummyData)
     }
-}
-
-
-@available(iOS 17.0, *)
-#Preview {
-    PreferenceExampleView()
 }
