@@ -94,7 +94,18 @@ extension HomeViewController: UITableViewDataSource {
                 withIdentifier: TitleHeaderTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! TitleHeaderTableViewCell
+
             cell.configure(style: style, title: title, subtitle: subtitle)
+
+            if style == .more {
+                cell.onTapMore = { [weak self] in
+                    let vc = CollectionFolderListViewController()
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            } else {
+                cell.onTapMore = nil
+            }
+
             return cell
 
         case .fliner(let items):

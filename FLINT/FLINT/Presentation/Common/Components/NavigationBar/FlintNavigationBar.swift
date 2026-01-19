@@ -64,7 +64,7 @@ final class FlintNavigationBar: BaseView {
         
         titleLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.equalTo(135)
+            $0.width.equalTo(165)
         }
         
         rightButton.snp.makeConstraints {

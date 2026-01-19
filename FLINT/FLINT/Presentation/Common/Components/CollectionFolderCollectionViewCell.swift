@@ -34,6 +34,7 @@ final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
+        $0.backgroundColor = .flintGray100
     }
     
     private let secondPosterImageView = UIImageView().then {
@@ -140,7 +141,7 @@ final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
     override func setLayout() {
         cardContainerView.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
             $0.size.equalTo(154)
         }
         
@@ -163,7 +164,8 @@ final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         }
         
         secondPosterImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.horizontalEdges.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(4)
         }
         
         folderOverlayoutView.snp.makeConstraints {
