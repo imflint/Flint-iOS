@@ -55,7 +55,7 @@ final class HomeViewController: BaseViewController<HomeView> {
         rootView.floatingButton.addTarget(self, action: #selector(didTapFab), for: .touchUpInside)
     }
     
-    //TODO: - tabbar자체를 수정하면안될거같아서 모달창으로 띄워둠 팀원들에게 물어보기
+    //TODO: - tabbarhidden 수정되면 수정하기
     
     @objc private func didTapFab() {
         let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())

@@ -152,15 +152,17 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 withIdentifier: CreateCollectionAddContentCell.reuseIdentifier,
                 for: indexPath
             ) as! CreateCollectionAddContentCell
-            
-            cell.onTapAdd = {
-                print("작품 추가하기 탭") // TODO: 작품 선택 화면 push/present
+
+            cell.onTapAdd = { [weak self] in
+                guard let self else { return }
+
+                let vc = AddContentSelectViewController()
+                let nav = UINavigationController(rootViewController: vc)
+                nav.modalPresentationStyle = .fullScreen
+                self.present(nav, animated: true)
             }
-            
+
             return cell
-            
-        default:
-            return UITableViewCell()
         }
     }
     

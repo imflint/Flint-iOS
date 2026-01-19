@@ -43,6 +43,4 @@ final class CreateCollectionView: BaseView {
             $0.edges.equalToSuperview()
         }
     }
-    
-    //MARK: Configure
 }
