@@ -66,31 +66,13 @@ private extension CreateCollectionViewController {
     }
     
     func registerCells() {
-        rootView.tableView.register(
-            CreateCollectionHeaderImageCell.self,
-            forCellReuseIdentifier: CreateCollectionHeaderImageCell.reuseIdentifier
-        )
-        
-        rootView.tableView.register(
-            CreateCollectionTitleInputCell.self,
-            forCellReuseIdentifier: CreateCollectionTitleInputCell.reuseIdentifier
-        )
-        
-        rootView.tableView.register(
-            CreateCollectionDescriptionInputCell.self,
-            forCellReuseIdentifier: CreateCollectionDescriptionInputCell.reuseIdentifier
-        )
-        
-        rootView.tableView.register(
-            CreateCollectionVisibilityCell.self,
-            forCellReuseIdentifier:
-                CreateCollectionVisibilityCell.reuseIdentifier
-        )
-        rootView.tableView.register(
-            CreateCollectionAddContentCell.self,
-            forCellReuseIdentifier: CreateCollectionAddContentCell.reuseIdentifier
-        )
+        rootView.tableView.register(CreateCollectionHeaderImageCell.self)
+        rootView.tableView.register(CreateCollectionTitleInputCell.self)
+        rootView.tableView.register(CreateCollectionDescriptionInputCell.self)
+        rootView.tableView.register(CreateCollectionVisibilityCell.self)
+        rootView.tableView.register(CreateCollectionAddContentCell.self)
     }
+
     
     func bindViewModel() {
         let input = CreateCollectionViewModel.Input(

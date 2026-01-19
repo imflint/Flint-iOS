@@ -55,9 +55,13 @@ final class HomeViewController: BaseViewController<HomeView> {
         rootView.floatingButton.addTarget(self, action: #selector(didTapFab), for: .touchUpInside)
     }
     
+    //TODO: - tabbar자체를 수정하면안될거같아서 모달창으로 띄워둠 팀원들에게 물어보기
+    
     @objc private func didTapFab() {
-        print("FAB tapped")
-        // TODO: - 플로팅 버튼 탭 버튼 구현
+        let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true)
     }
 
 }
