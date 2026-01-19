@@ -36,6 +36,7 @@ final class CollectionFolderListViewController: BaseViewController<CollectionFol
                 backgroundStyle: .solid(.flintBackground)
             )
         )
+        statusBarBackgroundView.isHidden = true
         
         navigationBarView.onTapLeft = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
@@ -96,10 +97,30 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
             self?.didSelectItem(at: indexPath)
         }
         
-        cell.onTapBookmark = { [weak self] isBookmarked in
-            self?.items[indexPath.item].isBookmarked = isBookmarked
+        cell.onTapBookmark = { [weak self, weak cell] isBookmarked in
+            guard let self, let cell,
+                  let indexPath = collectionView.indexPath(for: cell) else { return }
+
+            let wasBookmarked = self.items[indexPath.item].isBookmarked
+
+            self.items[indexPath.item].isBookmarked = isBookmarked
+
+            if wasBookmarked == false, isBookmarked == true {
+                Toast.action(
+                    image: .icBookmarkGradient,
+                    title: "컬렉션을 저장했어요",
+                    actionTitle: "컬렉션 보기",
+                    action: { _ in
+                      //TODO: - 저장된 컬렉션 뷰로 이동
+                    }
+                ).show()
+                return
+            }
+
+            if wasBookmarked == true, isBookmarked == false {
+                Toast.text("컬렉션 저장이 취소되었어요").show()
+            }
         }
-        
         return cell
     }
 }
@@ -203,7 +224,7 @@ private extension CollectionFolderListViewController {
                     name: "닉네임",
                     title: "한번 보면 못 빠져나오는 사랑이야기",
                     description: "이 컬렉션은 세계최고 너무나도 멋진 컬렉션입니다",
-                    isBookmarked: true,
+                    isBookmarked: false,
                     bookmarkedCountText: "123"
                 ),
                 .init(
@@ -223,7 +244,7 @@ private extension CollectionFolderListViewController {
                     name: "닉네임",
                     title: "한번 보면 못 빠져나오는 사랑이야기",
                     description: "이 컬렉션은 세계최고 너무나도 멋진 컬렉션입니다",
-                    isBookmarked: true,
+                    isBookmarked: false,
                     bookmarkedCountText: "123"
                 ),
                 .init(

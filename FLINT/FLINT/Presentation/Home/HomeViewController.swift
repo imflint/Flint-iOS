@@ -56,10 +56,13 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     @objc private func didTapFab() {
-        print("FAB tapped")
-        // TODO: - 플로팅 버튼 탭 버튼 구현
+        Log.d("FAB tapped")
     }
-
+    
+    private func pushCollectionFolderListViewController(_ action: UIAction) {
+        let collectionFolderListViewController = CollectionFolderListViewController()
+        parent?.navigationController?.pushViewController(collectionFolderListViewController, animated: true)
+    }
 }
 
 
@@ -98,10 +101,13 @@ extension HomeViewController: UITableViewDataSource {
             cell.configure(style: style, title: title, subtitle: subtitle)
 
             if style == .more {
+                //TODO: - collectionFolderListView 연결하기
+                
                 cell.onTapMore = { [weak self] in
                     let vc = CollectionFolderListViewController()
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
+    
             } else {
                 cell.onTapMore = nil
             }
