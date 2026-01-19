@@ -10,6 +10,7 @@ import Combine
 
 final class CreateCollectionViewController: BaseViewController<CreateCollectionView> {
     
+    //MARK: - enum
     enum CreateCollectionRow: Int, CaseIterable {
         case header
         case title
@@ -18,14 +19,16 @@ final class CreateCollectionViewController: BaseViewController<CreateCollectionV
         case addContent
     }
     
-    private let viewModel: CreateCollectionViewModel
-    private var cancellables = Set<AnyCancellable>()
-    
-    private let titleChangeSubject = PassthroughSubject<String, Never>()
+    private var collectionTitleText: String = ""
+    private var collectionDescriptionText: String = ""
     
     private var selectedContents: [SavedContentItemViewModel] = []
     private var selectedReasonItems: [SelectedContentReasonTableViewCellItem] = []
+
+    private let viewModel: CreateCollectionViewModel
     
+    private var cancellables = Set<AnyCancellable>()
+    private let titleChangeSubject = PassthroughSubject<String, Never>()
     private let visibilitySubject = CurrentValueSubject<Bool, Never>(false)
     private let selectedCountSubject = CurrentValueSubject<Int, Never>(0)
     
@@ -43,7 +46,6 @@ final class CreateCollectionViewController: BaseViewController<CreateCollectionV
         setTableView()
         registerCells()
         bindViewModel()
-        
     }
     
     // MARK: - Setup
@@ -79,7 +81,6 @@ private extension CreateCollectionViewController {
         rootView.tableView.register(SelectedContentReasonTableViewCell.self)
     }
     
-    
     func bindViewModel() {
         let input = CreateCollectionViewModel.Input(
             titleChange: titleChangeSubject.eraseToAnyPublisher(),
@@ -92,12 +93,11 @@ private extension CreateCollectionViewController {
         output.isDoneEnabled
             .receive(on: RunLoop.main)
             .sink { [weak self] isEnabled in
-                // TODO: 완료 버튼 만들면 여기서 enable/disable 처리
-                guard self != nil else { return }
-                _ = isEnabled
+                self?.rootView.setCompleteEnabled(isEnabled)
             }
             .store(in: &cancellables)
     }
+    
     func syncReasonItems(with models: [SavedContentItemViewModel]) {
         func key(of model: SavedContentItemViewModel) -> String {
             "\(model.title)|\(model.director)|\(model.year)"
@@ -121,6 +121,7 @@ private extension CreateCollectionViewController {
                 reasonText: nil
             )
         }
+        selectedCountSubject.send(selectedReasonItems.count)
     }
 }
 
@@ -134,9 +135,9 @@ extension CreateCollectionViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return CreateCollectionRow.allCases.count
+            return CreateCollectionRow.allCases.count - 1
         } else {
-            return selectedReasonItems.count
+            return selectedReasonItems.count + 1
         }
     }
 
@@ -161,9 +162,11 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     for: indexPath
                 ) as! CreateCollectionTitleInputCell
 
-                cell.onChangeTitle = { [weak titleChangeSubject] text in
-                    titleChangeSubject?.send(text)
+                cell.onChangeTitle = { [weak self] text in
+                    self?.collectionTitleText = text
+                    self?.titleChangeSubject.send(text)
                 }
+                cell.setText(collectionTitleText)
                 return cell
 
             case .description:
@@ -172,9 +175,10 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     for: indexPath
                 ) as! CreateCollectionDescriptionInputCell
 
-                cell.onChangeDescription = { _ in
-                    // TODO: descriptionSubject 연결 예정
+                cell.onChangeDescription = { [weak self] text in
+                    self?.collectionDescriptionText = text
                 }
+                cell.setText(collectionDescriptionText)
                 return cell
 
             case .visibility:
@@ -183,72 +187,82 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     for: indexPath
                 ) as! CreateCollectionVisibilityCell
 
-                cell.onChangeVisibility = { [weak visibilitySubject] _ in
-                    visibilitySubject?.send(true)
+                cell.onChangeVisibility = { [weak self] visibility in
+                    let isPublic = (visibility == .public)
+                    self?.visibilitySubject.send(isPublic)
                 }
                 return cell
 
             case .addContent:
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: CreateCollectionAddContentCell.reuseIdentifier,
-                    for: indexPath
-                ) as! CreateCollectionAddContentCell
-
-                cell.onTapAdd = { [weak self] in
-                    guard let self else { return }
-                    
-                    let vc = AddContentSelectViewController()
-                    vc.onComplete = { [weak self] selectedItems in
-                        guard let self else { return }
-                        
-                        self.selectedContents = selectedItems
-                        self.syncReasonItems(with: selectedItems)
-                        self.selectedCountSubject.send(self.selectedReasonItems.count)
-                        self.rootView.tableView.reloadData()
-                    }
+                return UITableViewCell()
+            }
+        }
 
 
-                    let nav = UINavigationController(rootViewController: vc)
-                    nav.modalPresentationStyle = .fullScreen
-                    self.present(nav, animated: true)
+        if indexPath.row < selectedReasonItems.count {
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: SelectedContentReasonTableViewCell.reuseIdentifier,
+                for: indexPath
+            ) as! SelectedContentReasonTableViewCell
+
+            let item = selectedReasonItems[indexPath.row]
+            cell.configure(with: item)
+
+            cell.onTapClose = { [weak self] in
+                guard let self else { return }
+
+                self.selectedReasonItems.remove(at: indexPath.row)
+
+                self.selectedContents.removeAll { model in
+                    model.title == item.title &&
+                    model.director == item.director &&
+                    model.year == item.year
                 }
 
-                return cell
+                self.selectedCountSubject.send(self.selectedReasonItems.count)
+                self.rootView.tableView.reloadData()
             }
-        }
 
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: SelectedContentReasonTableViewCell.reuseIdentifier,
-            for: indexPath
-        ) as! SelectedContentReasonTableViewCell
-
-        let item = selectedReasonItems[indexPath.row]
-        cell.configure(with: item)
-
-        cell.onTapClose = { [weak self] in
-            guard let self else { return }
-
-            self.selectedReasonItems.remove(at: indexPath.row)
-            self.selectedContents.removeAll { model in
-                model.title == item.title &&
-                model.director == item.director &&
-                model.year == item.year
+            cell.onToggleSpoiler = { [weak self] isOn in
+                self?.selectedReasonItems[indexPath.row].isSpoiler = isOn
             }
-            self.selectedCountSubject.send(self.selectedReasonItems.count)
-            self.rootView.tableView.reloadData()
-        }
 
-        cell.onToggleSpoiler = { [weak self] isOn in
-            guard let self else { return }
-            self.selectedReasonItems[indexPath.row].isSpoiler = isOn
-        }
+            cell.onChangeReasonText = { [weak self] text in
+                self?.selectedReasonItems[indexPath.row].reasonText = text
+            }
 
-        cell.onChangeReasonText = { [weak self] text in
-            guard let self else { return }
-            self.selectedReasonItems[indexPath.row].reasonText = text
-        }
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: CreateCollectionAddContentCell.reuseIdentifier,
+                for: indexPath
+            ) as! CreateCollectionAddContentCell
 
-        return cell
+            cell.onTapAdd = { [weak self] in
+                guard let self else { return }
+
+                let vc = AddContentSelectViewController()
+                vc.initialSelected = self.selectedContents
+                
+                vc.protectedDeleteKeys = Set(self.selectedContents.map { "\($0.title)|\($0.director)|\($0.year)" })
+                
+                vc.onComplete = { [weak self] selectedItems in
+                    guard let self else { return }
+
+                    self.selectedContents = selectedItems
+                    self.syncReasonItems(with: selectedItems)
+
+                    //self.selectedCountSubject.send(self.selectedReasonItems.count)
+                    self.rootView.tableView.reloadData()
+                }
+
+                let nav = UINavigationController(rootViewController: vc)
+                nav.modalPresentationStyle = .fullScreen
+                self.present(nav, animated: true)
+            }
+
+            return cell
+        }
     }
 }
 

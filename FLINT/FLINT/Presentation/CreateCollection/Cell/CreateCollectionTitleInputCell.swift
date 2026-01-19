@@ -89,6 +89,11 @@ final class CreateCollectionTitleInputCell: BaseTableViewCell {
         
         registerNotification()
     }
+    
+    func setText(_ text: String) {
+        titleTextView.text = text
+        titleTextView.delegate?.textViewDidChange?(titleTextView) // placeholder/카운트 갱신
+    }
 }
 
 // MARK: - Notification

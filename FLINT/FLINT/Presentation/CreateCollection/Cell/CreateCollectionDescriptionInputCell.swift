@@ -98,6 +98,11 @@ final class CreateCollectionDescriptionInputCell: BaseTableViewCell {
         
         registerNotification()
     }
+    
+    func setText(_ text: String) {
+        descriptionTextView.text = text
+        descriptionTextView.delegate?.textViewDidChange?(descriptionTextView)
+    }
 }
 
 //MARK: - Notification

@@ -112,7 +112,7 @@ final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         
         posterImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(64)
-            $0.leading.equalToSuperview()
+            $0.leading.equalToSuperview().inset(16)
             $0.width.equalTo(100)
             $0.height.equalTo(150)
         }
@@ -141,6 +141,7 @@ final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         
         sectionTitleLabel.snp.makeConstraints {
             $0.top.equalTo(posterImageView.snp.bottom).offset(16)
+            $0.leading.equalToSuperview().inset(16)
         }
         
         checkboxToggleView.snp.makeConstraints {
@@ -157,7 +158,7 @@ final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         
         textView.snp.makeConstraints {
             $0.top.equalTo(sectionTitleLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
             $0.height.greaterThanOrEqualTo(104)
         }

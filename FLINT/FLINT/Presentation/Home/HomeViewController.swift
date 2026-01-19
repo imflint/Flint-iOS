@@ -55,14 +55,9 @@ final class HomeViewController: BaseViewController<HomeView> {
         rootView.floatingButton.addTarget(self, action: #selector(didTapFab), for: .touchUpInside)
     }
     
-    //TODO: - tabbarhidden 수정되면 수정하기
-    
     @objc private func didTapFab() {
         let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
         self.parent?.navigationController?.pushViewController(vc, animated: true)
-//        let nav = UINavigationController(rootViewController: vc)
-//        nav.modalPresentationStyle = .fullScreen
-//        present(nav, animated: true)
     }
 
 }

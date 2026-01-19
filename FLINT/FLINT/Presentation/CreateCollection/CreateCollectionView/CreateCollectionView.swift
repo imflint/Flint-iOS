@@ -14,6 +14,10 @@ final class CreateCollectionView: BaseView {
     
     var onChangeTitle: ((String) -> Void)?
     
+    private var currentTitle: String = ""
+    private var isPublicSelected: Bool = false
+    private var selectedWorkCount: Int = 0
+    
     //MARK: - UI Component
 
     let tableView = UITableView(frame: .zero, style: .plain).then {
@@ -25,6 +29,9 @@ final class CreateCollectionView: BaseView {
         $0.rowHeight = UITableView.automaticDimension
         $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 24, right: 0) 
     }
+    
+    private var completeBUtton = FlintButton(style: .disable, title: "완료")
+    
 
     //MARK: - Setup
     
@@ -34,7 +41,7 @@ final class CreateCollectionView: BaseView {
     }
     
     override func setHierarchy() {
-        addSubviews(tableView)
+        addSubviews(tableView, completeBUtton)
     }
     
     override func setLayout() {
@@ -42,5 +49,41 @@ final class CreateCollectionView: BaseView {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        
+        completeBUtton.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(48)
+            $0.bottom.equalToSuperview().inset(24)
+        }
     }
+    
+    func setCompleteEnabled(_ enabled: Bool) {
+        updateCompleteButton(enabled: enabled)
+    }
+    
+    // MARK: - Private
+
+    private func updateCompleteButton(enabled: Bool) {
+        completeBUtton.removeFromSuperview()
+
+        let newButton: FlintButton = enabled
+        ? FlintButton(style: .able, title: "완료")
+        : FlintButton(style: .disable, title: "시작하기")
+
+        completeBUtton = newButton
+
+        addSubview(completeBUtton)
+        completeBUtton.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(48)
+            $0.bottom.equalToSuperview().inset(24)
+        }
+
+        tableView.snp.remakeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(completeBUtton.snp.top)
+        }
+    }
+
+
 }
