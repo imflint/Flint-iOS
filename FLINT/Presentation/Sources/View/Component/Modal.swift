@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 import Then
 
+import Domain
+
 public class Modal: BaseView {
     
     // MARK: - Properties

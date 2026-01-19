@@ -17,7 +17,7 @@ let package = Package(
     ],
     
     dependencies: [
-//        .package(name: "Domain", path: "../Domain"),
+        .package(name: "Domain", path: "../Domain"),
         .package(url: "https://github.com/onevcat/Kingfisher.git", "0.0.0"..."8.6.2"),
         .package(url: "https://github.com/SnapKit/SnapKit.git", "0.0.0"..."5.7.1"),
         .package(url: "https://github.com/devxoul/Then.git", "0.0.0"..."3.0.0"),
@@ -32,12 +32,12 @@ let package = Package(
             "ViewController",
         ]),
         .target(name: "ViewModel", dependencies: [
-//            .product(name: "Domain", package: "Domain"),
+            .product(name: "Domain", package: "Domain"),
         ]),
         .target(
             name: "View",
             dependencies: [
-//                .product(name: "Domain", package: "Domain"),
+                .product(name: "Domain", package: "Domain"),
                 .product(name: "SnapKit", package: "SnapKit"),
                 .product(name: "Then", package: "Then"),
                 .product(name: "Lottie", package: "lottie-ios"),

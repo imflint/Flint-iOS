@@ -7,6 +7,8 @@
 
 import UIKit
 
+import Domain
+
 extension UIFont {
     
     public enum PretendardWeight: String {

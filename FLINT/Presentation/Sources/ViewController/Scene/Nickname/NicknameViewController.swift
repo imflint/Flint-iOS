@@ -8,6 +8,8 @@
 import PhotosUI
 import UIKit
 
+import Domain
+
 import View
 
 public final class NicknameViewController: BaseViewController<NicknameView> {

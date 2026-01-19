@@ -8,10 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		969B6C042F1E498400177B52 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 969B6C032F1E498400177B52 /* Presentation */; };
+		969B6FE62F1E733200177B52 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 969B6FE52F1E733200177B52 /* Domain */; };
+		969B6FE92F1E746000177B52 /* Data in Frameworks */ = {isa = PBXBuildFile; productRef = 969B6FE82F1E746000177B52 /* Data */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		969B74122F1E7B6D00177B52 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B0E593142F0A427A009D7980 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B0E5931B2F0A427A009D7980;
+			remoteInfo = FLINT;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		969B6C012F1E489800177B52 /* Presentation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Presentation; sourceTree = "<group>"; };
+		969B6FE42F1E725700177B52 /* Domain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Domain; sourceTree = "<group>"; };
+		969B6FE72F1E743400177B52 /* Data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Data; sourceTree = "<group>"; };
+		969B740E2F1E7B6D00177B52 /* FLINTTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FLINTTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0E5931C2F0A427A009D7980 /* FLINT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FLINT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -26,6 +41,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		969B740F2F1E7B6D00177B52 /* FLINTTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = FLINTTests;
+			sourceTree = "<group>";
+		};
 		B0E5931E2F0A427A009D7980 /* FLINT */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -37,11 +57,20 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		969B740B2F1E7B6D00177B52 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B0E593192F0A427A009D7980 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				969B6FE62F1E733200177B52 /* Domain in Frameworks */,
 				969B6C042F1E498400177B52 /* Presentation in Frameworks */,
+				969B6FE92F1E746000177B52 /* Data in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,8 +87,11 @@
 		B0E593132F0A427A009D7980 = {
 			isa = PBXGroup;
 			children = (
+				969B6FE72F1E743400177B52 /* Data */,
+				969B6FE42F1E725700177B52 /* Domain */,
 				969B6C012F1E489800177B52 /* Presentation */,
 				B0E5931E2F0A427A009D7980 /* FLINT */,
+				969B740F2F1E7B6D00177B52 /* FLINTTests */,
 				969B6C022F1E498400177B52 /* Frameworks */,
 				B0E5931D2F0A427A009D7980 /* Products */,
 			);
@@ -69,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				B0E5931C2F0A427A009D7980 /* FLINT.app */,
+				969B740E2F1E7B6D00177B52 /* FLINTTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -76,6 +109,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		969B740D2F1E7B6D00177B52 /* FLINTTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 969B74142F1E7B6D00177B52 /* Build configuration list for PBXNativeTarget "FLINTTests" */;
+			buildPhases = (
+				969B740A2F1E7B6D00177B52 /* Sources */,
+				969B740B2F1E7B6D00177B52 /* Frameworks */,
+				969B740C2F1E7B6D00177B52 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				969B74132F1E7B6D00177B52 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				969B740F2F1E7B6D00177B52 /* FLINTTests */,
+			);
+			name = FLINTTests;
+			packageProductDependencies = (
+			);
+			productName = FLINTTests;
+			productReference = 969B740E2F1E7B6D00177B52 /* FLINTTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		B0E5931B2F0A427A009D7980 /* FLINT */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B0E5932F2F0A427C009D7980 /* Build configuration list for PBXNativeTarget "FLINT" */;
@@ -94,6 +150,8 @@
 			name = FLINT;
 			packageProductDependencies = (
 				969B6C032F1E498400177B52 /* Presentation */,
+				969B6FE52F1E733200177B52 /* Domain */,
+				969B6FE82F1E746000177B52 /* Data */,
 			);
 			productName = FLINT;
 			productReference = B0E5931C2F0A427A009D7980 /* FLINT.app */;
@@ -109,6 +167,10 @@
 				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
+					969B740D2F1E7B6D00177B52 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = B0E5931B2F0A427A009D7980;
+					};
 					B0E5931B2F0A427A009D7980 = {
 						CreatedOnToolsVersion = 26.2;
 					};
@@ -131,11 +193,19 @@
 			projectRoot = "";
 			targets = (
 				B0E5931B2F0A427A009D7980 /* FLINT */,
+				969B740D2F1E7B6D00177B52 /* FLINTTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		969B740C2F1E7B6D00177B52 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B0E5931A2F0A427A009D7980 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -146,6 +216,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		969B740A2F1E7B6D00177B52 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B0E593182F0A427A009D7980 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -155,7 +232,67 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		969B74132F1E7B6D00177B52 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B0E5931B2F0A427A009D7980 /* FLINT */;
+			targetProxy = 969B74122F1E7B6D00177B52 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		969B74152F1E7B6D00177B52 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JU27F4BHH8;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hosungkim.FLINTTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FLINT.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FLINT";
+				XROS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Debug;
+		};
+		969B74162F1E7B6D00177B52 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JU27F4BHH8;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hosungkim.FLINTTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FLINT.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FLINT";
+				XROS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Release;
+		};
 		B0E593302F0A427C009D7980 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -344,6 +481,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		969B74142F1E7B6D00177B52 /* Build configuration list for PBXNativeTarget "FLINTTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				969B74152F1E7B6D00177B52 /* Debug */,
+				969B74162F1E7B6D00177B52 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B0E593172F0A427A009D7980 /* Build configuration list for PBXProject "FLINT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -368,6 +514,14 @@
 		969B6C032F1E498400177B52 /* Presentation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Presentation;
+		};
+		969B6FE52F1E733200177B52 /* Domain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Domain;
+		};
+		969B6FE82F1E746000177B52 /* Data */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Data;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
