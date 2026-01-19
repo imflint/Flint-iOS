@@ -7,6 +7,8 @@
 
 import UIKit
 
+import Presentation
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -15,8 +17,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
 
-        let container = AppDIContainer.shared
-        container.configureNetworking()
+//        let container = AppDIContainer.shared
+//        container.configureNetworking()
 
         let viewController = TabBarViewController()
         window.rootViewController = viewController
