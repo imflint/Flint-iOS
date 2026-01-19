@@ -92,6 +92,8 @@ final class AddContentSelectViewController: BaseViewController<AddContentSelectV
     @objc private func didChangeSearchText() {
         let text = rootView.searchTextField.text ?? ""
         
+        //TODO: - 검색어 PATCH
+    
         if text.isEmpty {
             results = []
         } else {
@@ -264,7 +266,6 @@ extension AddContentSelectViewController: UICollectionViewDataSource {
         return cell
     }
 }
-
 
 // MARK: - UICollectionViewDelegate
 
