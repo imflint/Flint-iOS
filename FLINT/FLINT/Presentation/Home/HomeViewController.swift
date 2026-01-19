@@ -44,31 +44,11 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     private func registerCells() {
-        rootView.tableView.register(
-            HomeGreetingTableViewCell.self,
-            forCellReuseIdentifier: HomeGreetingTableViewCell.reuseIdentifier
-        )
-        
-        rootView.tableView.register(
-            TitleHeaderTableViewCell.self,
-            forCellReuseIdentifier:  TitleHeaderTableViewCell.reuseIdentifier
-        )
-        
-        rootView.tableView.register(
-            MoreNoMoreCollectionTableViewCell.self,
-            forCellReuseIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier
-        )
-        
-        rootView.tableView.register(
-            RecentSavedContentTableViewCell.self,
-            forCellReuseIdentifier: RecentSavedContentTableViewCell.reuseIdentifier
-        )
-        
-        rootView.tableView.register(
-            HomeCTAButtonTableViewCell.self,
-            forCellReuseIdentifier: HomeCTAButtonTableViewCell.reuseIdentifier
-        )
-
+        rootView.tableView.register(HomeGreetingTableViewCell.self)
+        rootView.tableView.register(TitleHeaderTableViewCell.self)
+        rootView.tableView.register(MoreNoMoreCollectionTableViewCell.self)
+        rootView.tableView.register(RecentSavedContentTableViewCell.self)
+        rootView.tableView.register(HomeCTAButtonTableViewCell.self)
     }
     
     private func bindActions() {
