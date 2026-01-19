@@ -251,8 +251,6 @@ extension CreateCollectionViewController: UITableViewDataSource {
 
                     self.selectedContents = selectedItems
                     self.syncReasonItems(with: selectedItems)
-
-                    //self.selectedCountSubject.send(self.selectedReasonItems.count)
                     self.rootView.tableView.reloadData()
                 }
 

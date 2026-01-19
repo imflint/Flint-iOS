@@ -22,6 +22,8 @@ final class AddContentSelectViewController: BaseViewController<AddContentSelectV
     private var results: [SavedContentItemViewModel] = []
     private var selected: [SavedContentItemViewModel] = []
     
+    private var isSearching: Bool = false
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -38,6 +40,10 @@ final class AddContentSelectViewController: BaseViewController<AddContentSelectV
         configureViews()
         
         selected = initialSelected
+        
+        isSearching = false
+        results = makePopularResults()
+        
         applyUI()
         updateAddButtonState()
     }
@@ -62,10 +68,15 @@ final class AddContentSelectViewController: BaseViewController<AddContentSelectV
     
     private func applyUI() {
         rootView.setPreviewHidden(selected.isEmpty)
-        
+
         let hasResult = !results.isEmpty
-        rootView.setEmptyHidden(hasResult)
-        
+
+        if isSearching {
+            rootView.setEmptyHidden(hasResult)
+        } else {
+            rootView.setEmptyHidden(true)
+        }
+
         rootView.selectedPreviewCollectionView.reloadData()
         rootView.tableView.reloadData()
         updateAddButtonState()
@@ -89,26 +100,38 @@ final class AddContentSelectViewController: BaseViewController<AddContentSelectV
         "\(model.title)|\(model.director)|\(model.year)"
     }
     
+    private func makePopularResults() -> [SavedContentItemViewModel] {
+        [
+            .init(posterImage: nil, title: "듄: 파트 2", director: "드니 빌뇌브", year: "2024"),
+            .init(posterImage: nil, title: "오펜하이머", director: "크리스토퍼 놀란", year: "2023"),
+            .init(posterImage: nil, title: "스즈메의 문단속", director: "신카이 마코토", year: "2022"),
+            .init(posterImage: nil, title: "어바웃 타임", director: "리처드 커티스", year: "2013"),
+            .init(posterImage: nil, title: "헤어질 결심", director: "박찬욱", year: "2022")
+        ]
+    }
+    
     @objc private func didChangeSearchText() {
         let text = rootView.searchTextField.text ?? ""
-        
-        //TODO: - 검색어 PATCH
-    
-        if text.isEmpty {
-            results = []
-        } else {
-            results = [
-                SavedContentItemViewModel(posterImage: nil, title: "\(text)를 여행하는 히치하이커를 위한 안내서", director: "가스 제닝스", year: "2005"),
-                SavedContentItemViewModel(posterImage: nil, title: "\(text)를 달리는 밤", director: "스기이 기사부로", year: "1985"),
-                SavedContentItemViewModel(posterImage: nil, title: "\(text)", director: "김수용", year: "1967"),
-                SavedContentItemViewModel(posterImage: nil, title: "\(text)", director: "ㅇㅇㅇ", year: "167"),
-                SavedContentItemViewModel(posterImage: nil, title: "\(text)", director: "김용", year: "967"),
-                SavedContentItemViewModel(posterImage: nil, title: "\(text)", director: "김", year: "167"),
-                SavedContentItemViewModel(posterImage: nil, title: "\(text)", director: "용", year: "17"),
-            ]
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if trimmed.isEmpty {
+            isSearching = false
+            results = makePopularResults()
+            applyUI()
+            return
         }
+
+        isSearching = true
+
+        // TODO: 검색 API 연결 시 여기서 호출
+        results = [
+            SavedContentItemViewModel(posterImage: nil, title: "\(trimmed)를 여행하는 히치하이커를 위한 안내서", director: "가스 제닝스", year: "2005"),
+            SavedContentItemViewModel(posterImage: nil, title: "\(trimmed)를 달리는 밤", director: "스기이 기사부로", year: "1985"),
+        ]
+
         applyUI()
     }
+
     
     @objc private func didTapRemovePreview(_ sender: UIButton) {
         let index = sender.tag
