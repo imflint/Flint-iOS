@@ -59,9 +59,10 @@ final class HomeViewController: BaseViewController<HomeView> {
     
     @objc private func didTapFab() {
         let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
-        let nav = UINavigationController(rootViewController: vc)
-        nav.modalPresentationStyle = .fullScreen
-        present(nav, animated: true)
+        self.parent?.navigationController?.pushViewController(vc, animated: true)
+//        let nav = UINavigationController(rootViewController: vc)
+//        nav.modalPresentationStyle = .fullScreen
+//        present(nav, animated: true)
     }
 
 }

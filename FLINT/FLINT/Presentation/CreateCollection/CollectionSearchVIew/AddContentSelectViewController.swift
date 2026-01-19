@@ -14,6 +14,8 @@ final class AddContentSelectViewController: BaseViewController<AddContentSelectV
     private var results: [SavedContentItemViewModel] = []
     private var selected: [SavedContentItemViewModel] = []
     
+    var onComplete: (([SavedContentItemViewModel]) -> Void)?
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -94,10 +96,11 @@ final class AddContentSelectViewController: BaseViewController<AddContentSelectV
         let color: UIColor = isActive ? .flintSecondary400 : .flintGray300
 
         navigationBarView.applyRight(.text(title: "추가", color: color))
-
+        
         navigationBarView.onTapRight = { [weak self] in
             guard let self else { return }
             guard isActive else { return }
+            self.onComplete?(self.selected)  
             self.dismiss(animated: true)
         }
     }

@@ -12,6 +12,8 @@ final class CreateCollectionViewModel {
     
     struct Input {
         let titleChange: AnyPublisher<String, Never>
+        let visibilitySelected: AnyPublisher<Bool, Never>
+        let selectedCount: AnyPublisher<Int, Never>
     }
     
     struct Output {
@@ -21,15 +23,24 @@ final class CreateCollectionViewModel {
     //MARK: - Transform
     
     func transform(input: Input) -> Output {
-        let title = input.titleChange
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines)}
-            .removeDuplicates()
-            .share()
-        
-        let isDoneEnabled = title
+        let titleValid = input.titleChange
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .map { !$0.isEmpty }
             .removeDuplicates()
         
-        return Output(isDoneEnabled: isDoneEnabled.eraseToAnyPublisher())
+        let visibilityValid = input.visibilitySelected
+            .removeDuplicates()
+        
+        let countValid = input.selectedCount
+            .map { $0 >= 2 }
+            .removeDuplicates()
+        
+        let isDoneEnabled = Publishers
+            .CombineLatest3(titleValid, countValid, visibilityValid)
+            .map { $0 && $1 && $2 }
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+        
+        return Output(isDoneEnabled: isDoneEnabled)
     }
 }
