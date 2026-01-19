@@ -8,6 +8,7 @@
 import XCTest
 import Combine
 @testable import Data
+@testable import Domain
 
 final class FLINTTests: XCTestCase {
     
@@ -36,15 +37,15 @@ final class FLINTTests: XCTestCase {
         var receivedValue: Bool?
         
         let cancellable = userService.checkNickname(nickname: "코코아")
-            .sink(receiveCompletion: { _ in
-                
-            }, receiveValue: { nicknameCheckDTO in
-                receivedValue = nicknameCheckDTO.available
+            .sink(receiveCompletion: { result in
+                Log.d(result)
+            }, receiveValue: { response in
+                receivedValue = response.data?.available
                 expectation.fulfill()
             })
         
-        wait(for: [expectation], timeout: 2.0)
-        XCTAssertEqual(receivedValue, false)
+        wait(for: [expectation], timeout: 3.0)
+        XCTAssertEqual(receivedValue, true)
         
         cancellable.cancel()
     }

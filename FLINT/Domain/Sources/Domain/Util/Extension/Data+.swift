@@ -12,7 +12,7 @@ extension Data {
         do {
             return try JSONDecoder().decode(T.self, from: self)
         } catch {
-            Log.e(error.localizedDescription, filename: filename, line: line, funcName: funcName)
+            Log.e("Decoding Error - \(String(decoding: self, as: UTF8.self)) \(error.localizedDescription)", filename: filename, line: line, funcName: funcName)
             return nil
         }
     }

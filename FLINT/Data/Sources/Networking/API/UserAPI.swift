@@ -12,7 +12,7 @@ import Domain
 import Moya
 
 enum UserAPI {
-    case checkNickname(nickname: String)
+    case checkNickname(_ nickname: String)
 }
 
 extension UserAPI: TargetType {

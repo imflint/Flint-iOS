@@ -19,11 +19,4 @@ extension Publisher {
             }
         }, receiveValue: receiveValue)
     }
-    
-    public func manageThread() -> AnyPublisher<Output, Failure> {
-        return self
-            .subscribe(on: DispatchQueue.global())
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-    }
 }

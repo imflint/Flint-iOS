@@ -7,6 +7,14 @@
 
 import Foundation
 
+import Entity
+
 public struct NicknameCheckDTO: Codable {
     public let available: Bool?
+}
+
+extension NicknameCheckDTO {
+    public var entity: NicknameCheckEntity {
+        return NicknameCheckEntity(available: available ?? false)
+    }
 }

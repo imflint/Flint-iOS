@@ -5,16 +5,33 @@
 //  Created by 김호성 on 2026.01.12.
 //
 
+import Combine
 import PhotosUI
 import UIKit
 
 import Domain
 
 import View
+import ViewModel
 
 public final class NicknameViewController: BaseViewController<NicknameView> {
     
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    
+    // MARK: - ViewModel
+    
+    private let onboardingViewModel: OnboardingViewModel
+    
     // MARK: - Basic
+    
+    public init(onboardingViewModel: OnboardingViewModel) {
+        self.onboardingViewModel = onboardingViewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +39,16 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
         setNavigationBar(.init(left: .back))
         hideKeyboardWhenTappedAround()
         addActions()
+    }
+    
+    // MARK: - Bind
+    
+    private func bind() {
+        onboardingViewModel.isValidNickname.sink(receiveValue: { [weak self] isValidNickname in
+            Log.d(isValidNickname)
+            self?.rootView.nextButton.isEnabled = isValidNickname ?? false
+        })
+        .store(in: &cancellables)
     }
     
     // MARK: - Private Function
@@ -104,8 +131,8 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     }
     
     private func verifyNickname(_ action: UIAction) {
-        // TODO: - Verify Nickname Logic
-        rootView.nextButton.isEnabled = true
+        guard let nickname = rootView.nicknameTextField.text else { return }
+        onboardingViewModel.checkNickname(nickname)
     }
     
     private func nextButtonTapped(_ action: UIAction) {
