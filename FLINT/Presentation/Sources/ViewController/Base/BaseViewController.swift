@@ -17,7 +17,8 @@ public class BaseViewController<RootView: UIView>: UIViewController {
     
     // MARK: - Property
     
-    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    public var viewControllerFactory: ViewControllerFactory?
+    public var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Component
     
