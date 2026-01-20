@@ -59,7 +59,7 @@ final class ActionToastView: BaseView, ToastView {
         
         imageView.image = image
         titleLabel.attributedText = .pretendard(.body1_sb_16, text: title)
-        actionButton.configuration?.attributedTitle = .pretendard(.body2_r_14, text: title)
+        actionButton.configuration?.attributedTitle = .pretendard(.body2_r_14, text: actionTitle)
         actionButton.addAction(UIAction(handler: action), for: .touchUpInside)
         self.customConstraints = customConstraints
     }
