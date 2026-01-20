@@ -66,7 +66,8 @@ final class SelectableContentTableViewCell: BaseTableViewCell {
 
     override func setLayout() {
         posterImageView.snp.makeConstraints {
-            $0.top.leading.bottom.equalToSuperview()
+            $0.top.bottom.equalToSuperview()
+            $0.leading.equalToSuperview().inset(16)
             $0.width.equalTo(100)
             $0.height.equalTo(150)
         }

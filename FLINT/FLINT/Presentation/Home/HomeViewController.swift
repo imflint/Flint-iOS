@@ -56,12 +56,8 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     @objc private func didTapFab() {
-        Log.d("FAB tapped")
-    }
-    
-    private func pushCollectionFolderListViewController(_ action: UIAction) {
-        let collectionFolderListViewController = CollectionFolderListViewController()
-        parent?.navigationController?.pushViewController(collectionFolderListViewController, animated: true)
+        let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
+        self.parent?.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
