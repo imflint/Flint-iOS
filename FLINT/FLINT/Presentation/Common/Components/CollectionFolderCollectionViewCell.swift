@@ -13,8 +13,8 @@ import Then
 final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
     
     var onTapCard: (() -> Void)?
-    var onTapBookmark: ((Bool) -> Void)?
-    
+    var onTapBookmark: ((Bool, Int) -> Void)?
+
     // MARK: - UI Component
     
     private let cardContainerView = UIView().then {
@@ -114,8 +114,8 @@ final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         tap.cancelsTouchesInView = false
         cardContainerView.addGestureRecognizer(tap)
         
-        bookmarkView.onTap = { [weak self] isBookmarked in
-            self?.onTapBookmark?(isBookmarked)
+        bookmarkView.onTap = { [weak self] isBookmarked, count in
+            self?.onTapBookmark?(isBookmarked, count)
         }
     }
     

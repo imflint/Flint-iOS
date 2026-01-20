@@ -12,26 +12,26 @@ import Then
 
 final class BookmarkView: BaseView {
     
-    //MARK: - Property
-    
-    var onTap: ((Bool) -> Void)?
+    var onTap: ((Bool, Int) -> Void)?
     
     private var isBookmarked: Bool = false
-    
-    //MARK: - Component
+    private var count: Int = 0
     
     private let bookmarkButton = UIButton(type: .system).then {
-        $0.setImage(.icBookmarkEmpty, for: .normal)
+        $0.setImage(UIImage.icBookmarkEmpty.withRenderingMode(.alwaysOriginal), for: .normal)
     }
+    
     private let countLabel = UILabel().then {
         $0.numberOfLines = 1
     }
     
-    //MARK: - Setup
-    
     override func setUI() {
         addSubviews(bookmarkButton, countLabel)
         bookmarkButton.addTarget(self, action: #selector(didTap), for: .touchUpInside)
+        
+        countLabel.isHidden = false
+        updateIcon()
+        updateCountLabel()
     }
     
     override func setLayout() {
@@ -47,32 +47,39 @@ final class BookmarkView: BaseView {
         }
     }
     
-    // MARK: - Custom Method
-
-    private func updateIcon(isBookmarked: Bool) {
+    private func updateIcon() {
         let image = isBookmarked ? UIImage.icBookmarkFill : UIImage.icBookmarkEmpty
         bookmarkButton.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
     }
-
-    @objc private func didTap() {
-        isBookmarked.toggle()
-        updateIcon(isBookmarked: isBookmarked)
-        onTap?(isBookmarked)
+    
+    private func updateCountLabel() {
+        countLabel.isHidden = false
+        countLabel.attributedText = .pretendard(.caption1_r_12, text: "\(count)", color: .flintWhite)
     }
     
-    // MARK: - Configure
-
-    func configure(isBookmarked: Bool, countText: String?) {
-        self.isBookmarked = isBookmarked
-        updateIcon(isBookmarked: isBookmarked)
-
-        if let countText, !countText.isEmpty {
-            countLabel.isHidden = false
-            countLabel.attributedText = .pretendard(.caption1_r_12, text: countText, color: .flintWhite)
-        } else {
-            countLabel.isHidden = true
-            countLabel.attributedText = nil
+    @objc private func didTap() {
+        let wasBookmarked = isBookmarked
+        isBookmarked.toggle()
+        
+        if !wasBookmarked && isBookmarked {
+            count += 1
+        } else if wasBookmarked && !isBookmarked {
+            count = max(0, count - 1)
         }
+        
+        updateIcon()
+        updateCountLabel()
+        onTap?(isBookmarked, count)
     }
+    
+    func configure(isBookmarked: Bool, countText: String? = "0") {
+        self.isBookmarked = isBookmarked
+        self.count = Int(countText ?? "") ?? 0
+        
+        if self.isBookmarked { self.count = max(1, self.count) }
 
+        
+        updateIcon()
+        updateCountLabel()
+    }
 }
