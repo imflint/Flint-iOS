@@ -24,20 +24,9 @@ public final class DefaultContentService: ContentService {
 
     public init() { }
 
-//    public func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<[FetchOTTPlatformsDTO], NetworkError> {
-//        return provider.requestPublisher(.fetchOTTPlatforms(contentId))
-//            .extractData([FetchOTTPlatformsDTO].self)
-//    }
-    
     public func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<[FetchOTTPlatformsDTO], NetworkError> {
         return provider.requestPublisher(.fetchOTTPlatforms(contentId))
-            .handleEvents(receiveOutput: { response in
-                Log.d("statusCode: \(response.statusCode)")
-                Log.d(String(data: response.data, encoding: .utf8) ?? "")
-            })
-            .eraseToAnyPublisher()
             .extractData([FetchOTTPlatformsDTO].self)
     }
-
 }
 
