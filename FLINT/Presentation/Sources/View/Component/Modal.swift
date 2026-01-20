@@ -16,8 +16,8 @@ public class Modal: BaseView {
     
     // MARK: - Properties
     
-    private var leftAction: ((UIAction) -> Void)
-    private var rightAction: ((UIAction) -> Void)
+    public var leftAction: ((UIAction) -> Void)
+    public var rightAction: ((UIAction) -> Void)
     
     // MARK: - UI Components
     
