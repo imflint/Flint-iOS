@@ -16,7 +16,7 @@ public class TabBarViewController: UIViewController {
     
     // MARK: - Child ViewController
     
-    private let homeViewController = UINavigationController(rootViewController: ExploreViewController())
+    private let homeViewController = UINavigationController(rootViewController: HomeViewController())
     private let exploreViewController = UINavigationController(rootViewController: ExploreViewController())
     private let myViewController = UINavigationController(rootViewController: MyViewController())
     

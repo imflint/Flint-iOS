@@ -8,9 +8,17 @@
 import UIKit
 
 public struct MoreNoMoreCollectionItem {
-    let id: UUID
-    let image: UIImage?
-    let profileImage: UIImage?
-    let title: String
-    let userName: String
+    public let id: UUID
+    public let image: UIImage?
+    public let profileImage: UIImage?
+    public let title: String
+    public let userName: String
+    
+    public init(id: UUID, image: UIImage?, profileImage: UIImage?, title: String, userName: String) {
+        self.id = id
+        self.image = image
+        self.profileImage = profileImage
+        self.title = title
+        self.userName = userName
+    }
 }

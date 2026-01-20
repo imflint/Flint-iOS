@@ -28,4 +28,12 @@ public struct RecentSavedContentItem: Hashable {
         }
         return (Array(list.prefix(2)), list.count - 2)
     }
+    
+    public init(posterImageName: String, title: String, year: Int, availableOn: Set<CircleOTTPlatform>, subscribedOn: Set<CircleOTTPlatform>) {
+        self.posterImageName = posterImageName
+        self.title = title
+        self.year = year
+        self.availableOn = availableOn
+        self.subscribedOn = subscribedOn
+    }
 }
