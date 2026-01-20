@@ -31,8 +31,7 @@ public extension AnyPublisher where Output == Response, Failure == MoyaError {
                 return data
             })
             .mapError({ error in
-                Log.e(error.localizedDescription
-                )
+                Log.e(error.localizedDescription)
                 return error as? NetworkError ?? .unknown
             })
             .eraseToAnyPublisher()
