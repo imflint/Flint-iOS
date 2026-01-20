@@ -37,7 +37,7 @@ final class TitleHeaderTableViewCell: BaseTableViewCell {
         $0.numberOfLines = 1
     }
     
-    private let moreButton = UIButton().then {
+    let moreButton = UIButton().then {
         $0.setImage(.icMore, for: .normal)
         $0.isHidden = true
     }

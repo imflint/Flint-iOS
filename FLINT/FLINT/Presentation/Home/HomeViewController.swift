@@ -59,7 +59,6 @@ final class HomeViewController: BaseViewController<HomeView> {
         let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
         self.parent?.navigationController?.pushViewController(vc, animated: true)
     }
-
 }
 
 
@@ -94,7 +93,21 @@ extension HomeViewController: UITableViewDataSource {
                 withIdentifier: TitleHeaderTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! TitleHeaderTableViewCell
+
             cell.configure(style: style, title: title, subtitle: subtitle)
+
+            if style == .more {
+                //TODO: - collectionFolderListView 연결하기
+                
+                cell.onTapMore = { [weak self] in
+                    let vc = CollectionFolderListViewController()
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+    
+            } else {
+                cell.onTapMore = nil
+            }
+
             return cell
 
         case .fliner(let items):

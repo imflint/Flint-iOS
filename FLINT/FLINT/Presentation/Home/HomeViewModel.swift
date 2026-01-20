@@ -69,7 +69,28 @@ final class HomeViewModel {
 
       
         let watchingCollectionItems: [MoreNoMoreCollectionItem] = [
-            ///데이터가있는경우는 여기 .init을 채우면 나옵니다
+            //데이터가있는경우는 여기 .init을 채우면 나옵니다
+            .init(
+                    id: UUID(),
+                    image: UIImage(named: "img_background_gradiant_middle"),
+                    profileImage: UIImage(named: "img_profile_blue"),
+                    title: "요즘 빠진 스릴러만 모았어요",
+                    userName: "키키"
+                ),
+                .init(
+                    id: UUID(),
+                    image: UIImage(named: "img_background_gradiant_middle"),
+                    profileImage: UIImage(named: "img_profile_blue"),
+                    title: "주말에 보기 좋은 힐링 영화",
+                    userName: "소은"
+                ),
+                .init(
+                    id: UUID(),
+                    image: UIImage(named: "img_background_gradiant_middle"),
+                    profileImage: UIImage(named: "img_profile_blue"),
+                    title: "한 번 보면 끝까지 보는 시리즈",
+                    userName: "소은"
+                )
         ]
 
         let watchingSectionRows: [Row]
@@ -113,7 +134,7 @@ final class HomeViewModel {
                 ),
                 .recentSaved(items: dummyRecentSavedItems)
             ]),
-            .init(rows: watchingSectionRows) 
+            .init(rows: watchingSectionRows)
         ]
     }
 }
