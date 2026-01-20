@@ -17,7 +17,7 @@ public protocol NicknameUseCase {
 
 public class DefaultNicknameUseCase: NicknameUseCase {
     
-    let userRepository: UserRepository
+    private let userRepository: UserRepository
     
     public init(userRepository: UserRepository) {
         self.userRepository = userRepository

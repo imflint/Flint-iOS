@@ -46,3 +46,4 @@ extension OnboardingFactory {
         return DefaultOnboardingViewModel(nicknameUseCase: nicknameUseCase)
     }
 }
+
