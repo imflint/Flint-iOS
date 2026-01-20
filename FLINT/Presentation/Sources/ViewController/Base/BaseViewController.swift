@@ -5,6 +5,7 @@
 //  Created by 진소은 on 1/6/26.
 //
 
+import Combine
 import UIKit
 
 import SnapKit
@@ -13,6 +14,10 @@ import Then
 import View
 
 public class BaseViewController<RootView: UIView>: UIViewController {
+    
+    // MARK: - Property
+    
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Component
     

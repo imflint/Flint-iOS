@@ -37,7 +37,7 @@ public final class HomeCTAButtonTableViewCell: BaseTableViewCell {
     public override func setLayout() {
         button.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
             $0.height.equalTo(48)
         }

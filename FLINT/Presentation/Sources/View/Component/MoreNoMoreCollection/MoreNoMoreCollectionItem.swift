@@ -7,6 +7,8 @@
 
 import UIKit
 
+// TODO: - 나중에 옮길 것!!!!!!!!!!!!!!!
+
 public struct MoreNoMoreCollectionItem {
     public let id: UUID
     public let image: UIImage?

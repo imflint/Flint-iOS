@@ -17,11 +17,19 @@ public enum KeywordColor: String, Decodable {
 }
 
 public struct KeywordDTO: Decodable {
-    let color: KeywordColor
-    let rank: Int
-    let name: String
-    let percentage: Int
-    let imageUrl: String
+    public let color: KeywordColor
+    public let rank: Int
+    public let name: String
+    public let percentage: Int
+    public let imageUrl: String
+    
+    public init(color: KeywordColor, rank: Int, name: String, percentage: Int, imageUrl: String) {
+        self.color = color
+        self.rank = rank
+        self.name = name
+        self.percentage = percentage
+        self.imageUrl = imageUrl
+    }
 }
 
 extension KeywordColor {

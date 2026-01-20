@@ -9,7 +9,7 @@ import Foundation
 import os
 
 /// Centralized Custom Logging System
-public final class Log {
+public struct Log {
     
     private static let enabled: Bool = true
     

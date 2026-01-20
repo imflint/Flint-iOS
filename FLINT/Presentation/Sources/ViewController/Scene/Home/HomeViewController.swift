@@ -8,14 +8,15 @@
 import UIKit
 
 import View
+import ViewModel
 
-final class HomeViewController: BaseViewController<HomeView> {
+public final class HomeViewController: BaseViewController<HomeView> {
 
     private let viewModel = HomeViewModel(userName: "얀비")
 
     // MARK: - Lifecycle
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         setTableView()
         registerCells()
@@ -24,7 +25,7 @@ final class HomeViewController: BaseViewController<HomeView> {
 
     // MARK: - Override Points
 
-    override func setUI() {
+    public override func setUI() {
         view.backgroundColor = DesignSystem.Color.background
 
         setNavigationBar(
@@ -58,8 +59,8 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
 
     @objc private func didTapFab() {
-        print("FAB tapped")
-        // TODO: - 플로팅 버튼 탭 버튼 구현
+        let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
+        self.parent?.navigationController?.pushViewController(vc, animated: true)
     }
 
 }
@@ -69,15 +70,15 @@ final class HomeViewController: BaseViewController<HomeView> {
 
 extension HomeViewController: UITableViewDataSource {
 
-    func numberOfSections(in tableView: UITableView) -> Int {
+    public func numberOfSections(in tableView: UITableView) -> Int {
         viewModel.sections.count
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.sections[section].rows.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let row = viewModel.sections[indexPath.section].rows[indexPath.row]
 
@@ -136,11 +137,11 @@ extension HomeViewController: UITableViewDataSource {
 
 extension HomeViewController: UITableViewDelegate {
 
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         48
     }
 
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let view = UIView()
         view.backgroundColor = .clear
         return view

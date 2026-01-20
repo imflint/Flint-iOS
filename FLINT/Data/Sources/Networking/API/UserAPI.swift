@@ -7,9 +7,9 @@
 
 import Foundation
 
-import Domain
-
 import Moya
+
+import Domain
 
 enum UserAPI {
     case checkNickname(_ nickname: String)
@@ -17,11 +17,7 @@ enum UserAPI {
 
 extension UserAPI: TargetType {
     var baseURL: URL {
-        guard let baseURL = URL(string: "https://flint.r-e.kr") else {
-            Log.f("Invalid BaseURL")
-            fatalError("Invalid BaseURL")
-        }
-        return baseURL
+        return NetworkConfig.baseURL
     }
     
     var path: String {
