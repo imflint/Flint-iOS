@@ -11,7 +11,26 @@ import Domain
 
 extension UIFont {
     
-    public enum PretendardWeight: String {
+    public static func registerPretendardFonts() {
+        PretendardWeight.allCases.forEach { pretendardWeight in
+            guard let fontURL = Bundle.module.url(forResource: pretendardWeight.name, withExtension: "otf") else {
+                Log.e("\(pretendardWeight.name) 파일을 찾을 수 없습니다.")
+                return
+            }
+            var error: Unmanaged<CFError>?
+            if !CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error) {
+                if let cfError = error?.takeRetainedValue() {
+                    Log.e("\(pretendardWeight.name) 등록 실패: \(cfError)")
+                } else {
+                    Log.e("\(pretendardWeight.name) 등록 실패 (unknown)")
+                }
+            } else {
+                Log.d("\(pretendardWeight.name) 등록 성공")
+            }
+        }
+    }
+    
+    public enum PretendardWeight: String, CaseIterable {
         case bold       = "Bold"
         case semiBold   = "SemiBold"
         case medium     = "Medium"

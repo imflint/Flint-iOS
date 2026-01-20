@@ -5,7 +5,7 @@
 //  Created by 김호성 on 2025.12.05.
 //
 
-import Foundation
+import UIKit
 import Combine
 
 import Data
@@ -27,6 +27,11 @@ final class DIContainer: AppFactory {
     }
     
     // MARK: - ViewControllerFactory
+    
+    func makeTabBarViewController() -> TabBarViewController {
+        return TabBarViewController()
+    }
+    
     func makeNicknameViewController(onboardingViewModel: OnboardingViewModel) -> NicknameViewController {
         return NicknameViewController(onboardingViewModel: makeOnboardingViewModel())
     }

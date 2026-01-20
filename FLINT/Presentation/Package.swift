@@ -43,7 +43,7 @@ let package = Package(
                 .product(name: "Lottie", package: "lottie-ios"),
             ],
             resources: [
-                .process("Assets.xcassets")
+                .process("Resource"),
             ]
         ),
         .target(name: "ViewController", dependencies: [

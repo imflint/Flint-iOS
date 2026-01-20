@@ -36,11 +36,11 @@ final class FLINTTests: XCTestCase {
         let expectation = XCTestExpectation(description: "비동기 Test")
         var receivedValue: Bool?
         
-        let cancellable = userService.checkNickname(nickname: "코코아")
+        let cancellable = userService.checkNickname("코코아")
             .sink(receiveCompletion: { result in
                 Log.d(result)
-            }, receiveValue: { response in
-                receivedValue = response.data?.available
+            }, receiveValue: { dto in
+                receivedValue = dto.available
                 expectation.fulfill()
             })
         

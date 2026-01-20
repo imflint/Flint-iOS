@@ -13,9 +13,3 @@ public protocol ViewControllerFactory {
     func makeTabBarViewController() -> TabBarViewController
     func makeNicknameViewController(onboardingViewModel: OnboardingViewModel) -> NicknameViewController
 }
-
-extension ViewControllerFactory {
-    @MainActor public func makeTabBarViewController() -> TabBarViewController {
-        return TabBarViewController()
-    }
-}
