@@ -56,8 +56,8 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     @objc private func didTapFab() {
-        print("FAB tapped")
-        // TODO: - 플로팅 버튼 탭 버튼 구현
+        let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
+        self.parent?.navigationController?.pushViewController(vc, animated: true)
     }
 
 }
