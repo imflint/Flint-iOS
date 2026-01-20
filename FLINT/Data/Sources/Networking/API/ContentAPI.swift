@@ -8,9 +8,9 @@
 
 import Foundation
 
-import Domain
-
 import Moya
+
+import Domain
 
 enum ContentAPI {
     case fetchOTTPlatforms(_ contentId: Int64)

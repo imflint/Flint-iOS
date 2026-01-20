@@ -7,9 +7,9 @@
 
 import Foundation
 
-import Domain
-
 import Moya
+
+import Domain
 
 enum HomeAPI {
     case fetchRecommendedCollections

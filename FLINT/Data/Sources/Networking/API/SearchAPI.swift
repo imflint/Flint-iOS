@@ -7,10 +7,9 @@
 
 import Foundation
 
-import Domain
-
 import Moya
 
+import Domain
 
 enum SearchAPI {
     case searchContents(_ keyword: String)
