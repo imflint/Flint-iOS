@@ -38,7 +38,7 @@ let package = Package(
                 .product(name: "CombineMoya", package: "Moya"),
             ],
             resources: [
-                .process("Secret.plist"),
+                .process("Flint-iOS-Private"),
             ]
         ),
         .target(name: "RepositoryImpl", dependencies: [

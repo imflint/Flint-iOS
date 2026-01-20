@@ -1,0 +1,3 @@
+[submodule "FLINT/Data/Sources/Networking/Flint-iOS-Private"]
+	path = FLINT/Data/Sources/Networking/Flint-iOS-Private
+	url = git@github.com:imflint/Flint-iOS-Private.git
