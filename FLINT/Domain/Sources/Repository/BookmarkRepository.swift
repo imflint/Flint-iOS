@@ -12,4 +12,6 @@ import Entity
 
 public protocol BookmarkRepository {
     func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, NetworkError>
+    
+    func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, NetworkError>
 }

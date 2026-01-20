@@ -155,6 +155,29 @@ final class FLINTTests: XCTestCase {
 
         cancellable.cancel()
     }
+    func testToggleContentBookmark_Fails_WithoutToken() throws {
+        let expectation = XCTestExpectation(description: "Auth Required Test")
 
-    
+        let repository = DefaultBookmarkRepository(
+            bookmarkService: DefaultBookmarkService()
+        )
+
+        var didFail = false
+
+        let cancellable = repository.toggleContentBookmark(1)
+            .sink(receiveCompletion: { result in
+                if case .failure = result {
+                    didFail = true
+                }
+                expectation.fulfill()
+            }, receiveValue: { _ in
+                XCTFail("Expected failure, but received value")
+            })
+
+        wait(for: [expectation], timeout: 3.0)
+        XCTAssertTrue(didFail)
+
+        cancellable.cancel()
+    }
+
 }

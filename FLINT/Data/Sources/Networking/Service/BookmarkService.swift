@@ -18,16 +18,22 @@ import DTO
 
 public protocol BookmarkService {
     func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, NetworkError>
+    func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, NetworkError>
 }
 
 public final class DefaultBookmarkService: BookmarkService {
-
+    
     private let provider = MoyaProvider<BookmarkAPI>()
-
+    
     public init() { }
-
+    
     public func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, NetworkError> {
         return provider.requestPublisher(.toggleCollectionBookmark(collectionId))
+            .extractData(Bool.self)
+    }
+    
+    public func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, NetworkError> {
+        return provider.requestPublisher(.toggleContentBookmark(contentId))
             .extractData(Bool.self)
     }
 }

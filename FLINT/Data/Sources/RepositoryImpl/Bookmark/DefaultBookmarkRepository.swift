@@ -25,4 +25,9 @@ public final class DefaultBookmarkRepository: BookmarkRepository {
         return bookmarkService.toggleCollectionBookmark(collectionId)
             .eraseToAnyPublisher()
     }
+    
+    public func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, NetworkError> {
+           return bookmarkService.toggleContentBookmark(contentId)
+               .eraseToAnyPublisher()
+       }
 }
