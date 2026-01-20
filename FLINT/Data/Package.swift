@@ -30,11 +30,17 @@ let package = Package(
         .target(name: "DTO", dependencies: [
             .product(name: "Domain", package: "Domain"),
         ]),
-        .target(name: "Networking", dependencies: [
-            "DTO",
-            .product(name: "Moya", package: "Moya"),
-            .product(name: "CombineMoya", package: "Moya"),
-        ]),
+        .target(
+            name: "Networking",
+            dependencies: [
+                "DTO",
+                .product(name: "Moya", package: "Moya"),
+                .product(name: "CombineMoya", package: "Moya"),
+            ],
+            resources: [
+                .process("Secret.plist"),
+            ]
+        ),
         .target(name: "RepositoryImpl", dependencies: [
             "Networking",
         ]),
