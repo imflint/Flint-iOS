@@ -10,16 +10,16 @@ import Foundation
 extension Toast {
     
     /// The direction where the toast will be displayed
-    enum Direction {
+    public enum Direction {
         case top, bottom, center
     }
     
-    enum DismissSwipeDirection: Equatable {
+    public enum DismissSwipeDirection: Equatable {
         case toTop,
              toBottom,
              natural
         
-        func shouldApply(_ delta: CGFloat, direction: Direction) -> Bool {
+        public func shouldApply(_ delta: CGFloat, direction: Direction) -> Bool {
             switch self {
             case .toTop:
                 return delta <= 0

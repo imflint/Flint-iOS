@@ -34,6 +34,7 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
+        $0.backgroundColor = .flintGray100
     }
     
     private let secondPosterImageView = UIImageView().then {
@@ -140,7 +141,7 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
     public override func setLayout() {
         cardContainerView.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
             $0.size.equalTo(154)
         }
         
@@ -163,7 +164,8 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         }
         
         secondPosterImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.horizontalEdges.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(4)
         }
         
         folderOverlayoutView.snp.makeConstraints {
@@ -239,6 +241,17 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         
         public let isBookmarked: Bool
         public let bookmarkedCountText: String?
+        
+        public init(firstPosterImage: UIImage?, secondPosterImage: UIImage?, profileImage: UIImage?, name: String, title: String, description: String, isBookmarked: Bool, bookmarkedCountText: String?) {
+            self.firstPosterImage = firstPosterImage
+            self.secondPosterImage = secondPosterImage
+            self.profileImage = profileImage
+            self.name = name
+            self.title = title
+            self.description = description
+            self.isBookmarked = isBookmarked
+            self.bookmarkedCountText = bookmarkedCountText
+        }
     }
     
     public func configure(_ configuration: Configuration) {

@@ -8,22 +8,22 @@
 import Foundation
 
 @MainActor
-final class ToastQueue {
+public final class ToastQueue {
     
     private var queue: [Toast]
     private var multicast = MulticastDelegate<ToastQueueDelegate>()
     private var isShowing = false
     
-    init(toasts: [Toast] = [], delegates: [ToastQueueDelegate] = []) {
+    public init(toasts: [Toast] = [], delegates: [ToastQueueDelegate] = []) {
         self.queue = toasts
         delegates.forEach(multicast.add)
     }
     
-    func enqueue(_ toast: Toast) -> Void {
+    public func enqueue(_ toast: Toast) -> Void {
         queue.append(toast)
     }
     
-    func enqueue(_ toasts: [Toast]) -> Void {
+    public func enqueue(_ toasts: [Toast]) -> Void {
         let size = queue.count
         toasts.forEach({ queue.append($0) })
         
@@ -32,7 +32,7 @@ final class ToastQueue {
         }
     }
     
-    func dequeue(_ toastToDequeue: Toast) -> Void {
+    public func dequeue(_ toastToDequeue: Toast) -> Void {
         let index: Int? = queue.firstIndex { $0 === toastToDequeue }
         
         if let index {
@@ -40,11 +40,11 @@ final class ToastQueue {
         }
     }
     
-    func size() -> Int {
+    public func size() -> Int {
         return queue.count
     }
     
-    func show() -> Void {
+    public func show() -> Void {
         show(index: 0)
     }
     

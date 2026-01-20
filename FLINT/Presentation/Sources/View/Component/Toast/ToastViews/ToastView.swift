@@ -7,6 +7,6 @@
 
 import UIKit
 
-protocol ToastView : UIView {
+public protocol ToastView : UIView {
     func createView(for toast: Toast)
 }

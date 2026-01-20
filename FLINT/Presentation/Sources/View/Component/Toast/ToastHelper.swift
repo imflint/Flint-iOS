@@ -7,9 +7,9 @@
 
 import UIKit
 
-class ToastHelper {
+public class ToastHelper {
     
-    static func topController() -> UIViewController? {
+    public static func topController() -> UIViewController? {
         if var topController = keyWindow()?.rootViewController {
             while let presentedViewController = topController.presentedViewController {
                 topController = presentedViewController

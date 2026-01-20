@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ToastQueueDelegate: AnyObject {
+public protocol ToastQueueDelegate: AnyObject {
     
     func willShowAnyToast(_ toast: Toast, queuedToasts: [Toast]) -> Void
     

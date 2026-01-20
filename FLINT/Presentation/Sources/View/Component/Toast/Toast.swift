@@ -10,10 +10,10 @@ import UIKit
 import SnapKit
 
 @MainActor
-class Toast {
+public class Toast {
     private static var activeToasts: [Toast] = []
     
-    let view: ToastView
+    public let view: ToastView
     private var backgroundView: UIView?
     
     private var closeTimer: Timer?
@@ -28,7 +28,7 @@ class Toast {
     
     // MARK: - Flint Toasts
     
-    static func success(
+    public static func success(
         _ text: String,
         config: ToastConfiguration = ToastConfiguration(),
         customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
@@ -36,7 +36,7 @@ class Toast {
         return plain(image: .icCheck, title: text, customConstraints: customConstraints)
     }
     
-    static func failure(
+    public static func failure(
         _ text: String,
         config: ToastConfiguration = ToastConfiguration(),
         customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
@@ -44,7 +44,7 @@ class Toast {
         return plain(image: .icX, title: text, customConstraints: customConstraints)
     }
     
-    static func text(
+    public static func text(
         _ text: String,
         config: ToastConfiguration = ToastConfiguration(),
         customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
@@ -52,7 +52,7 @@ class Toast {
         return plain(title: text, customConstraints: customConstraints)
     }
     
-    static func plain(
+    public static func plain(
         image: UIImage? = nil,
         title: String,
         config: ToastConfiguration = ToastConfiguration(),
@@ -62,7 +62,7 @@ class Toast {
         return self.init(view: view, config: config)
     }
     
-    static func action(
+    public static func action(
         image: UIImage,
         title: String,
         actionTitle: String,
@@ -79,7 +79,7 @@ class Toast {
     ///   - view: A view which is displayed when the toast is shown
     ///   - config: Configuration options
     /// - Returns: A new Toast view with the configured layout
-    static func custom(
+    public static func custom(
         view: ToastView,
         config: ToastConfiguration = ToastConfiguration()
     ) -> Toast {
@@ -113,14 +113,14 @@ class Toast {
     /// - Parameters:
     ///   - type: Haptic feedback type
     ///   - time: Time after which the toast is shown
-    func show(haptic type: UINotificationFeedbackGenerator.FeedbackType, after time: TimeInterval = 0) {
+    public func show(haptic type: UINotificationFeedbackGenerator.FeedbackType, after time: TimeInterval = 0) {
         UINotificationFeedbackGenerator().notificationOccurred(type)
         show(after: time)
     }
     
     /// Show the toast
     /// - Parameter delay: Time after which the toast is shown
-    func show(after delay: TimeInterval = 0) {
+    public func show(after delay: TimeInterval = 0) {
         UIView.performWithoutAnimation {
             config.view?.addSubview(view) ?? ToastHelper.topController()?.view.addSubview(view)
             view.createView(for: self)
@@ -157,7 +157,7 @@ class Toast {
     /// - Parameters:
     ///   - completion: A completion handler which is invoked after the toast is hidden
     ///   - animated: A Boolean value that determines whether to apply animation.
-    func close(animated: Bool = true, completion: (() -> Void)? = nil) {
+    public func close(animated: Bool = true, completion: (() -> Void)? = nil) {
         multicast.invoke { $0.willCloseToast(self) }
 
         closeTimer?.invalidate()
@@ -181,7 +181,7 @@ class Toast {
         })
     }
     
-    func addDelegate(delegate: ToastDelegate) -> Void {
+    public func addDelegate(delegate: ToastDelegate) -> Void {
         multicast.add(delegate)
     }
     
@@ -241,17 +241,17 @@ extension Toast {
         }
     }
     
-    func enableTapToClose() {
+    public func enableTapToClose() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(toastOnTap))
         self.view.addGestureRecognizer(tap)
     }
     
-    func enableLongPressToClose() {
+    public func enableLongPressToClose() {
         let tap = UILongPressGestureRecognizer(target: self, action: #selector(toastOnTap))
         self.view.addGestureRecognizer(tap)
     }
     
-    @objc func toastOnTap(_ gesture: UITapGestureRecognizer) {
+    @objc public func toastOnTap(_ gesture: UITapGestureRecognizer) {
         closeTimer?.invalidate()
         close()
     }
@@ -268,7 +268,7 @@ extension Toast {
 }
 
 extension Toast {
-    enum Dismissable: Equatable {
+    public enum Dismissable: Equatable {
         case tap,
              longPress,
              time(time: TimeInterval),
@@ -277,7 +277,7 @@ extension Toast {
 }
 
 extension Toast: @MainActor Equatable {
-    static func == (lhs: Toast, rhs: Toast) -> Bool {
+    public static func == (lhs: Toast, rhs: Toast) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
 }

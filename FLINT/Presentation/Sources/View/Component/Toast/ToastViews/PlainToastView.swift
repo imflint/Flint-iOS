@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class PlainToastView: BaseView, ToastView {
+public final class PlainToastView: BaseView, ToastView {
     
     // MARK: - Property
     
@@ -37,7 +37,7 @@ final class PlainToastView: BaseView, ToastView {
     
     // MARK: - Basic
     
-    init(image: UIImage? = nil, title: String, customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil) {
+    public init(image: UIImage? = nil, title: String, customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil) {
         super.init(frame: .zero)
         
         imageView.image = image
@@ -51,19 +51,19 @@ final class PlainToastView: BaseView, ToastView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func removeFromSuperview() {
+    public override func removeFromSuperview() {
       super.removeFromSuperview()
       self.toast = nil
     }
     
     // MARK: - Setup
     
-    override func setHierarchy() {
+    public override func setHierarchy() {
         addSubview(mainStackView)
         mainStackView.addArrangedSubviews(imageView, titleLabel)
     }
     
-    override func setLayout() {
+    public override func setLayout() {
         mainStackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(12)
             $0.verticalEdges.equalToSuperview().inset(9)
@@ -75,7 +75,7 @@ final class PlainToastView: BaseView, ToastView {
     
     // MARK: - Function
     
-    func createView(for toast: Toast) {
+    public func createView(for toast: Toast) {
         self.toast = toast
         snp.makeConstraints {
             $0.leading.greaterThanOrEqualToSuperview().inset(10)
@@ -101,7 +101,7 @@ final class PlainToastView: BaseView, ToastView {
         }
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         UIView.animate(withDuration: 0.5) {
             self.style()
         }

@@ -55,13 +55,13 @@ public final class HomeViewModel {
             .init(posterImageName: "img_background_gradiant_large",
                   title: "오펜하이머",
                   year: 2023,
-                  availableOn: [.wave, .tving],
-                  subscribedOn: [.tving, .wave]),
+                  availableOn: [.wave, .tving, .netflix,.disneyPlus, .watcha],
+                  subscribedOn: [.tving, .wave, .netflix,.disneyPlus, .watcha]),
             .init(posterImageName: "img_background_gradiant_large",
                   title: "스즈메의 문단속",
                   year: 2022,
-                  availableOn: [.netflix, .watcha],
-                  subscribedOn: [.netflix]),
+                  availableOn: [.netflix, .watcha, .disneyPlus, .watcha],
+                  subscribedOn: [.netflix,.disneyPlus, .watcha]),
             .init(posterImageName: "img_background_gradiant_large",
                   title: "스즈메의 문단속",
                   year: 2022,
@@ -71,7 +71,28 @@ public final class HomeViewModel {
 
 
         let watchingCollectionItems: [MoreNoMoreCollectionItem] = [
-            ///데이터가있는경우는 여기 .init을 채우면 나옵니다
+            //데이터가있는경우는 여기 .init을 채우면 나옵니다
+            .init(
+                    id: UUID(),
+                    image: UIImage(named: "img_background_gradiant_middle"),
+                    profileImage: UIImage(named: "img_profile_blue"),
+                    title: "요즘 빠진 스릴러만 모았어요",
+                    userName: "키키"
+                ),
+                .init(
+                    id: UUID(),
+                    image: UIImage(named: "img_background_gradiant_middle"),
+                    profileImage: UIImage(named: "img_profile_blue"),
+                    title: "주말에 보기 좋은 힐링 영화",
+                    userName: "소은"
+                ),
+                .init(
+                    id: UUID(),
+                    image: UIImage(named: "img_background_gradiant_middle"),
+                    profileImage: UIImage(named: "img_profile_blue"),
+                    title: "한 번 보면 끝까지 보는 시리즈",
+                    userName: "소은"
+                )
         ]
 
         let watchingSectionRows: [Row]

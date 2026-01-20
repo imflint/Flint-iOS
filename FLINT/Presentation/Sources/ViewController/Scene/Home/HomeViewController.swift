@@ -62,7 +62,6 @@ public final class HomeViewController: BaseViewController<HomeView> {
         let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
         self.parent?.navigationController?.pushViewController(vc, animated: true)
     }
-
 }
 
 
@@ -81,9 +80,9 @@ extension HomeViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let row = viewModel.sections[indexPath.section].rows[indexPath.row]
-
+        
         switch row {
-
+            
         case .greeting(let userName):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: HomeGreetingTableViewCell.reuseIdentifier,
@@ -91,15 +90,29 @@ extension HomeViewController: UITableViewDataSource {
             ) as! HomeGreetingTableViewCell
             cell.configure(userName: userName)
             return cell
-
+            
         case .header(let style, let title, let subtitle):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: TitleHeaderTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! TitleHeaderTableViewCell
-            cell.configure(style: style, title: title, subtitle: subtitle)
-            return cell
 
+            cell.configure(style: style, title: title, subtitle: subtitle)
+
+            if style == .more {
+                //TODO: - collectionFolderListView 연결하기
+                
+                cell.onTapMore = { [weak self] in
+                    let vc = CollectionFolderListViewController()
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+    
+            } else {
+                cell.onTapMore = nil
+            }
+
+            return cell
+            
         case .fliner(let items):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier,
@@ -107,13 +120,24 @@ extension HomeViewController: UITableViewDataSource {
             ) as! MoreNoMoreCollectionTableViewCell
             cell.configure(items: items)
             return cell
-
+            
         case .recentSaved(let items):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! RecentSavedContentTableViewCell
+            
             cell.configure(items: items)
+            
+            cell.onTapItem = { [weak self] item in
+                let circles = item.availableOn.intersection(item.subscribedOn)
+
+                let platforms = CircleOTTPlatform.order
+                    .filter { circles.contains($0) }
+                    .map { OTTPlatform(circle: $0) }     
+
+                self?.presentOTTBottomSheet(platforms: platforms)
+            }
             return cell
 
         case .ctaButton(let title):
@@ -129,6 +153,12 @@ extension HomeViewController: UITableViewDataSource {
             return cell
 
         }
+    }
+    private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
+        let vc = BaseBottomSheetViewController(
+            content: .ott(platforms: platforms)
+        )
+        present(vc, animated: false)
     }
 }
 

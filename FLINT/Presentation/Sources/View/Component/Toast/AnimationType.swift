@@ -9,7 +9,7 @@ import UIKit
 
 extension Toast {
     /// Built-in animations for your toast
-    enum AnimationType {
+    public enum AnimationType {
         /// Use this type for fading in/out animations.
         case slide(x: CGFloat, y: CGFloat)
 
@@ -30,7 +30,7 @@ extension Toast {
         /// Currently the default animation if no explicit one specified.
         case `default`
         
-        func apply(to view: UIView) {
+        public func apply(to view: UIView) {
             switch self {
             case .slide(x: let x, y: let y):
                 view.transform = CGAffineTransform(translationX: x, y: y)
@@ -53,7 +53,7 @@ extension Toast {
         }
         
         /// Undo the effects from the ToastView so that it never happened.
-        func undo(from view: UIView) {
+        public func undo(from view: UIView) {
             switch self {
             case .slide, .scaleAndSlide, .scale, .custom:
                 view.transform = .identity

@@ -14,6 +14,8 @@ public final class RecentSavedContentTableViewCell: BaseTableViewCell {
     
     public var onTapItem: ((RecentSavedContentItem) -> Void)?
     
+    private var items: [RecentSavedContentItem] = []
+    
     // MARK: - UI
     
     private let collectionView: UICollectionView = {
@@ -28,10 +30,6 @@ public final class RecentSavedContentTableViewCell: BaseTableViewCell {
             $0.showsHorizontalScrollIndicator = false
         }
     }()
-    
-    // MARK: - Data
-    
-    private var items: [RecentSavedContentItem] = []
     
     // MARK: - Override
     
@@ -49,13 +47,12 @@ public final class RecentSavedContentTableViewCell: BaseTableViewCell {
         )
     }
     
-    
     public override func setLayout() {
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.top.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
-            $0.height.equalTo(226)   
+            $0.height.equalTo(226)
         }
     }
     
