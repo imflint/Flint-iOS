@@ -44,6 +44,8 @@ public class BaseViewController<RootView: UIView>: UIViewController {
         setUI()
         setHierarchy()
         setLayout()
+        
+        bind()
     }
     
     // MARK: - Setup
@@ -73,6 +75,10 @@ public class BaseViewController<RootView: UIView>: UIViewController {
     }
     
     // MARK: - Override Points
+    
+    public func bind() {
+        
+    }
     
     public func setUI() {
         
