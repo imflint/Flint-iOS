@@ -12,8 +12,9 @@ import View
 import ViewModel
 
 public final class CreateCollectionViewController: BaseViewController<CreateCollectionView> {
-    
-    //MARK: - enum
+
+    // MARK: - Enum
+
     enum CreateCollectionRow: Int, CaseIterable {
         case header
         case title
@@ -21,42 +22,52 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
         case visibility
         case addContent
     }
-    
+
+    // MARK: - State
+
     private var collectionTitleText: String = ""
     private var collectionDescriptionText: String = ""
-    
+
     private var selectedContents: [SavedContentItemViewModel] = []
     private var selectedReasonItems: [SelectedContentReasonTableViewCellItem] = []
 
     private let viewModel: CreateCollectionViewModel
-    
+
     private var cancellables = Set<AnyCancellable>()
     private let titleChangeSubject = PassthroughSubject<String, Never>()
     private let visibilitySubject = CurrentValueSubject<Bool, Never>(false)
     private let selectedCountSubject = CurrentValueSubject<Int, Never>(0)
-    
-    // MARK: - init
-    
+
+    // MARK: - Init
+
     public init(viewModel: CreateCollectionViewModel = CreateCollectionViewModel()) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
+
+    // MARK: - Lifecycle
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         setTableView()
         registerCells()
         bindViewModel()
     }
-    
+
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        rootView.refreshFooterLayout()
+    }
+
     // MARK: - Setup
-    
+
     public override func setUI() {
         super.setUI()
+
         view.backgroundColor = DesignSystem.Color.background
-        
+
         setNavigationBar(
             .init(
                 left: .back,
@@ -67,14 +78,15 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
     }
 }
 
-//MARK: - Private
+// MARK: - Private
 
 private extension CreateCollectionViewController {
+
     func setTableView() {
         rootView.tableView.dataSource = self
         rootView.tableView.delegate = self
     }
-    
+
     func registerCells() {
         rootView.tableView.register(CreateCollectionHeaderImageCell.self)
         rootView.tableView.register(CreateCollectionTitleInputCell.self)
@@ -83,7 +95,7 @@ private extension CreateCollectionViewController {
         rootView.tableView.register(CreateCollectionAddContentCell.self)
         rootView.tableView.register(SelectedContentReasonTableViewCell.self)
     }
-    
+
     func bindViewModel() {
         let input = CreateCollectionViewModel.Input(
             titleChange: titleChangeSubject.eraseToAnyPublisher(),
@@ -92,7 +104,7 @@ private extension CreateCollectionViewController {
         )
 
         let output = viewModel.transform(input: input)
-        
+
         output.isDoneEnabled
             .receive(on: RunLoop.main)
             .sink { [weak self] isEnabled in
@@ -100,16 +112,16 @@ private extension CreateCollectionViewController {
             }
             .store(in: &cancellables)
     }
-    
+
     func syncReasonItems(with models: [SavedContentItemViewModel]) {
         func key(of model: SavedContentItemViewModel) -> String {
             "\(model.title)|\(model.director)|\(model.year)"
         }
-        
+
         let existingByKey = Dictionary(uniqueKeysWithValues: selectedReasonItems.map {
             (key(of: .init(posterImage: $0.posterImage, title: $0.title, director: $0.director, year: $0.year)), $0)
         })
-        
+
         selectedReasonItems = models.map { model in
             let k = key(of: model)
             if let existing = existingByKey[k] {
@@ -124,7 +136,25 @@ private extension CreateCollectionViewController {
                 reasonText: nil
             )
         }
+
         selectedCountSubject.send(selectedReasonItems.count)
+    }
+
+    func presentAddContentSelect() {
+        let vc = AddContentSelectViewController()
+        vc.initialSelected = selectedContents
+        vc.protectedDeleteKeys = Set(selectedContents.map { "\($0.title)|\($0.director)|\($0.year)" })
+
+        vc.onComplete = { [weak self] selectedItems in
+            guard let self else { return }
+            self.selectedContents = selectedItems
+            self.syncReasonItems(with: selectedItems)
+            self.rootView.tableView.reloadData()
+        }
+
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true)
     }
 }
 
@@ -201,7 +231,6 @@ extension CreateCollectionViewController: UITableViewDataSource {
             }
         }
 
-
         if indexPath.row < selectedReasonItems.count {
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: SelectedContentReasonTableViewCell.reuseIdentifier,
@@ -242,24 +271,7 @@ extension CreateCollectionViewController: UITableViewDataSource {
             ) as! CreateCollectionAddContentCell
 
             cell.onTapAdd = { [weak self] in
-                guard let self else { return }
-
-                let vc = AddContentSelectViewController()
-                vc.initialSelected = self.selectedContents
-                
-                vc.protectedDeleteKeys = Set(self.selectedContents.map { "\($0.title)|\($0.director)|\($0.year)" })
-                
-                vc.onComplete = { [weak self] selectedItems in
-                    guard let self else { return }
-
-                    self.selectedContents = selectedItems
-                    self.syncReasonItems(with: selectedItems)
-                    self.rootView.tableView.reloadData()
-                }
-
-                let nav = UINavigationController(rootViewController: vc)
-                nav.modalPresentationStyle = .fullScreen
-                self.present(nav, animated: true)
+                self?.presentAddContentSelect()
             }
 
             return cell
