@@ -1,5 +1,5 @@
 {
-  "originHash" : "24192107733364f65e09e7ff67bd70a78d2d368bca32b5d4ee67fdca34601cae",
+  "originHash" : "499bc7866c0eefc55b8f28f669be6270ada66aa161145f710529ecf63575da13",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -31,7 +31,7 @@
     {
       "identity" : "moya",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Moya/Moya",
+      "location" : "https://github.com/Moya/Moya.git",
       "state" : {
         "revision" : "c263811c1f3dbf002be9bd83107f7cdc38992b26",
         "version" : "15.0.3"
