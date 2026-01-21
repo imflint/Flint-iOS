@@ -8,6 +8,7 @@
 import UIKit
 import Combine
 
+import Alamofire
 import Moya
 
 import Data
@@ -20,8 +21,17 @@ final class DIContainer: AppFactory {
     
     // MARK: - Root Dependency
     
-    private lazy var userAPIProvider = MoyaProvider<UserAPI>()
-//    private lazy var searchService: SearchService = DefaultSearchService()
+    private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
+    
+    private lazy var authInterceptor: AuthInterceptor = AuthInterceptor(tokenStorage: tokenStorage)
+    private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()
+    
+    private lazy var userAPIProvider = MoyaProvider<UserAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
     
     // MARK: - Init
     
