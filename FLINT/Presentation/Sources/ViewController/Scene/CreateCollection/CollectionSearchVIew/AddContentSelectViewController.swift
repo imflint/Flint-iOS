@@ -11,7 +11,7 @@ import View
 
 public final class AddContentSelectViewController: BaseViewController<AddContentSelectView> {
     
-    //MARK: - Outputㅣ
+    //MARK: - Output
     public var onComplete: (([SavedContentItemViewModel]) -> Void)?
     
     //MARK: - Input
