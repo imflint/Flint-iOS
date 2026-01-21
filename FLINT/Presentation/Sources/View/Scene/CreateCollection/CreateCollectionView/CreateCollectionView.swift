@@ -11,14 +11,14 @@ import SnapKit
 import Then
 
 public final class CreateCollectionView: BaseView {
-    
+
     public var onChangeTitle: ((String) -> Void)?
-    
+
     private var currentTitle: String = ""
     private var isPublicSelected: Bool = false
     private var selectedWorkCount: Int = 0
-    
-    //MARK: - UI Component
+
+    // MARK: - UI
 
     public let tableView = UITableView(frame: .zero, style: .plain).then {
         $0.backgroundColor = .flintBackground
@@ -27,63 +27,81 @@ public final class CreateCollectionView: BaseView {
         $0.keyboardDismissMode = .onDrag
         $0.estimatedRowHeight = 80
         $0.rowHeight = UITableView.automaticDimension
-        $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 24, right: 0) 
+        $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 8, right: 0)
     }
-    
-    private var completeBUtton = FlintButton(style: .disable, title: "완료")
-    
 
-    //MARK: - Setup
-    
+    private var completeBUtton = FlintButton(style: .disable, title: "완료")
+
+    private let footerContainerView = UIView()
+
+    private let footerButtonHeight: CGFloat = 48
+    private let footerBottomInset: CGFloat = 4
+    private let footerSideInset: CGFloat = 16
+
+    // MARK: - Setup
+
     public override func setUI() {
         super.setUI()
         backgroundColor = .flintBackground
+
+        applyFooter(button: completeBUtton)
     }
-    
+
     public override func setHierarchy() {
-        addSubviews(tableView, completeBUtton)
+        addSubview(tableView)
     }
-    
+
     public override func setLayout() {
         super.setLayout()
+
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
-        completeBUtton.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(48)
-            $0.bottom.equalToSuperview().inset(24)
-        }
     }
-    
+
+    // MARK: - Public
+
     public func setCompleteEnabled(_ enabled: Bool) {
         updateCompleteButton(enabled: enabled)
     }
-    
+
+    public func refreshFooterLayout() {
+        guard tableView.tableFooterView === footerContainerView else { return }
+        footerContainerView.frame.size.width = tableView.bounds.width
+        tableView.tableFooterView = footerContainerView
+    }
+
     // MARK: - Private
 
     private func updateCompleteButton(enabled: Bool) {
-        completeBUtton.removeFromSuperview()
-
         let newButton: FlintButton = enabled
         ? FlintButton(style: .able, title: "완료")
         : FlintButton(style: .disable, title: "시작하기")
 
         completeBUtton = newButton
-
-        addSubview(completeBUtton)
-        completeBUtton.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(48)
-            $0.bottom.equalToSuperview().inset(24)
-        }
-
-        tableView.snp.remakeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(completeBUtton.snp.top)
-        }
+        applyFooter(button: newButton)
     }
 
+    private func applyFooter(button: FlintButton) {
+        footerContainerView.subviews.forEach { $0.removeFromSuperview() }
+        footerContainerView.backgroundColor = .clear
 
+        footerContainerView.addSubview(button)
+        button.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(footerSideInset)
+            $0.height.equalTo(footerButtonHeight)
+            $0.bottom.equalToSuperview().inset(footerBottomInset)
+        }
+
+        let footerHeight = footerButtonHeight + footerBottomInset
+        footerContainerView.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: tableView.bounds.width,
+            height: footerHeight
+        )
+
+        tableView.tableFooterView = footerContainerView
+    }
 }
