@@ -13,7 +13,7 @@ import Then
 
 final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
 
-    // MARK: - Callback
+    // MARK: - Property
     
     var onTapRevealSpoiler: (() -> Void)?
 
@@ -119,7 +119,7 @@ final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
         didSet { spoilerOverlayView.isHidden = !isSpoiler }
     }
 
-    // MARK: - Init (Base에 setConfigure 없을 때 안전)
+    // MARK: - Init
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -135,7 +135,7 @@ final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
         revealButton.addTarget(self, action: #selector(didTapReveal), for: .touchUpInside)
     }
 
-    // MARK: - Override
+    // MARK: - Setup
     
     override func setStyle() {
         backgroundColor = .clear
@@ -238,6 +238,8 @@ final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
 
 }
 
+// MARK: - Extension
+
 extension UIButton.Configuration {
     static func flintMore(title: String = "보기") -> UIButton.Configuration {
         var config = UIButton.Configuration.plain()
@@ -259,7 +261,6 @@ extension UIButton.Configuration {
 extension UIButton {
     static func flintMoreButton(title: String = "보기") -> UIButton {
         let button = UIButton(configuration: .flintMore(title: title))
-//        button.contentHorizontalAlignment = .leading // 필요 없으면 제거
         return button
     }
 }

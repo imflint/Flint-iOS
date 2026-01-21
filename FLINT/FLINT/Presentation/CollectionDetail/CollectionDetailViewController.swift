@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 
 final class CollectionDetailViewController: BaseViewController<CollectionDetailView> {
+    
+    // MARK: - Enum
 
     private enum Row {
         case header
@@ -17,6 +19,8 @@ final class CollectionDetailViewController: BaseViewController<CollectionDetailV
         case film(Int)
         case saveUsers
     }
+    
+    // MARK: - Property
 
     private let filmCount: Int = 3
 
@@ -26,6 +30,8 @@ final class CollectionDetailViewController: BaseViewController<CollectionDetailV
         result += [.saveUsers]
         return result
     }()
+    
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +39,8 @@ final class CollectionDetailViewController: BaseViewController<CollectionDetailV
         setupTableView()
         setNavigationBar(.init(left: .back, backgroundStyle: .clear))
     }
+    
+    // MARK: - Setup
 
     override func setBaseLayout() {
         statusBarBackgroundView.snp.makeConstraints {

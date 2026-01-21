@@ -16,7 +16,7 @@ final class CollectionDetailDescriptionTableViewCell: BaseTableViewCell {
     
      var onTapAuthor: (() -> Void)?
 
-    // MARK: - UI
+    // MARK: - Component
 
     private let containerView = UIView().then {
         $0.backgroundColor = .flintBackground
@@ -51,7 +51,6 @@ final class CollectionDetailDescriptionTableViewCell: BaseTableViewCell {
     private let descriptionLabel = UILabel().then {
         $0.textColor = .flintGray100
         $0.numberOfLines = 0
-//        $0.font = .pretendard(.body1_r_16)
         $0.attributedText = .pretendard(.body1_r_16, text: "시간이 흘러도 빛이 바래지 않는, 사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
     }
 
@@ -59,12 +58,10 @@ final class CollectionDetailDescriptionTableViewCell: BaseTableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        // bind() 필요 시 여기서
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        // bind() 필요 시 여기서
     }
 
     // MARK: - Override
@@ -132,8 +129,4 @@ final class CollectionDetailDescriptionTableViewCell: BaseTableViewCell {
         dateLabel.text = dateText
         descriptionLabel.text = description
     }
-}
-@available(iOS 17.0, *)
-#Preview {
-    CollectionDetailDescriptionTableViewCell()
 }

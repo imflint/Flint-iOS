@@ -12,11 +12,15 @@ import Then
 
 final class CollectionDetailHeaderTableViewCell: BaseTableViewCell {
     
+    // MARK: - Property
+    
     var onTapSave: ((Bool) -> Void)?
     
     private var isSaved: Bool = false {
         didSet { updateSaveButtonImage() }
     }
+    
+    // MARK: - Component
     
     private let backgroundImageView = UIImageView().then {
         $0.image = UIImage(resource: .imgBackgroundGradient)
@@ -31,6 +35,8 @@ final class CollectionDetailHeaderTableViewCell: BaseTableViewCell {
     private var saveButton = UIButton().then {
         $0.setImage(UIImage(resource: .icCollectionSave), for: .normal)
     }
+    
+    // MARK: - Setup
     
     override func setHierarchy() {
         contentView.addSubviews(backgroundImageView, titleLabel, saveButton)
@@ -86,9 +92,4 @@ final class CollectionDetailHeaderTableViewCell: BaseTableViewCell {
         : UIImage(resource: .icCollectionSave)
         saveButton.setImage(image, for: .normal)
     }
-}
-
-@available(iOS 17.0, *)
-#Preview {
-    CollectionDetailHeaderTableViewCell()
 }

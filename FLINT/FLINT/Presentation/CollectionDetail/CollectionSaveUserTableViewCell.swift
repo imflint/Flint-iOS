@@ -12,11 +12,11 @@ import Then
 
 final class CollectionSaveUserTableViewCell: BaseTableViewCell {
     
-    // MARK: - Callback
+    // MARK: - Property
     
     var onTapMore: (() -> Void)?
     
-    // MARK: - UI
+    // MARK: - Component
     
     private let titleLabel = UILabel().then {
         $0.attributedText = .pretendard(.head2_sb_20, text: "이 컬렉션을 저장한 사람들", color: .white)
@@ -38,7 +38,7 @@ final class CollectionSaveUserTableViewCell: BaseTableViewCell {
     private let avatarSize: CGFloat = 56
     private let overlap: CGFloat = 12
     
-    // MARK: - Life Cycle
+    // MARK: - Init
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -50,11 +50,13 @@ final class CollectionSaveUserTableViewCell: BaseTableViewCell {
         bind()
     }
     
+    // MARK: - Bind
+    
     private func bind() {
         chevronButton.addTarget(self, action: #selector(didTapMore), for: .touchUpInside)
     }
     
-    // MARK: - Override
+    // MARK: - Setup
     
     override func setStyle() {
         backgroundColor = .clear
@@ -164,25 +166,4 @@ final class CollectionSaveUserTableViewCell: BaseTableViewCell {
         avatarImageViews.forEach { $0.removeFromSuperview() }
         avatarImageViews.removeAll()
     }
-}
-
-@available(iOS 17.0, *)
-#Preview {
-    let cell = CollectionSaveUserTableViewCell(style: .default, reuseIdentifier: nil)
-
-    let dummyImages: [UIImage] = [
-        UIImage(resource: .imgProfileGray),
-        UIImage(resource: .imgBackgroundGradiantLarge),
-        UIImage(resource: .imgProfileGray),
-        UIImage(resource: .imgBackgroundGradiantMiddle),
-        UIImage(resource: .imgProfileGray),
-        UIImage(resource: .imgBackgroundGradiantLarge)
-    ]
-
-    cell.configure(
-        title: "이 컬렉션을 저장한 사람들",
-        images: dummyImages
-    )
-
-    return cell
 }
