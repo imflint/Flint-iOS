@@ -154,6 +154,7 @@ extension HomeViewController: UITableViewDataSource {
 
         }
     }
+    
     private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
         let vc = BaseBottomSheetViewController(
             content: .ott(platforms: platforms)

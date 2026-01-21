@@ -31,5 +31,12 @@ public final class DefaultContentRepository: ContentRepository {
             }
             .eraseToAnyPublisher()
     }
+    
+    public func fetchBookmarkedContents() -> AnyPublisher<BookmarkContentsListEntity, NetworkError> {
+        return contentService.fetchBookmarkedContents()
+            .map(\.entity)
+           // .tryMap ({try $0.entity})
+            .eraseToAnyPublisher()
+    }
 }
 

@@ -12,4 +12,5 @@ import Entity
 
 public protocol ContentRepository {
     func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<FetchOTTPlatformsEntity, NetworkError>
+    func fetchBookmarkedContents() -> AnyPublisher<BookmarkContentsListEntity, NetworkError>
 }

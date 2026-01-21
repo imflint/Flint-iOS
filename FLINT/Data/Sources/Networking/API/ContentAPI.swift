@@ -14,6 +14,7 @@ import Domain
 
 enum ContentAPI {
     case fetchOTTPlatforms(_ contentId: Int64)
+    case fetchBookmarkedContents
 }
 
 extension ContentAPI: TargetType {
@@ -30,19 +31,21 @@ extension ContentAPI: TargetType {
         switch self {
         case .fetchOTTPlatforms(let contentId):
             return "/api/v1/contents/ott/\(contentId)"
+        case .fetchBookmarkedContents:
+            return "/api/v1/contents/bookmarks"
+           }
         }
-    }
     
     var method: Moya.Method {
         switch self {
-        case .fetchOTTPlatforms:
+        case .fetchOTTPlatforms, .fetchBookmarkedContents:
             return .get
         }
     }
     
     var task: Moya.Task {
         switch self {
-        case .fetchOTTPlatforms:
+        case .fetchOTTPlatforms, .fetchBookmarkedContents:
             return .requestPlain
         }
     }

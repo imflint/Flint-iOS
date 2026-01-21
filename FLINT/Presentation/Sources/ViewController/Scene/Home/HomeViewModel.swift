@@ -10,6 +10,7 @@ import UIKit
 
 import View
 
+
 public final class HomeViewModel {
 
     public struct SectionModel {
