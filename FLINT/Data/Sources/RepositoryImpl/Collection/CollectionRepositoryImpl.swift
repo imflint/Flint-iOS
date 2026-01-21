@@ -13,7 +13,7 @@ import Domain
 import DTO
 import Networking
 
-public final class DefaultCollectionRepositoryImpl: CollectionRepository {
+public final class DefaultCollectionRepository: CollectionRepository {
     
     private let collectionService: CollectionService
     
@@ -24,4 +24,10 @@ public final class DefaultCollectionRepositoryImpl: CollectionRepository {
     public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
         return collectionService.createCollection(entity)
     }
+    
+    public func fetchRecentCollections() -> AnyPublisher<RecentCollectionsEntity, Error> {
+           return collectionService.fetchRecentCollections()
+               .tryMap({ try $0.entity })
+               .eraseToAnyPublisher()
+       }
 }

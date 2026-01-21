@@ -12,11 +12,9 @@ import Then
 
 public final class CreateCollectionView: BaseView {
 
-    public var onChangeTitle: ((String) -> Void)?
+    // MARK: - Event
 
-    private var currentTitle: String = ""
-    private var isPublicSelected: Bool = false
-    private var selectedWorkCount: Int = 0
+    public var onTapComplete: (() -> Void)?
 
     // MARK: - UI
 
@@ -30,8 +28,7 @@ public final class CreateCollectionView: BaseView {
         $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 8, right: 0)
     }
 
-    private var completeBUtton = FlintButton(style: .disable, title: "완료")
-
+    private var completeButton = FlintButton(style: .disable, title: "완료")
     private let footerContainerView = UIView()
 
     private let footerButtonHeight: CGFloat = 48
@@ -43,8 +40,7 @@ public final class CreateCollectionView: BaseView {
     public override func setUI() {
         super.setUI()
         backgroundColor = .flintBackground
-
-        applyFooter(button: completeBUtton)
+        applyFooter(button: completeButton)
     }
 
     public override func setHierarchy() {
@@ -74,11 +70,12 @@ public final class CreateCollectionView: BaseView {
     // MARK: - Private
 
     private func updateCompleteButton(enabled: Bool) {
-        let newButton: FlintButton = enabled
-        ? FlintButton(style: .able, title: "완료")
-        : FlintButton(style: .disable, title: "시작하기")
+        let nextStyle: FlintButton.Style = enabled ? .able : .disable
+        let nextTitle: String = "완료"
 
-        completeBUtton = newButton
+        let newButton = FlintButton(style: nextStyle, title: nextTitle)
+
+        completeButton = newButton
         applyFooter(button: newButton)
     }
 
@@ -94,6 +91,9 @@ public final class CreateCollectionView: BaseView {
             $0.bottom.equalToSuperview().inset(footerBottomInset)
         }
 
+        button.removeTarget(self, action: #selector(didTapComplete), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapComplete), for: .touchUpInside)
+
         let footerHeight = footerButtonHeight + footerBottomInset
         footerContainerView.frame = CGRect(
             x: 0,
@@ -103,5 +103,9 @@ public final class CreateCollectionView: BaseView {
         )
 
         tableView.tableFooterView = footerContainerView
+    }
+
+    @objc private func didTapComplete() {
+        onTapComplete?()
     }
 }

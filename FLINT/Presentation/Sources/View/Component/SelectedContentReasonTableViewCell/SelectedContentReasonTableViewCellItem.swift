@@ -8,6 +8,7 @@
 import UIKit
 
 public struct SelectedContentReasonTableViewCellItem {
+    public let contentId: Int64
     public let posterImage: UIImage?
     public let title: String
     public let director: String
@@ -17,6 +18,7 @@ public struct SelectedContentReasonTableViewCellItem {
     public var reasonText: String?
 
     public init(
+        contentId: Int64,
         posterImage: UIImage? = nil,
         title: String,
         director: String,
@@ -24,6 +26,7 @@ public struct SelectedContentReasonTableViewCellItem {
         isSpoiler: Bool = false,
         reasonText: String? = nil
     ) {
+        self.contentId = contentId
         self.posterImage = posterImage
         self.title = title
         self.director = director

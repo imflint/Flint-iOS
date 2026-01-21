@@ -72,7 +72,7 @@ public final class CreateCollectionTitleInputCell: BaseTableViewCell {
         countLabel.snp.makeConstraints {
             $0.top.equalTo(titleTextView.snp.bottom).offset(8)
             $0.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview()
         }
     }
     

@@ -103,11 +103,11 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
     
     private func makePopularResults() -> [SavedContentItemViewModel] {
         [
-            .init(posterImage: nil, title: "듄: 파트 2", director: "드니 빌뇌브", year: "2024"),
-            .init(posterImage: nil, title: "오펜하이머", director: "크리스토퍼 놀란", year: "2023"),
-            .init(posterImage: nil, title: "스즈메의 문단속", director: "신카이 마코토", year: "2022"),
-            .init(posterImage: nil, title: "어바웃 타임", director: "리처드 커티스", year: "2013"),
-            .init(posterImage: nil, title: "헤어질 결심", director: "박찬욱", year: "2022")
+            .init(contentId: 123, posterImage: nil, title: "듄: 파트 2", director: "드니 빌뇌브", year: "2024"),
+            .init(contentId: 123, posterImage: nil, title: "오펜하이머", director: "크리스토퍼 놀란", year: "2023"),
+            .init(contentId: 123, posterImage: nil, title: "스즈메의 문단속", director: "신카이 마코토", year: "2022"),
+            .init(contentId: 123, posterImage: nil, title: "어바웃 타임", director: "리처드 커티스", year: "2013"),
+            .init(contentId: 123, posterImage: nil, title: "헤어질 결심", director: "박찬욱", year: "2022")
         ]
     }
     
@@ -126,8 +126,8 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 
         // TODO: 검색 API 연결 시 여기서 호출
         results = [
-            SavedContentItemViewModel(posterImage: nil, title: "\(trimmed)를 여행하는 히치하이커를 위한 안내서", director: "가스 제닝스", year: "2005"),
-            SavedContentItemViewModel(posterImage: nil, title: "\(trimmed)를 달리는 밤", director: "스기이 기사부로", year: "1985"),
+            SavedContentItemViewModel(contentId: 123, posterImage: nil, title: "\(trimmed)를 여행하는 히치하이커를 위한 안내서", director: "가스 제닝스", year: "2005"),
+            SavedContentItemViewModel(contentId: 123, posterImage: nil, title: "\(trimmed)를 달리는 밤", director: "스기이 기사부로", year: "1985"),
         ]
 
         applyUI()

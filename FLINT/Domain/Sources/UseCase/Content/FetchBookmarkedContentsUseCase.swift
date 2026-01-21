@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchBookmarkedContentsUseCase {
-    func fetchBookmarkedContents() -> AnyPublisher<BookmarkContentsListEntity, NetworkError>
+    func fetchBookmarkedContents() -> AnyPublisher<BookmarkContentsListEntity, Error>
 }
 
 public class DefaultFetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase {
@@ -23,7 +23,7 @@ public class DefaultFetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCa
         self.contentRepository = contentRepository
     }
 
-    public func fetchBookmarkedContents() -> AnyPublisher<BookmarkContentsListEntity, NetworkError> {
+    public func fetchBookmarkedContents() -> AnyPublisher<BookmarkContentsListEntity, Error> {
         return contentRepository.fetchBookmarkedContents()
     }
 }

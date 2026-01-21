@@ -97,6 +97,11 @@ public final class DefaultTokenStorage: TokenStorage {
 }
 
 public final class TestTokenStorage: TokenStorage {
+    
+    public init() {
+        
+    }
+    
     public func save(_ token: String, type: TokenType) {
         return
     }

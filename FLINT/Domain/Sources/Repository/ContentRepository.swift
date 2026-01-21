@@ -11,10 +11,6 @@ import Foundation
 import Entity
 
 public protocol ContentRepository {
-<<<<<<< HEAD
-    func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<FetchOTTPlatformsEntity, NetworkError>
-    func fetchBookmarkedContents() -> AnyPublisher<BookmarkContentsListEntity, NetworkError>
-=======
     func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<[OTTPlatformEntity], Error>
->>>>>>> origin/develop
+    func fetchBookmarkedContents() -> AnyPublisher<BookmarkContentsListEntity, Error>
 }

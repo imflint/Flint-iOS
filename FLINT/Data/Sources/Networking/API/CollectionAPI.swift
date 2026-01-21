@@ -13,6 +13,7 @@ import Moya
 
 public enum CollectionAPI {
     case createCollection(_ request: CreateCollectionEntity)
+    case fetchRecentCollections
 }
 
 extension CollectionAPI: TargetType {
@@ -28,6 +29,8 @@ extension CollectionAPI: TargetType {
         switch self {
         case .createCollection:
             return "/api/v1/collections"
+        case .fetchRecentCollections:
+            return "/api/v1/collections/recent"
         }
     }
     
@@ -35,6 +38,8 @@ extension CollectionAPI: TargetType {
         switch self {
         case .createCollection:
             return .post
+        case .fetchRecentCollections:
+            return .get
         }
     }
     
@@ -42,6 +47,8 @@ extension CollectionAPI: TargetType {
         switch self {
         case .createCollection(let request):
             return .requestJSONEncodable(request)
+        case .fetchRecentCollections:
+            return .requestPlain
             
         }
     }

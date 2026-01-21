@@ -10,11 +10,12 @@ import Combine
 
 import View
 import ViewModel
+import Domain
 
 public final class CreateCollectionViewController: BaseViewController<CreateCollectionView> {
-    
-    //MARK: - enum
-    
+
+    // MARK: - Enum
+
     enum CreateCollectionRow: Int, CaseIterable {
         case header
         case title
@@ -32,16 +33,19 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
     private var selectedReasonItems: [SelectedContentReasonTableViewCellItem] = []
 
     private let viewModel: CreateCollectionViewModel
-    
+
+    // MARK: - Combine
+
     private let titleChangeSubject = PassthroughSubject<String, Never>()
     private let visibilitySubject = CurrentValueSubject<Bool, Never>(false)
     private let selectedCountSubject = CurrentValueSubject<Int, Never>(0)
 
     // MARK: - Init
 
-    public init(viewModel: CreateCollectionViewModel = CreateCollectionViewModel()) {
+    public init(viewModel: CreateCollectionViewModel, viewControllerFactory: ViewControllerFactory) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        self.viewControllerFactory = viewControllerFactory
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -53,6 +57,7 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
         setTableView()
         registerCells()
         bindViewModel()
+        bindActions()
     }
 
     public override func viewDidLayoutSubviews() {
@@ -81,6 +86,8 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
 
 private extension CreateCollectionViewController {
 
+    // MARK: - Table
+
     func setTableView() {
         rootView.tableView.dataSource = self
         rootView.tableView.delegate = self
@@ -95,22 +102,87 @@ private extension CreateCollectionViewController {
         rootView.tableView.register(SelectedContentReasonTableViewCell.self)
     }
 
+    // MARK: - Bind
+
     func bindViewModel() {
-        let input = CreateCollectionViewModel.Input(
-            titleChange: titleChangeSubject.eraseToAnyPublisher(),
-            visibilitySelected: visibilitySubject.eraseToAnyPublisher(),
-            selectedCount: selectedCountSubject.eraseToAnyPublisher()
-        )
 
-        let output = viewModel.transform(input: input)
+        // Input -> ViewModel
+        titleChangeSubject
+            .sink { [weak self] title in
+                self?.viewModel.updateTitle(title)
+            }
+            .store(in: &cancellables)
 
-        output.isDoneEnabled
+        visibilitySubject
+            .sink { [weak self] isPublic in
+                self?.viewModel.updateVisibility(isPublic)
+            }
+            .store(in: &cancellables)
+
+        selectedCountSubject
+            .sink { [weak self] count in
+                self?.viewModel.updateSelectedCount(count)
+            }
+            .store(in: &cancellables)
+
+        // ViewModel -> Output (UI bind)
+        viewModel.isDoneEnabled
             .receive(on: RunLoop.main)
             .sink { [weak self] isEnabled in
                 self?.rootView.setCompleteEnabled(isEnabled)
             }
             .store(in: &cancellables)
+
+        viewModel.createSuccess
+            .receive(on: RunLoop.main)
+            .sink { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            .store(in: &cancellables)
+
+        viewModel.createFailure
+            .receive(on: RunLoop.main)
+            .sink { error in
+                print("CreateCollection failed:", error)
+            }
+            .store(in: &cancellables)
+
+        viewModel.updateTitle(collectionTitleText)
+        viewModel.updateVisibility(visibilitySubject.value)
+        viewModel.updateSelectedCount(selectedReasonItems.count)
     }
+
+    func bindActions() {
+        
+        rootView.onTapComplete = { [weak self] in
+            self?.didTapComplete()
+        }
+    }
+
+    // MARK: - Complete
+
+    func didTapComplete() {
+
+        let contents: [CreateCollectionEntity.CreateCollectionContents] = selectedReasonItems.map {
+            CreateCollectionEntity.CreateCollectionContents(
+                contentId: $0.contentId,
+                isSpoiler: $0.isSpoiler,
+                reason: $0.reasonText ?? ""
+            )
+        }
+
+        let entity = CreateCollectionEntity(
+            imgaeUrl: "",
+            title: collectionTitleText,
+            description: collectionDescriptionText,
+            isPublic: visibilitySubject.value,
+            contentList: contents
+        )
+
+        viewModel.updateCreateCollectionEntity(entity)
+        viewModel.createCollection()
+    }
+    // MARK: - Selected Reason Items Sync
 
     func syncReasonItems(with models: [SavedContentItemViewModel]) {
         func key(of model: SavedContentItemViewModel) -> String {
@@ -118,7 +190,7 @@ private extension CreateCollectionViewController {
         }
 
         let existingByKey = Dictionary(uniqueKeysWithValues: selectedReasonItems.map {
-            (key(of: .init(posterImage: $0.posterImage, title: $0.title, director: $0.director, year: $0.year)), $0)
+            (key(of: .init(contentId: $0.contentId, posterImage: $0.posterImage, title: $0.title, director: $0.director, year: $0.year)), $0)
         })
 
         selectedReasonItems = models.map { model in
@@ -127,6 +199,7 @@ private extension CreateCollectionViewController {
                 return existing
             }
             return SelectedContentReasonTableViewCellItem(
+                contentId: model.contentId,
                 posterImage: model.posterImage,
                 title: model.title,
                 director: model.director,
@@ -138,6 +211,8 @@ private extension CreateCollectionViewController {
 
         selectedCountSubject.send(selectedReasonItems.count)
     }
+
+    // MARK: - Add Content Flow
 
     func presentAddContentSelect() {
         let vc = AddContentSelectViewController()

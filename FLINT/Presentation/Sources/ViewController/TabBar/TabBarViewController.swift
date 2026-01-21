@@ -20,7 +20,7 @@ public class TabBarViewController: UIViewController {
     
     // MARK: - Child ViewController
     
-    private let homeViewController = HomeViewController()
+    private let homeViewController: HomeViewController
     private let exploreViewController = ExploreViewController()
     private let myViewController = MyViewController()
     
@@ -39,6 +39,7 @@ public class TabBarViewController: UIViewController {
     
     public init(viewControllerFactory: ViewControllerFactory) {
         self.viewControllerFactory = viewControllerFactory
+        homeViewController = HomeViewController(viewControllerFactory: viewControllerFactory)
         super.init(nibName: nil, bundle: nil)
     }
     

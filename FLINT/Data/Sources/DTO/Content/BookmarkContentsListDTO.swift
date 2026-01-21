@@ -28,22 +28,40 @@ public extension BookmarkContentsListDTO {
     }
 }
 
+
 extension BookmarkContentsListDTO {
+
     public var entity: BookmarkContentsListEntity {
-        return BookmarkContentsListEntity(
-            contents: (contents ?? []).map { dto in
-                BookmarkContentsListEntity.BookmarkContentEntity(
-                    id: dto.id ?? 0,
-                    title: dto.title ?? "",
-                    year: dto.year ?? 0,
-                    ottList: (dto.getOttSimpleList ?? []).map {
-                        BookmarkContentsListEntity.OTTSimpleEntity(
-                            ottName: $0.ottName ?? "",
-                            logoUrl: $0.logoUrl ?? ""
-                        )
-                    }
-                )
-            }
+        get throws {
+            return try BookmarkContentsListEntity(
+                contents: (contents ?? []).map { dto in
+                    try dto.entity
+                }
+            )
+        }
+    }
+}
+
+extension BookmarkContentsListDTO.ContentDTO {
+
+    public var entity: BookmarkContentsListEntity.BookmarkContentEntity {
+        get throws {
+            return try BookmarkContentsListEntity.BookmarkContentEntity(
+                id: unwrap(id, key: CodingKeys.id),          // 필수만 unwrap
+                title: title ?? "",
+                year: year ?? 0,
+                ottList: (getOttSimpleList ?? []).map { $0.entity }
+            )
+        }
+    }
+}
+
+extension BookmarkContentsListDTO.OTTSimpleDTO {
+
+    public var entity: BookmarkContentsListEntity.OTTSimpleEntity {
+        return BookmarkContentsListEntity.OTTSimpleEntity(
+            ottName: ottName ?? "",
+            logoUrl: logoUrl ?? ""
         )
     }
 }

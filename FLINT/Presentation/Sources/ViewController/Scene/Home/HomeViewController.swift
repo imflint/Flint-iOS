@@ -12,10 +12,21 @@ import ViewModel
 
 public final class HomeViewController: BaseViewController<HomeView> {
 
+    // MARK: - Property
+
     private let viewModel = HomeViewModel(userName: "얀비")
 
     // MARK: - Lifecycle
-
+    
+    public init(viewControllerFactory: ViewControllerFactory?) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewControllerFactory = viewControllerFactory
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setTableView()
@@ -58,9 +69,10 @@ public final class HomeViewController: BaseViewController<HomeView> {
         rootView.floatingButton.addTarget(self, action: #selector(didTapFab), for: .touchUpInside)
     }
 
-    @objc private func didTapFab() {
-        let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
-        navigationController?.pushViewController(vc, animated: true)
+    @objc private func
+    didTapFab() {
+        guard let createCollectionViewController = viewControllerFactory?.makeCreateCollectionViewController() else { return }
+        navigationController?.pushViewController(createCollectionViewController, animated: true)
     }
 }
 
@@ -80,9 +92,9 @@ extension HomeViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let row = viewModel.sections[indexPath.section].rows[indexPath.row]
-        
+
         switch row {
-            
+
         case .greeting(let userName):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: HomeGreetingTableViewCell.reuseIdentifier,
@@ -90,7 +102,7 @@ extension HomeViewController: UITableViewDataSource {
             ) as! HomeGreetingTableViewCell
             cell.configure(userName: userName)
             return cell
-            
+
         case .header(let style, let title, let subtitle):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: TitleHeaderTableViewCell.reuseIdentifier,
@@ -100,19 +112,17 @@ extension HomeViewController: UITableViewDataSource {
             cell.configure(style: style, title: title, subtitle: subtitle)
 
             if style == .more {
-                //TODO: - collectionFolderListView 연결하기
-                
+                // TODO: - collectionFolderListView 연결하기
                 cell.onTapMore = { [weak self] in
                     let vc = CollectionFolderListViewController()
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
-    
             } else {
                 cell.onTapMore = nil
             }
 
             return cell
-            
+
         case .fliner(let items):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier,
@@ -120,21 +130,21 @@ extension HomeViewController: UITableViewDataSource {
             ) as! MoreNoMoreCollectionTableViewCell
             cell.configure(items: items)
             return cell
-            
+
         case .recentSaved(let items):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! RecentSavedContentTableViewCell
-            
+
             cell.configure(items: items)
-            
+
             cell.onTapItem = { [weak self] item in
                 let circles = item.availableOn.intersection(item.subscribedOn)
 
                 let platforms = CircleOTTPlatform.order
                     .filter { circles.contains($0) }
-                    .map { OTTPlatform(circle: $0) }     
+                    .map { OTTPlatform(circle: $0) }
 
                 self?.presentOTTBottomSheet(platforms: platforms)
             }
@@ -151,10 +161,9 @@ extension HomeViewController: UITableViewDataSource {
                 print("취향발견하러가기 탭") // TODO: 화면 이동 연결
             }
             return cell
-
         }
     }
-    
+
     private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
         let vc = BaseBottomSheetViewController(
             content: .ott(platforms: platforms)
