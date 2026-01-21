@@ -15,7 +15,7 @@ public enum TokenType: String, CaseIterable {
     case refreshToken
 }
 
-public protocol TokenStorage {
+public protocol TokenStorage: Sendable {
     func save(_ token: String, type: TokenType)
     func load(type: TokenType) -> String?
     func delete(type: TokenType)
@@ -97,6 +97,11 @@ public final class DefaultTokenStorage: TokenStorage {
 }
 
 public final class TestTokenStorage: TokenStorage {
+    
+    public init() {
+        
+    }
+    
     public func save(_ token: String, type: TokenType) {
         return
     }
