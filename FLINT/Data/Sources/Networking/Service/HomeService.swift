@@ -1,0 +1,42 @@
+//
+//  HomeService.swift
+//  Data
+//
+//  Created by 소은 on 1/20/26.
+//
+
+import Combine
+import Foundation
+
+import CombineMoya
+import Moya
+
+import Domain
+
+import DTO
+
+public protocol HomeService {
+    func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, NetworkError>
+}
+
+public final class DefaultHomeService: HomeService {
+    private let provider = MoyaProvider<HomeAPI>()
+    
+    public init() {}
+    
+    public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, NetworkError> {
+        return provider.requestPublisher(.fetchRecommendedCollections)
+            .handleEvents(receiveOutput: { response in
+                Log.d("statusCode: \(response.statusCode)")
+                Log.d(String(data: response.data, encoding: .utf8) ?? "")
+            })
+            .eraseToAnyPublisher()
+            .extractData(HomeRecommendedCollectionsDTO.self)
+    }
+//
+//    public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, NetworkError> {
+//        return provider.requestPublisher(.fetchRecommendedCollections)
+//            .extractData(HomeRecommendedCollectionsDTO.self)
+//    }
+}
+

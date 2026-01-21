@@ -60,7 +60,7 @@ public final class HomeViewController: BaseViewController<HomeView> {
 
     @objc private func didTapFab() {
         let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
-        self.parent?.navigationController?.pushViewController(vc, animated: true)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 

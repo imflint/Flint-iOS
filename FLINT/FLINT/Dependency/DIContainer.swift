@@ -19,6 +19,7 @@ final class DIContainer: AppFactory {
     // MARK: - Root Dependency
     
     private lazy var userService: UserService = DefaultUserService()
+    private lazy var searchService: SearchService = DefaultSearchService()
     
     // MARK: - Init
     
@@ -29,11 +30,11 @@ final class DIContainer: AppFactory {
     // MARK: - ViewControllerFactory
     
     func makeTabBarViewController() -> TabBarViewController {
-        return TabBarViewController()
+        return TabBarViewController(viewControllerFactory: self)
     }
     
     func makeNicknameViewController(onboardingViewModel: OnboardingViewModel) -> NicknameViewController {
-        return NicknameViewController(onboardingViewModel: makeOnboardingViewModel())
+        return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
     }
     
     // MARK: - Root Dependency Injection
