@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum NetworkError: Error {
+public enum NetworkError: Error, LocalizedError {
     case noData
     case decoding
     case httpStatusCode(ServerError)

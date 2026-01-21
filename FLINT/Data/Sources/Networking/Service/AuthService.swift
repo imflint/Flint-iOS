@@ -17,7 +17,7 @@ import DTO
 
 
 public protocol AuthService {
-    func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<SignupDTO, NetworkError>
+    func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error>
 }
 
 public final class DefaultAuthService: AuthService {
@@ -29,7 +29,7 @@ public final class DefaultAuthService: AuthService {
         self.tokenStorage = tokenStorage
     }
     
-    public func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<SignupDTO, NetworkError> {
+    public func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error> {
         return provider.requestPublisher(.signup(signupInfoEntity))
             .extractData(SignupDTO.self)
     }

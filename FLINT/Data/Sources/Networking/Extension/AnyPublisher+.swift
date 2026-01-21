@@ -16,7 +16,7 @@ import Domain
 import DTO
 
 public extension AnyPublisher where Output == Response, Failure == MoyaError {
-    func extractData<D: Codable>(_ type: D.Type, atKeyPath keyPath: String? = nil, using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true) -> AnyPublisher<D, NetworkError> {
+    func extractData<D: Codable>(_ type: D.Type, atKeyPath keyPath: String? = nil, using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true) -> AnyPublisher<D, Error> {
         return map(BaseResponse<D>.self)
             .tryMap({ baseResponse in
                 guard (200..<300).contains(baseResponse.status) else {
@@ -26,10 +26,6 @@ public extension AnyPublisher where Output == Response, Failure == MoyaError {
                     throw NetworkError.noData
                 }
                 return data
-            })
-            .mapError({ error in
-                Log.e(error.localizedDescription)
-                return error as? NetworkError ?? .unknown
             })
             .eraseToAnyPublisher()
     }

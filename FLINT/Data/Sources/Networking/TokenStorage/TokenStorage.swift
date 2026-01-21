@@ -8,15 +8,28 @@
 import Foundation
 import Security
 
-public final class TokenStorage {
+public enum TokenType: String {
+    case accessToken
+    case refreshToken
+}
+
+public enum TokenError: Error, LocalizedError {
     
-    public init() {
-        
-    }
-    
-    @discardableResult
-    public func saveToken(token: String, account: String, service: String) -> OSStatus {
-        let tokenData = token.data(using: .utf8)!
+}
+
+public protocol TokenStorage {
+    func save(_ token: String, type: TokenType) throws
+    func load(type: TokenType) -> String?
+    func delete(type: TokenType) throws
+    func clearAll() throws
+}
+
+
+public final class DefaultTokenStorage: TokenStorage {
+    public func save(_ token: String, type: TokenType) throws {
+        guard let tokenData = token.data(using: .utf8) else {
+            
+        }
         
         // Access Control 설정 (Face ID 또는 기기 잠금 해제 후 접근 가능)
         let accessControl = SecAccessControlCreateWithFlags(
@@ -37,6 +50,23 @@ public final class TokenStorage {
         // 기존 항목 삭제 후 새로운 항목 저장
         SecItemDelete(query as CFDictionary)
         return SecItemAdd(query as CFDictionary, nil)
+    }
+    
+    public func load(type: TokenType) -> String? {
+        <#code#>
+    }
+    
+    public func delete(type: TokenType) throws {
+        <#code#>
+    }
+    
+    public func clearAll() throws {
+        <#code#>
+    }
+    
+    
+    public init() {
+        
     }
     
     

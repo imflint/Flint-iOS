@@ -16,7 +16,7 @@ import Domain
 import DTO
 
 public protocol UserService {
-    func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, NetworkError>
+    func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error>
 }
 
 public final class DefaultUserService: UserService {
@@ -27,7 +27,7 @@ public final class DefaultUserService: UserService {
         
     }
     
-    public func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, NetworkError> {
+    public func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error> {
         return provider.requestPublisher(.checkNickname(nickname))
             .extractData(NicknameCheckDTO.self)
     }

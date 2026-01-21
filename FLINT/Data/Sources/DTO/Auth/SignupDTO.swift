@@ -17,10 +17,12 @@ public struct SignupDTO: Codable {
 
 extension SignupDTO {
     public var entity: LoginEntity {
-        return LoginEntity(
-            accessToken: accessToken ?? "",
-            refreshToken: refreshToken ?? "",
-            userId: userId ?? ""
-        )
+        get throws {
+            return try LoginEntity(
+                accessToken: unwrap(accessToken, key: CodingKeys.accessToken),
+                refreshToken: unwrap(refreshToken, key: CodingKeys.refreshToken),
+                userId: unwrap(userId, key: CodingKeys.userId)
+            )
+        }
     }
 }

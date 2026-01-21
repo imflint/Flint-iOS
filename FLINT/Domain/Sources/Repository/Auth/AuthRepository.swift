@@ -11,5 +11,5 @@ import Foundation
 import Entity
 
 public protocol AuthRepository {
-    func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<LoginEntity, NetworkError>
+    func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<LoginEntity, Error>
 }
