@@ -14,11 +14,9 @@ public struct NicknameCheckDTO: Codable {
 }
 
 extension NicknameCheckDTO {
-    public var entity: NicknameCheckEntity {
+    public var isAvailable: Bool {
         get throws {
-            return try NicknameCheckEntity(
-                available: unwrap(available, key: CodingKeys.available)
-            )
+            return try unwrap(available, key: CodingKeys.available)
         }
     }
 }
