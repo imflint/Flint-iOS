@@ -35,7 +35,7 @@ final class DIContainer: AppFactory {
         return TabBarViewController(viewControllerFactory: self)
     }
     
-    func makeNicknameViewController(onboardingViewModel: OnboardingViewModel) -> NicknameViewController {
+    func makeNicknameViewController() -> NicknameViewController {
         return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
     }
     

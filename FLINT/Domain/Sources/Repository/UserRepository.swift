@@ -11,6 +11,6 @@ import Foundation
 import Entity
 
 public protocol UserRepository {
-    func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckEntity, Error>
+    func checkNickname(_ nickname: String) -> AnyPublisher<Bool, Error>
 }
 

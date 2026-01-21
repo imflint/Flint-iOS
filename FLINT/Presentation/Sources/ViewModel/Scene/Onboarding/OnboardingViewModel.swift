@@ -35,7 +35,6 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     public func checkNickname(_ nickname: String) {
         nicknameUseCase.checkNickname(nickname)
             .manageThread()
-            .map(\.available)
             .sinkHandledCompletion(receiveValue: { [weak self] isValidNickname in
                 self?.isValidNickname.send(isValidNickname)
             })
