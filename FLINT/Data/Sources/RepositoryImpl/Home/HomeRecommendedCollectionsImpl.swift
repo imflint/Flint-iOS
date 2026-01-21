@@ -21,9 +21,9 @@ public final class DefaultHomeRepository: HomeRepository {
         self.homeService = homeService
     }
     
-    public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsEntity, NetworkError> {
+    public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsEntity, Error> {
         homeService.fetchRecommendedCollections()
-            .map(\.entity)
+            .tryMap({ try $0.entity })
             .eraseToAnyPublisher()
     }
 }

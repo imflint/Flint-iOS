@@ -21,9 +21,9 @@ final class DefaultSearchRepository: SearchRepository {
         self.searchService = searchService
     }
     
-    public func searchContents(_ keyword: String) -> AnyPublisher<SearchContentsEntity, NetworkError> {
+    public func searchContents(_ keyword: String) -> AnyPublisher<SearchContentsEntity, Error> {
         searchService.searchContents(keyword)
-            .map(\.entity)
+            .tryMap({ try $0.entity })
             .eraseToAnyPublisher()
     }
 }

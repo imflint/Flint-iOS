@@ -21,8 +21,7 @@ public final class DefaultCollectionRepositoryImpl: CollectionRepository {
         self.collectionService = collectionService
     }
     
-    public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, NetworkError> {
+    public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
         return collectionService.createCollection(entity)
-            .eraseToAnyPublisher()
     }
 }

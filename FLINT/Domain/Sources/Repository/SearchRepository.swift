@@ -10,5 +10,5 @@ import Combine
 import Entity
 
 public protocol SearchRepository {
-    func searchContents(_ query: String) -> AnyPublisher<SearchContentsEntity, NetworkError>
+    func searchContents(_ query: String) -> AnyPublisher<SearchContentsEntity, Error>
 }

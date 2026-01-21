@@ -11,5 +11,5 @@ import Foundation
 import Entity
 
 public protocol ContentRepository {
-    func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<FetchOTTPlatformsEntity, NetworkError>
+    func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<[OTTPlatformEntity], Error>
 }

@@ -7,12 +7,17 @@
 
 import Foundation
 
+import Moya
+
 import Data
 import Domain
 import Presentation
 
 protocol OnboardingFactory {
+    func makeUserAPIProvider() -> MoyaProvider<UserAPI>
+    
     func makeUserService() -> UserService
+    func makeUserService(userAPIProvider: MoyaProvider<UserAPI>) -> UserService
     
     func makeUserRepository() -> UserRepository
     func makeUserRepository(userService: UserService) -> UserRepository
@@ -25,6 +30,14 @@ protocol OnboardingFactory {
 }
 
 extension OnboardingFactory {
+    
+    func makeUserService() -> UserService {
+        return DefaultUserService(userAPIProvider: makeUserAPIProvider())
+    }
+    func makeUserService(userAPIProvider: MoyaProvider<UserAPI>) -> UserService {
+        return DefaultUserService(userAPIProvider: userAPIProvider)
+    }
+    
     func makeUserRepository() -> UserRepository {
         return makeUserRepository(userService: makeUserService())
     }

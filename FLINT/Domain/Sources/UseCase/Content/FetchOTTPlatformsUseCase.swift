@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchOTTPlatformsUseCase {
-    func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<FetchOTTPlatformsEntity, NetworkError>
+    func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<[OTTPlatformEntity], Error>
 }
 
 public class DefaultFetchOTTPlatformsUseCase: FetchOTTPlatformsUseCase {
@@ -23,7 +23,7 @@ public class DefaultFetchOTTPlatformsUseCase: FetchOTTPlatformsUseCase {
         self.contentRepository = contentRepository
     }
     
-    public func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<FetchOTTPlatformsEntity, NetworkError> {
+    public func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<[OTTPlatformEntity], Error> {
         return contentRepository.fetchOTTPlatforms(contentId)
     }
 }

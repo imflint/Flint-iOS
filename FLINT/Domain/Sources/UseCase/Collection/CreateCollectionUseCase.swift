@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol CreateCollectionUseCase {
-    func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, NetworkError>
+    func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error>
 }
 
 public class DefaultCreateCollectionUseCase: CreateCollectionUseCase {
@@ -23,7 +23,7 @@ public class DefaultCreateCollectionUseCase: CreateCollectionUseCase {
         self.collectionRepository = collectionRepository
     }
     
-    public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, NetworkError> {
+    public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
         return collectionRepository.createCollection(entity)
     }
 }

@@ -16,17 +16,17 @@ import Domain
 import DTO
 
 public protocol CollectionService {
-    func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, NetworkError>
+    func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error>
 }
 
 public final class DefaultCollectionService: CollectionService {
-    private let provider = MoyaProvider<CollectionAPI>()
+    private let provider: MoyaProvider<CollectionAPI>
     
-    public init() {
-        
+    public init(provider: MoyaProvider<CollectionAPI>) {
+        self.provider = provider
     }
     
-    public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, NetworkError> {
+    public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
         return provider.requestPublisher(.createCollection(entity))
             .extractData(BlankData.self)
             .map { _ in () }

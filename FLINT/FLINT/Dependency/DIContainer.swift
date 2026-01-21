@@ -8,6 +8,8 @@
 import UIKit
 import Combine
 
+import Moya
+
 import Data
 import Domain
 import Presentation
@@ -18,8 +20,8 @@ final class DIContainer: AppFactory {
     
     // MARK: - Root Dependency
     
-    private lazy var userService: UserService = DefaultUserService()
-    private lazy var searchService: SearchService = DefaultSearchService()
+    private lazy var userAPIProvider = MoyaProvider<UserAPI>()
+//    private lazy var searchService: SearchService = DefaultSearchService()
     
     // MARK: - Init
     
@@ -38,7 +40,7 @@ final class DIContainer: AppFactory {
     }
     
     // MARK: - Root Dependency Injection
-    func makeUserService() -> UserService {
-        return userService
+    func makeUserAPIProvider() -> MoyaProvider<UserAPI> {
+        return userAPIProvider
     }
 }

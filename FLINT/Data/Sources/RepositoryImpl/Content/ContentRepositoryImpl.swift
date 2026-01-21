@@ -22,13 +22,9 @@ public final class DefaultContentRepository: ContentRepository {
         self.contentService = contentService
     }
     
-    public func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<Entity.FetchOTTPlatformsEntity, Entity.NetworkError> {
+    public func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<[OTTPlatformEntity], Error> {
         return contentService.fetchOTTPlatforms(contentId)
-            .map { dtoList in
-                FetchOTTPlatformsEntity(
-                    ottPlatforms: dtoList.map(\.entity)
-                )
-            }
+            .tryMap({ try $0.entity })
             .eraseToAnyPublisher()
     }
 }

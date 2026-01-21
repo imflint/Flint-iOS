@@ -20,11 +20,11 @@ public enum AuthAPI {
 }
 
 extension AuthAPI: TargetType {
-    var baseURL: URL {
+    public var baseURL: URL {
         return NetworkConfig.baseURL
     }
     
-    var path: String {
+    public var path: String {
         switch self {
         case .signup:
             return "/api/v1/auth/signup"
@@ -33,14 +33,14 @@ extension AuthAPI: TargetType {
         }
     }
     
-    var method: Moya.Method {
+    public var method: Moya.Method {
         switch self {
         case .logout, .logoutAll, .refresh, .signup, .socialVerify:
             return .post
         }
     }
     
-    var task: Moya.Task {
+    public var task: Moya.Task {
         switch self {
         case .signup(let signupInfoEntity):
             return .requestJSONEncodable(signupInfoEntity)

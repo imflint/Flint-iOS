@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol SearchContentsUseCase: AnyObject {
-    func searchContents(_ query: String) -> AnyPublisher<SearchContentsEntity, NetworkError>
+    func searchContents(_ query: String) -> AnyPublisher<SearchContentsEntity, Error>
 }
 
 public class DefaultSearchContentsUSeCase: SearchContentsUseCase {
@@ -23,7 +23,7 @@ public class DefaultSearchContentsUSeCase: SearchContentsUseCase {
         self.searchContentsrepository = searchContentsrepository
     }
     
-    public func searchContents(_ query: String) -> AnyPublisher<SearchContentsEntity, NetworkError> {
+    public func searchContents(_ query: String) -> AnyPublisher<SearchContentsEntity, Error> {
         return searchContentsrepository.searchContents(query)
     }
     
