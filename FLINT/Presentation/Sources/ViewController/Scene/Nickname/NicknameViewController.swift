@@ -16,8 +16,6 @@ import ViewModel
 
 public final class NicknameViewController: BaseViewController<NicknameView> {
     
-    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
-    
     // MARK: - ViewModel
     
     private let onboardingViewModel: OnboardingViewModel

@@ -21,10 +21,12 @@ public protocol AuthService {
 }
 
 public final class DefaultAuthService: AuthService {
+    
+    private let tokenStorage: TokenStorage
     private let provider = MoyaProvider<AuthAPI>()
     
-    public init() {
-        
+    public init(tokenStorage: TokenStorage) {
+        self.tokenStorage = tokenStorage
     }
     
     public func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<SignupDTO, NetworkError> {
