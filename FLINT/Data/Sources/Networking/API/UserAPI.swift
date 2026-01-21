@@ -11,7 +11,7 @@ import Moya
 
 import Domain
 
-enum UserAPI {
+public enum UserAPI {
     case checkNickname(_ nickname: String)
 }
 

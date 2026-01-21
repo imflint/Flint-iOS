@@ -20,9 +20,9 @@ public final class DefaultAuthRepository: AuthRepository {
         self.authService = authService
     }
     
-    public func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<LoginEntity, Error> {
+    public func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<String, Error> {
         return authService.signup(signupInfoEntity)
-            .tryMap({ try $0.entity })
+            .tryMap({ try $0.userIdValue })
             .eraseToAnyPublisher()
     }
 }

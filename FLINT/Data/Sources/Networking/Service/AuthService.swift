@@ -23,14 +23,22 @@ public protocol AuthService {
 public final class DefaultAuthService: AuthService {
     
     private let tokenStorage: TokenStorage
-    private let provider = MoyaProvider<AuthAPI>()
+    private let authAPIProvider: MoyaProvider<AuthAPI>
     
-    public init(tokenStorage: TokenStorage) {
+    public init(tokenStorage: TokenStorage, authAPIProvider: MoyaProvider<AuthAPI>) {
         self.tokenStorage = tokenStorage
+        self.authAPIProvider = authAPIProvider
     }
     
     public func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error> {
-        return provider.requestPublisher(.signup(signupInfoEntity))
+        return authAPIProvider.requestPublisher(.signup(signupInfoEntity))
             .extractData(SignupDTO.self)
+            .tryMap({ [weak self] in
+                let loginEntity = try $0.entity
+                self?.tokenStorage.save(loginEntity.accessToken, type: .accessToken)
+                self?.tokenStorage.save(loginEntity.refreshToken, type: .refreshToken)
+                return $0
+            })
+            .eraseToAnyPublisher()
     }
 }

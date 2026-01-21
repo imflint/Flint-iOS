@@ -21,14 +21,14 @@ public protocol UserService {
 
 public final class DefaultUserService: UserService {
     
-    private let provider = MoyaProvider<UserAPI>()
+    private let userAPIProvider: MoyaProvider<UserAPI>
     
-    public init() {
-        
+    public init(userAPIProvider: MoyaProvider<UserAPI>) {
+        self.userAPIProvider = userAPIProvider
     }
     
     public func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error> {
-        return provider.requestPublisher(.checkNickname(nickname))
+        return userAPIProvider.requestPublisher(.checkNickname(nickname))
             .extractData(NicknameCheckDTO.self)
     }
 }

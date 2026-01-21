@@ -11,7 +11,7 @@ import Moya
 
 import Domain
 
-enum AuthAPI {
+public enum AuthAPI {
     case logout
     case logoutAll
     case refresh

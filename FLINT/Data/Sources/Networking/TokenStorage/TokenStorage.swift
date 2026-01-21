@@ -8,73 +8,51 @@
 import Foundation
 import Security
 
-public enum TokenType: String {
+import Domain
+
+public enum TokenType: String, CaseIterable {
     case accessToken
     case refreshToken
 }
 
-public enum TokenError: Error, LocalizedError {
-    
-}
-
 public protocol TokenStorage {
-    func save(_ token: String, type: TokenType) throws
+    func save(_ token: String, type: TokenType)
     func load(type: TokenType) -> String?
-    func delete(type: TokenType) throws
-    func clearAll() throws
+    func delete(type: TokenType)
+    func clearAll()
 }
 
 
 public final class DefaultTokenStorage: TokenStorage {
-    public func save(_ token: String, type: TokenType) throws {
-        guard let tokenData = token.data(using: .utf8) else {
-            
-        }
-        
-        // Access Control 설정 (Face ID 또는 기기 잠금 해제 후 접근 가능)
-        let accessControl = SecAccessControlCreateWithFlags(
-            kCFAllocatorDefault,
-            kSecAttrAccessibleWhenUnlocked,
-            .userPresence,   // 사용자 인증 (Face ID, Touch ID 또는 기기 암호)
-            nil
-        )
-        
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,  // 일반 데이터 저장
-            kSecAttrAccount as String: account,             // 계정 이름
-            kSecAttrService as String: service,             // 서비스 이름
-            kSecValueData as String: tokenData,             // 실제 토큰 데이터
-            kSecAttrAccessControl as String: accessControl! // 접근 제어 추가
-        ]
-        
-        // 기존 항목 삭제 후 새로운 항목 저장
-        SecItemDelete(query as CFDictionary)
-        return SecItemAdd(query as CFDictionary, nil)
-    }
-    
-    public func load(type: TokenType) -> String? {
-        <#code#>
-    }
-    
-    public func delete(type: TokenType) throws {
-        <#code#>
-    }
-    
-    public func clearAll() throws {
-        <#code#>
-    }
-    
     
     public init() {
         
     }
     
+    public func save(_ token: String, type: TokenType) {
+        guard let tokenData = token.data(using: .utf8) else {
+            Log.e("Token Data Encoding Error")
+            return
+        }
+        
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,  // 일반 데이터 저장
+            kSecAttrAccount as String: type.rawValue,             // 계정 이름
+            kSecValueData as String: tokenData,             // 실제 토큰 데이터
+        ]
+        
+        // 기존 항목 삭제 후 새로운 항목 저장
+        SecItemDelete(query as CFDictionary)
+        let status = SecItemAdd(query as CFDictionary, nil)
+        if status == errSecSuccess {
+            Log.d("Keychain \(type.rawValue) 저장 완료")
+        }
+    }
     
-    public func loadToken(account: String, service: String) -> String? {
+    public func load(type: TokenType) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: account,
-            kSecAttrService as String: service,
+            kSecAttrAccount as String: type.rawValue,
             kSecReturnData as String: true,                 // 데이터를 반환하도록 설정
             kSecMatchLimit as String: kSecMatchLimitOne     // 하나의 결과만 반환
         ]
@@ -82,24 +60,56 @@ public final class DefaultTokenStorage: TokenStorage {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         
-        guard status == errSecSuccess else { return nil }
-        
-        if let data = item as? Data, let token = String(data: data, encoding: .utf8) {
-            return token
+        guard status == errSecSuccess else {
+            Log.e("Keychain \(type.rawValue) load failed. \(status)")
+            return nil
         }
-        
-        return nil
+        guard let data = item as? Data else {
+            Log.e("Keychain \(type.rawValue) data invalid")
+            return nil
+        }
+        guard let token = String(data: data, encoding: .utf8) else {
+            Log.e("Keychain \(type.rawValue) string encoding failed.")
+            return nil
+        }
+        return token
     }
     
-    // 토큰 삭제 함수
-    @discardableResult
-    public func deleteToken(account: String, service: String) -> OSStatus {
+    public func delete(type: TokenType) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: account,
-            kSecAttrService as String: service
+            kSecAttrAccount as String: type.rawValue,
         ]
         
-        return SecItemDelete(query as CFDictionary)
+        let status = SecItemDelete(query as CFDictionary)
+        
+        guard status == errSecSuccess else {
+            Log.e("Keychain \(type.rawValue) delete failed. \(status)")
+            return
+        }
+    }
+    
+    public func clearAll() {
+        TokenType.allCases.forEach { tokenType in
+            delete(type: tokenType)
+        }
+    }
+}
+
+public final class TestTokenStorage: TokenStorage {
+    public func save(_ token: String, type: TokenType) {
+        return
+    }
+    
+    public func load(type: TokenType) -> String? {
+        return NetworkConfig.testToken
+    }
+    
+    public func delete(type: TokenType) {
+        return
+    }
+    
+    public func clearAll() {
+        return
     }
 }
