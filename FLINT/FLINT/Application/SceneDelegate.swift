@@ -7,22 +7,26 @@
 
 import UIKit
 
+import Presentation
+import Domain
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    let diContainer: DIContainer = DIContainer()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        let window = UIWindow(windowScene: windowScene)
-
-        let container = AppDIContainer.shared
-        container.configureNetworking()
-
-        let viewController = TabBarViewController()
-        window.rootViewController = viewController
-
-        self.window = window
-        window.makeKeyAndVisible()
+        
+        window = UIWindow(windowScene: windowScene)
+        
+        let viewController = TabBarViewController(viewControllerFactory: diContainer)
+        
+        let navigationController = UINavigationController(rootViewController: viewController).configured({
+            $0.navigationBar.isHidden = true
+        })
+        window?.rootViewController = navigationController
+        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
