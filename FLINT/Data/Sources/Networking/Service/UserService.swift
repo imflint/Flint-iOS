@@ -16,19 +16,19 @@ import Domain
 import DTO
 
 public protocol UserService {
-    func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, NetworkError>
+    func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error>
 }
 
 public final class DefaultUserService: UserService {
     
-    private let provider = MoyaProvider<UserAPI>()
+    private let userAPIProvider: MoyaProvider<UserAPI>
     
-    public init() {
-        
+    public init(userAPIProvider: MoyaProvider<UserAPI>) {
+        self.userAPIProvider = userAPIProvider
     }
     
-    public func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, NetworkError> {
-        return provider.requestPublisher(.checkNickname(nickname))
+    public func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error> {
+        return userAPIProvider.requestPublisher(.checkNickname(nickname))
             .extractData(NicknameCheckDTO.self)
     }
 }

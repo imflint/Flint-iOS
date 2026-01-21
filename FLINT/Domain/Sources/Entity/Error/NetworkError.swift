@@ -7,9 +7,30 @@
 
 import Foundation
 
-public enum NetworkError: Error {
+public enum NetworkError: Error, LocalizedError {
     case noData
     case decoding
-    case httpStatusCode(code: Int, message: String)
+    case httpStatusCode(ServerError)
     case unknown
+}
+
+public struct ServerError: Sendable {
+    public let title: String
+    public let detail: String
+    public let instance: String
+    public let errorCode: String
+    public let additionalInfo: [String: String]
+    
+    public let status: Int
+    public let message: String
+    
+    public init(title: String, detail: String, instance: String, errorCode: String, additionalInfo: [String : String], status: Int, message: String) {
+        self.title = title
+        self.detail = detail
+        self.instance = instance
+        self.errorCode = errorCode
+        self.additionalInfo = additionalInfo
+        self.status = status
+        self.message = message
+    }
 }
