@@ -13,3 +13,4 @@ import Entity
 public protocol UserRepository {
     func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckEntity, NetworkError>
 }
+

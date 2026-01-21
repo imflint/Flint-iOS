@@ -19,6 +19,7 @@ final class DIContainer: AppFactory {
     // MARK: - Root Dependency
     
     private lazy var userService: UserService = DefaultUserService()
+    private lazy var searchService: SearchService = DefaultSearchService()
     
     // MARK: - Init
     
