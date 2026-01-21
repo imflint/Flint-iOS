@@ -214,5 +214,6 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
             onTapClose?()
         }
     }
+
 }
 
