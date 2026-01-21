@@ -34,7 +34,7 @@ public final class DefaultAuthService: AuthService {
         return authAPIProvider.requestPublisher(.signup(signupInfoEntity))
             .extractData(SignupDTO.self)
             .tryMap({ [weak self] in
-                let loginEntity = try $0.entity
+                let loginEntity = try $0.loginEntity
                 self?.tokenStorage.save(loginEntity.accessToken, type: .accessToken)
                 self?.tokenStorage.save(loginEntity.refreshToken, type: .refreshToken)
                 return $0

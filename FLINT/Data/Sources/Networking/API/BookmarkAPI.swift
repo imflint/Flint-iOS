@@ -11,14 +11,14 @@ import Domain
 
 import Moya
 
-enum BookmarkAPI {
+public enum BookmarkAPI {
     case toggleCollectionBookmark(_ collectionId: Int64)
     case toggleContentBookmark(_ contentId: Int64)
 }
 
 extension BookmarkAPI: TargetType {
     
-    var baseURL: URL {
+    public var baseURL: URL {
         guard let baseURL = URL(string: "https://flint.r-e.kr") else {
             Log.f("Invalid BaseURL")
             fatalError("Invalid BaseURL")
@@ -26,7 +26,7 @@ extension BookmarkAPI: TargetType {
         return baseURL
     }
     
-    var path: String {
+    public var path: String {
         switch self {
         case .toggleCollectionBookmark(let collectionId):
             return "/api/v1/bookmarks/collections/\(collectionId)"
@@ -35,7 +35,7 @@ extension BookmarkAPI: TargetType {
         }
     }
     
-    var method: Moya.Method {
+    public var method: Moya.Method {
         switch self {
         case .toggleCollectionBookmark:
             return .post
@@ -44,7 +44,7 @@ extension BookmarkAPI: TargetType {
         }
     }
     
-    var task: Moya.Task {
+    public var task: Moya.Task {
         switch self {
         case .toggleCollectionBookmark:
             return .requestPlain

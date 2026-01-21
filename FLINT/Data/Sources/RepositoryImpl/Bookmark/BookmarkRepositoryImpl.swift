@@ -21,13 +21,11 @@ public final class DefaultBookmarkRepository: BookmarkRepository {
         self.bookmarkService = bookmarkService
     }
 
-    public func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, NetworkError> {
+    public func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, Error> {
         return bookmarkService.toggleCollectionBookmark(collectionId)
-            .eraseToAnyPublisher()
     }
     
-    public func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, NetworkError> {
+    public func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, Error> {
            return bookmarkService.toggleContentBookmark(contentId)
-               .eraseToAnyPublisher()
        }
 }

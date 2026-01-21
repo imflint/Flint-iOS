@@ -12,9 +12,8 @@ import Entity
 import Repository
 
 public protocol ToggleCollectionBookmarkUseCase {
-    func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, NetworkError>
+    func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, Error>
 }
-
 
 public class DefaultToggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase {
 
@@ -24,7 +23,7 @@ public class DefaultToggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUse
         self.bookmarkRepository = bookmarkRepository
     }
 
-    public func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, NetworkError> {
+    public func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, Error> {
         return bookmarkRepository.toggleCollectionBookmark(collectionId)
     }
 }

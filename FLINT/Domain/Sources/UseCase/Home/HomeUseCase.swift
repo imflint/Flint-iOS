@@ -11,7 +11,7 @@ import Entity
 import Repository
 
 public protocol HomeUseCase {
-    func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsEntity, NetworkError>
+    func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsEntity, Error>
 }
 
 public class DefaultHomeUseCase: HomeUseCase {
@@ -22,7 +22,7 @@ public class DefaultHomeUseCase: HomeUseCase {
         self.homeRepository = homeRepository
     }
     
-    public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsEntity, NetworkError> {
+    public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsEntity, Error> {
         return homeRepository.fetchRecommendedCollections()
     }
 }

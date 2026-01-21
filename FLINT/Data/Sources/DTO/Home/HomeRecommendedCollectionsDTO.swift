@@ -5,6 +5,7 @@
 //  Created by 소은 on 1/20/26.
 //
 
+import Combine
 import Foundation
 
 import Entity
@@ -30,21 +31,29 @@ public extension HomeRecommendedCollectionsDTO {
 
 extension HomeRecommendedCollectionsDTO {
     public var entity: HomeRecommendedCollectionsEntity {
-        return HomeRecommendedCollectionsEntity(
-            collections: (collections ?? []).map {
-                HomeRecommendedCollectionsEntity.HomeRecommendedCollectionEntity(
-                    id: $0.id ?? "",
-                    thumbnailUrl: $0.thumbnailUrl ?? "",
-                    title: $0.title ?? "",
-                    description: $0.description ?? "",
-                    imageList: $0.imageList ?? [],
-                    bookmarkCount: $0.bookmarkCount ?? 0,
-                    isBookmarked: $0.isBookmarked ?? false,
-                    userId: $0.userId ?? "",
-                    nickname: $0.nickname ?? "",
-                    profileUrl: $0.profileUrl ?? ""
-                )
-            }
-        )
+        get throws {
+            return try HomeRecommendedCollectionsEntity(
+                collections: collections?.map({ try $0.entity }) ?? []
+            )
+        }
+    }
+}
+
+extension HomeRecommendedCollectionsDTO.CollectionDTO {
+    public var entity: HomeRecommendedCollectionsEntity.HomeRecommendedCollectionEntity {
+        get throws {
+            return try HomeRecommendedCollectionsEntity.HomeRecommendedCollectionEntity(
+                id: unwrap(id, key: CodingKeys.id),
+                thumbnailUrl: thumbnailUrl ?? "",
+                title: title ?? "",
+                description: description ?? "",
+                imageList: imageList ?? [],
+                bookmarkCount: bookmarkCount ?? 0,
+                isBookmarked: isBookmarked ?? false,
+                userId: unwrap(userId, key: CodingKeys.userId),
+                nickname: nickname ?? "",
+                profileUrl: profileUrl ?? ""
+            )
+        }
     }
 }
