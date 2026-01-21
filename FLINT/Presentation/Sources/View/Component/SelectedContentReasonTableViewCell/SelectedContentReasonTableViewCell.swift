@@ -16,6 +16,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     public var onTapClose: (() -> Void)?
     public var onToggleSpoiler: ((Bool) -> Void)?
     public var onChangeReasonText: ((String) -> Void)?
+    public var onTapCloseWithDraft: (() -> Void)?
     
     private var isSpoilerOn: Bool = false
     
@@ -204,7 +205,14 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     //MARK: - Action
     
     @objc private func didTapClose() {
+        let text = (textView.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let hasDraft = !text.isEmpty
+
+        if hasDraft {
+            onTapCloseWithDraft?()
+        } else {
             onTapClose?()
         }
+    }
 }
 
