@@ -16,7 +16,6 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     public var onTapClose: (() -> Void)?
     public var onToggleSpoiler: ((Bool) -> Void)?
     public var onChangeReasonText: ((String) -> Void)?
-    public var onTapCloseWithDraft: (() -> Void)?  
     
     private var isSpoilerOn: Bool = false
     
