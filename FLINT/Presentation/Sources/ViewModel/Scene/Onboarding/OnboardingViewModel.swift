@@ -15,7 +15,8 @@ public protocol OnboardingViewModelInput {
 }
 
 public protocol OnboardingViewModelOutput {
-    var isValidNickname: CurrentValueSubject<Bool?, Never> { get }
+    var nickname: CurrentValueSubject<String, Never> { get }
+    var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> { get }
 }
 
 public typealias OnboardingViewModel = OnboardingViewModelInput & OnboardingViewModelOutput
@@ -24,7 +25,8 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
     private let nicknameUseCase: NicknameUseCase
     
-    public var isValidNickname: CurrentValueSubject<Bool?, Never> = .init(nil)
+    public var nickname: CurrentValueSubject<String, Never> = .init("")
+    public var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
@@ -33,11 +35,18 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func checkNickname(_ nickname: String) {
+        guard nickname.isValidNickname() else {
+            nicknameValidState.send(.invalid)
+            return
+        }
         nicknameUseCase.checkNickname(nickname)
             .manageThread()
             .map(\.available)
             .sinkHandledCompletion(receiveValue: { [weak self] isValidNickname in
-                self?.isValidNickname.send(isValidNickname)
+                self?.nicknameValidState.send(isValidNickname ? .valid : .duplicate)
+                if isValidNickname {
+                    self?.nickname.send(nickname)
+                }
             })
             .store(in: &cancellables)
     }

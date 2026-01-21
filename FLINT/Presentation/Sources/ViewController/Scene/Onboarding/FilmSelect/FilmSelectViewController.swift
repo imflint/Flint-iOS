@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 
 import View
+import ViewModel
 
 // TODO: - shadow & select logic
 
@@ -30,11 +31,25 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         }
     }
     
+    // MARK: - ViewModel
+    
+    private let onboardingViewModel: OnboardingViewModel
+    
     // MARK: - Property
     
     private var offsetCorrection: CGFloat = 0
     
     // MARK: - Basic
+    
+    public init(onboardingViewModel: OnboardingViewModel, viewControllerFactory: ViewControllerFactory) {
+        self.onboardingViewModel = onboardingViewModel
+        super.init(nibName: nil, bundle: nil)
+        self.viewControllerFactory = viewControllerFactory
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +63,7 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: "이번 달 가장 재미있었던 작품은?")
         rootView.filmPreviewCollectionView.dataSource = self
         rootView.filmCollectionView.dataSource = self
+        rootView.filmCollectionView.delegate = self
         
         rootView.layoutIfNeeded()
         
@@ -105,7 +121,7 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
     }
 }
 
-// MARK: - UICollectionViewDataSource
+// MARK: - UICollectionView DataSource & Delegate
 
 extension FilmSelectViewController: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -125,7 +141,12 @@ extension FilmSelectViewController: UICollectionViewDataSource {
         }
         return UICollectionViewCell()
     }
-    
+}
+
+extension FilmSelectViewController: UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        filmCollectionView(collectionView, didSelectItemAt: indexPath)
+    }
 }
 
 // MARK: - FilmPreviewCollectionView DataSource
@@ -143,7 +164,7 @@ extension FilmSelectViewController {
     }
 }
 
-// MARK: - FilmCollectionView DataSource
+// MARK: - FilmCollectionView DataSource & Delegate
 
 extension FilmSelectViewController {
     public func filmCollectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -158,5 +179,11 @@ extension FilmSelectViewController {
         cell.directorLabel.attributedText = .pretendard(.caption1_r_12, text: "가스 제닝스")
         cell.yearLabel.attributedText = .pretendard(.caption1_r_12, text: "2005")
         return cell
+    }
+}
+
+extension FilmSelectViewController {
+    public func filmCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
     }
 }

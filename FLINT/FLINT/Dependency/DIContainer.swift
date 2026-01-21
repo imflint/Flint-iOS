@@ -45,8 +45,12 @@ final class DIContainer: AppFactory {
         return TabBarViewController(viewControllerFactory: self)
     }
     
-    func makeNicknameViewController(onboardingViewModel: OnboardingViewModel) -> NicknameViewController {
+    func makeNicknameViewController() -> NicknameViewController {
         return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
+    }
+    
+    func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController {
+        return FilmSelectViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
     }
     
     // MARK: - Root Dependency Injection
