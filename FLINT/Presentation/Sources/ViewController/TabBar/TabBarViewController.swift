@@ -14,11 +14,15 @@ import View
 
 public class TabBarViewController: UIViewController {
     
+    // MARK: - DI
+    
+    public var viewControllerFactory: ViewControllerFactory?
+    
     // MARK: - Child ViewController
     
-    private let homeViewController = UINavigationController(rootViewController: HomeViewController())
-    private let exploreViewController = UINavigationController(rootViewController: ExploreViewController())
-    private let myViewController = UINavigationController(rootViewController: MyViewController())
+    private let homeViewController = HomeViewController()
+    private let exploreViewController = ExploreViewController()
+    private let myViewController = MyViewController()
     
     // MARK: - Component
     
@@ -29,9 +33,18 @@ public class TabBarViewController: UIViewController {
     
     // MARK: - Property
     
-    private var containerViewController: UINavigationController?
+    private var containerViewController: UIViewController?
     
     // MARK: - Basic
+    
+    public init(viewControllerFactory: ViewControllerFactory) {
+        self.viewControllerFactory = viewControllerFactory
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,7 +88,7 @@ public class TabBarViewController: UIViewController {
         containerViewController?.removeFromParent()
         containerViewController?.view.removeFromSuperview()
         
-        let newContainerViewController: UINavigationController
+        let newContainerViewController: UIViewController
         switch tab {
         case .home:
             newContainerViewController = homeViewController
@@ -85,7 +98,6 @@ public class TabBarViewController: UIViewController {
             newContainerViewController = myViewController
         }
         
-        newContainerViewController.setNavigationBarHidden(true, animated: false)
         addChild(newContainerViewController)
         newContainerViewController.view.frame = containerView.bounds
         containerView.addSubview(newContainerViewController.view)

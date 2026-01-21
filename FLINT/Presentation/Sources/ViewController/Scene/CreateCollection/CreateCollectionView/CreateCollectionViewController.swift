@@ -12,9 +12,9 @@ import View
 import ViewModel
 
 public final class CreateCollectionViewController: BaseViewController<CreateCollectionView> {
-
-    // MARK: - Enum
-
+    
+    //MARK: - enum
+    
     enum CreateCollectionRow: Int, CaseIterable {
         case header
         case title
@@ -32,8 +32,7 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
     private var selectedReasonItems: [SelectedContentReasonTableViewCellItem] = []
 
     private let viewModel: CreateCollectionViewModel
-
-    private var cancellables = Set<AnyCancellable>()
+    
     private let titleChangeSubject = PassthroughSubject<String, Never>()
     private let visibilitySubject = CurrentValueSubject<Bool, Never>(false)
     private let selectedCountSubject = CurrentValueSubject<Int, Never>(0)

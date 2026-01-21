@@ -17,7 +17,8 @@ public class BaseViewController<RootView: UIView>: UIViewController {
     
     // MARK: - Property
     
-    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    public var viewControllerFactory: ViewControllerFactory?
+    public var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Component
     
@@ -43,6 +44,8 @@ public class BaseViewController<RootView: UIView>: UIViewController {
         setUI()
         setHierarchy()
         setLayout()
+        
+        bind()
     }
     
     // MARK: - Setup
@@ -72,6 +75,10 @@ public class BaseViewController<RootView: UIView>: UIViewController {
     }
     
     // MARK: - Override Points
+    
+    public func bind() {
+        
+    }
     
     public func setUI() {
         
