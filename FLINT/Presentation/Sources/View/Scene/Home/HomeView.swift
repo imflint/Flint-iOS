@@ -21,7 +21,7 @@ public final class HomeView: BaseView {
     }
     
     public let floatingButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "img_fab"), for: .normal)
+        $0.setImage(DesignSystem.Image.Common.fab, for: .normal)
     }
     
     // MARK: - BaseView

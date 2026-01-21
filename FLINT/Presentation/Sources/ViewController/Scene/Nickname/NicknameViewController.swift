@@ -22,9 +22,10 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     
     // MARK: - Basic
     
-    public init(onboardingViewModel: OnboardingViewModel) {
+    public init(onboardingViewModel: OnboardingViewModel, viewControllerFactory: ViewControllerFactory) {
         self.onboardingViewModel = onboardingViewModel
         super.init(nibName: nil, bundle: nil)
+        self.viewControllerFactory = viewControllerFactory
     }
     
     required init?(coder: NSCoder) {
@@ -41,7 +42,7 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     
     // MARK: - Bind
     
-    private func bind() {
+    public override func bind() {
         onboardingViewModel.isValidNickname.sink(receiveValue: { [weak self] isValidNickname in
             Log.d(isValidNickname)
             self?.rootView.nextButton.isEnabled = isValidNickname ?? false
