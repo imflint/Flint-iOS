@@ -11,5 +11,5 @@ import Foundation
 import Entity
 
 public protocol CollectionRepository {
-    func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, NetworkError>
+    func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error>
 }

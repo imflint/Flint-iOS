@@ -99,7 +99,7 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
             self?.didSelectItem(at: indexPath)
         }
         
-        cell.onTapBookmark = { [weak self, weak cell] isBookmarked in
+        cell.onTapBookmark = { [weak self, weak cell] isBookmarked, count in
             guard let self, let cell,
                   let indexPath = collectionView.indexPath(for: cell) else { return }
 

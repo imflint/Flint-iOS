@@ -12,14 +12,14 @@ import Moya
 
 import Domain
 
-enum ContentAPI {
+public enum ContentAPI {
     case fetchOTTPlatforms(_ contentId: Int64)
     case fetchBookmarkedContents
 }
 
 extension ContentAPI: TargetType {
     
-    var baseURL: URL {
+    public var baseURL: URL {
         guard let baseURL = URL(string: "https://flint.r-e.kr") else {
             Log.f("Invalid BaseURL")
             fatalError("Invalid BaseURL")
@@ -27,7 +27,7 @@ extension ContentAPI: TargetType {
         return baseURL
     }
     
-    var path: String {
+    public var path: String {
         switch self {
         case .fetchOTTPlatforms(let contentId):
             return "/api/v1/contents/ott/\(contentId)"
@@ -36,14 +36,14 @@ extension ContentAPI: TargetType {
            }
         }
     
-    var method: Moya.Method {
+    public var method: Moya.Method {
         switch self {
         case .fetchOTTPlatforms, .fetchBookmarkedContents:
             return .get
         }
     }
     
-    var task: Moya.Task {
+    public var task: Moya.Task {
         switch self {
         case .fetchOTTPlatforms, .fetchBookmarkedContents:
             return .requestPlain

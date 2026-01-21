@@ -15,6 +15,7 @@ import Domain
 import DTO
 
 public protocol ContentService {
+<<<<<<< HEAD
     func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<[FetchOTTPlatformsDTO], NetworkError>
     func fetchBookmarkedContents() -> AnyPublisher<BookmarkContentsListDTO, NetworkError>
 }
@@ -26,8 +27,22 @@ public final class DefaultContentService: ContentService {
     public init() { }
     
     public func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<[FetchOTTPlatformsDTO], NetworkError> {
+=======
+    func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<OTTPlatformsDTO, Error>
+}
+
+public final class DefaultContentService: ContentService {
+
+    private let provider: MoyaProvider<ContentAPI>
+
+    public init(provider: MoyaProvider<ContentAPI>) {
+        self.provider = provider
+    }
+
+    public func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<OTTPlatformsDTO, Error> {
+>>>>>>> origin/develop
         return provider.requestPublisher(.fetchOTTPlatforms(contentId))
-            .extractData([FetchOTTPlatformsDTO].self)
+            .extractData(OTTPlatformsDTO.self)
     }
     
     public func fetchBookmarkedContents() -> AnyPublisher<BookmarkContentsListDTO, NetworkError> {

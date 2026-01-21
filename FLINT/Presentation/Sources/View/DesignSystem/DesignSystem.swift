@@ -73,6 +73,10 @@ public enum DesignSystem {
     public enum Icon {
         
         public enum Common {
+            // TODO: - Temp 추후 Component로 변경 예정
+            public static let collectionSave: UIImage = .icCollectionSave
+            public static let collectionSaved: UIImage = .icCollectionSaved
+            
             public static let bookmark: UIImage = .icBookmark
             public static let check: UIImage = .icBookmark
             public static let quilified: UIImage = .icBookmark
@@ -148,6 +152,7 @@ public enum DesignSystem {
     
     public enum Image {
         public enum Background {
+            public static let backgroundGradient: UIImage = .imgBackgroundGradient
             public static let backgroundGradientLarge: UIImage = .imgBackgroundGradiantLarge
             public static let backgroundGradientMiddle: UIImage = .imgBackgroundGradiantMiddle
             public static let collectionBg: UIImage = .imgCollectionBg
