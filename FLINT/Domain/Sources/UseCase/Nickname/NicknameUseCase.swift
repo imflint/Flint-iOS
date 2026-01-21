@@ -15,7 +15,7 @@ public protocol NicknameUseCase {
     func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckEntity, NetworkError>
 }
 
-public class DefaultNicknameUseCase: NicknameUseCase {
+public final class DefaultNicknameUseCase: NicknameUseCase {
     
     let userRepository: UserRepository
     
