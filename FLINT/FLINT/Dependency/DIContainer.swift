@@ -14,7 +14,7 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingFactory  & CreateCollectionFactory
+typealias AppFactory = ViewControllerFactory & OnboardingFactory  & CreateCollectionFactory & HomeFactory
 
 final class DIContainer: AppFactory {
     
@@ -23,6 +23,7 @@ final class DIContainer: AppFactory {
     private lazy var userAPIProvider = MoyaProvider<UserAPI>()
 //    private lazy var searchService: SearchService = DefaultSearchService()
     private lazy var collectionAPIProvider = MoyaProvider<CollectionAPI>()
+    private lazy var homeAPIProvider = MoyaProvider<HomeAPI>()
     
     // MARK: - Init
     
@@ -40,6 +41,11 @@ final class DIContainer: AppFactory {
         return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
     }
     
+    func makeHomeViewController() -> HomeViewController {
+        let vm = makeHomeViewModel(userName: "얀비") // TODO: 실제 유저명 연결
+        return HomeViewController(viewModel: vm)
+    }
+    
     func makeCreateCollectionViewController() -> CreateCollectionViewController {
         return CreateCollectionViewController(viewModel: makeCreateCollectionViewModel(), viewControllerFactory: self)
     }
@@ -51,5 +57,9 @@ final class DIContainer: AppFactory {
     
     func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI> {
         collectionAPIProvider
+    }
+    
+    func makeHomeAPIProvider() -> MoyaProvider<HomeAPI> {
+        homeAPIProvider
     }
 }

@@ -68,4 +68,37 @@ final class FLINTTests: XCTestCase {
         
         cancellable.cancel()
     }
+    
+    func testFetchRecommendedCollections_success() {
+        let expectation = XCTestExpectation(description: "fetchRecommendedCollections completes")
+
+        var receivedEntity: HomeRecommendedCollectionsEntity?
+        var receivedError: Error?
+
+        let homeUseCase: HomeUseCase = diContainer.makeHomeUseCase()
+
+        let cancellable = homeUseCase.fetchRecommendedCollections()
+            .sink(
+                receiveCompletion: { completion in
+                    if case let .failure(error) = completion {
+                        receivedError = error
+                    }
+                    expectation.fulfill()
+                },
+                receiveValue: { entity in
+                    receivedEntity = entity
+                }
+            )
+
+        wait(for: [expectation], timeout: 5.0)
+        cancellable.cancel()
+
+        if let receivedError {
+            XCTFail("fetchRecommendedCollections failed with error: \(receivedError)")
+            return
+        }
+
+        XCTAssertNotNil(receivedEntity)
+        XCTAssertFalse(receivedEntity?.collections.isEmpty ?? true)
+    }
 }

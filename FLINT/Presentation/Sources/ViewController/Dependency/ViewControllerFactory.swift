@@ -12,5 +12,6 @@ import ViewModel
 public protocol ViewControllerFactory {
     func makeTabBarViewController() -> TabBarViewController
     func makeNicknameViewController(onboardingViewModel: OnboardingViewModel) -> NicknameViewController
+    func makeHomeViewController() -> HomeViewController
     func makeCreateCollectionViewController() -> CreateCollectionViewController
 }

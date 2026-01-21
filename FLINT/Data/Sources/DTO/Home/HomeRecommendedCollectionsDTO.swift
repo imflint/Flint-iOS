@@ -25,7 +25,7 @@ public extension HomeRecommendedCollectionsDTO {
         public let isBookmarked: Bool?
         public let userId: String?
         public let nickname: String?
-        public let profileUrl: String?
+        public let profileImageUrl: String?
     }
 }
 
@@ -52,7 +52,7 @@ extension HomeRecommendedCollectionsDTO.CollectionDTO {
                 isBookmarked: isBookmarked ?? false,
                 userId: unwrap(userId, key: CodingKeys.userId),
                 nickname: nickname ?? "",
-                profileUrl: profileUrl ?? ""
+                profileImageUrl: profileImageUrl ?? ""
             )
         }
     }

@@ -39,7 +39,7 @@ public class TabBarViewController: UIViewController {
     
     public init(viewControllerFactory: ViewControllerFactory) {
         self.viewControllerFactory = viewControllerFactory
-        homeViewController = HomeViewController(viewControllerFactory: viewControllerFactory)
+        self.homeViewController = viewControllerFactory.makeHomeViewController()
         super.init(nibName: nil, bundle: nil)
     }
     

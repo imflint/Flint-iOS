@@ -30,6 +30,8 @@ public final class DefaultHomeService: HomeService {
     public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, Error> {
         return provider.requestPublisher(.fetchRecommendedCollections)
             .extractData(HomeRecommendedCollectionsDTO.self)
+
     }
+    
 }
 

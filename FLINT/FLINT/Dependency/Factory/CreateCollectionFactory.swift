@@ -1,3 +1,8 @@
+//
+//  CreateCollectionFactory.swift
+//  FLINT
+//
+
 import Foundation
 import Moya
 
@@ -29,7 +34,6 @@ public protocol CreateCollectionFactory {
 
 public extension CreateCollectionFactory {
 
-    // Service
     func makeCollectionService() -> CollectionService {
         return makeCollectionService(collectionAPIProvider: makeCollectionAPIProvider())
     }
@@ -38,7 +42,6 @@ public extension CreateCollectionFactory {
         return DefaultCollectionService(provider: collectionAPIProvider)
     }
 
-    // Repository
     func makeCollectionRepository() -> CollectionRepository {
         return makeCollectionRepository(collectionService: makeCollectionService())
     }
@@ -47,7 +50,6 @@ public extension CreateCollectionFactory {
         return DefaultCollectionRepository(collectionService: collectionService)
     }
 
-    // UseCase
     func makeCreateCollectionUseCase() -> CreateCollectionUseCase {
         return makeCreateCollectionUseCase(collectionRepository: makeCollectionRepository())
     }
@@ -56,7 +58,6 @@ public extension CreateCollectionFactory {
         return DefaultCreateCollectionUseCase(collectionRepository: collectionRepository)
     }
 
-    // ViewModel
     func makeCreateCollectionViewModel() -> CreateCollectionViewModel {
         return makeCreateCollectionViewModel(createCollectionUseCase: makeCreateCollectionUseCase())
     }

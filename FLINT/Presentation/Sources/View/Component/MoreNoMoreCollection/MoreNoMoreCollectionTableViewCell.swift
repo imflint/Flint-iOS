@@ -48,10 +48,9 @@ public final class MoreNoMoreCollectionTableViewCell: BaseTableViewCell {
     public override func setLayout() {
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.width.equalTo(260)
-            $0.height.equalTo(180)
         }
     }
+
     
     public override func prepare() {
         onSelectItem = nil
@@ -87,6 +86,7 @@ extension MoreNoMoreCollectionTableViewCell: UICollectionViewDataSource, UIColle
         }
         
         cell.configure(with: items[indexPath.item])
+        print("items count:", items.count)
         return cell
     }
     

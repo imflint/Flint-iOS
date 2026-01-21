@@ -6,32 +6,36 @@
 //
 
 import UIKit
+import Combine
 
 import View
 import ViewModel
+import Domain
 
 public final class HomeViewController: BaseViewController<HomeView> {
 
-    // MARK: - Property
+    private let viewModel: HomeViewModelType
+    private var sections: [HomeViewModel.SectionModel] = []
 
-    private let viewModel = HomeViewModel(userName: "얀비")
+    // MARK: - Init
+
+    public init(viewModel: HomeViewModelType) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     // MARK: - Lifecycle
-    
-    public init(viewControllerFactory: ViewControllerFactory?) {
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         setTableView()
         registerCells()
+        bindViewModel()
         bindActions()
+
+        viewModel.fetchRecommendedCollections()
     }
 
     // MARK: - Override Points
@@ -55,6 +59,7 @@ public final class HomeViewController: BaseViewController<HomeView> {
     private func setTableView() {
         rootView.tableView.dataSource = self
         rootView.tableView.delegate = self
+        rootView.tableView.separatorStyle = .none
     }
 
     private func registerCells() {
@@ -65,14 +70,30 @@ public final class HomeViewController: BaseViewController<HomeView> {
         rootView.tableView.register(HomeCTAButtonTableViewCell.self)
     }
 
+    private func bindViewModel() {
+        viewModel.sections
+            .receive(on: RunLoop.main)
+            .sink { [weak self] sections in
+                self?.sections = sections
+                self?.rootView.tableView.reloadData()
+            }
+            .store(in: &cancellables)
+    }
+
     private func bindActions() {
         rootView.floatingButton.addTarget(self, action: #selector(didTapFab), for: .touchUpInside)
     }
 
-    @objc private func
-    didTapFab() {
+    @objc private func didTapFab() {
         guard let createCollectionViewController = viewControllerFactory?.makeCreateCollectionViewController() else { return }
         navigationController?.pushViewController(createCollectionViewController, animated: true)
+    }
+
+    private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
+        let vc = BaseBottomSheetViewController(
+            content: .ott(platforms: platforms)
+        )
+        present(vc, animated: false)
     }
 }
 
@@ -82,16 +103,19 @@ public final class HomeViewController: BaseViewController<HomeView> {
 extension HomeViewController: UITableViewDataSource {
 
     public func numberOfSections(in tableView: UITableView) -> Int {
-        viewModel.sections.count
+        sections.count
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.sections[section].rows.count
+        sections[section].rows.count
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
 
-        let row = viewModel.sections[indexPath.section].rows[indexPath.row]
+        let row = sections[indexPath.section].rows[indexPath.row]
 
         switch row {
 
@@ -112,7 +136,6 @@ extension HomeViewController: UITableViewDataSource {
             cell.configure(style: style, title: title, subtitle: subtitle)
 
             if style == .more {
-                // TODO: - collectionFolderListView 연결하기
                 cell.onTapMore = { [weak self] in
                     let vc = CollectionFolderListViewController()
                     self?.navigationController?.pushViewController(vc, animated: true)
@@ -124,6 +147,8 @@ extension HomeViewController: UITableViewDataSource {
             return cell
 
         case .fliner(let items):
+             print("HomeVC fliner row items:", items.count)
+
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier,
                 for: indexPath
@@ -163,19 +188,32 @@ extension HomeViewController: UITableViewDataSource {
             return cell
         }
     }
-
-    private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
-        let vc = BaseBottomSheetViewController(
-            content: .ott(platforms: platforms)
-        )
-        present(vc, animated: false)
-    }
 }
 
 
 // MARK: - UITableViewDelegate
 
 extension HomeViewController: UITableViewDelegate {
+    
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let row = sections[indexPath.section].rows[indexPath.row]
+        switch row {
+        case .fliner:
+            return 180 
+        default:
+            return UITableView.automaticDimension
+        }
+    }
+
+    public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        let row = sections[indexPath.section].rows[indexPath.row]
+        switch row {
+        case .fliner:
+            return 180
+        default:
+            return 100
+        }
+    }
 
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         48
