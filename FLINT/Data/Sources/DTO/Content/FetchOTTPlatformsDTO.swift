@@ -10,7 +10,7 @@ import Foundation
 import Entity
 
 public struct FetchOTTPlatformsDTO: Codable {
-    public let ottId: Int?
+    public let ottId: String?
     public let name: String?
     public let logoUrl: String?
     public let contentUrl: String?
@@ -19,7 +19,7 @@ public struct FetchOTTPlatformsDTO: Codable {
 extension FetchOTTPlatformsDTO {
     public var entity: FetchOTTPlatformsEntity.OTTPlatformEntity {
         return FetchOTTPlatformsEntity.OTTPlatformEntity(
-            ottId: ottId ?? 0,
+            ottId: ottId ?? "",
             name: name ?? "",
             logoUrl: logoUrl ?? "",
             contentUrl: contentUrl ?? ""

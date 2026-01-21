@@ -20,26 +20,26 @@ public extension HomeRecommendedCollectionsEntity {
 
     struct HomeRecommendedCollectionEntity {
 
-        public let id: Int
+        public let id: String
         public let thumbnailUrl: String
         public let title: String
         public let description: String
         public let imageList: [String]
         public let bookmarkCount: Int
         public let isBookmarked: Bool
-        public let userId: Int
+        public let userId: String
         public let nickname: String
         public let profileUrl: String
 
         public init(
-            id: Int,
+            id: String,
             thumbnailUrl: String,
             title: String,
             description: String,
             imageList: [String],
             bookmarkCount: Int,
             isBookmarked: Bool,
-            userId: Int,
+            userId: String,
             nickname: String,
             profileUrl: String
         ) {

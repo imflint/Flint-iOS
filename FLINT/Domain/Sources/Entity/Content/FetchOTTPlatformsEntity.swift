@@ -20,12 +20,12 @@ public extension FetchOTTPlatformsEntity {
     
     struct OTTPlatformEntity {
         
-        public let ottId: Int
+        public let ottId: String
         public let name: String
         public let logoUrl: String
         public let contentUrl: String
         
-        public init(ottId: Int,
+        public init(ottId: String,
                     name: String,
                     logoUrl: String,
                     contentUrl: String
