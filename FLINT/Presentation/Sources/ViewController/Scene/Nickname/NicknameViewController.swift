@@ -42,7 +42,7 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     
     // MARK: - Bind
     
-    private func bind() {
+    public override func bind() {
         onboardingViewModel.isValidNickname.sink(receiveValue: { [weak self] isValidNickname in
             Log.d(isValidNickname)
             self?.rootView.nextButton.isEnabled = isValidNickname ?? false
