@@ -25,6 +25,11 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
     
     // MARK: - Override
     
+    public override func bind() {
+        rootView.collectionView.dataSource = self
+        rootView.collectionView.delegate = self
+    }
+    
     public override func setUI() {
         super.setUI()
         
@@ -46,11 +51,6 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
     }
     
     // MARK: - Private
-    
-    private func bind() {
-        rootView.collectionView.dataSource = self
-        rootView.collectionView.delegate = self
-    }
     
     private func applyCount() {
         rootView.countLabel.attributedText = .pretendard(
