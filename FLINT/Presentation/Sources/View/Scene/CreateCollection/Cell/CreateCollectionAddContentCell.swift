@@ -34,7 +34,7 @@ public final class CreateCollectionAddContentCell: BaseTableViewCell {
     }
     
     private let addButton = FlintButton(
-        style: .outline,
+        style: .colorOutline,
         title: "작품 추가하기",
         image: .icPlus
     )
@@ -72,7 +72,7 @@ public final class CreateCollectionAddContentCell: BaseTableViewCell {
         addButton.snp.makeConstraints {
             $0.top.equalTo(subtitleLabel.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(36)
             $0.height.equalTo(80)
         }
     }
