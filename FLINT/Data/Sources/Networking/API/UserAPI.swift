@@ -43,4 +43,3 @@ extension UserAPI: TargetType {
         }
     }
 }
-

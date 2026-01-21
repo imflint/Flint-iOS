@@ -20,10 +20,7 @@ public extension AnyPublisher where Output == Response, Failure == MoyaError {
         return map(BaseResponse<D>.self)
             .tryMap({ baseResponse in
                 guard (200..<300).contains(baseResponse.status) else {
-                    throw NetworkError.httpStatusCode(
-                        code: baseResponse.status,
-                        message: baseResponse.message
-                    )
+                    throw NetworkError.httpStatusCode(baseResponse.serverError)
                 }
                 guard let data = baseResponse.data else {
                     throw NetworkError.noData
