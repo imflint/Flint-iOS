@@ -89,6 +89,8 @@ public final class AddContentSelectView: BaseView {
     public override func layoutSubviews() {
         super.layoutSubviews()
 
+        bringSubviewToFront(selectedPreviewContainerView)
+
         selectedPreviewContainerView.layer.applyShadow(
             alpha: 0.25,
             blur: 12,
@@ -106,7 +108,7 @@ public final class AddContentSelectView: BaseView {
 
         tableView.snp.remakeConstraints {
             if hidden {
-                $0.top.equalTo(searchTextField.snp.bottom).offset(12)
+                $0.top.equalTo(searchTextField.snp.bottom).offset(24)
             } else {
                 $0.top.equalTo(selectedPreviewContainerView.snp.bottom).offset(8)
             }
