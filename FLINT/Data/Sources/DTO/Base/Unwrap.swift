@@ -8,11 +8,14 @@
 import Foundation
 
 public enum DTOMappingError: Error, LocalizedError {
-    case missingField(String)
+    case missingField(String?)
     
     public var errorDescription: String? {
         switch self {
         case .missingField(let string):
+            guard let string else {
+                return "DTO Mapping Error: - missing field"
+            }
             return "DTO Mapping Error: - missing field \(string)"
         }
     }
@@ -20,10 +23,10 @@ public enum DTOMappingError: Error, LocalizedError {
 
 public func unwrap<T>(
     _ value: T?,
-    key: CodingKey
+    key: CodingKey? = nil
 ) throws -> T {
     guard let value else {
-        throw DTOMappingError.missingField(key.stringValue)
+        throw DTOMappingError.missingField(key?.stringValue)
     }
     return value
 }
