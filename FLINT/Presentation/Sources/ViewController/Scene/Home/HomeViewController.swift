@@ -5,6 +5,8 @@
 //  Created by 소은 on 1/6/26.
 //
 
+import Domain //TODO: - 로그 지우면서 지우기
+
 import UIKit
 import Combine
 
@@ -13,36 +15,81 @@ import ViewModel
 import Domain
 
 public final class HomeViewController: BaseViewController<HomeView> {
-
-    private let viewModel: HomeViewModelType
-    private var sections: [HomeViewModel.SectionModel] = []
-
+    
+    private let viewModel: HomeViewModel
+    
+    private let recentSavedDummyItems: [RecentSavedContentItem] = [
+        .init(
+            posterImageName: "img_background_gradiant_large",
+            title: "듄: 파트 2",
+            year: 2024,
+            availableOn: [.netflix, .disneyPlus, .watcha],
+            subscribedOn: [.netflix, .wave]
+        ),
+        .init(
+            posterImageName: "img_background_gradiant_large",
+            title: "오펜하이머",
+            year: 2023,
+            availableOn: [.wave, .tving],
+            subscribedOn: [.tving, .wave]
+        ),
+        .init(
+            posterImageName: "img_background_gradiant_large",
+            title: "스즈메의 문단속",
+            year: 2022,
+            availableOn: [.netflix, .watcha],
+            subscribedOn: [.netflix]
+        )
+    ]
+    
     // MARK: - Init
-
-    public init(viewModel: HomeViewModelType) {
+    
+    public init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-
+    
     // MARK: - Lifecycle
-
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setTableView()
         registerCells()
-        bindViewModel()
         bindActions()
-
+        
         viewModel.fetchRecommendedCollections()
+        viewModel.fetchRecentCollections()
     }
-
+    
     // MARK: - Override Points
-
+    
+    public override func bind() {
+        viewModel.homeRecommendedCollections
+            .sink { [weak self] items in
+                Log.d(" recommended count: \(items.count)")
+                self?.rootView.tableView.reloadSections(
+                    IndexSet(integer: HomeTableViewSection.recommend.rawValue),
+                    with: .none
+                )
+            }
+            .store(in: &cancellables)
+        
+        viewModel.recentCollections
+            .sink { [weak self] items in
+                Log.d(" recent count: \(items.count)")
+                self?.rootView.tableView.reloadSections(
+                    IndexSet(integer: HomeTableViewSection.recent.rawValue),
+                    with: .none
+                )
+            }
+            .store(in: &cancellables)
+    }
+    
     public override func setUI() {
         view.backgroundColor = DesignSystem.Color.background
-
+        
         setNavigationBar(
             .init(
                 left: .logo,
@@ -50,18 +97,18 @@ public final class HomeViewController: BaseViewController<HomeView> {
                 backgroundStyle: .solid(DesignSystem.Color.background)
             )
         )
-
+        
         statusBarBackgroundView.isHidden = true
     }
-
+    
     // MARK: - Private
-
+    
     private func setTableView() {
         rootView.tableView.dataSource = self
         rootView.tableView.delegate = self
         rootView.tableView.separatorStyle = .none
     }
-
+    
     private func registerCells() {
         rootView.tableView.register(HomeGreetingTableViewCell.self)
         rootView.tableView.register(TitleHeaderTableViewCell.self)
@@ -69,26 +116,16 @@ public final class HomeViewController: BaseViewController<HomeView> {
         rootView.tableView.register(RecentSavedContentTableViewCell.self)
         rootView.tableView.register(HomeCTAButtonTableViewCell.self)
     }
-
-    private func bindViewModel() {
-        viewModel.sections
-            .receive(on: RunLoop.main)
-            .sink { [weak self] sections in
-                self?.sections = sections
-                self?.rootView.tableView.reloadData()
-            }
-            .store(in: &cancellables)
-    }
-
+    
     private func bindActions() {
         rootView.floatingButton.addTarget(self, action: #selector(didTapFab), for: .touchUpInside)
     }
-
+    
     @objc private func didTapFab() {
         guard let createCollectionViewController = viewControllerFactory?.makeCreateCollectionViewController() else { return }
         navigationController?.pushViewController(createCollectionViewController, animated: true)
     }
-
+    
     private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
         let vc = BaseBottomSheetViewController(
             content: .ott(platforms: platforms)
@@ -101,87 +138,117 @@ public final class HomeViewController: BaseViewController<HomeView> {
 // MARK: - UITableViewDataSource
 
 extension HomeViewController: UITableViewDataSource {
-
+    
+    enum HomeTableViewSection: Int, CaseIterable {
+        case greeting = 0
+        case recommendHeader
+        case recommend
+        case recentSavedHeader
+        case recentSaved
+        case recentHeader
+        case recent
+        case ctaButton
+    }
+    
     public func numberOfSections(in tableView: UITableView) -> Int {
-        sections.count
+        return HomeTableViewSection.allCases.count
     }
-
+    
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        sections[section].rows.count
+        return 1
     }
-
+    
     public func tableView(
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
-
-        let row = sections[indexPath.section].rows[indexPath.row]
-
-        switch row {
-
-        case .greeting(let userName):
+        
+        guard let section = HomeTableViewSection(rawValue: indexPath.section) else {
+            Log.e("Invalid IndexPath")
+            return UITableViewCell()
+        }
+        
+        switch section {
+        case .greeting:
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: HomeGreetingTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! HomeGreetingTableViewCell
-            cell.configure(userName: userName)
+            
+            let name = viewModel.homeRecommendedCollections.value.first?.userName ?? "얀비"
+            cell.configure(userName: name)
             return cell
-
-        case .header(let style, let title, let subtitle):
+            
+        case .recommendHeader:
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: TitleHeaderTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! TitleHeaderTableViewCell
-
-            cell.configure(style: style, title: title, subtitle: subtitle)
-
-            if style == .more {
-                cell.onTapMore = { [weak self] in
-                    let vc = CollectionFolderListViewController()
-                    self?.navigationController?.pushViewController(vc, animated: true)
-                }
-            } else {
-                cell.onTapMore = nil
-            }
-
+            
+            cell.configure(style: .normal, title: "Fliner의 추천 컬렉션을 만나보세요", subtitle: "Fliner는 콘텐츠에 진심인, 플린트의 큐레이터들이에요")
             return cell
-
-        case .fliner(let items):
-             print("HomeVC fliner row items:", items.count)
-
+            
+        case .recommend:
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! MoreNoMoreCollectionTableViewCell
-            cell.configure(items: items)
+            cell.configure(items: viewModel.homeRecommendedCollections.value as! [MoreNoMoreCollectionItem])
             return cell
-
-        case .recentSaved(let items):
+            
+        case .recentSavedHeader:
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: TitleHeaderTableViewCell.reuseIdentifier,
+                for: indexPath
+            ) as! TitleHeaderTableViewCell
+            
+            cell.configure(style: .normal, title: "최근저장한 콘텐츠", subtitle: "현재 구독 중인 OTT에서 볼 수 있는 작품들이에요")
+            return cell
+            
+        case .recentSaved:
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! RecentSavedContentTableViewCell
-
-            cell.configure(items: items)
-
+            
+            cell.configure(items: recentSavedDummyItems)
+            
             cell.onTapItem = { [weak self] item in
                 let circles = item.availableOn.intersection(item.subscribedOn)
-
+                
                 let platforms = CircleOTTPlatform.order
                     .filter { circles.contains($0) }
                     .map { OTTPlatform(circle: $0) }
-
+                
                 self?.presentOTTBottomSheet(platforms: platforms)
             }
             return cell
-
-        case .ctaButton(let title):
+            
+        case .recentHeader:
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: TitleHeaderTableViewCell.reuseIdentifier,
+                for: indexPath
+            ) as! TitleHeaderTableViewCell
+            
+            cell.configure(style: .more, title: "눈여겨보고 있는 컬렉션", subtitle: "키카님이 최근 살펴본 컬렉션이에요")
+            return cell
+            
+        case .recent:
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier,
+                for: indexPath
+            ) as! MoreNoMoreCollectionTableViewCell
+            
+            cell.configure(items: viewModel.recentCollections.value as! [MoreNoMoreCollectionItem])
+            return cell
+            
+        case .ctaButton:
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: HomeCTAButtonTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! HomeCTAButtonTableViewCell
-
-            cell.configure(title: title)
+            
+            cell.configure(title: "취향발견하러가기")
             cell.onTap = {
                 print("취향발견하러가기 탭") // TODO: 화면 이동 연결
             }
@@ -189,39 +256,45 @@ extension HomeViewController: UITableViewDataSource {
         }
     }
 }
-
-
-// MARK: - UITableViewDelegate
-
-extension HomeViewController: UITableViewDelegate {
     
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let row = sections[indexPath.section].rows[indexPath.row]
-        switch row {
-        case .fliner:
-            return 180 
-        default:
-            return UITableView.automaticDimension
+    
+    // MARK: - UITableViewDelegate
+    
+extension HomeViewController: UITableViewDelegate {
+        
+        public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+            guard let section = HomeTableViewSection(rawValue: indexPath.section) else {
+                return UITableView.automaticDimension
+            }
+            
+            switch section {
+            case .recommend, .recent:
+                return 180
+            default:
+                return UITableView.automaticDimension
+            }
         }
-    }
-
+        
     public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        let row = sections[indexPath.section].rows[indexPath.row]
-        switch row {
-        case .fliner:
-            return 180
-        default:
-            return 100
-        }
-    }
+           guard let section = HomeTableViewSection(rawValue: indexPath.section) else {
+               return 100
+           }
 
-    public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        48
-    }
+           switch section {
+           case .recommend, .recent:
+               return 180
+           default:
+               return 100
+           }
+       }
 
-    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        let view = UIView()
-        view.backgroundColor = .clear
-        return view
-    }
-}
+       public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+           48
+       }
+
+       public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+           let view = UIView()
+           view.backgroundColor = .clear
+           return view
+       }
+   }

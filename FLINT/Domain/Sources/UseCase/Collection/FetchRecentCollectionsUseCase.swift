@@ -12,18 +12,18 @@ import Entity
 import Repository
 
 public protocol FetchRecentCollectionsUseCase {
-    func fetchRecentCollections() -> AnyPublisher<RecentCollectionsEntity, Error>
+    func fetchRecentCollections() -> AnyPublisher<[RecentCollectionEntity], Error>
 }
 
-public final class DefaultFetchRecentCollectionsUseCase: FetchRecentCollectionsUseCase {
-
-    private let collectionRepository: CollectionRepository
-
-    public init(collectionRepository: CollectionRepository) {
-        self.collectionRepository = collectionRepository
+public final class DefaultRecentCollectionUseCase: FetchRecentCollectionsUseCase {
+    
+    private let repository: CollectionRepository
+    
+    public init(repository: CollectionRepository) {
+        self.repository = repository
     }
-
-    public func fetchRecentCollections() -> AnyPublisher<RecentCollectionsEntity, Error> {
-        return collectionRepository.fetchRecentCollections()
+    
+    public func fetchRecentCollections() -> AnyPublisher<[RecentCollectionEntity], Error> {
+        repository.fetchRecentCollections()
     }
 }

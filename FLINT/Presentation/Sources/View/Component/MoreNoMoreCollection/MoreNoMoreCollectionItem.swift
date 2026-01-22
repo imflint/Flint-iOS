@@ -7,17 +7,13 @@
 
 import UIKit
 
-// TODO: - 나중에 옮길 것!!!!!!!!!!!!!!!
-
-public struct MoreNoMoreCollectionItem {
-    public let id: UUID
+public struct MoreNoMoreCollectionItem: Equatable {
     public let image: UIImage?
     public let profileImage: UIImage?
     public let title: String
     public let userName: String
-    
-    public init(id: UUID, image: UIImage?, profileImage: UIImage?, title: String, userName: String) {
-        self.id = id
+
+    public init(image: UIImage?, profileImage: UIImage?, title: String, userName: String) {
         self.image = image
         self.profileImage = profileImage
         self.title = title

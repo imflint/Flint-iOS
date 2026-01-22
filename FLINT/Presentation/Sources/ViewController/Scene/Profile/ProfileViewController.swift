@@ -44,21 +44,21 @@ public final class ProfileViewController: UIViewController {
     
     private let moreNoMoreDummy: [MoreNoMoreCollectionItem] = [
         MoreNoMoreCollectionItem(
-            id: UUID(),
+          //  id: UUID(),
             image: DesignSystem.Image.Background.collectionBg,
             profileImage: DesignSystem.Image.Common.profileGray,
             title: "요즘 많이 보는 콘텐츠",
             userName: "쏘나기"
         ),
         MoreNoMoreCollectionItem(
-            id: UUID(),
+           // id: UUID(),
             image: DesignSystem.Image.Background.collectionBg,
             profileImage: DesignSystem.Image.Common.profileGray,
             title: "취향 저격 영화 모음",
             userName: "플린트"
         ),
         MoreNoMoreCollectionItem(
-            id: UUID(),
+          //  id: UUID(),
             image: DesignSystem.Image.Background.collectionBg,
             profileImage: DesignSystem.Image.Common.profileGray,
             title: "혼자 보기 좋은 작품",

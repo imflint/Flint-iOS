@@ -115,3 +115,4 @@ public final class MoreNoMoreCollectionItemCell: BaseCollectionViewCell {
         userNameLabel.attributedText = .pretendard(.caption1_r_12, text: item.userName, color: .flintGray200)
     }
 }
+

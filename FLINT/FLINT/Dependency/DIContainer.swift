@@ -21,8 +21,8 @@ final class DIContainer: AppFactory {
     
     // MARK: - Root Dependency
     
-    private lazy var userAPIProvider = MoyaProvider<UserAPI>()
-//    private lazy var searchService: SearchService = DefaultSearchService()
+    private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
+    
     private lazy var collectionAPIProvider = MoyaProvider<CollectionAPI>()
     private lazy var homeAPIProvider = MoyaProvider<HomeAPI>()
     
@@ -53,7 +53,7 @@ final class DIContainer: AppFactory {
     }
     
     func makeHomeViewController() -> HomeViewController {
-        let vm = makeHomeViewModel(userName: "얀비") // TODO: 실제 유저명 연결
+        let vm = makeHomeViewModel()
         return HomeViewController(viewModel: vm)
     }
     

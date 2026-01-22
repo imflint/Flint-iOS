@@ -1,8 +1,8 @@
 //
-//  RecentCollectionsDTO.swift
+//  HomeRecommendedCollectionsDTO.swift
 //  Data
 //
-//  Created by 소은 on 1/22/26.
+//  Created by 소은 on 1/20/26.
 //
 
 import Foundation
@@ -14,7 +14,7 @@ public struct RecentCollectionsDTO: Codable {
 }
 
 public extension RecentCollectionsDTO {
-
+    
     struct CollectionDTO: Codable {
         public let id: String?
         public let thumbnailUrl: String?
@@ -29,35 +29,39 @@ public extension RecentCollectionsDTO {
     }
 }
 
-extension RecentCollectionsDTO {
+// MARK: - DTO -> Entity
 
-    public var entity: RecentCollectionsEntity {
-        get throws {
-            return try RecentCollectionsEntity(
-                collections: (collections ?? []).map { dto in
-                    try dto.entity
-                }
-            )
-        }
+public extension RecentCollectionsDTO {
+    var entities: [RecentCollectionEntity] {
+        (collections ?? []).compactMap { $0.entity }
     }
 }
 
-extension RecentCollectionsDTO.CollectionDTO {
-
-    public var entity: RecentCollectionEntity {
-        get throws {
-            return try RecentCollectionEntity(
-                id: unwrap(id, key: CodingKeys.id),
-                thumbnailUrl: thumbnailUrl ?? "",
-                title: title ?? "",
-                description: description ?? "",
-                imageList: imageList ?? [],
-                bookmarkCount: bookmarkCount ?? 0,
-                isBookmarked: isBookmarked ?? false,
-                userId: unwrap(userId, key: CodingKeys.userId),   
-                nickname: nickname ?? "",
-                profileImageUrl: profileImageUrl ?? ""
-            )
+public extension RecentCollectionsDTO.CollectionDTO {
+    var entity: RecentCollectionEntity? {
+        guard
+            let id,
+            let title,
+            let description,
+            let userId,
+            let nickname
+        else {
+            return nil
         }
+        
+        return RecentCollectionEntity(
+            id: id,
+            thumbnailURL: thumbnailUrl.flatMap(URL.init(string:)),
+            title: title,
+            description: description,
+            imageList: (imageList ?? []).compactMap(URL.init(string:)),
+            bookmarkCount: bookmarkCount ?? 0,
+            isBookmarked: isBookmarked ?? false,
+            author: RecentCollectionAuthorEntity(
+                userId: userId,
+                nickname: nickname,
+                profileImageURL: profileImageUrl.flatMap(URL.init(string:))
+            )
+        )
     }
 }

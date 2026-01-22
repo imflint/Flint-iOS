@@ -35,7 +35,7 @@ public final class DefaultCollectionService: CollectionService {
     }
     
     public func fetchRecentCollections() -> AnyPublisher<RecentCollectionsDTO, Error> {
-        return provider.requestPublisher(.fetchRecentCollections)
+        provider.requestPublisher(.fetchRecentCollections)
             .extractData(RecentCollectionsDTO.self)
             .eraseToAnyPublisher()
     }

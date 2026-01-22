@@ -12,6 +12,8 @@ import Presentation
 
 public protocol HomeFactory {
 
+    // MARK: - Home (Recommended)
+
     // Root Dependency
     func makeHomeAPIProvider() -> MoyaProvider<HomeAPI>
 
@@ -27,42 +29,99 @@ public protocol HomeFactory {
     func makeHomeUseCase() -> HomeUseCase
     func makeHomeUseCase(homeRepository: HomeRepository) -> HomeUseCase
 
-    // ViewModel
-    func makeHomeViewModel(userName: String) -> HomeViewModelType
-    func makeHomeViewModel(userName: String, homeUseCase: HomeUseCase) -> HomeViewModelType
+    // MARK: - Collection (Recent)
+
+    // Root Dependency
+    func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI>
+
+    // Service
+    func makeCollectionService() -> CollectionService
+    func makeCollectionService(collectionAPIProvider: MoyaProvider<CollectionAPI>) -> CollectionService
+
+    // Repository
+    func makeCollectionRepository() -> CollectionRepository
+    func makeCollectionRepository(collectionService: CollectionService) -> CollectionRepository
+
+    // UseCase
+    func makeFetchRecentCollectionsUseCase() -> FetchRecentCollectionsUseCase
+    func makeFetchRecentCollectionsUseCase(collectionRepository: CollectionRepository) -> FetchRecentCollectionsUseCase
+
+    // MARK: - ViewModel
+
+    func makeHomeViewModel() -> HomeViewModel
+    func makeHomeViewModel(homeUseCase: HomeUseCase, fetchRecentCollectionsUseCase: FetchRecentCollectionsUseCase) -> HomeViewModel
 }
 
 public extension HomeFactory {
 
+    // MARK: - Home (Recommended)
+
     func makeHomeService() -> HomeService {
-        return makeHomeService(homeAPIProvider: makeHomeAPIProvider())
+        makeHomeService(homeAPIProvider: makeHomeAPIProvider())
     }
 
     func makeHomeService(homeAPIProvider: MoyaProvider<HomeAPI>) -> HomeService {
-        return DefaultHomeService(provider: homeAPIProvider)
+        DefaultHomeService(provider: homeAPIProvider)
     }
 
     func makeHomeRepository() -> HomeRepository {
-        return makeHomeRepository(homeService: makeHomeService())
+        makeHomeRepository(homeService: makeHomeService())
     }
 
     func makeHomeRepository(homeService: HomeService) -> HomeRepository {
-        return DefaultHomeRepository(homeService: homeService)
+        DefaultHomeRepository(homeService: homeService)
     }
 
     func makeHomeUseCase() -> HomeUseCase {
-        return makeHomeUseCase(homeRepository: makeHomeRepository())
+        makeHomeUseCase(homeRepository: makeHomeRepository())
     }
 
     func makeHomeUseCase(homeRepository: HomeRepository) -> HomeUseCase {
-        return DefaultHomeUseCase(homeRepository: homeRepository)
+        DefaultHomeUseCase(homeRepository: homeRepository)
     }
 
-    func makeHomeViewModel(userName: String) -> HomeViewModelType {
-        return makeHomeViewModel(userName: userName, homeUseCase: makeHomeUseCase())
+    // MARK: - Collection (Recent)
+
+    func makeCollectionService() -> CollectionService {
+        makeCollectionService(collectionAPIProvider: makeCollectionAPIProvider())
     }
 
-    func makeHomeViewModel(userName: String, homeUseCase: HomeUseCase) -> HomeViewModelType {
-        return DefaultHomeViewModel(userName: userName, homeUseCase: homeUseCase)
+    func makeCollectionService(collectionAPIProvider: MoyaProvider<CollectionAPI>) -> CollectionService {
+        DefaultCollectionService(provider: collectionAPIProvider)
+    }
+
+    func makeCollectionRepository() -> CollectionRepository {
+        makeCollectionRepository(collectionService: makeCollectionService())
+    }
+
+    func makeCollectionRepository(collectionService: CollectionService) -> CollectionRepository {
+        DefaultCollectionRepository(collectionService: collectionService)
+    }
+
+    func makeFetchRecentCollectionsUseCase() -> FetchRecentCollectionsUseCase {
+        makeFetchRecentCollectionsUseCase(collectionRepository: makeCollectionRepository())
+    }
+
+    func makeFetchRecentCollectionsUseCase(collectionRepository: CollectionRepository) -> FetchRecentCollectionsUseCase {
+        DefaultRecentCollectionUseCase(repository: collectionRepository)
+    }
+
+    // MARK: - ViewModel
+
+    func makeHomeViewModel() -> HomeViewModel {
+        makeHomeViewModel(
+            homeUseCase: makeHomeUseCase(),
+            fetchRecentCollectionsUseCase: makeFetchRecentCollectionsUseCase()
+        )
+    }
+
+    func makeHomeViewModel(
+        homeUseCase: HomeUseCase,
+        fetchRecentCollectionsUseCase: FetchRecentCollectionsUseCase
+    ) -> HomeViewModel {
+        DefaultHomeViewModel(
+            homeUseCase: homeUseCase,
+            fetchRecentCollectionsUseCase: fetchRecentCollectionsUseCase
+        )
     }
 }
