@@ -32,7 +32,7 @@ protocol OnboardingFactory {
 extension OnboardingFactory {
     
     func makeUserService() -> UserService {
-        return DefaultUserService(userAPIProvider: makeUserAPIProvider())
+        return makeUserService(userAPIProvider: makeUserAPIProvider())
     }
     func makeUserService(userAPIProvider: MoyaProvider<UserAPI>) -> UserService {
         return DefaultUserService(userAPIProvider: userAPIProvider)

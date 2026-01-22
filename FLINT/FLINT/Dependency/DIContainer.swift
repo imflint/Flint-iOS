@@ -15,7 +15,7 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingFactory
+typealias AppFactory = ViewControllerFactory & OnboardingFactory & ExploreFactory
 
 final class DIContainer: AppFactory {
     
@@ -27,6 +27,12 @@ final class DIContainer: AppFactory {
     private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()
     
     private lazy var userAPIProvider = MoyaProvider<UserAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
+    private lazy var collectionAPIProvider = MoyaProvider<CollectionAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
             networkLoggerPlugin
@@ -49,8 +55,19 @@ final class DIContainer: AppFactory {
         return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
     }
     
+    func makeExploreViewController() -> ViewController.ExploreViewController {
+        return ExploreViewController(exploreViewModel: makeExploreViewModel(), viewControllerFactory: self)
+    }
+    
+    
     // MARK: - Root Dependency Injection
+    
     func makeUserAPIProvider() -> MoyaProvider<UserAPI> {
         return userAPIProvider
     }
+    
+    func makeCollectionAPIProvider() -> Moya.MoyaProvider<Networking.CollectionAPI> {
+        return collectionAPIProvider
+    }
+    
 }
