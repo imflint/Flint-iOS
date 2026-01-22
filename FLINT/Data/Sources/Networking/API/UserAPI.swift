@@ -11,30 +11,30 @@ import Moya
 
 import Domain
 
-enum UserAPI {
+public enum UserAPI {
     case checkNickname(_ nickname: String)
 }
 
 extension UserAPI: TargetType {
-    var baseURL: URL {
+    public var baseURL: URL {
         return NetworkConfig.baseURL
     }
     
-    var path: String {
+    public var path: String {
         switch self {
         case .checkNickname:
             return "/api/v1/users/nickname/check"
         }
     }
     
-    var method: Moya.Method {
+    public var method: Moya.Method {
         switch self {
         case .checkNickname:
             return .get
         }
     }
     
-    var task: Moya.Task {
+    public var task: Moya.Task {
         switch self {
         case .checkNickname(let nickname):
             return .requestParameters(parameters: [
@@ -43,4 +43,3 @@ extension UserAPI: TargetType {
         }
     }
 }
-

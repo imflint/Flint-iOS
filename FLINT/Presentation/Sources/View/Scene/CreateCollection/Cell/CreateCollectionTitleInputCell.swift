@@ -92,7 +92,7 @@ public final class CreateCollectionTitleInputCell: BaseTableViewCell {
     
     public func setText(_ text: String) {
         titleTextView.text = text
-        titleTextView.delegate?.textViewDidChange?(titleTextView) // placeholder/카운트 갱신
+        titleTextView.delegate?.textViewDidChange?(titleTextView)
     }
 }
 

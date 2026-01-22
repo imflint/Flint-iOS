@@ -8,7 +8,7 @@
 import Moya
 
 extension TargetType {
-    var headers: [String : String]? {
+    public var headers: [String : String]? {
         return [
             "Content-Type": "application/json",
             "Accept": "application/json"

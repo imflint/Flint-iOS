@@ -12,18 +12,18 @@ import Entity
 import Repository
 
 public protocol NicknameUseCase {
-    func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckEntity, NetworkError>
+    func checkNickname(_ nickname: String) -> AnyPublisher<Bool, Error>
 }
 
-public class DefaultNicknameUseCase: NicknameUseCase {
+public final class DefaultNicknameUseCase: NicknameUseCase {
     
-    let userRepository: UserRepository
+    private let userRepository: UserRepository
     
     public init(userRepository: UserRepository) {
         self.userRepository = userRepository
     }
     
-    public func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckEntity, NetworkError> {
+    public func checkNickname(_ nickname: String) -> AnyPublisher<Bool, Error> {
         return userRepository.checkNickname(nickname)
     }
 }

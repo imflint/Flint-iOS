@@ -44,8 +44,22 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     
     public override func bind() {
         onboardingViewModel.isValidNickname.sink(receiveValue: { [weak self] isValidNickname in
+            guard let self, let isValidNickname else { return }
             Log.d(isValidNickname)
-            self?.rootView.nextButton.isEnabled = isValidNickname ?? false
+            rootView.nextButton.isEnabled = isValidNickname
+            if isValidNickname {
+                rootView.nicknameTextField.layer.borderWidth = 0
+                rootView.nicknameTextField.layer.borderColor = nil
+                Toast.success("사용 가능한 닉네임입니다", customConstraints: {
+                    $0.bottom.equalTo(self.rootView.nextButton.snp.top).offset(-8)
+                }).show()
+            } else {
+                rootView.nicknameTextField.layer.borderWidth = 1
+                rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
+                Toast.failure("이미 사용 중인 닉네임입니다", customConstraints: {
+                    $0.bottom.equalTo(self.rootView.nextButton.snp.top).offset(-8)
+                }).show()
+            }
         })
         .store(in: &cancellables)
     }
@@ -135,7 +149,8 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     }
     
     private func nextButtonTapped(_ action: UIAction) {
-        // TODO: - Next Button Tapped
+        // TODO: - FilmSelect 연결
+//        viewControllerFactory.
     }
 }
 

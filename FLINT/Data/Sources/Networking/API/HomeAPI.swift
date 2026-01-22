@@ -1,0 +1,48 @@
+//
+//  HomeAPI.swift
+//  Data
+//
+//  Created by 소은 on 1/20/26.
+//
+
+import Foundation
+
+import Moya
+
+import Domain
+
+public enum HomeAPI {
+    case fetchRecommendedCollections
+}
+
+extension HomeAPI: TargetType {
+    
+    public var baseURL: URL {
+        guard let baseURL = URL(string: "https://flint.r-e.kr") else {
+            Log.f("Invalid BaseURL")
+            fatalError("Invalid BaseURL")
+        }
+        return baseURL
+    }
+    
+    public var path: String {
+        switch self {
+        case .fetchRecommendedCollections:
+            return "/api/v1/home/recommended-collections"
+        }
+    }
+    
+    public var method: Moya.Method {
+        switch self {
+        case .fetchRecommendedCollections:
+            return .get
+        }
+    }
+    
+    public var task: Moya.Task {
+        switch self {
+        case .fetchRecommendedCollections:
+            return .requestPlain
+        }
+    }
+}
