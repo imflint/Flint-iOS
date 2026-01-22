@@ -12,4 +12,5 @@ import Entity
 
 public protocol CollectionRepository {
     func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error>
+    func fetchRecentCollections() -> AnyPublisher<[RecentCollectionEntity], Error>
 }

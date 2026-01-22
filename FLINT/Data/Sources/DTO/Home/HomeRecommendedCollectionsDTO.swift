@@ -25,35 +25,28 @@ public extension HomeRecommendedCollectionsDTO {
         public let isBookmarked: Bool?
         public let userId: String?
         public let nickname: String?
-        public let profileUrl: String?
+        public let profileImageUrl: String?
     }
 }
 
 extension HomeRecommendedCollectionsDTO {
-    public var entity: HomeRecommendedCollectionsEntity {
+    public var entity: [CollectionInfoEntity] {
         get throws {
-            return try HomeRecommendedCollectionsEntity(
-                collections: collections?.map({ try $0.entity }) ?? []
-            )
+            return try collections?.map { try $0.entity } ?? []
         }
     }
 }
 
 extension HomeRecommendedCollectionsDTO.CollectionDTO {
-    public var entity: HomeRecommendedCollectionsEntity.HomeRecommendedCollectionEntity {
+    public var entity: CollectionInfoEntity {
         get throws {
-            return try HomeRecommendedCollectionsEntity.HomeRecommendedCollectionEntity(
-                id: unwrap(id, key: CodingKeys.id),
-                thumbnailUrl: thumbnailUrl ?? "",
+            return CollectionInfoEntity(
+                imageURL: URL(string: thumbnailUrl ?? ""),
+                profileImageURL: URL(string: profileImageUrl ?? ""),
                 title: title ?? "",
-                description: description ?? "",
-                imageList: imageList ?? [],
-                bookmarkCount: bookmarkCount ?? 0,
-                isBookmarked: isBookmarked ?? false,
-                userId: unwrap(userId, key: CodingKeys.userId),
-                nickname: nickname ?? "",
-                profileUrl: profileUrl ?? ""
+                userName: nickname ?? ""
             )
+                
         }
     }
 }

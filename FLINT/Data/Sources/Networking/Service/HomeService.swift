@@ -16,20 +16,21 @@ import Domain
 import DTO
 
 public protocol HomeService {
-    func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, Error>
+    func fetchRecommendedCollections() -> AnyPublisher<[CollectionInfoEntity], Error>
 }
 
 public final class DefaultHomeService: HomeService {
-    
+
     private let provider: MoyaProvider<HomeAPI>
-    
+
     public init(provider: MoyaProvider<HomeAPI>) {
         self.provider = provider
     }
-    
-    public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, Error> {
+
+    public func fetchRecommendedCollections() -> AnyPublisher<[CollectionInfoEntity], Error> {
         return provider.requestPublisher(.fetchRecommendedCollections)
             .extractData(HomeRecommendedCollectionsDTO.self)
+            .tryMap { try $0.entity }   
+            .eraseToAnyPublisher()
     }
 }
-

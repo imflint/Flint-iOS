@@ -97,7 +97,7 @@ extension HomeViewController: UITableViewDataSource {
                 for: indexPath
             ) as! TitleHeaderTableViewCell
 
-            cell.configure(style: style, title: title, subtitle: subtitle)
+            cell.configure(style: .init(style), title: title, subtitle: subtitle)
 
             if style == .more {
                 //TODO: - collectionFolderListView 연결하기
@@ -118,7 +118,7 @@ extension HomeViewController: UITableViewDataSource {
                 withIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! MoreNoMoreCollectionTableViewCell
-            cell.configure(items: items)
+            cell.configure(items: items.map(MoreNoMoreCollectionItem.init))
             return cell
             
         case .recentSaved(let items):
@@ -127,7 +127,8 @@ extension HomeViewController: UITableViewDataSource {
                 for: indexPath
             ) as! RecentSavedContentTableViewCell
             
-            cell.configure(items: items)
+            cell.configure(items: items.map(RecentSavedContentItem.init))
+
             
             cell.onTapItem = { [weak self] item in
                 let circles = item.availableOn.intersection(item.subscribedOn)

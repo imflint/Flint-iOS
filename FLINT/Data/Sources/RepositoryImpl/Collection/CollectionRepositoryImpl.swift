@@ -13,15 +13,21 @@ import Domain
 import DTO
 import Networking
 
-public final class DefaultCollectionRepositoryImpl: CollectionRepository {
-    
+public final class DefaultCollectionRepository: CollectionRepository {
+
     private let collectionService: CollectionService
-    
+
     public init(collectionService: CollectionService) {
         self.collectionService = collectionService
     }
-    
+
     public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
-        return collectionService.createCollection(entity)
+        collectionService.createCollection(entity)
+    }
+
+    public func fetchRecentCollections() -> AnyPublisher<[RecentCollectionEntity], Error> {
+        collectionService.fetchRecentCollections()
+            .map(\.entities)
+            .eraseToAnyPublisher()
     }
 }

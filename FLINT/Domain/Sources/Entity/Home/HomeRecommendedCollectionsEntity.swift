@@ -5,6 +5,7 @@
 //  Created by 소은 on 1/20/26.
 //
 
+
 import Foundation
 
 public struct HomeRecommendedCollectionsEntity {
@@ -29,7 +30,7 @@ public extension HomeRecommendedCollectionsEntity {
         public let isBookmarked: Bool
         public let userId: String
         public let nickname: String
-        public let profileUrl: String
+        public let profileImageUrl: String
 
         public init(
             id: String,
@@ -41,7 +42,7 @@ public extension HomeRecommendedCollectionsEntity {
             isBookmarked: Bool,
             userId: String,
             nickname: String,
-            profileUrl: String
+            profileImageUrl: String
         ) {
             self.id = id
             self.thumbnailUrl = thumbnailUrl
@@ -52,7 +53,8 @@ public extension HomeRecommendedCollectionsEntity {
             self.isBookmarked = isBookmarked
             self.userId = userId
             self.nickname = nickname
-            self.profileUrl = profileUrl
+            self.profileImageUrl = profileImageUrl
         }
     }
 }
+
