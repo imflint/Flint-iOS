@@ -11,5 +11,5 @@ import ViewModel
 
 public protocol ViewControllerFactory {
     func makeTabBarViewController() -> TabBarViewController
-    func makeNicknameViewController(onboardingViewModel: OnboardingViewModel) -> NicknameViewController
+    func makeNicknameViewController() -> NicknameViewController
 }
