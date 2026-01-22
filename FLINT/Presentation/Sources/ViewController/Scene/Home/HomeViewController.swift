@@ -4,6 +4,7 @@
 //
 //  Created by 소은 on 1/6/26.
 //
+import Domain
 
 import UIKit
 
@@ -13,7 +14,7 @@ import ViewModel
 public final class HomeViewController: BaseViewController<HomeView> {
 
     private let viewModel = HomeViewModel(userName: "얀비")
-
+    
     // MARK: - Lifecycle
 
     public override func viewDidLoad() {
@@ -59,9 +60,26 @@ public final class HomeViewController: BaseViewController<HomeView> {
     }
 
     @objc private func didTapFab() {
-        let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
-        navigationController?.pushViewController(vc, animated: true)
+        Log.d("didTapFab")
+        let factory = viewControllerFactory
+            ?? (parent as? TabBarViewController)?.viewControllerFactory
+
+        guard let factory else {
+            Log.d("factory is nil")
+            return
+        }
+        let vc = factory.makeCreateCollectionViewController()
+
+        let nav = navigationController ?? parent?.navigationController
+
+        guard let nav else {
+            Log.d("nav is nil -> cannot push")
+            return
+        }
+
+        nav.pushViewController(vc, animated: true)
     }
+
 }
 
 

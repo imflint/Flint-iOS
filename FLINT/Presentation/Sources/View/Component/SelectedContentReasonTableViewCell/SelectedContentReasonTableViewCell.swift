@@ -184,10 +184,20 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         
     }
     
+    public override func prepareForReuse() {
+        super.prepareForReuse()
+        posterImageView.kf.cancelDownloadTask()
+        posterImageView.image = nil
+    }
+    
     //MARK: - Configure
     
     public func configure(with item: SelectedContentReasonTableViewCellItem) {
-        posterImageView.image = item.posterImage
+        if let url = item.posterURL {
+            posterImageView.kf.setImage(with: url)
+        } else {
+            posterImageView.image = item.posterImage
+        }
 
         titleLabel.attributedText = .pretendard(.head3_m_18, text: item.title, color: .flintWhite)
         directorLabel.attributedText = .pretendard(.body1_r_16, text: item.director, color: .flintGray300)

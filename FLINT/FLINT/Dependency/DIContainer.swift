@@ -15,11 +15,10 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingFactory & SearchFactory
+typealias AppFactory = ViewControllerFactory & OnboardingFactory & SearchFactory & CreateCollectionFactory
 
 final class DIContainer: AppFactory {
-    
-    
+ 
     // MARK: - Root Dependency
     
     private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
@@ -35,6 +34,11 @@ final class DIContainer: AppFactory {
     )
     
     private lazy var searchAPIProvider = MoyaProvider<SearchAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [networkLoggerPlugin]
+    )
+    
+    private lazy var collectionAPIProvider = MoyaProvider<CollectionAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [networkLoggerPlugin]
     )
@@ -55,14 +59,18 @@ final class DIContainer: AppFactory {
         return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
     }
     
-    func makeAddContentSelectViewController() -> ViewController.AddContentSelectViewController {
-        return AddContentSelectViewController(
-            viewModel: makeAddContentSelectViewModel(),
-            viewControllerFactory: self
-        )
+    func makeAddContentSelectViewController() -> AddContentSelectViewController {
+        let vm = makeAddContentSelectViewModel()
+        return AddContentSelectViewController(viewModel: vm, viewControllerFactory: self)
     }
     
-    
+    func makeCreateCollectionViewController() -> CreateCollectionViewController {
+        let vm = makeCreateCollectionViewModel()
+        return CreateCollectionViewController(viewModel: vm, viewControllerFactory: self)
+    }
+    func makeHomeViewController() -> HomeViewController {
+        return HomeViewController()
+    }
     
     // MARK: - Root Dependency Injection
     func makeUserAPIProvider() -> MoyaProvider<UserAPI> {
@@ -72,5 +80,8 @@ final class DIContainer: AppFactory {
     func makeSearchAPIProvider() -> MoyaProvider<SearchAPI> {
         return searchAPIProvider
     }
-
+    
+    func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI> {
+        return collectionAPIProvider
+    }
 }

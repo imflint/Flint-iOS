@@ -59,10 +59,10 @@ public extension CreateCollectionFactory {
     }
 
     func makeCreateCollectionViewModel() -> CreateCollectionViewModel {
-        return CreateCollectionViewModel()
+        return makeCreateCollectionViewModel(createCollectionUseCase: makeCreateCollectionUseCase())
     }
 
     func makeCreateCollectionViewModel(createCollectionUseCase: CreateCollectionUseCase) -> CreateCollectionViewModel {
-        return CreateCollectionViewModel()
+        return DefaultCreateCollectionViewModel(createCollectionUseCase: createCollectionUseCase)
     }
 }

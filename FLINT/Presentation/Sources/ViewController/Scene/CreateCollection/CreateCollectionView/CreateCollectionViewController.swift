@@ -8,12 +8,13 @@
 import UIKit
 import Combine
 
+import Domain
 import View
 import ViewModel
 
 public final class CreateCollectionViewController: BaseViewController<CreateCollectionView> {
     
-    //MARK: - enum
+    // MARK: - Enum
     
     enum CreateCollectionRow: Int, CaseIterable {
         case header
@@ -27,15 +28,12 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
     
     private var collectionTitleText: String = ""
     private var collectionDescriptionText: String = ""
+    private var isPublic: Bool = false
     
     private var selectedContents: [SavedContentItemViewModel] = []
     private var selectedReasonItems: [SelectedContentReasonTableViewCellItem] = []
     
     private let viewModel: CreateCollectionViewModel
-    
-    private let titleChangeSubject = PassthroughSubject<String, Never>()
-    private let visibilitySubject = CurrentValueSubject<Bool, Never>(false)
-    private let selectedCountSubject = CurrentValueSubject<Int, Never>(0)
     
     // MARK: - Init
     
@@ -97,20 +95,46 @@ private extension CreateCollectionViewController {
     }
     
     func bindViewModel() {
-        let input = CreateCollectionViewModel.Input(
-            titleChange: titleChangeSubject.eraseToAnyPublisher(),
-            visibilitySelected: visibilitySubject.eraseToAnyPublisher(),
-            selectedCount: selectedCountSubject.eraseToAnyPublisher()
-        )
-        
-        let output = viewModel.transform(input: input)
-        
-        output.isDoneEnabled
+        viewModel.isDoneEnabled
             .receive(on: RunLoop.main)
             .sink { [weak self] isEnabled in
                 self?.rootView.setCompleteEnabled(isEnabled)
             }
             .store(in: &cancellables)
+        
+        viewModel.createSuccess
+            .receive(on: RunLoop.main)
+            .sink { [weak self] in
+                // TODO: 성공 처리 (예: pop/dismiss)
+                self?.navigationController?.popViewController(animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.createFailure
+            .receive(on: RunLoop.main)
+            .sink { error in
+                // TODO: 실패 처리 (토스트/얼럿)
+                print("CreateCollection 실패:", error)
+            }
+            .store(in: &cancellables)
+    }
+    func updateCreatePayload() {
+        viewModel.updateTitle(collectionTitleText)
+        viewModel.updateDescription(collectionDescriptionText)
+        viewModel.updateVisibility(isPublic)
+        viewModel.updateContentList(makeContentList())
+    }
+    
+    func makeContentList() -> [CreateCollectionEntity.CreateCollectionContents] {
+        return selectedReasonItems.map { item in
+            let contentId: Int64 = 0 // TODO: 실제 contentId 연결 필요
+            
+            return CreateCollectionEntity.CreateCollectionContents(
+                contentId: contentId,
+                isSpoiler: item.isSpoiler,
+                reason: item.reasonText ?? ""
+            )
+        }
     }
     
     func syncReasonItems(with models: [SavedContentItemViewModel]) {
@@ -119,17 +143,22 @@ private extension CreateCollectionViewController {
         }
         
         let existingByKey = Dictionary(uniqueKeysWithValues: selectedReasonItems.map {
-            (key(of: .init(posterImage: $0.posterImage, title: $0.title, director: $0.director, year: $0.year)), $0)
+            ("\($0.title)|\($0.director)|\($0.year)", $0)
         })
         
         selectedReasonItems = models.map { model in
             let k = key(of: model)
-            if let existing = existingByKey[k] {
+            
+            if var existing = existingByKey[k] {
+                // 기존에 작성한 reason/spoiler는 유지하면서, 포스터만 최신 값으로 갱신
+                existing.posterURL = model.posterURL
+                existing.posterImage = model.posterImage
                 return existing
             }
+            
             return SelectedContentReasonTableViewCellItem(
-                posterImage: model.posterImage,
-                title: model.title,
+                posterURL: model.posterURL,
+                posterImage: model.posterImage, title: model.title,
                 director: model.director,
                 year: model.year,
                 isSpoiler: false,
@@ -137,33 +166,27 @@ private extension CreateCollectionViewController {
             )
         }
         
-        selectedCountSubject.send(selectedReasonItems.count)
+        updateCreatePayload()
     }
     
+    
     func presentAddContentSelect() {
-//        
-//        guard let factory = viewControllerFactory else { return }
-//        let vm = factory.makeAddContentSelectViewModel()
-//        
-//        let vc = AddContentSelectViewController(
-//                viewModel: vm,
-//                viewControllerFactory: factory
-//            )
-//        
-//        vc.initialSelected = selectedContents
-//        vc.protectedDeleteKeys = Set(selectedContents.map { "\($0.title)|\($0.director)|\($0.year)" })
-//        
-//        vc.onComplete = { [weak self] (selectedItems: [SavedContentItemViewModel]) in
-//            guard let self else { return }
-//            self.selectedContents = selectedItems
-//            self.syncReasonItems(with: selectedItems)
-//            self.rootView.tableView.reloadData()
-//        }
-//
-//        
-//        let nav = UINavigationController(rootViewController: vc)
-//        nav.modalPresentationStyle = UIModalPresentationStyle.overFullScreen
-//        present(nav, animated: true)
+        guard let factory = viewControllerFactory else { return }
+        
+        let vc = factory.makeAddContentSelectViewController()
+        vc.initialSelected = selectedContents
+        vc.protectedDeleteKeys = Set(selectedContents.map { "\($0.title)|\($0.director)|\($0.year)" })
+        
+        vc.onComplete = { [weak self] selectedItems in
+            guard let self else { return }
+            self.selectedContents = selectedItems
+            self.syncReasonItems(with: selectedItems)
+            self.rootView.tableView.reloadData()
+        }
+        
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .overFullScreen
+        present(nav, animated: true)
     }
     
     func deleteReasonItem(_ item: SelectedContentReasonTableViewCellItem, at index: Int) {
@@ -175,7 +198,7 @@ private extension CreateCollectionViewController {
             model.year == item.year
         }
         
-        selectedCountSubject.send(selectedReasonItems.count)
+        updateCreatePayload()
         rootView.tableView.reloadData()
     }
     
@@ -222,10 +245,7 @@ extension CreateCollectionViewController: UITableViewDataSource {
         }
     }
     
-    public func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if indexPath.section == 0 {
             guard let row = CreateCollectionRow(rawValue: indexPath.row) else { return UITableViewCell() }
@@ -244,8 +264,9 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 ) as! CreateCollectionTitleInputCell
                 
                 cell.onChangeTitle = { [weak self] text in
-                    self?.collectionTitleText = text
-                    self?.titleChangeSubject.send(text)
+                    guard let self else { return }
+                    self.collectionTitleText = text
+                    self.updateCreatePayload()
                 }
                 cell.setText(collectionTitleText)
                 return cell
@@ -257,7 +278,9 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 ) as! CreateCollectionDescriptionInputCell
                 
                 cell.onChangeDescription = { [weak self] text in
-                    self?.collectionDescriptionText = text
+                    guard let self else { return }
+                    self.collectionDescriptionText = text
+                    self.updateCreatePayload()
                 }
                 cell.setText(collectionDescriptionText)
                 return cell
@@ -269,8 +292,9 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 ) as! CreateCollectionVisibilityCell
                 
                 cell.onChangeVisibility = { [weak self] visibility in
-                    let isPublic = (visibility == .public)
-                    self?.visibilitySubject.send(isPublic)
+                    guard let self else { return }
+                    self.isPublic = (visibility == .public)
+                    self.updateCreatePayload()
                 }
                 return cell
                 
@@ -310,12 +334,14 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 guard let self, let cell,
                       let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
                 self.selectedReasonItems[indexPath.row].isSpoiler = isOn
+                self.updateCreatePayload()
             }
             
             cell.onChangeReasonText = { [weak self, weak cell] text in
                 guard let self, let cell,
                       let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
                 self.selectedReasonItems[indexPath.row].reasonText = text
+                self.updateCreatePayload()
             }
             
             return cell

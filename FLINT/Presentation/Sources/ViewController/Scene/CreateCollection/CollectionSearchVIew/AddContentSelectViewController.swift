@@ -20,11 +20,11 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 
     // MARK: - Output
 
-    public var onComplete: (([SearchContentsEntity.SearchContent]) -> Void)?
+    public var onComplete: (([SavedContentItemViewModel]) -> Void)?
 
     // MARK: - Input
 
-    public var initialSelected: [SearchContentsEntity.SearchContent] = []
+    public var initialSelected: [SavedContentItemViewModel] = []
     public var protectedDeleteKeys: Set<String> = []
 
     // MARK: - Dependency
@@ -34,7 +34,9 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
     // MARK: - Property
 
     private var results: [SearchContentsEntity.SearchContent] = []
-    private var selected: [SearchContentsEntity.SearchContent] = []
+    private var selectedEntities: [SearchContentsEntity.SearchContent] = []
+
+    private var selectedViewModels: [SavedContentItemViewModel] = []
 
     private var isSearching: Bool = false
 
@@ -66,13 +68,12 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 
         configureViews()
 
-        selected = initialSelected
-
+        selectedViewModels = initialSelected
+        selectedEntities = []
         isSearching = false
         results = makePopularResults()
 
         applyUI()
-        updateAddButtonState()
     }
 
     public override func setUI() {
@@ -102,15 +103,16 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
             .receive(on: RunLoop.main)
             .sink { [weak self] newResults in
                 guard let self else { return }
-                
-                if self.isSearching {
-                    self.results = newResults
-                }
+
+                guard self.isSearching else { return }
+
+                self.results = newResults
+                self.syncSelectedEntitiesFromResultsIfNeeded()
                 self.applyUI()
             }
             .store(in: &cancellables)
+
     }
-    
 
     // MARK: - Setup
 
@@ -125,8 +127,10 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         rootView.searchTextField.addTarget(self, action: #selector(didChangeSearchText), for: .editingChanged)
     }
 
+    // MARK: - UI
+
     private func applyUI() {
-        rootView.setPreviewHidden(selected.isEmpty)
+        rootView.setPreviewHidden(selectedViewModels.isEmpty)
 
         let hasResult = !results.isEmpty
 
@@ -142,23 +146,27 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
     }
 
     private func updateAddButtonState() {
-        let isActive = selected.count >= 1
+        let isActive = selectedViewModels.count >= 1
         let color: UIColor = isActive ? DesignSystem.Color.secondary400 : DesignSystem.Color.gray300
 
         navigationBarView.applyRight(.text(title: "추가", color: color))
 
         navigationBarView.onTapRight = { [weak self] in
             guard let self else { return }
-            guard isActive else { return }
-            self.onComplete?(self.selected)
+            guard self.selectedViewModels.count >= 1 else { return }
+            self.onComplete?(self.selectedViewModels)
             self.dismiss(animated: true)
         }
     }
 
     // MARK: - Helpers
 
-    private func key(of model: SearchContentsEntity.SearchContent) -> String {
-        model.id
+    private func key(of vm: SavedContentItemViewModel) -> String {
+        "\(vm.title)|\(vm.director)|\(vm.year)"
+    }
+
+    private func key(of entity: SearchContentsEntity.SearchContent) -> String {
+        "\(entity.title)|\(entity.author)|\(entity.year)"
     }
 
     private func makePopularResults() -> [SearchContentsEntity.SearchContent] {
@@ -169,6 +177,26 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
             .init(id: "popular-4", title: "어바웃 타임", author: "리처드 커티스", posterUrl: nil, year: 2013),
             .init(id: "popular-5", title: "헤어질 결심", author: "박찬욱", posterUrl: nil, year: 2022)
         ]
+    }
+
+    private func toViewModel(_ entity: SearchContentsEntity.SearchContent) -> SavedContentItemViewModel {
+        SavedContentItemViewModel(
+            posterURL: entity.posterUrl,
+            posterImage: nil,
+            title: entity.title,
+            director: entity.author,
+            year: String(entity.year)
+        )
+    }
+
+    private func syncSelectedEntitiesFromResultsIfNeeded() {
+        guard !results.isEmpty else { return }
+        let selectedKeys = Set(selectedViewModels.map(key(of:)))
+        let matched = results.filter { selectedKeys.contains(key(of: $0)) }
+
+        if selectedEntities.isEmpty && !matched.isEmpty {
+            selectedEntities = matched
+        }
     }
 
     // MARK: - Actions
@@ -192,21 +220,28 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 
     @objc private func didTapRemovePreview(_ sender: UIButton) {
         let index = sender.tag
-        guard selected.indices.contains(index) else { return }
+        guard selectedViewModels.indices.contains(index) else { return }
 
-        let model = selected[index]
+        let vm = selectedViewModels[index]
 
-        if protectedDeleteKeys.contains(key(of: model)) {
+        if protectedDeleteKeys.contains(key(of: vm)) {
             showDeleteConfirmModal { [weak self] confirmed in
                 guard let self else { return }
                 guard confirmed else { return }
-                self.selected.remove(at: index)
-                self.applyUI()
+                self.removeSelected(at: index)
             }
             return
         }
 
-        selected.remove(at: index)
+        removeSelected(at: index)
+    }
+
+    private func removeSelected(at index: Int) {
+        let removed = selectedViewModels.remove(at: index)
+
+        let k = key(of: removed)
+        selectedEntities.removeAll { key(of: $0) == k }
+
         applyUI()
     }
 
@@ -258,25 +293,36 @@ extension AddContentSelectViewController: UITableViewDataSource {
             for: indexPath
         ) as! SelectableContentTableViewCell
 
-        let model = results[indexPath.section]
+        let entity = results[indexPath.section]
+        let isSelected = selectedViewModels.contains(where: { key(of: $0) == key(of: entity) })
 
-        let isSelected = selected.contains(where: { $0.id == model.id })
+        let vm = toViewModel(entity)
 
-        cell.configure(entity: model, isSelected: isSelected)
+        cell.configure(model: vm, isSelected: isSelected)
+
+        if let url = entity.posterUrl {
+            cell.posterImageView.kf.setImage(with: url)
+        } else {
+            cell.posterImageView.image = nil
+        }
 
         cell.onTapCheckbox = { [weak self] isChecked in
             guard let self else { return }
 
+            let vm = self.toViewModel(entity)
+
             if isChecked {
-                guard self.selected.count < 10 else {
-                    return
-                }
-                if !self.selected.contains(where: { $0.id == model.id }) {
-                    self.selected.append(model)
+                guard self.selectedViewModels.count < 10 else { return }
+                if !self.selectedViewModels.contains(where: { self.key(of: $0) == self.key(of: entity) }) {
+                    self.selectedViewModels.append(vm)
+                    self.selectedEntities.append(entity)
                 }
             } else {
-                self.selected.removeAll(where: { $0.id == model.id })
+                let k = self.key(of: entity)
+                self.selectedViewModels.removeAll { self.key(of: $0) == k }
+                self.selectedEntities.removeAll { self.key(of: $0) == k }
             }
+
             self.applyUI()
         }
 
@@ -289,13 +335,16 @@ extension AddContentSelectViewController: UITableViewDataSource {
 extension AddContentSelectViewController: UITableViewDelegate {
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let item = results[indexPath.section]
+        let entity = results[indexPath.section]
+        let k = key(of: entity)
 
-        if let idx = selected.firstIndex(where: { $0.id == item.id }) {
-            selected.remove(at: idx)
+        if let idx = selectedViewModels.firstIndex(where: { key(of: $0) == k }) {
+            selectedViewModels.remove(at: idx)
+            selectedEntities.removeAll { key(of: $0) == k }
         } else {
-            guard selected.count < 10 else { return }
-            selected.append(item)
+            guard selectedViewModels.count < 10 else { return }
+            selectedViewModels.append(toViewModel(entity))
+            selectedEntities.append(entity)
         }
 
         applyUI()
@@ -317,7 +366,7 @@ extension AddContentSelectViewController: UITableViewDelegate {
 extension AddContentSelectViewController: UICollectionViewDataSource {
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        selected.count
+        selectedViewModels.count
     }
 
     public func collectionView(
@@ -330,12 +379,12 @@ extension AddContentSelectViewController: UICollectionViewDataSource {
             for: indexPath
         ) as! FilmPreviewCollectionViewCell
 
-        let model = selected[indexPath.item]
-        
-        if let url = model.posterUrl {
+        let vm = selectedViewModels[indexPath.item]
+
+        if let url = vm.posterURL {
             cell.imageView.kf.setImage(with: url)
         } else {
-            cell.imageView.image = nil
+            cell.imageView.image = vm.posterImage
         }
 
         cell.xButton.tag = indexPath.item
@@ -348,29 +397,3 @@ extension AddContentSelectViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 
 extension AddContentSelectViewController: UICollectionViewDelegate { }
-
-public extension SelectableContentTableViewCell {
-
-    func configure(entity: SearchContentsEntity.SearchContent, isSelected: Bool) {
-
-        if let url = entity.posterUrl {
-            posterImageView.kf.setImage(
-                with: url,
-                placeholder: nil,
-                options: [
-                    .transition(.fade(0.2)),
-                    .cacheOriginalImage
-                ]
-            )
-        } else {
-            posterImageView.image = nil
-        }
-
-        titleLabel.attributedText = .pretendard(.head3_sb_18, text: entity.title, color: DesignSystem.Color.white)
-        directorLabel.attributedText = .pretendard(.body1_r_16, text: entity.author, color: DesignSystem.Color.gray300)
-        yearLabel.attributedText = .pretendard(.body1_r_16, text: String(entity.year), color: DesignSystem.Color.gray300)
-
-        isSelectedItem = isSelected
-        updateCheckbox(isSelected: isSelected)
-    }
-}
