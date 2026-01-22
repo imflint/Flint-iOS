@@ -66,7 +66,7 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         
         rootView.layoutIfNeeded()
         
-        rootView.filmCollectionView.contentInset.top = rootView.titleView.bounds.height + rootView.searchView.bounds.height + 8
+        rootView.filmCollectionView.contentInset.top = rootView.foldableView.bounds.height + rootView.subtitleLabelView.bounds.height + rootView.searchView.bounds.height + 8
         rootView.filmCollectionView.contentOffset.y = -rootView.filmCollectionView.contentInset.top
         
         rootView.filmCollectionView.panGestureRecognizer.addTarget(self, action: #selector(filmCollectionViewPanGesture))
@@ -90,7 +90,7 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
     
     @objc public func filmCollectionViewPanGesture(_ sender: UIPanGestureRecognizer) {
         // Adjust the accumulated scroll translation
-        // so that the topBarView responds immediately when the scroll direction changes
+        // so that the foldableView responds immediately when the scroll direction changes
         let translationY = sender.translation(in: rootView.filmCollectionView).y
         let velocityY = sender.velocity(in: rootView.filmCollectionView).y
         
@@ -102,15 +102,15 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
             // topBarViewOffsetY = translationY - offsetCorrection = 0
             offsetCorrection = translationY
         }
-        if unclampedOffset <= -rootView.titleView.bounds.height {
+        if unclampedOffset <= -rootView.foldableView.bounds.height {
             // When topBarView is hidden
-            // topBarViewOffsetY = translationY - offsetCorrection = -rootView.topBarView.bounds.height
-            offsetCorrection = translationY + rootView.titleView.bounds.height
+            // topBarViewOffsetY = translationY - offsetCorrection = -rootView.foldableView.bounds.height
+            offsetCorrection = translationY + rootView.foldableView.bounds.height
         }
         
-        let titleViewYOffset = translationY - offsetCorrection
-        rootView.updateTitleViewYOffset(titleViewYOffset)
-        rootView.titleView.alpha = 1 + titleViewYOffset / rootView.titleView.bounds.height
+        let foldableViewYOffset = translationY - offsetCorrection
+        rootView.updateFoldableViewYOffset(foldableViewYOffset)
+        rootView.foldableView.alpha = 1 + foldableViewYOffset / rootView.foldableView.bounds.height
         
         // Magnetic snapping effect when the gesture ends
         if sender.state == .ended {
@@ -118,15 +118,15 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
                 guard let self else { return }
                 switch ScrollDirection(velocity: velocityY) {
                 case .up:
-                    rootView.filmCollectionView.contentOffset.y += titleViewYOffset
-                    rootView.updateTitleViewYOffset(0)
+                    rootView.filmCollectionView.contentOffset.y += foldableViewYOffset
+                    rootView.updateFoldableViewYOffset(0)
                     offsetCorrection = 0
-                    rootView.titleView.alpha = 1
+                    rootView.foldableView.alpha = 1
                 case .down:
-                    rootView.filmCollectionView.contentOffset.y += rootView.titleView.bounds.height + titleViewYOffset
-                    rootView.updateTitleViewYOffset(-rootView.titleView.bounds.height)
-                    offsetCorrection = rootView.titleView.bounds.height
-                    rootView.titleView.alpha = 0
+                    rootView.filmCollectionView.contentOffset.y += rootView.foldableView.bounds.height + foldableViewYOffset
+                    rootView.updateFoldableViewYOffset(-rootView.foldableView.bounds.height)
+                    offsetCorrection = rootView.foldableView.bounds.height
+                    rootView.foldableView.alpha = 0
                 case nil:
                     break
                 }

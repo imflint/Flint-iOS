@@ -26,23 +26,17 @@ public final class FilmSelectView: BaseView {
         $0.textColor = .flintWhite
     }
     
-    public let titleViewBackgroundView = UIView().then {
+    public let foldableViewBackgroundView = UIView().then {
         $0.backgroundColor = .flintBackground
     }
-    public let titleView = UIView().then {
-        $0.backgroundColor = .flintBackground
-    }
-    
-    public let titleStackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.spacing = 8
-        $0.alignment = .fill
-        $0.distribution = .equalSpacing
-    }
+    public let foldableView = UIView()
     
     public let titleLabel = UILabel().then {
         $0.textColor = .flintWhite
         $0.numberOfLines = 0
+    }
+    public let subtitleLabelView = UIView().then {
+        $0.backgroundColor = .flintBackground
     }
     public let subtitleLabel = UILabel().then {
         $0.textColor = .flintGray300
@@ -128,16 +122,17 @@ public final class FilmSelectView: BaseView {
     public override func setHierarchy() {
         addSubviews(
             filmCollectionView,
-            titleViewBackgroundView,
-            titleView,
+            foldableViewBackgroundView,
+            foldableView,
+            subtitleLabelView,
             progressInfoView,
             searchView,
             filmPreviewCollectionView,
             nextButton,
         )
         progressInfoView.addSubviews(progressView, progressLabel)
-        titleView.addSubview(titleStackView)
-        titleStackView.addArrangedSubviews(titleLabel, subtitleLabel)
+        foldableView.addSubview(titleLabel)
+        subtitleLabelView.addSubview(subtitleLabel)
         searchView.addSubview(searchTextField)
     }
     
@@ -155,20 +150,29 @@ public final class FilmSelectView: BaseView {
             $0.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(11)
         }
-        titleView.snp.makeConstraints {
+        foldableView.snp.makeConstraints {
             $0.top.equalTo(progressInfoView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
         }
-        titleViewBackgroundView.snp.makeConstraints {
-            $0.edges.equalTo(titleView)
-        }
-        titleStackView.snp.makeConstraints {
+        titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview()
+        }
+        subtitleLabelView.snp.makeConstraints {
+            $0.top.equalTo(foldableView.snp.bottom)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        subtitleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(24)
         }
+        foldableViewBackgroundView.snp.makeConstraints {
+            $0.edges.equalTo(foldableView)
+        }
         searchView.snp.makeConstraints {
-            $0.top.equalTo(titleView.snp.bottom)
+            $0.top.equalTo(subtitleLabelView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
         }
         searchTextField.snp.makeConstraints {
@@ -195,8 +199,8 @@ public final class FilmSelectView: BaseView {
     
     // MARK: - Global Function
     
-    public func updateTitleViewYOffset(_ y: CGFloat) {
-        titleView.snp.updateConstraints {
+    public func updateFoldableViewYOffset(_ y: CGFloat) {
+        foldableView.snp.updateConstraints {
             $0.top.equalTo(progressInfoView.snp.bottom).offset(y)
         }
     }
