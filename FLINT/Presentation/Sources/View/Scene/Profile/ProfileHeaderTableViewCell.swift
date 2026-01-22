@@ -45,11 +45,6 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
         $0.image = UIImage(resource: .icQuilified)
     }
     
-    public override func prepareForReuse() {
-        super.prepareForReuse()
-        verificationBadge.isHidden = false
-    }
-    
     public override func setHierarchy() {
         contentView.backgroundColor = .flintBackground
         contentView.addSubviews(profilebackgroundImageView, gradientView, profileImageView, nameStack)
@@ -83,8 +78,26 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
         }
     }
     
-    public func configure(name: String, isVerified: Bool) {
-        nameLabel.attributedText = .pretendard(.display2_m_28, text: name)
-        verificationBadge.isHidden = !isVerified
+    public override func prepareForReuse() {
+            super.prepareForReuse()
+            profileImageView.kf.cancelDownloadTask()
+            profileImageView.image = UIImage(resource: .imgProfileGray)
+        }
+
+    public func configure(
+        nickname: String = "",
+        profileImageUrl: String? = nil,
+        isFliner: Bool = false
+    ) {
+        nameLabel.attributedText = .pretendard(.display2_m_28, text: nickname)
+        verificationBadge.isHidden = !isFliner
+
+        let placeholder = UIImage(resource: .imgProfileGray)
+        guard let urlString = profileImageUrl, let url = URL(string: urlString) else {
+            profileImageView.image = placeholder
+            return
+        }
+        profileImageView.kf.setImage(with: url, placeholder: placeholder)
     }
+
 }

@@ -12,5 +12,7 @@ import Entity
 
 public protocol UserRepository {
     func checkNickname(_ nickname: String) -> AnyPublisher<Bool, Error>
+    func fetchUserProfile(userId: Int64) -> AnyPublisher<UserProfileEntity, Error>
+    func fetchMyProfile() -> AnyPublisher<UserProfileEntity, Error>
 }
 

@@ -13,6 +13,8 @@ import Domain
 
 public enum UserAPI {
     case checkNickname(_ nickname: String)
+    case fetchUserProfile(userId: Int64)
+    case fetchMyProfile
 }
 
 extension UserAPI: TargetType {
@@ -24,6 +26,10 @@ extension UserAPI: TargetType {
         switch self {
         case .checkNickname:
             return "/api/v1/users/nickname/check"
+        case let .fetchUserProfile(userId):
+            return "/api/v1/users/\(userId)"
+        case .fetchMyProfile:
+            return "/api/v1/users/me"
         }
     }
     
@@ -31,15 +37,23 @@ extension UserAPI: TargetType {
         switch self {
         case .checkNickname:
             return .get
+        case .fetchUserProfile:
+            return .get
+        case .fetchMyProfile:
+            return .get
         }
     }
     
     public var task: Moya.Task {
         switch self {
         case .checkNickname(let nickname):
-            return .requestParameters(parameters: [
-                "nickname": nickname
-            ], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["nickname": nickname],
+                encoding: URLEncoding.queryString)
+        case .fetchUserProfile:
+            return .requestPlain
+        case .fetchMyProfile:
+            return .requestPlain
         }
     }
 }

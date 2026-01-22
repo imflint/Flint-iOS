@@ -26,4 +26,16 @@ public final class DefaultUserRepository: UserRepository {
             .tryMap({ try $0.isAvailable })
             .eraseToAnyPublisher()
     }
+    
+    public func fetchUserProfile(userId: Int64) -> AnyPublisher<UserProfileEntity, Error> {
+        userService.fetchUserProfile(userId: userId)
+            .tryMap { try $0.entity }
+            .eraseToAnyPublisher()
+    }
+    
+    public func fetchMyProfile() -> AnyPublisher<UserProfileEntity, Error> {
+        userService.fetchMyProfile()
+            .tryMap { try $0.entity }
+            .eraseToAnyPublisher()
+    }
 }

@@ -17,6 +17,8 @@ import DTO
 
 public protocol UserService {
     func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error>
+    func fetchUserProfile(userId: Int64) -> AnyPublisher<UserProfileDTO, Error>
+    func fetchMyProfile() -> AnyPublisher<UserProfileDTO, Error>
 }
 
 public final class DefaultUserService: UserService {
@@ -30,5 +32,15 @@ public final class DefaultUserService: UserService {
     public func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error> {
         return userAPIProvider.requestPublisher(.checkNickname(nickname))
             .extractData(NicknameCheckDTO.self)
+    }
+    
+    public func fetchUserProfile(userId: Int64) -> AnyPublisher<UserProfileDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchUserProfile(userId: userId))
+            .extractData(UserProfileDTO.self)
+    }
+    
+    public func fetchMyProfile() -> AnyPublisher<UserProfileDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchMyProfile)
+            .extractData(UserProfileDTO.self)
     }
 }

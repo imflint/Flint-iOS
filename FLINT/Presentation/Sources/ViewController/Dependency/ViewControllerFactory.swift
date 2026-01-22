@@ -12,4 +12,5 @@ import ViewModel
 public protocol ViewControllerFactory {
     func makeTabBarViewController() -> TabBarViewController
     func makeNicknameViewController() -> NicknameViewController
+    func makeProfileViewController() -> ProfileViewController
 }
