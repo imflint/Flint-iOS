@@ -16,7 +16,6 @@ public protocol AddContentSelectViewModelInput {
 
 public protocol AddContentSelectViewModelOutput {
     var results: CurrentValueSubject<[SearchContentsEntity.SearchContent], Never> { get }
-  // var results: CurrentValueSubject<[SavedContentItemViewModel], Never>
 
     var isSearching: CurrentValueSubject<Bool, Never> { get }
 }

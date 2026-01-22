@@ -74,6 +74,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         results = makePopularResults()
 
         applyUI()
+        print("protectedDeleteKeys count:", protectedDeleteKeys.count)
     }
 
     public override func setUI() {

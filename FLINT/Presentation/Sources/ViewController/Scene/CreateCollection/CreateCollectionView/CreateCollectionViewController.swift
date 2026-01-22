@@ -105,7 +105,7 @@ private extension CreateCollectionViewController {
         viewModel.createSuccess
             .receive(on: RunLoop.main)
             .sink { [weak self] in
-                // TODO: 성공 처리 (예: pop/dismiss)
+                // TODO: 성공 처리 
                 self?.navigationController?.popViewController(animated: true)
             }
             .store(in: &cancellables)
@@ -113,7 +113,6 @@ private extension CreateCollectionViewController {
         viewModel.createFailure
             .receive(on: RunLoop.main)
             .sink { error in
-                // TODO: 실패 처리 (토스트/얼럿)
                 print("CreateCollection 실패:", error)
             }
             .store(in: &cancellables)
@@ -150,7 +149,6 @@ private extension CreateCollectionViewController {
             let k = key(of: model)
             
             if var existing = existingByKey[k] {
-                // 기존에 작성한 reason/spoiler는 유지하면서, 포스터만 최신 값으로 갱신
                 existing.posterURL = model.posterURL
                 existing.posterImage = model.posterImage
                 return existing
@@ -175,7 +173,9 @@ private extension CreateCollectionViewController {
         
         let vc = factory.makeAddContentSelectViewController()
         vc.initialSelected = selectedContents
-        vc.protectedDeleteKeys = Set(selectedContents.map { "\($0.title)|\($0.director)|\($0.year)" })
+        vc.protectedDeleteKeys = Set(
+            selectedContents.map { "\($0.title)|\($0.director)|\($0.year)" }
+        )
         
         vc.onComplete = { [weak self] selectedItems in
             guard let self else { return }
