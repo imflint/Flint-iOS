@@ -41,7 +41,6 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         }
         nicknameUseCase.checkNickname(nickname)
             .manageThread()
-            .map(\.available)
             .sinkHandledCompletion(receiveValue: { [weak self] isValidNickname in
                 self?.nicknameValidState.send(isValidNickname ? .valid : .duplicate)
                 if isValidNickname {

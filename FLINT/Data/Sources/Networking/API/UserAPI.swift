@@ -16,10 +16,6 @@ public enum UserAPI {
 }
 
 extension UserAPI: TargetType {
-    public var baseURL: URL {
-        return NetworkConfig.baseURL
-    }
-    
     public var path: String {
         switch self {
         case .checkNickname:

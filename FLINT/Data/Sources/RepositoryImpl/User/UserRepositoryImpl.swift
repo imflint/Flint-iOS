@@ -21,9 +21,9 @@ public final class DefaultUserRepository: UserRepository {
         self.userService = userService
     }
     
-    public func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckEntity, Error> {
+    public func checkNickname(_ nickname: String) -> AnyPublisher<Bool, Error> {
         userService.checkNickname(nickname)
-            .tryMap({ try $0.entity })
+            .tryMap({ try $0.isAvailable })
             .eraseToAnyPublisher()
     }
 }
