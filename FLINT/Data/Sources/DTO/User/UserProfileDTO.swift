@@ -10,7 +10,7 @@ import Foundation
 import Entity
 
 public struct UserProfileDTO: Codable {
-    public let id: Int64?
+    public let id: String?
     public let nickname: String?
     public let profileImageUrl: String?
     public let isFliner: Bool?

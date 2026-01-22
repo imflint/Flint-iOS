@@ -39,7 +39,6 @@ public final class ProfileViewModel {
         self.userProfileUseCase = userProfileUseCase
         self.nickname = initialNickname
         self.isFliner = initialIsFliner
-
         self.rows = makeRows(nickname: initialNickname, isFliner: initialIsFliner)
     }
 

@@ -15,4 +15,3 @@ public protocol UserRepository {
     func fetchUserProfile(userId: Int64) -> AnyPublisher<UserProfileEntity, Error>
     func fetchMyProfile() -> AnyPublisher<UserProfileEntity, Error>
 }
-
