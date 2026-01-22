@@ -14,7 +14,7 @@ import Entity
 public final class ProfileViewModel {
 
     public enum Row {
-        case profileHeader(nickname: String, isFliner: Bool)
+        case profileHeader(nickname: String, profileImageUrl: String, isFliner: Bool)
     }
 
     // MARK: - Output
@@ -30,38 +30,41 @@ public final class ProfileViewModel {
 
     private var nickname: String
     private var isFliner: Bool
+    private var profileImageUrl: String?
 
     public init(
         userProfileUseCase: UserProfileUseCase,
-        initialNickname: String = "쏘나기",
+        initialNickname: String = "플링",
         initialIsFliner: Bool = true
     ) {
         self.userProfileUseCase = userProfileUseCase
         self.nickname = initialNickname
         self.isFliner = initialIsFliner
-        self.rows = makeRows(nickname: initialNickname, isFliner: initialIsFliner)
+        self.rows = makeRows(nickname: initialNickname, profileImageUrl: "", isFliner: initialIsFliner)
     }
 
     // MARK: - Input
 
     public func load() {
-        userProfileUseCase.fetchMyProfile()
+        userProfileUseCase.fetchUserProfile(userId: 1)
+//        userProfileUseCase.fetchMyProfile()
             .receive(on: DispatchQueue.main)
             .sink { _ in
             } receiveValue: { [weak self] profile in
                 guard let self else { return }
                 self.nickname = profile.nickname
                 self.isFliner = profile.isFliner
-                self.rows = self.makeRows(nickname: profile.nickname, isFliner: profile.isFliner)
+                self.profileImageUrl = profile.profileImageUrl
+                self.rows = self.makeRows(nickname: profile.nickname, profileImageUrl: profile.profileImageUrl, isFliner: profile.isFliner)
             }
             .store(in: &cancellables)
     }
 
     // MARK: - Row builder
 
-    private func makeRows(nickname: String, isFliner: Bool) -> [Row] {
+    private func makeRows(nickname: String, profileImageUrl: String?, isFliner: Bool) -> [Row] {
         [
-            .profileHeader(nickname: nickname, isFliner: isFliner)
+            .profileHeader(nickname: nickname, profileImageUrl: profileImageUrl ?? "", isFliner: isFliner)
         ]
     }
 }

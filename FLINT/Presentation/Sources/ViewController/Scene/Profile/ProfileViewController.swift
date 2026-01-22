@@ -72,14 +72,14 @@ extension ProfileViewController: UITableViewDataSource {
         let row = profileViewModel.rows[indexPath.section]
 
         switch row {
-        case let .profileHeader(nickname, isFliner):
+        case let .profileHeader(nickname, profileImageUrl, isFliner):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: ProfileHeaderTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! ProfileHeaderTableViewCell
 
             cell.selectionStyle = .none
-            cell.configure(nickname: nickname, isFliner: isFliner)
+            cell.configure(nickname: nickname, profileImageUrl: profileImageUrl, isFliner: isFliner)
             return cell
         }
     }
