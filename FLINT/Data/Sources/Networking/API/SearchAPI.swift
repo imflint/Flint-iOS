@@ -12,7 +12,7 @@ import Moya
 import Domain
 
 public enum SearchAPI {
-    case searchContents(_ keyword: String)
+    case searchContents(_ keyword: String?)
 }
 
 extension SearchAPI: TargetType {
@@ -34,8 +34,12 @@ extension SearchAPI: TargetType {
     public var task: Moya.Task {
         switch self {
         case .searchContents(let keyword):
+            var parameters: [String: Any] = [:]
+            if let keyword {
+                parameters["keyword"] = keyword
+            }
             return .requestParameters(
-                parameters: ["keyword": keyword],
+                parameters: parameters,
                 encoding: URLEncoding.queryString
             )
         }

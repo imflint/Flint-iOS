@@ -59,7 +59,7 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         view.bringSubviewToFront(statusBarBackgroundView)
         rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "1/7")
         rootView.progressView.progress = 1/7
-        rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "얀비 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
+        rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
         rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: "이번 달 가장 재미있었던 작품은?")
         rootView.filmPreviewCollectionView.dataSource = self
         rootView.filmCollectionView.dataSource = self
@@ -71,6 +71,15 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         rootView.filmCollectionView.contentOffset.y = -rootView.filmCollectionView.contentInset.top
         
         rootView.filmCollectionView.panGestureRecognizer.addTarget(self, action: #selector(filmCollectionViewPanGesture))
+    }
+    
+    public override func bind() {
+        onboardingViewModel.nickname.sink { [weak self] nickname in
+            guard let self else { return }
+            rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
+            
+        }
+        .store(in: &cancellables)
     }
     
     @objc public func filmCollectionViewPanGesture(_ sender: UIPanGestureRecognizer) {

@@ -16,8 +16,7 @@ import Domain
 import DTO
 
 public protocol SearchService {
-    func searchContents(
-        _ query: String) -> AnyPublisher<SearchContentsDTO, Error>
+    func searchContents(_ keyword: String) -> AnyPublisher<SearchContentsDTO, Error>
 }
 
 public final class DefaultSearchService: SearchService {

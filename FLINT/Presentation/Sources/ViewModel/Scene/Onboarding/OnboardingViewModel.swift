@@ -15,6 +15,7 @@ public protocol OnboardingViewModelInput {
 }
 
 public protocol OnboardingViewModelOutput {
+    var filmSelectQuestions: [String] { get set }
     var nickname: CurrentValueSubject<String, Never> { get }
     var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> { get }
 }
@@ -25,6 +26,15 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
     private let nicknameUseCase: NicknameUseCase
     
+    public var filmSelectQuestions: [String] = [
+        "이번 달, 가장 재미있었던 작품은 무엇인가요?",
+        "여러번 정주행 했던 작품은 무엇인가요?",
+        "좋아하는 인물이 등장하는 작품은 무엇인가요?",
+        "요즘 밥 먹으면서 자주 보는 작품은 무엇인가요?",
+        "\"이건 꼭 봐\"라고 말했던 작품은 무엇인가요?",
+        "계절에 생각나는 작품은 무엇인가요?",
+        "어렸을 적 즐겨봤던 추억의 작품은 무엇인가요?",
+    ]
     public var nickname: CurrentValueSubject<String, Never> = .init("")
     public var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
     
