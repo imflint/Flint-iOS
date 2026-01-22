@@ -136,13 +136,11 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
                 guard let self else { return }
                 switch ScrollDirection(velocity: velocityY) {
                 case .up:
-                    rootView.filmCollectionView.contentOffset.y += foldableViewYOffset
                     foldableViewYOffset = 0
                     rootView.updateFoldableViewYOffset(foldableViewYOffset)
                     offsetCorrection = 0
                     rootView.foldableView.alpha = 1
                 case .down:
-                    rootView.filmCollectionView.contentOffset.y += rootView.foldableView.bounds.height + foldableViewYOffset
                     foldableViewYOffset = -rootView.foldableView.bounds.height
                     rootView.updateFoldableViewYOffset(foldableViewYOffset)
                     offsetCorrection = rootView.foldableView.bounds.height
