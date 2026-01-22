@@ -25,7 +25,7 @@ public enum EmptyStateType {
     public var title: String {
         switch self {
         case .notFoundWork:
-            return "작품을 찾을 수 없어요"
+            return "아직 준비 중인 작품이에요"
         case .anyFindWork:
             return "떠오르는 작품이 있나요?"
         }
