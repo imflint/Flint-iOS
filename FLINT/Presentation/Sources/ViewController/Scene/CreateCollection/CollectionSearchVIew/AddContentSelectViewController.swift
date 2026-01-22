@@ -74,7 +74,6 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         results = makePopularResults()
 
         applyUI()
-        print("protectedDeleteKeys count:", protectedDeleteKeys.count)
     }
 
     public override func setUI() {
@@ -207,12 +206,12 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if trimmed.isEmpty {
-            isSearching = false
-            results = makePopularResults()
+            isSearching = true
             viewModel.updateKeyword(keyword: "")
             applyUI()
             return
         }
+
 
         isSearching = true
         viewModel.updateKeyword(keyword: trimmed)

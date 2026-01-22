@@ -55,7 +55,7 @@ extension OnboardingFactory {
     func makeOnboardingViewModel() -> OnboardingViewModel {
         return makeOnboardingViewModel(nicknameUseCase: makeNicknameUseCase())
     }
-    func makeOnboardingViewModel(nicknameUseCase: NicknameUseCase) -> OnboardingViewModel {
+    func  makeOnboardingViewModel(nicknameUseCase: NicknameUseCase) -> OnboardingViewModel {
         return DefaultOnboardingViewModel(nicknameUseCase: nicknameUseCase)
     }
 }

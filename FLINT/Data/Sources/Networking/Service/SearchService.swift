@@ -31,10 +31,6 @@ public final class DefaultSearchService: SearchService {
     public func searchContents(keyword: String) -> AnyPublisher<SearchContentsDTO, Error> {
         provider.requestPublisher(.searchContents(keyword: keyword))
             .extractData(SearchContentsDTO.self)
-//            .handleEvents(receiveOutput: { dto in
-//                   print("✅ contents count:", dto.contents?.count ?? -1)
-//                   if let first = dto.contents?.first { print("✅ first:", first) }
-//               })
             .eraseToAnyPublisher()
     }
         
