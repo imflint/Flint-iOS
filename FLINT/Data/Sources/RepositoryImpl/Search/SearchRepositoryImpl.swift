@@ -13,7 +13,7 @@ import Domain
 import DTO
 import Networking
 
-final class DefaultSearchRepository: SearchRepository {
+public final class DefaultSearchRepository: SearchRepository {
     
     private let searchService: SearchService
     
@@ -21,8 +21,8 @@ final class DefaultSearchRepository: SearchRepository {
         self.searchService = searchService
     }
     
-    public func searchContents(_ keyword: String) -> AnyPublisher<SearchContentsEntity, Error> {
-        searchService.searchContents(keyword)
+    public func searchContents(keyword: String) -> AnyPublisher<SearchContentsEntity, Error> {
+        searchService.searchContents(keyword: keyword)
             .tryMap({ try $0.entity })
             .eraseToAnyPublisher()
     }

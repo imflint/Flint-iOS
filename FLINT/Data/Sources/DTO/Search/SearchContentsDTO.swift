@@ -40,7 +40,7 @@ extension SearchContentsDTO.ContentDTO {
                 id: unwrap(id, key: CodingKeys.id),
                 title: title ?? "",
                 author: author ?? "",
-                posterUrl: posterUrl ?? "",
+                posterUrl: URL(string: posterUrl ?? ""),
                 year: year ?? 0
             )
         }

@@ -12,7 +12,7 @@ import Moya
 import Domain
 
 public enum SearchAPI {
-    case searchContents(_ keyword: String)
+    case searchContents(keyword: String)
 }
 
 extension SearchAPI: TargetType {

@@ -23,14 +23,14 @@ public extension SearchContentsEntity {
         public let id: String
         public let title: String
         public let author: String
-        public let posterUrl: String
+        public let posterUrl: URL?
         public let year: Int
 
         public init(
             id: String,
             title: String,
             author: String,
-            posterUrl: String,
+            posterUrl: URL?,
             year: Int
         ) {
             self.id = id

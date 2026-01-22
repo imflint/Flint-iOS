@@ -13,7 +13,7 @@ import Domain
 import DTO
 import Networking
 
-public final class DefaultCollectionRepositoryImpl: CollectionRepository {
+public final class DefaultCollectionRepository: CollectionRepository {
     
     private let collectionService: CollectionService
     

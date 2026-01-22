@@ -7,29 +7,54 @@
 
 import UIKit
 
+import Kingfisher
+import SnapKit
+import Then
+
+import Domain
+
 import View
+import ViewModel
 
 public final class AddContentSelectViewController: BaseViewController<AddContentSelectView> {
-    
-    //MARK: - Output
-    public var onComplete: (([SavedContentItemViewModel]) -> Void)?
-    
-    //MARK: - Input
-    public var initialSelected: [SavedContentItemViewModel] = []
+
+    // MARK: - Output
+
+    public var onComplete: (([SearchContentsEntity.SearchContent]) -> Void)?
+
+    // MARK: - Input
+
+    public var initialSelected: [SearchContentsEntity.SearchContent] = []
     public var protectedDeleteKeys: Set<String> = []
-    
+
+    // MARK: - Dependency
+
+    private let viewModel: AddContentSelectViewModel
+
     // MARK: - Property
-    
-    private var results: [SavedContentItemViewModel] = []
-    private var selected: [SavedContentItemViewModel] = []
-    
+
+    private var results: [SearchContentsEntity.SearchContent] = []
+    private var selected: [SearchContentsEntity.SearchContent] = []
+
     private var isSearching: Bool = false
-    
+
+    // MARK: - Init
+
+    public init(viewModel: AddContentSelectViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        self.viewControllerFactory = viewControllerFactory
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - Lifecycle
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setNavigationBar(
             .init(
                 left: .back,
@@ -38,35 +63,68 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
                 backgroundStyle: .solid(DesignSystem.Color.background)
             )
         )
+
         configureViews()
-        
+
         selected = initialSelected
-        
+
         isSearching = false
         results = makePopularResults()
-        
+
         applyUI()
         updateAddButtonState()
     }
-    
+
     public override func setUI() {
         super.setUI()
         view.backgroundColor = DesignSystem.Color.background
     }
+
+    // MARK: - Bind (BaseViewController Override)
+
+    public override func bind() {
+        super.bind()
+
+        viewModel.isSearching
+            .receive(on: RunLoop.main)
+            .sink { [weak self] searching in
+                guard let self else { return }
+                self.isSearching = searching
+
+                if !searching {
+                    self.results = self.makePopularResults()
+                }
+                self.applyUI()
+            }
+            .store(in: &cancellables)
+
+        viewModel.results
+            .receive(on: RunLoop.main)
+            .sink { [weak self] newResults in
+                guard let self else { return }
+                
+                if self.isSearching {
+                    self.results = newResults
+                }
+                self.applyUI()
+            }
+            .store(in: &cancellables)
+    }
     
+
     // MARK: - Setup
-    
+
     private func configureViews() {
         rootView.tableView.dataSource = self
         rootView.tableView.delegate = self
         rootView.tableView.register(SelectableContentTableViewCell.self)
-        
+
         rootView.selectedPreviewCollectionView.dataSource = self
         rootView.selectedPreviewCollectionView.delegate = self
-        
+
         rootView.searchTextField.addTarget(self, action: #selector(didChangeSearchText), for: .editingChanged)
     }
-    
+
     private func applyUI() {
         rootView.setPreviewHidden(selected.isEmpty)
 
@@ -82,13 +140,13 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         rootView.tableView.reloadData()
         updateAddButtonState()
     }
-    
+
     private func updateAddButtonState() {
-        let isActive = selected.count >= 2
+        let isActive = selected.count >= 1
         let color: UIColor = isActive ? DesignSystem.Color.secondary400 : DesignSystem.Color.gray300
-        
+
         navigationBarView.applyRight(.text(title: "추가", color: color))
-        
+
         navigationBarView.onTapRight = { [weak self] in
             guard let self else { return }
             guard isActive else { return }
@@ -96,21 +154,25 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
             self.dismiss(animated: true)
         }
     }
-    
-    private func key(of model: SavedContentItemViewModel) -> String {
-        "\(model.title)|\(model.director)|\(model.year)"
+
+    // MARK: - Helpers
+
+    private func key(of model: SearchContentsEntity.SearchContent) -> String {
+        model.id
     }
-    
-    private func makePopularResults() -> [SavedContentItemViewModel] {
+
+    private func makePopularResults() -> [SearchContentsEntity.SearchContent] {
         [
-            .init(posterImage: nil, title: "듄: 파트 2", director: "드니 빌뇌브", year: "2024"),
-            .init(posterImage: nil, title: "오펜하이머", director: "크리스토퍼 놀란", year: "2023"),
-            .init(posterImage: nil, title: "스즈메의 문단속", director: "신카이 마코토", year: "2022"),
-            .init(posterImage: nil, title: "어바웃 타임", director: "리처드 커티스", year: "2013"),
-            .init(posterImage: nil, title: "헤어질 결심", director: "박찬욱", year: "2022")
+            .init(id: "popular-1", title: "듄: 파트 2", author: "드니 빌뇌브", posterUrl: nil, year: 2024),
+            .init(id: "popular-2", title: "오펜하이머", author: "크리스토퍼 놀란", posterUrl: nil, year: 2023),
+            .init(id: "popular-3", title: "스즈메의 문단속", author: "신카이 마코토", posterUrl: nil, year: 2022),
+            .init(id: "popular-4", title: "어바웃 타임", author: "리처드 커티스", posterUrl: nil, year: 2013),
+            .init(id: "popular-5", title: "헤어질 결심", author: "박찬욱", posterUrl: nil, year: 2022)
         ]
     }
-    
+
+    // MARK: - Actions
+
     @objc private func didChangeSearchText() {
         let text = rootView.searchTextField.text ?? ""
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -118,28 +180,22 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         if trimmed.isEmpty {
             isSearching = false
             results = makePopularResults()
+            viewModel.updateKeyword(keyword: "")
             applyUI()
             return
         }
 
         isSearching = true
-
-        // TODO: 검색 API 연결 시 여기서 호출
-        results = [
-            SavedContentItemViewModel(posterImage: nil, title: "\(trimmed)를 여행하는 히치하이커를 위한 안내서", director: "가스 제닝스", year: "2005"),
-            SavedContentItemViewModel(posterImage: nil, title: "\(trimmed)를 달리는 밤", director: "스기이 기사부로", year: "1985"),
-        ]
-
+        viewModel.updateKeyword(keyword: trimmed)
         applyUI()
     }
 
-    
     @objc private func didTapRemovePreview(_ sender: UIButton) {
         let index = sender.tag
         guard selected.indices.contains(index) else { return }
-        
+
         let model = selected[index]
-        
+
         if protectedDeleteKeys.contains(key(of: model)) {
             showDeleteConfirmModal { [weak self] confirmed in
                 guard let self else { return }
@@ -149,14 +205,14 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
             }
             return
         }
-        
+
         selected.remove(at: index)
         applyUI()
     }
-    
+
     private func showDeleteConfirmModal(onResult: @escaping (Bool) -> Void) {
         var modal: Modal?
-        
+
         modal = Modal(
             image: DesignSystem.Icon.Gradient.none,
             title: "작품을 삭제할까요?",
@@ -177,7 +233,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
                 }
             }
         )
-        
+
         guard let modal else { return }
         modal.show(in: view)
     }
@@ -186,80 +242,69 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 // MARK: - UITableViewDataSource
 
 extension AddContentSelectViewController: UITableViewDataSource {
-    
+
     public func numberOfSections(in tableView: UITableView) -> Int {
         results.count
     }
-    
+
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         1
     }
-    
+
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+
         let cell = tableView.dequeueReusableCell(
             withIdentifier: SelectableContentTableViewCell.reuseIdentifier,
             for: indexPath
         ) as! SelectableContentTableViewCell
-        
+
         let model = results[indexPath.section]
-        
-        //TODO: - 검색어 PATCH
-        let isSame: (SavedContentItemViewModel) -> Bool = { item in
-            item.title == model.title &&
-            item.director == model.director &&
-            item.year == model.year
-        }
-        
-        let isSelected = selected.contains(where: isSame)
-        cell.configure(model: model, isSelected: isSelected)
-        
-        cell.onTapCheckbox = { [weak self, weak cell] isChecked in
+
+        let isSelected = selected.contains(where: { $0.id == model.id })
+
+        cell.configure(entity: model, isSelected: isSelected)
+
+        cell.onTapCheckbox = { [weak self] isChecked in
             guard let self else { return }
-            
+
             if isChecked {
                 guard self.selected.count < 10 else {
-                    cell?.configure(model: model, isSelected: false)
                     return
                 }
-                if !self.selected.contains(where: isSame) {
+                if !self.selected.contains(where: { $0.id == model.id }) {
                     self.selected.append(model)
                 }
             } else {
-                self.selected.removeAll(where: isSame)
+                self.selected.removeAll(where: { $0.id == model.id })
             }
             self.applyUI()
         }
+
         return cell
     }
 }
 
-
 // MARK: - UITableViewDelegate
 
 extension AddContentSelectViewController: UITableViewDelegate {
-    
+
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = results[indexPath.section]
-        
-        let isSame: (SavedContentItemViewModel) -> Bool = {
-            $0.title == item.title && $0.director == item.director && $0.year == item.year
-        }
-        
-        if let idx = selected.firstIndex(where: isSame) {
+
+        if let idx = selected.firstIndex(where: { $0.id == item.id }) {
             selected.remove(at: idx)
         } else {
             guard selected.count < 10 else { return }
             selected.append(item)
         }
-        
+
         applyUI()
     }
-    
+
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         section == results.count - 1 ? 0 : 12
     }
-    
+
     public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let view = UIView()
         view.backgroundColor = .clear
@@ -267,26 +312,35 @@ extension AddContentSelectViewController: UITableViewDelegate {
     }
 }
 
-
 // MARK: - UICollectionViewDataSource
 
 extension AddContentSelectViewController: UICollectionViewDataSource {
-    
+
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         selected.count
     }
-    
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
+
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: FilmPreviewCollectionViewCell.reuseIdentifier,
             for: indexPath
         ) as! FilmPreviewCollectionViewCell
+
+        let model = selected[indexPath.item]
         
-        // TODO: 썸네일이 여기서 이미지 세팅
-        
+        if let url = model.posterUrl {
+            cell.imageView.kf.setImage(with: url)
+        } else {
+            cell.imageView.image = nil
+        }
+
         cell.xButton.tag = indexPath.item
         cell.xButton.addTarget(self, action: #selector(didTapRemovePreview(_:)), for: .touchUpInside)
+
         return cell
     }
 }
@@ -294,3 +348,29 @@ extension AddContentSelectViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 
 extension AddContentSelectViewController: UICollectionViewDelegate { }
+
+public extension SelectableContentTableViewCell {
+
+    func configure(entity: SearchContentsEntity.SearchContent, isSelected: Bool) {
+
+        if let url = entity.posterUrl {
+            posterImageView.kf.setImage(
+                with: url,
+                placeholder: nil,
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
+            )
+        } else {
+            posterImageView.image = nil
+        }
+
+        titleLabel.attributedText = .pretendard(.head3_sb_18, text: entity.title, color: DesignSystem.Color.white)
+        directorLabel.attributedText = .pretendard(.body1_r_16, text: entity.author, color: DesignSystem.Color.gray300)
+        yearLabel.attributedText = .pretendard(.body1_r_16, text: String(entity.year), color: DesignSystem.Color.gray300)
+
+        isSelectedItem = isSelected
+        updateCheckbox(isSelected: isSelected)
+    }
+}

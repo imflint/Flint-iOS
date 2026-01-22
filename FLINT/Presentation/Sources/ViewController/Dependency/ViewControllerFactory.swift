@@ -12,4 +12,6 @@ import ViewModel
 public protocol ViewControllerFactory {
     func makeTabBarViewController() -> TabBarViewController
     func makeNicknameViewController() -> NicknameViewController
+    func makeAddContentSelectViewController() -> AddContentSelectViewController
+
 }

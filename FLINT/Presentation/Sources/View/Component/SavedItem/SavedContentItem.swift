@@ -1,5 +1,5 @@
 //
-//  SavedContentItem.swift
+//  SavedContentItemViewModel.swift
 //  FLINT
 //
 //  Created by 소은 on 1/15/26.
