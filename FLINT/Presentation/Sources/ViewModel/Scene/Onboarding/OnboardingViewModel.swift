@@ -11,7 +11,14 @@ import Foundation
 import Domain
 
 public protocol OnboardingViewModelInput {
+    // nickname
     func checkNickname(_ nickname: String)
+    
+    // film select
+    func fetchContents()
+    func searchContents(_ keyword: String)
+    
+    
 }
 
 public protocol OnboardingViewModelOutput {

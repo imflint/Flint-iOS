@@ -9,6 +9,8 @@ import UIKit
 
 import SnapKit
 
+import Domain
+
 import View
 import ViewModel
 
@@ -56,6 +58,8 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         
         setNavigationBar(.init(left: .back, backgroundStyle: .solid(DesignSystem.Color.background)))
         
+        onboardingViewModel.fetchContents()
+        
         rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(onboardingViewModel.selectedContents.value.count)/\(onboardingViewModel.filmSelectQuestions.count)")
         rootView.progressView.progress = Float(onboardingViewModel.selectedContents.value.count / onboardingViewModel.filmSelectQuestions.count)
         rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
@@ -76,6 +80,11 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         onboardingViewModel.nickname.sink { [weak self] nickname in
             guard let self else { return }
             rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
+        }
+        .store(in: &cancellables)
+        
+        onboardingViewModel.contents.sink { [weak self] contents in
+            self?.rootView.filmCollectionView.reloadData()
         }
         .store(in: &cancellables)
         
@@ -168,7 +177,7 @@ extension FilmSelectViewController: UICollectionViewDelegate {
 
 extension FilmSelectViewController {
     public func filmPreviewCollectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return onboardingViewModel.selectedContents.value.count
     }
     
     public func filmPreviewCollectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -183,22 +192,24 @@ extension FilmSelectViewController {
 
 extension FilmSelectViewController {
     public func filmCollectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return onboardingViewModel.contents.value.count
     }
     
     public func filmCollectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OnboardingFilmCollectionViewCell.reuseIdentifier, for: indexPath) as? OnboardingFilmCollectionViewCell else {
             return UICollectionViewCell()
         }
-        cell.titleLabel.attributedText = .pretendard(.body1_r_16, text: "은하수를 여행하는 히치하이커를 위한 안내서")
-        cell.directorLabel.attributedText = .pretendard(.caption1_r_12, text: "가스 제닝스")
-        cell.yearLabel.attributedText = .pretendard(.caption1_r_12, text: "2005")
+        let content = onboardingViewModel.contents.value[indexPath.item]
+        cell.titleLabel.attributedText = .pretendard(.body1_r_16, text: content.title)
+        cell.directorLabel.attributedText = .pretendard(.caption1_r_12, text: content.author)
+        cell.yearLabel.attributedText = .pretendard(.caption1_r_12, text: "\(content.year)")
+        cell.imageView.kf.setImage(with: content.posterUrl)
         return cell
     }
 }
 
 extension FilmSelectViewController {
     public func filmCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+        Log.d(indexPath)
     }
 }
