@@ -40,6 +40,7 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
     // MARK: - Property
     
     private var offsetCorrection: CGFloat = 0
+    private var foldableViewYOffset: CGFloat = 0
     
     // MARK: - Basic
     
@@ -57,11 +58,12 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         super.viewDidLoad()
         
         setNavigationBar(.init(left: .back, backgroundStyle: .solid(DesignSystem.Color.background)))
+        hideKeyboardWhenTappedAround()
         
         onboardingViewModel.fetchContents()
         
         rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(onboardingViewModel.selectedContents.value.count)/\(onboardingViewModel.filmSelectQuestions.count)")
-        rootView.progressView.progress = Float(onboardingViewModel.selectedContents.value.count / onboardingViewModel.filmSelectQuestions.count)
+        rootView.progressView.progress = Float(onboardingViewModel.selectedContents.value.count) / Float(onboardingViewModel.filmSelectQuestions.count)
         rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
         rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.filmSelectQuestions[onboardingViewModel.selectedContents.value.count])
         rootView.filmPreviewCollectionView.dataSource = self
@@ -69,8 +71,6 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         rootView.filmCollectionView.delegate = self
         
         rootView.layoutIfNeeded()
-        
-        rootView.filmCollectionView.contentInset.top = rootView.foldableView.bounds.height + rootView.subtitleLabelView.bounds.height + rootView.searchView.bounds.height + 8
         rootView.filmCollectionView.contentOffset.y = -rootView.filmCollectionView.contentInset.top
         
         rootView.filmCollectionView.panGestureRecognizer.addTarget(self, action: #selector(filmCollectionViewPanGesture))
@@ -88,11 +88,16 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         }
         .store(in: &cancellables)
         
-        onboardingViewModel.selectedContents.sink { [weak self] contents in
+        onboardingViewModel.selectedContents.sink { [weak self] selectedContents in
             guard let self else { return }
-            rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(onboardingViewModel.selectedContents.value.count)/\(onboardingViewModel.filmSelectQuestions.count)")
-            rootView.progressView.progress = Float(onboardingViewModel.selectedContents.value.count / onboardingViewModel.filmSelectQuestions.count)
-            rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.filmSelectQuestions[onboardingViewModel.selectedContents.value.count])
+            UIView.animate(withDuration: 0.2, animations: {
+                self.rootView.filmPreviewCollectionView.isHidden = selectedContents.isEmpty
+            })
+            self.rootView.filmPreviewCollectionView.reloadData()
+            self.rootView.filmCollectionView.reloadData()
+            rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(selectedContents.count)/\(onboardingViewModel.filmSelectQuestions.count)")
+            rootView.progressView.progress = Float(selectedContents.count) / Float(onboardingViewModel.filmSelectQuestions.count)
+            rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.filmSelectQuestions[min(selectedContents.count, onboardingViewModel.filmSelectQuestions.count-1)])
         }
         .store(in: &cancellables)
     }
@@ -102,6 +107,8 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         // so that the foldableView responds immediately when the scroll direction changes
         let translationY = sender.translation(in: rootView.filmCollectionView).y
         let velocityY = sender.velocity(in: rootView.filmCollectionView).y
+        
+        Log.d(translationY)
         
         let unclampedOffset = translationY - offsetCorrection
         
@@ -116,9 +123,10 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
             // topBarViewOffsetY = translationY - offsetCorrection = -rootView.foldableView.bounds.height
             offsetCorrection = translationY + rootView.foldableView.bounds.height
         }
-        
-        let foldableViewYOffset = translationY - offsetCorrection
+        let passedFoldableViewYOffset = foldableViewYOffset
+        foldableViewYOffset = translationY - offsetCorrection
         rootView.updateFoldableViewYOffset(foldableViewYOffset)
+        rootView.filmCollectionView.contentOffset.y += foldableViewYOffset - passedFoldableViewYOffset
         rootView.foldableView.alpha = 1 + foldableViewYOffset / rootView.foldableView.bounds.height
         
         // Magnetic snapping effect when the gesture ends
@@ -184,6 +192,12 @@ extension FilmSelectViewController {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilmPreviewCollectionViewCell.reuseIdentifier, for: indexPath) as? FilmPreviewCollectionViewCell else {
             return UICollectionViewCell()
         }
+        let content = onboardingViewModel.selectedContents.value[indexPath.item]
+        
+        cell.imageView.kf.setImage(with: content.posterUrl)
+        cell.xButton.addAction(UIAction(handler: { [weak self] _ in
+            self?.onboardingViewModel.deleteContent(content)
+        }), for: .touchUpInside)
         return cell
     }
 }
@@ -200,6 +214,10 @@ extension FilmSelectViewController {
             return UICollectionViewCell()
         }
         let content = onboardingViewModel.contents.value[indexPath.item]
+        
+        cell.overlayView.isHidden = !onboardingViewModel.selectedContents.value.contains(where: {
+            $0 == content
+        })
         cell.titleLabel.attributedText = .pretendard(.body1_r_16, text: content.title)
         cell.directorLabel.attributedText = .pretendard(.caption1_r_12, text: content.author)
         cell.yearLabel.attributedText = .pretendard(.caption1_r_12, text: "\(content.year)")
@@ -210,6 +228,9 @@ extension FilmSelectViewController {
 
 extension FilmSelectViewController {
     public func filmCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        Log.d(indexPath)
+        guard onboardingViewModel.selectedContents.value.count <= 6 else {
+            return
+        }
+        onboardingViewModel.clickContent(onboardingViewModel.contents.value[indexPath.item])
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ContentEntity {
+public struct ContentEntity: Equatable {
     public let id: String
     public let title: String
     public let author: String
@@ -20,5 +20,9 @@ public struct ContentEntity {
         self.author = author
         self.posterUrl = posterUrl
         self.year = year
+    }
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.id == rhs.id
     }
 }

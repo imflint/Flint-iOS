@@ -17,7 +17,8 @@ public protocol OnboardingViewModelInput {
     // film select
     func fetchContents()
     func searchContents(_ keyword: String)
-    
+    func clickContent(_ content: ContentEntity)
+    func deleteContent(_ content: ContentEntity) 
     
 }
 
@@ -93,5 +94,19 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
                 self?.contents.send(contents)
             }
             .store(in: &cancellables)
+    }
+    
+    public func clickContent(_ content: ContentEntity) {
+        if let index = selectedContents.value.firstIndex(of: content) {
+            selectedContents.value.remove(at: index)
+        } else {
+            selectedContents.value.insert(content, at: 0)
+        }
+    }
+    
+    public func deleteContent(_ content: ContentEntity) {
+        selectedContents.value.removeAll(where: {
+            content == $0
+        })
     }
 }

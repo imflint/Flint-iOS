@@ -46,8 +46,15 @@ public final class FilmSelectView: BaseView {
         $0.backgroundColor = .flintBackground
         $0.layer.applyShadow(alpha: 0.25, blur: 12, y: 12)
     }
-    public let searchTextField = SearchTextField(placeholder: "작품 이름")
-    
+    public let searchTextField = SearchTextField(placeholder: "작품 이름").then {
+        $0.returnKeyType = .search
+    }
+    public let collectionViewStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 0
+        $0.alignment = .fill
+        $0.distribution = .fill
+    }
     public let filmPreviewCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout().then {
@@ -67,7 +74,7 @@ public final class FilmSelectView: BaseView {
     }
     
     public let filmCollectionView: UICollectionView = {
-        let uselessHeight: CGFloat = 0
+        let uselessHeight: CGFloat = 230
         let item = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1/3),
@@ -121,14 +128,17 @@ public final class FilmSelectView: BaseView {
     
     public override func setHierarchy() {
         addSubviews(
-            filmCollectionView,
+            collectionViewStackView,
             foldableViewBackgroundView,
             foldableView,
             subtitleLabelView,
             progressInfoView,
             searchView,
-            filmPreviewCollectionView,
             nextButton,
+        )
+        collectionViewStackView.addArrangedSubviews(
+            filmPreviewCollectionView,
+            filmCollectionView,
         )
         progressInfoView.addSubviews(progressView, progressLabel)
         foldableView.addSubview(titleLabel)
@@ -180,17 +190,15 @@ public final class FilmSelectView: BaseView {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(18)
         }
-        filmPreviewCollectionView.snp.makeConstraints {
+        collectionViewStackView.snp.makeConstraints {
             $0.top.equalTo(searchView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
+        }
+        filmPreviewCollectionView.snp.makeConstraints {
             $0.height.equalTo(108)
         }
-        filmCollectionView.snp.makeConstraints {
-            $0.top.equalTo(progressInfoView.snp.bottom)
-            $0.horizontalEdges.equalToSuperview()
-        }
         nextButton.snp.makeConstraints {
-            $0.top.equalTo(filmCollectionView.snp.bottom).offset(8)
+            $0.top.equalTo(collectionViewStackView.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(48)
             $0.bottom.equalTo(safeAreaLayoutGuide)
