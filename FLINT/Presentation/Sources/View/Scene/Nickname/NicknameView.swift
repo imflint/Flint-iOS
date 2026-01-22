@@ -14,6 +14,16 @@ public final class NicknameView: BaseView {
     
     // MARK: - Component
     
+    public lazy var successToast = Toast.success("사용 가능한 닉네임입니다", customConstraints: { [weak self] in
+        guard let self else { return }
+        $0.bottom.equalTo(nextButton.snp.top).offset(-8)
+    })
+    
+    public lazy var failureToast = Toast.failure("이미 사용 중인 닉네임입니다", customConstraints: { [weak self] in
+        guard let self else { return }
+        $0.bottom.equalTo(nextButton.snp.top).offset(-8)
+    })
+    
     public let profileImageSettingView = ProfileImageSettingView()
     
     public let nicknameStackView = UIStackView().then {

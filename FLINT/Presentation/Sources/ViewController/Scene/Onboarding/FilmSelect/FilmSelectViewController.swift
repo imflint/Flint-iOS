@@ -69,6 +69,7 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         rootView.filmPreviewCollectionView.dataSource = self
         rootView.filmCollectionView.dataSource = self
         rootView.filmCollectionView.delegate = self
+        rootView.searchTextField.delegate = self
         
         rootView.layoutIfNeeded()
         rootView.filmCollectionView.contentOffset.y = -rootView.filmCollectionView.contentInset.top
@@ -136,12 +137,14 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
                 switch ScrollDirection(velocity: velocityY) {
                 case .up:
                     rootView.filmCollectionView.contentOffset.y += foldableViewYOffset
-                    rootView.updateFoldableViewYOffset(0)
+                    foldableViewYOffset = 0
+                    rootView.updateFoldableViewYOffset(foldableViewYOffset)
                     offsetCorrection = 0
                     rootView.foldableView.alpha = 1
                 case .down:
                     rootView.filmCollectionView.contentOffset.y += rootView.foldableView.bounds.height + foldableViewYOffset
-                    rootView.updateFoldableViewYOffset(-rootView.foldableView.bounds.height)
+                    foldableViewYOffset = -rootView.foldableView.bounds.height
+                    rootView.updateFoldableViewYOffset(foldableViewYOffset)
                     offsetCorrection = rootView.foldableView.bounds.height
                     rootView.foldableView.alpha = 0
                 case nil:
@@ -232,5 +235,14 @@ extension FilmSelectViewController {
             return
         }
         onboardingViewModel.clickContent(onboardingViewModel.contents.value[indexPath.item])
+    }
+}
+
+extension FilmSelectViewController: UITextFieldDelegate {
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        guard let text = textField.text else { return true }
+        onboardingViewModel.searchContents(text)
+        return true
     }
 }

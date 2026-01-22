@@ -52,9 +52,7 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
                 rootView.nicknameWarningLabel.isHidden = true
                 rootView.nicknameTextField.layer.borderWidth = 0
                 rootView.nicknameTextField.layer.borderColor = nil
-                Toast.success("사용 가능한 닉네임입니다", customConstraints: {
-                    $0.bottom.equalTo(self.rootView.nextButton.snp.top).offset(-8)
-                }).show()
+                rootView.successToast.show()
             case .invalid:
                 rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = false
@@ -65,9 +63,7 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
                 rootView.nicknameWarningLabel.isHidden = true
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
-                Toast.failure("이미 사용 중인 닉네임입니다", customConstraints: {
-                    $0.bottom.equalTo(self.rootView.nextButton.snp.top).offset(-8)
-                }).show()
+                rootView.failureToast.show()
             case .none:
                 rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = true
@@ -163,6 +159,8 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     }
     
     private func nextButtonTapped(_ action: UIAction) {
+        rootView.successToast.close(animated: false)
+        rootView.failureToast.close(animated: false)
         guard let filmSelectViewController = viewControllerFactory?.makeFilmSelectViewController(onboardingViewModel: onboardingViewModel) else { return }
         navigationController?.pushViewController(filmSelectViewController, animated: true)
     }
