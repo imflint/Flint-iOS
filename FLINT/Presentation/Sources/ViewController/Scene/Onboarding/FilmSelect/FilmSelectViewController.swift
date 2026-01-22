@@ -55,19 +55,18 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         super.viewDidLoad()
         
         setNavigationBar(.init(left: .back, backgroundStyle: .solid(DesignSystem.Color.background)))
-        view.bringSubviewToFront(navigationBarView)
-        view.bringSubviewToFront(statusBarBackgroundView)
-        rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "1/7")
-        rootView.progressView.progress = 1/7
+        
+        rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(onboardingViewModel.selectedContents.value.count)/\(onboardingViewModel.filmSelectQuestions.count)")
+        rootView.progressView.progress = Float(onboardingViewModel.selectedContents.value.count / onboardingViewModel.filmSelectQuestions.count)
         rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
-        rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: "이번 달 가장 재미있었던 작품은?")
+        rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.filmSelectQuestions[onboardingViewModel.selectedContents.value.count])
         rootView.filmPreviewCollectionView.dataSource = self
         rootView.filmCollectionView.dataSource = self
         rootView.filmCollectionView.delegate = self
         
         rootView.layoutIfNeeded()
         
-        rootView.filmCollectionView.contentInset.top = rootView.titleView.bounds.height + rootView.searchView.bounds.height + rootView.filmPreviewCollectionView.bounds.height + 8
+        rootView.filmCollectionView.contentInset.top = rootView.titleView.bounds.height + rootView.searchView.bounds.height + 8
         rootView.filmCollectionView.contentOffset.y = -rootView.filmCollectionView.contentInset.top
         
         rootView.filmCollectionView.panGestureRecognizer.addTarget(self, action: #selector(filmCollectionViewPanGesture))
@@ -77,7 +76,14 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         onboardingViewModel.nickname.sink { [weak self] nickname in
             guard let self else { return }
             rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
-            
+        }
+        .store(in: &cancellables)
+        
+        onboardingViewModel.selectedContents.sink { [weak self] contents in
+            guard let self else { return }
+            rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(onboardingViewModel.selectedContents.value.count)/\(onboardingViewModel.filmSelectQuestions.count)")
+            rootView.progressView.progress = Float(onboardingViewModel.selectedContents.value.count / onboardingViewModel.filmSelectQuestions.count)
+            rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.filmSelectQuestions[onboardingViewModel.selectedContents.value.count])
         }
         .store(in: &cancellables)
     }

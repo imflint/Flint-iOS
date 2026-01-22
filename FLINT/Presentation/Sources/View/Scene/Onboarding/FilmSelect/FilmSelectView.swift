@@ -50,6 +50,7 @@ public final class FilmSelectView: BaseView {
     
     public let searchView = UIView().then {
         $0.backgroundColor = .flintBackground
+        $0.layer.applyShadow(alpha: 0.25, blur: 12, y: 12)
     }
     public let searchTextField = SearchTextField(placeholder: "작품 이름")
     
@@ -62,6 +63,8 @@ public final class FilmSelectView: BaseView {
             $0.minimumLineSpacing = 0
         }
     ).then {
+        $0.isHidden = true
+        $0.layer.applyShadow(alpha: 0.25, blur: 12, y: 12)
         $0.register(FilmPreviewCollectionViewCell.self)
         $0.backgroundColor = .flintBackground
         $0.showsHorizontalScrollIndicator = false

@@ -15,7 +15,7 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingFactory & ExploreFactory
+typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory
 
 final class DIContainer: AppFactory {
     
@@ -38,6 +38,12 @@ final class DIContainer: AppFactory {
             networkLoggerPlugin
         ]
     )
+    private lazy var searchAPIProvider = MoyaProvider<SearchAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
     
     // MARK: - Init
     
@@ -55,18 +61,14 @@ final class DIContainer: AppFactory {
         return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
     }
     
-<<<<<<< HEAD
     func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController {
         return FilmSelectViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
     }
     
-=======
     func makeExploreViewController() -> ViewController.ExploreViewController {
         return ExploreViewController(exploreViewModel: makeExploreViewModel(), viewControllerFactory: self)
     }
     
-    
->>>>>>> 6325fa2c8b5a3a91438bd354e898f0dc452134d8
     // MARK: - Root Dependency Injection
     
     func makeUserAPIProvider() -> MoyaProvider<UserAPI> {
@@ -77,4 +79,7 @@ final class DIContainer: AppFactory {
         return collectionAPIProvider
     }
     
+    func makeSearchAPIProvider() -> Moya.MoyaProvider<Networking.SearchAPI> {
+        return searchAPIProvider
+    }
 }
