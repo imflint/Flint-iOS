@@ -15,7 +15,7 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory
+typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & CollectionDetailFactory
 
 
 final class DIContainer: AppFactory {
@@ -100,6 +100,12 @@ final class DIContainer: AppFactory {
     func makeProfileViewController() -> ProfileViewController {
         return ProfileViewController(profileViewModel: makeProfileViewModel(), viewControllerFactory: self)
     }
+    
+    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
+        let vm = makeCollectionDetailViewModel(collectionId: collectionId)
+        return CollectionDetailViewController(viewModel: vm)
+    }
+    
     
     // MARK: - Root Dependency Injection
     
