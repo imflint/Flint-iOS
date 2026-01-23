@@ -10,18 +10,7 @@ import Data
 import Domain
 import Presentation
 
-public protocol CreateCollectionFactory {
-
-    // Root Dependency
-    func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI>
-
-    // Service
-    func makeCollectionService() -> CollectionService
-    func makeCollectionService(collectionAPIProvider: MoyaProvider<CollectionAPI>) -> CollectionService
-
-    // Repository
-    func makeCollectionRepository() -> CollectionRepository
-    func makeCollectionRepository(collectionService: CollectionService) -> CollectionRepository
+protocol CreateCollectionFactory: CollectionRepositoryFactory {
 
     // UseCase
     func makeCreateCollectionUseCase() -> CreateCollectionUseCase
@@ -32,23 +21,7 @@ public protocol CreateCollectionFactory {
     func makeCreateCollectionViewModel(createCollectionUseCase: CreateCollectionUseCase) -> CreateCollectionViewModel
 }
 
-public extension CreateCollectionFactory {
-
-    func makeCollectionService() -> CollectionService {
-        return makeCollectionService(collectionAPIProvider: makeCollectionAPIProvider())
-    }
-
-    func makeCollectionService(collectionAPIProvider: MoyaProvider<CollectionAPI>) -> CollectionService {
-        return DefaultCollectionService(provider: collectionAPIProvider)
-    }
-
-    func makeCollectionRepository() -> CollectionRepository {
-        return makeCollectionRepository(collectionService: makeCollectionService())
-    }
-
-    func makeCollectionRepository(collectionService: CollectionService) -> CollectionRepository {
-        return DefaultCollectionRepository(collectionService: collectionService)
-    }
+extension CreateCollectionFactory {
 
     func makeCreateCollectionUseCase() -> CreateCollectionUseCase {
         return makeCreateCollectionUseCase(collectionRepository: makeCollectionRepository())

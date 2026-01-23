@@ -12,21 +12,18 @@ import Entity
 import Repository
 
 public protocol SearchContentsUseCase: AnyObject {
-    func searchContents(keyword: String) -> AnyPublisher<SearchContentsEntity, Error>
+    func searchContents(_ keyword: String) -> AnyPublisher<[ContentEntity], Error>
 }
 
 public class DefaultSearchContentsUseCase: SearchContentsUseCase {
     
-    private let repository: SearchRepository
+    let searchRepository: SearchRepository
     
-    public init(repository: SearchRepository) {
-        self.repository = repository
+    public init(searchRepository: SearchRepository) {
+        self.searchRepository = searchRepository
     }
     
-    public func searchContents(keyword: String) -> AnyPublisher<SearchContentsEntity, Error> {
-        repository.searchContents(keyword: keyword)
+    public func searchContents(_ keyword: String) -> AnyPublisher<[ContentEntity], Error> {
+        return searchRepository.searchContents(keyword)
     }
-    
 }
-
-

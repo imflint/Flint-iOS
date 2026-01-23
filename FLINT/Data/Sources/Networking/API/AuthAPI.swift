@@ -20,9 +20,6 @@ public enum AuthAPI {
 }
 
 extension AuthAPI: TargetType {
-    public var baseURL: URL {
-        return NetworkConfig.baseURL
-    }
     
     public var path: String {
         switch self {

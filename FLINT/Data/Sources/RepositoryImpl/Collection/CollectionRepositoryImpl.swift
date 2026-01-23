@@ -21,6 +21,12 @@ public final class DefaultCollectionRepository: CollectionRepository {
         self.collectionService = collectionService
     }
     
+    public func fetchCollections(cursor: UInt?, size: Int) -> AnyPublisher<CollectionPagingEntity, Error> {
+        return collectionService.fetchCollections(cursor: cursor, size: size)
+            .tryMap({ try $0.entity })
+            .eraseToAnyPublisher()
+    }
+    
     public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
         return collectionService.createCollection(entity)
     }

@@ -33,8 +33,8 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 
     // MARK: - Property
 
-    private var results: [SearchContentsEntity.SearchContent] = []
-    private var selectedEntities: [SearchContentsEntity.SearchContent] = []
+    private var results: [ContentEntity] = []
+    private var selectedEntities: [ContentEntity] = []
 
     private var selectedViewModels: [SavedContentItemViewModel] = []
 
@@ -165,11 +165,11 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         "\(vm.title)|\(vm.director)|\(vm.year)"
     }
 
-    private func key(of entity: SearchContentsEntity.SearchContent) -> String {
+    private func key(of entity: ContentEntity) -> String {
         "\(entity.title)|\(entity.author)|\(entity.year)"
     }
 
-    private func makePopularResults() -> [SearchContentsEntity.SearchContent] {
+    private func makePopularResults() -> [ContentEntity] {
         [
             .init(id: "popular-1", title: "듄: 파트 2", author: "드니 빌뇌브", posterUrl: nil, year: 2024),
             .init(id: "popular-2", title: "오펜하이머", author: "크리스토퍼 놀란", posterUrl: nil, year: 2023),
@@ -179,7 +179,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         ]
     }
 
-    private func toViewModel(_ entity: SearchContentsEntity.SearchContent) -> SavedContentItemViewModel {
+    private func toViewModel(_ entity: ContentEntity) -> SavedContentItemViewModel {
         SavedContentItemViewModel(
             posterURL: entity.posterUrl,
             posterImage: nil,

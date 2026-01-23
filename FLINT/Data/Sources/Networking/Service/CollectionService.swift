@@ -16,6 +16,7 @@ import Domain
 import DTO
 
 public protocol CollectionService {
+    func fetchCollections(cursor: UInt?, size: Int) -> AnyPublisher<CollectionsDTO, Error>
     func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error>
 }
 
@@ -24,6 +25,11 @@ public final class DefaultCollectionService: CollectionService {
     
     public init(provider: MoyaProvider<CollectionAPI>) {
         self.provider = provider
+    }
+    
+    public func fetchCollections(cursor: UInt?, size: Int) -> AnyPublisher<CollectionsDTO, Error> {
+        return provider.requestPublisher(.fetchCollections(cursor: cursor, size: size))
+            .extractData(CollectionsDTO.self)
     }
     
     public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {

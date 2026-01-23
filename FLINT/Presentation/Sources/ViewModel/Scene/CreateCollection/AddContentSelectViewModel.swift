@@ -15,7 +15,7 @@ public protocol AddContentSelectViewModelInput {
 }
 
 public protocol AddContentSelectViewModelOutput {
-    var results: CurrentValueSubject<[SearchContentsEntity.SearchContent], Never> { get }
+    var results: CurrentValueSubject<[ContentEntity], Never> { get }
 
     var isSearching: CurrentValueSubject<Bool, Never> { get }
 }
@@ -26,7 +26,7 @@ public final class DefaultAddContentSelectViewModel: AddContentSelectViewModel {
 
     private let useCase: SearchContentsUseCase
 
-    public var results: CurrentValueSubject<[SearchContentsEntity.SearchContent], Never> = .init([])
+    public var results: CurrentValueSubject<[ContentEntity], Never> = .init([])
     public var isSearching: CurrentValueSubject<Bool, Never> = .init(false)
 
     private let keywordSubject = CurrentValueSubject<String, Never>("")
@@ -63,10 +63,9 @@ public extension DefaultAddContentSelectViewModel {
         }
 
         isSearching.send(true)
-
-        useCase.searchContents(keyword: keyword)
+        
+        useCase.searchContents(keyword)
             .manageThread()
-            .map(\.contents)
             .sinkHandledCompletion { [weak self] contents in
                 self?.results.send(contents)
             }

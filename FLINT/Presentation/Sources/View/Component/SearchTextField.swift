@@ -10,11 +10,14 @@ import UIKit
 import SnapKit
 import Then
 
+import Domain
+
 public final class SearchTextField: UITextField {
     
     // MARK: - Property
     
     public var searchAction: ((String?) -> Void)?
+    public var clearAction: (() -> Void)?
     
     // MARK: - Component
     
@@ -92,6 +95,7 @@ public final class SearchTextField: UITextField {
     private func touchUpInsideActionButton(_ action: UIAction) {
         if isFirstResponder {
             text = nil
+            clearAction?()
         } else {
             searchAction?(text)
         }

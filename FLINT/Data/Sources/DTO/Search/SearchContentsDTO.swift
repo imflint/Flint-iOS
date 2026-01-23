@@ -24,20 +24,18 @@ public extension SearchContentsDTO {
 }
 
 extension SearchContentsDTO {
-    public var entity: SearchContentsEntity {
+    public var entities: [ContentEntity] {
         get throws {
-            return try SearchContentsEntity(
-                contents: contents?.map { try $0.entity } ?? []
-            )
+            return try contents?.map({ try $0.entity }) ?? []
         }
     }
 }
 
 extension SearchContentsDTO.ContentDTO {
-    public var entity: SearchContentsEntity.SearchContent {
+    public var entity: ContentEntity {
         get throws {
-            return try SearchContentsEntity.SearchContent(
-                id: unwrap(id, key: CodingKeys.id),
+            return try ContentEntity(
+                id: unwrap(id),
                 title: title ?? "",
                 author: author ?? "",
                 posterUrl: URL(string: posterUrl ?? ""),

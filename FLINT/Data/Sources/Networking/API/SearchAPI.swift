@@ -12,17 +12,10 @@ import Moya
 import Domain
 
 public enum SearchAPI {
-    case searchContents(keyword: String)
+    case searchContents(_ keyword: String?)
 }
 
 extension SearchAPI: TargetType {
-    public var baseURL: URL {
-        guard let baseURL = URL(string: "https://flint.r-e.kr") else {
-            Log.f("Invalid BaseURL")
-            fatalError("Invalid BaseURL")
-        }
-        return baseURL
-    }
     
     public var path: String {
         switch self {
@@ -41,8 +34,12 @@ extension SearchAPI: TargetType {
     public var task: Moya.Task {
         switch self {
         case .searchContents(let keyword):
+            var parameters: [String: Any] = [:]
+            if let keyword {
+                parameters["keyword"] = keyword
+            }
             return .requestParameters(
-                parameters: ["keyword": keyword],
+                parameters: parameters,
                 encoding: URLEncoding.queryString
             )
         }
