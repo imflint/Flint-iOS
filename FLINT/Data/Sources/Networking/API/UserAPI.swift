@@ -19,6 +19,8 @@ public enum UserAPI {
     case fetchUserKeywords(userId: Int64)
     case fetchMyCollections
     case fetchUserCollections(userId: Int64)
+    case fetchMyBookmarkedCollections
+    case fetchBookmarkedCollections(userId: Int64)
 }
 
 extension UserAPI: TargetType {
@@ -42,6 +44,10 @@ extension UserAPI: TargetType {
                 return "/api/v1/users/me/collections"
         case let .fetchUserCollections(userId):
             return "/api/v1/users/\(userId)/collections"
+        case .fetchMyBookmarkedCollections:
+            return "/api/v1/users/me/bookmarked-collections"
+        case let .fetchBookmarkedCollections(userId):
+            return "/api/v1/users/\(userId)/bookmarked-collections"
         }
     }
     
@@ -60,6 +66,10 @@ extension UserAPI: TargetType {
         case .fetchUserCollections:
             return .get
         case .fetchMyCollections:
+            return .get
+        case .fetchMyBookmarkedCollections:
+            return .get
+        case .fetchBookmarkedCollections:
             return .get
         }
     }
@@ -81,6 +91,10 @@ extension UserAPI: TargetType {
         case .fetchUserCollections:
             return .requestPlain
         case .fetchMyCollections:
+            return .requestPlain
+        case .fetchMyBookmarkedCollections:
+            return .requestPlain
+        case .fetchBookmarkedCollections:
             return .requestPlain
         }
     }

@@ -155,7 +155,6 @@ extension ProfileViewController: UITableViewDataSource {
             ) as! MoreNoMoreCollectionTableViewCell
             cell.selectionStyle = .none
 
-            // ✅ 매핑 제거: Entity 그대로 넘김
             cell.configure(items: items)
 
             cell.onSelectItem = { entity in
@@ -170,7 +169,6 @@ extension ProfileViewController: UITableViewDataSource {
             ) as! MoreNoMoreCollectionTableViewCell
             cell.selectionStyle = .none
 
-            // ✅ 매핑 제거: Entity 그대로 넘김
             cell.configure(items: items)
 
             cell.onSelectItem = { entity in

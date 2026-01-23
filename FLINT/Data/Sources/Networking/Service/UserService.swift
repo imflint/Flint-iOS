@@ -23,11 +23,11 @@ public protocol UserService {
     func fetchUserKeywords(userId: Int64) -> AnyPublisher<KeywordsDTO, Error>
     func fetchMyCollections() -> AnyPublisher<UserCollectionsDTO, Error>
     func fetchUserCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error>
+    func fetchMyBookmarkedCollections() -> AnyPublisher<UserCollectionsDTO, Error>
+    func fetchBookmarkedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error>
 }
 
 public final class DefaultUserService: UserService {
-
-    
     
     private let userAPIProvider: MoyaProvider<UserAPI>
     
@@ -67,6 +67,15 @@ public final class DefaultUserService: UserService {
 
     public func fetchUserCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error> {
         return userAPIProvider.requestPublisher(.fetchUserCollections(userId: userId))
+            .extractData(UserCollectionsDTO.self)
+    }
+    public func fetchMyBookmarkedCollections() -> AnyPublisher<UserCollectionsDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchMyBookmarkedCollections)
+            .extractData(UserCollectionsDTO.self)
+    }
+    
+    public func fetchBookmarkedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchBookmarkedCollections(userId: userId))
             .extractData(UserCollectionsDTO.self)
     }
 }

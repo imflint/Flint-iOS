@@ -58,7 +58,7 @@ public final class DefaultUserRepository: UserRepository {
     public func fetchMyCollections() -> AnyPublisher<[CollectionEntity], Error> {
         userService.fetchMyCollections()
             .tryMap { dto in
-                try (dto.collections ?? []).map { try $0.entity }   // entity 프로퍼티면 $0.entity로
+                try (dto.collections ?? []).map { try $0.entity }
             }
             .eraseToAnyPublisher()
     }
@@ -66,8 +66,24 @@ public final class DefaultUserRepository: UserRepository {
     public func fetchUserCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error> {
         userService.fetchUserCollections(userId: userId)
             .tryMap { dto in
-                try (dto.collections ?? []).map { try $0.entity }   // entity 프로퍼티면 $0.entity로
+                try (dto.collections ?? []).map { try $0.entity }
             }
             .eraseToAnyPublisher()
     }
+    
+    public func fetchMyBookmarkedCollections() -> AnyPublisher<[CollectionEntity], Error> {
+            userService.fetchMyBookmarkedCollections()
+                .tryMap { dto in
+                    try (dto.collections ?? []).map { try $0.entity }
+                }
+                .eraseToAnyPublisher()
+        }
+
+        public func fetchBookmarkedCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error> {
+            userService.fetchBookmarkedCollections(userId: userId)
+                .tryMap { dto in
+                    try (dto.collections ?? []).map { try $0.entity }
+                }
+                .eraseToAnyPublisher()
+        }
 }

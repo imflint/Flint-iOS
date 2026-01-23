@@ -36,7 +36,6 @@ public final class HomeViewModel {
 
     public init(userName: String) {
 
-        // ✅ CollectionEntity 더미는 이제 "String / url / ..." 기반으로 생성해야 함
         let dummyFlinerItems: [CollectionEntity] = [
             .init(
                 id: "1",

@@ -59,7 +59,6 @@ public final class ProfileViewModel {
     // MARK: - Input
     public func load() {
 
-        // 1️⃣ 프로필
         userProfileUseCase.fetchUserProfile(userId: 1)
             .receive(on: DispatchQueue.main)
             .sink { completion in
@@ -75,7 +74,6 @@ public final class ProfileViewModel {
             }
             .store(in: &cancellables)
 
-        // 2️⃣ 키워드
         userProfileUseCase.fetchUserKeywords(userId: 1)
             .receive(on: DispatchQueue.main)
             .sink { completion in
@@ -89,7 +87,6 @@ public final class ProfileViewModel {
             }
             .store(in: &cancellables)
 
-        // 3️⃣ 내 컬렉션
 //        userProfileUseCase.fetchMyCollections()
         userProfileUseCase.fetchUserCollections(userId: 1)
             .receive(on: DispatchQueue.main)
@@ -103,6 +100,21 @@ public final class ProfileViewModel {
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
+        
+//        userProfileUseCase.fetchBookmarkedCollections(userId: 1)
+            userProfileUseCase.fetchMyBookmarkedCollections()
+                .receive(on: DispatchQueue.main)
+                .sink { completion in
+                    if case let .failure(error) = completion {
+                        print("❌ fetchSavedCollections failed:", error)
+                    }
+                } receiveValue: { [weak self] items in
+                    print("asdf", items.count)
+                    guard let self else { return }
+                    self.savedCollections = items
+                    self.rows = self.makeRows()
+                }
+                .store(in: &cancellables)
     }
 
     // MARK: - Row builder
