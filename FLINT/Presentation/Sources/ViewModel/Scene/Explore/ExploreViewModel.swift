@@ -16,7 +16,7 @@ public protocol ExploreViewModelInput {
 
 public protocol ExploreViewModelOutput {
     var index: CurrentValueSubject<Int, Never> { get }
-    var collections: CurrentValueSubject<[CollectionInfoEntity], Never> { get }
+    var collections: CurrentValueSubject<[ExploreInfoEntity], Never> { get }
     var cursor: UInt? { get set }
 }
 
@@ -27,7 +27,7 @@ public final class DefaultExploreViewModel: ExploreViewModel {
     private let exploreUseCase: ExploreUseCase
     
     public var index: CurrentValueSubject<Int, Never> = .init(0)
-    public var collections: CurrentValueSubject<[Entity.CollectionInfoEntity], Never> = .init([])
+    public var collections: CurrentValueSubject<[ExploreInfoEntity], Never> = .init([])
     public var cursor: UInt?
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()

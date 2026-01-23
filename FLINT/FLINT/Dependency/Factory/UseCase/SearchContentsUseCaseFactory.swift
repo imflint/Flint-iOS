@@ -19,6 +19,6 @@ extension SearchContentsUseCaseFactory {
         return makeSearchContentsUseCase(searchRepository: makeSearchRepository())
     }
     func makeSearchContentsUseCase(searchRepository: SearchRepository) -> SearchContentsUseCase {
-        return DefaultSearchContentsUSeCase(searchContentsrepository: searchRepository)
+        return DefaultSearchContentsUseCase(searchRepository: searchRepository)
     }
 }

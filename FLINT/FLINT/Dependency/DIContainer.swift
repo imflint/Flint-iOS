@@ -15,12 +15,10 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & ProfileFactory
+typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory
+
 
 final class DIContainer: AppFactory {
-    
-    
-    
     
     // MARK: - Root Dependency
     
@@ -70,6 +68,19 @@ final class DIContainer: AppFactory {
         return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
     }
     
+    func makeAddContentSelectViewController() -> AddContentSelectViewController {
+        let vm = makeAddContentSelectViewModel()
+        return AddContentSelectViewController(viewModel: vm, viewControllerFactory: self)
+    }
+    
+    func makeCreateCollectionViewController() -> CreateCollectionViewController {
+        let vm = makeCreateCollectionViewModel()
+        return CreateCollectionViewController(viewModel: vm, viewControllerFactory: self)
+    }
+    func makeHomeViewController() -> HomeViewController {
+        return HomeViewController()
+    }
+    
     func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController {
         return FilmSelectViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
     }
@@ -100,12 +111,12 @@ final class DIContainer: AppFactory {
         return userAPIProvider
     }
     
-    func makeCollectionAPIProvider() -> Moya.MoyaProvider<Networking.CollectionAPI> {
-        return collectionAPIProvider
+    func makeSearchAPIProvider() -> MoyaProvider<SearchAPI> {
+        return searchAPIProvider
     }
     
-    func makeSearchAPIProvider() -> Moya.MoyaProvider<Networking.SearchAPI> {
-        return searchAPIProvider
+    func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI> {
+        return collectionAPIProvider
     }
     
     func makeAuthAPIProvider() -> MoyaProvider<AuthAPI> {

@@ -10,11 +10,20 @@ import UIKit
 import ViewModel
 
 public protocol ViewControllerFactory {
-    func makeTabBarViewController() -> TabBarViewController
+    
     func makeNicknameViewController() -> NicknameViewController
+    
     func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController
     func makeOttSelectViewController(onboardingViewModel: OnboardingViewModel) -> OttSelectViewController
     func makeOnboardingDoneViewController(onboardingViewModel: OnboardingViewModel) -> OnboardingDoneViewController
+    
+    func makeTabBarViewController() -> TabBarViewController
+    
+    func makeHomeViewController() -> HomeViewController
     func makeExploreViewController() -> ExploreViewController
+    
+    func makeAddContentSelectViewController() -> AddContentSelectViewController
+    func makeCreateCollectionViewController() -> CreateCollectionViewController
+    
     func makeProfileViewController() -> ProfileViewController
 }

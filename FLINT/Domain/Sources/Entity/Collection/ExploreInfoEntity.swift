@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CollectionInfoEntity {
+public struct ExploreInfoEntity {
     public let id: String
     public let imageUrl: URL?
     public let title: String

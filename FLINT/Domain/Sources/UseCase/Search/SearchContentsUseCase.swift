@@ -15,17 +15,15 @@ public protocol SearchContentsUseCase: AnyObject {
     func searchContents(_ keyword: String) -> AnyPublisher<[ContentEntity], Error>
 }
 
-public class DefaultSearchContentsUSeCase: SearchContentsUseCase {
+public class DefaultSearchContentsUseCase: SearchContentsUseCase {
     
-    let searchContentsrepository: SearchRepository
+    let searchRepository: SearchRepository
     
-    public init(searchContentsrepository: SearchRepository) {
-        self.searchContentsrepository = searchContentsrepository
+    public init(searchRepository: SearchRepository) {
+        self.searchRepository = searchRepository
     }
     
     public func searchContents(_ keyword: String) -> AnyPublisher<[ContentEntity], Error> {
-        return searchContentsrepository.searchContents(keyword)
+        return searchRepository.searchContents(keyword)
     }
 }
-
-

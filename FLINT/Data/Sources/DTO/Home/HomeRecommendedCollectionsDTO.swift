@@ -29,31 +29,19 @@ public extension HomeRecommendedCollectionsDTO {
     }
 }
 
-extension HomeRecommendedCollectionsDTO {
-    public var entity: HomeRecommendedCollectionsEntity {
-        get throws {
-            return try HomeRecommendedCollectionsEntity(
-                collections: collections?.map({ try $0.entity }) ?? []
-            )
-        }
+public extension HomeRecommendedCollectionsDTO {
+    var entities: [CollectionInfoEntity] {
+        (collections ?? []).map { $0.entity }
     }
 }
 
-extension HomeRecommendedCollectionsDTO.CollectionDTO {
-    public var entity: HomeRecommendedCollectionsEntity.HomeRecommendedCollectionEntity {
-        get throws {
-            return try HomeRecommendedCollectionsEntity.HomeRecommendedCollectionEntity(
-                id: unwrap(id, key: CodingKeys.id),
-                thumbnailUrl: thumbnailUrl ?? "",
-                title: title ?? "",
-                description: description ?? "",
-                imageList: imageList ?? [],
-                bookmarkCount: bookmarkCount ?? 0,
-                isBookmarked: isBookmarked ?? false,
-                userId: unwrap(userId, key: CodingKeys.userId),
-                nickname: nickname ?? "",
-                profileUrl: profileUrl ?? ""
-            )
-        }
+public extension HomeRecommendedCollectionsDTO.CollectionDTO {
+    var entity: CollectionInfoEntity {
+        CollectionInfoEntity(
+            imageUrlString: thumbnailUrl ?? "",
+            profileImageUrlString: profileUrl ?? "",
+            title: title ?? "",
+            userName: nickname ?? ""
+        )
     }
 }

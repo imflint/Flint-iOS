@@ -10,6 +10,8 @@ import UIKit
 import View
 import ViewModel
 
+import Domain
+
 public final class HomeViewController: BaseViewController<HomeView> {
 
     private let viewModel = HomeViewModel(userName: "얀비")
@@ -59,9 +61,26 @@ public final class HomeViewController: BaseViewController<HomeView> {
     }
 
     @objc private func didTapFab() {
-        let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
-        navigationController?.pushViewController(vc, animated: true)
-    }
+            Log.d("didTapFab")
+            let factory = viewControllerFactory
+                ?? (parent as? TabBarViewController)?.viewControllerFactory
+
+            guard let factory else {
+                Log.d("factory is nil")
+                return
+            }
+
+            let vc = factory.makeCreateCollectionViewController()
+
+            let nav = navigationController ?? parent?.navigationController
+            guard let nav else {
+                Log.d("nav is nil -> cannot push")
+                return
+            }
+
+            nav.pushViewController(vc, animated: true)
+        }
+
     
     private func map(_ style: HomeViewModel.TitleHeaderStyle) -> TitleHeaderTableViewCell.TitleHeaderStyle {
         switch style {
@@ -133,7 +152,7 @@ extension HomeViewController: UITableViewDataSource {
 //                withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,
 //                for: indexPath
 //            ) as! RecentSavedContentTableViewCell
-//            
+//
 //            cell.configure(items: items)
 //            
 //            cell.onTapItem = { [weak self] item in
@@ -141,7 +160,7 @@ extension HomeViewController: UITableViewDataSource {
 //
 //                let platforms = CircleOTTPlatform.order
 //                    .filter { circles.contains($0) }
-//                    .map { OTTPlatform(circle: $0) }     
+//                    .map { OTTPlatform(circle: $0) }
 //
 //                self?.presentOTTBottomSheet(platforms: platforms)
 //            }

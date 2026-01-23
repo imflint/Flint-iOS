@@ -30,6 +30,7 @@ public final class DefaultSearchService: SearchService {
     public func searchContents(_ keyword: String?) -> AnyPublisher<SearchContentsDTO, Error> {
         provider.requestPublisher(.searchContents(keyword))
             .extractData(SearchContentsDTO.self)
+            .eraseToAnyPublisher()
     }
 }
 

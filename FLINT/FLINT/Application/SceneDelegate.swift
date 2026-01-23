@@ -20,8 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-//        let viewController = diContainer.makeTabBarViewController()
-        let viewController = diContainer.makeNicknameViewController()
+        let viewController = diContainer.makeTabBarViewController()
         
         
         let navigationController = UINavigationController(rootViewController: diContainer.makeTabBarViewController()).configured({
