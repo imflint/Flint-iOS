@@ -13,6 +13,7 @@ import Then
 public final class CreateCollectionView: BaseView {
 
     public var onChangeTitle: ((String) -> Void)?
+    public var onTapComplete: (() -> Void)?
 
     private var currentTitle: String = ""
     private var isPublicSelected: Bool = false
@@ -87,6 +88,14 @@ public final class CreateCollectionView: BaseView {
         footerContainerView.backgroundColor = .clear
 
         footerContainerView.addSubview(button)
+
+        button.addAction(
+            UIAction { [weak self] _ in
+                self?.onTapComplete?()
+            },
+            for: .touchUpInside
+        )
+
         button.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(footerSideInset)
@@ -104,4 +113,5 @@ public final class CreateCollectionView: BaseView {
 
         tableView.tableFooterView = footerContainerView
     }
+
 }

@@ -164,6 +164,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 
     private func toViewModel(_ entity: ContentEntity) -> SavedContentItemViewModel {
         SavedContentItemViewModel(
+            contentId: Int64(entity.id) ?? 0,
             posterURL: entity.posterUrl,
             posterImage: nil,
             title: entity.title,

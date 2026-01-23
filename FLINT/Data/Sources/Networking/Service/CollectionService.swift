@@ -34,9 +34,17 @@ public final class DefaultCollectionService: CollectionService {
     
     public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
         return provider.requestPublisher(.createCollection(entity))
-            .extractData(BlankData.self)
+            .handleEvents(receiveOutput: { response in
+                if response.statusCode == 404 {
+                    let body = String(data: response.data, encoding: .utf8) ?? ""
+                    print("❌ 404 body:", body)
+                }
+            })
+            .eraseToAnyPublisher() 
+            .extractData(CreateCollectionResponseDTO.self)
             .map { _ in () }
             .eraseToAnyPublisher()
     }
+
 }
 
