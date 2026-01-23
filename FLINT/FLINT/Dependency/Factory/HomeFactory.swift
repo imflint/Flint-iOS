@@ -71,10 +71,10 @@ public extension HomeFactory {
         )
     }
 
-    func makeHomeViewModel(homeUseCase: HomeUseCase) -> HomeViewModel {
-        DefaultHomeViewModel(
-            userName: "더미", homeUseCase: homeUseCase
-        )
-    }
+//    func makeHomeViewModel(homeUseCase: HomeUseCase) -> HomeViewModel {
+//        DefaultHomeViewModel(
+//            userName: "더미", homeUseCase: homeUseCase
+//        )
+//    }
 }
 

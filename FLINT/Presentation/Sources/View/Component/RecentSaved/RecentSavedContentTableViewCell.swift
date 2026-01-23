@@ -10,11 +10,13 @@ import UIKit
 import SnapKit
 import Then
 
+import Entity
+
 public final class RecentSavedContentTableViewCell: BaseTableViewCell {
     
-    public var onTapItem: ((RecentSavedContentItem) -> Void)?
+    public var onTapItem: ((ContentInfoEntity) -> Void)?
     
-    private var items: [RecentSavedContentItem] = []
+    private var items: [ContentInfoEntity] = []
     
     // MARK: - UI
     
@@ -64,7 +66,7 @@ public final class RecentSavedContentTableViewCell: BaseTableViewCell {
     
     // MARK: - Configure
     
-    public func configure(items: [RecentSavedContentItem]) {
+    public func configure(items: [ContentInfoEntity]) {
         self.items = items
         collectionView.reloadData()
     }

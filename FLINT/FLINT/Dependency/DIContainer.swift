@@ -15,13 +15,13 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory
+typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory
 
 final class DIContainer: AppFactory {
     
     // MARK: - Root Dependency
     
-    private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
+    private lazy var tokenStorage: TokenStorage = TestTokenStorage()
     
     private lazy var authInterceptor: AuthInterceptor = AuthInterceptor(tokenStorage: tokenStorage)
     private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()
@@ -94,6 +94,10 @@ final class DIContainer: AppFactory {
     
     func makeExploreViewController() -> ViewController.ExploreViewController {
         return ExploreViewController(exploreViewModel: makeExploreViewModel(), viewControllerFactory: self)
+    }
+    
+    func makeProfileViewController() -> ProfileViewController {
+        return ProfileViewController(profileViewModel: makeProfileViewModel(), viewControllerFactory: self)
     }
     
     // MARK: - Root Dependency Injection

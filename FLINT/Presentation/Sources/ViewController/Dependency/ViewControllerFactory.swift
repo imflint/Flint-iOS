@@ -24,4 +24,6 @@ public protocol ViewControllerFactory {
     
     func makeAddContentSelectViewController() -> AddContentSelectViewController
     func makeCreateCollectionViewController() -> CreateCollectionViewController
+    
+    func makeProfileViewController() -> ProfileViewController
 }

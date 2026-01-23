@@ -1,177 +1,127 @@
 //
 //  HomeViewModel.swift
-//  Presentation
+//  FLINT
 //
 //  Created by 소은 on 1/18/26.
 //
 
-import Combine
 import Foundation
+import Entity
 
-import Domain
-import View
+public final class HomeViewModel {
 
-// MARK: - Section/Row Model
-
-public struct HomeSectionModel {
-    public let rows: [HomeRow]
-
-    public init(rows: [HomeRow]) {
-        self.rows = rows
-    }
-}
-
-public enum HomeHeaderStyle {
-    case normal
-    case more
-}
-
-public enum HomeRow {
-    case greeting(userName: String)
-    case header(style: HomeHeaderStyle, title: String, subtitle: String)
-    case fliner(items: [CollectionInfoEntity])
-    case recentSaved(items: [RecentSavedContentItem])
-    case ctaButton(title: String)
-}
-
-// MARK: - ViewModel Protocol
-
-public protocol HomeViewModelInput {
-    func fetchRecommendedCollections()
-}
-
-public protocol HomeViewModelOutput {
-    var sections: CurrentValueSubject<[HomeSectionModel], Never> { get }
-    var fetchSuccess: PassthroughSubject<Void, Never> { get }
-    var fetchFailure: PassthroughSubject<Error, Never> { get }
-}
-
-public typealias HomeViewModel = HomeViewModelInput & HomeViewModelOutput
-
-// MARK: - DefaultHomeViewModel
-
-public final class DefaultHomeViewModel: HomeViewModel {
-
-    // MARK: - Dependency
-
-    private let homeUseCase: HomeUseCase
-
-    // MARK: - Output
-
-    public var sections: CurrentValueSubject<[HomeSectionModel], Never>
-    public var fetchSuccess: PassthroughSubject<Void, Never> = .init()
-    public var fetchFailure: PassthroughSubject<Error, Never> = .init()
-
-    // MARK: - State
-
-    private let userName: String
-    private var cancellables: Set<AnyCancellable> = .init()
-
-    // MARK: - Init
-
-    public init(
-        userName: String,
-        homeUseCase: HomeUseCase
-    ) {
-        self.userName = userName
-        self.homeUseCase = homeUseCase
-
-        let initial = Self.makeInitialSections(userName: userName)
-        self.sections = .init(initial)
+    public struct SectionModel {
+        public let rows: [Row]
     }
 
-    // MARK: - Input
-
-    public func fetchRecommendedCollections() {
-        homeUseCase.fetchRecommendedCollections()
-            .manageThread()
-            .map { Result<[CollectionInfoEntity], Error>.success($0) }
-            .catch { Just(Result<[CollectionInfoEntity], Error>.failure($0)) }
-            .sinkHandledCompletion { [weak self] result in
-                guard let self else { return }
-                switch result {
-                case .success(let entities):
-                    self.applyRecommendedCollections(entities)
-                    self.fetchSuccess.send(())
-                case .failure(let error):
-                    self.fetchFailure.send(error)
-                }
-            }
-            .store(in: &cancellables)
+    public enum TitleHeaderStyle {
+        case normal
+        case more
     }
 
-    // MARK: - Private
+    public enum Row {
+        case greeting(userName: String)
+        case header(style: TitleHeaderStyle, title: String, subtitle: String)
 
-    private func applyRecommendedCollections(_ entities: [CollectionInfoEntity]) {
-        var current = sections.value
-        guard current.indices.contains(1) else {
-            sections.send(current)
-            return
-        }
+        case fliner(items: [CollectionEntity])
 
-        // ✅ HomeSectionModel/HomeRow로 만들어야 타입이 맞음
-        let newSection1 = HomeSectionModel(rows: [
-            .header(
-                style: .normal,
-                title: "Fliner의 추천 컬렉션을 만나보세요",
-                subtitle: "Fliner는 콘텐츠에 진심인, 플린트의 큐레이터들이에요"
-            ),
-            .fliner(items: entities)
-        ])
+        // ⚠️ RecentSavedContentItem이 어느 레이어 타입인지 불명확해서 유지
+        // 가능하면 이것도 Entity로 바꾸는 게 방향상 맞음
+//        case recentSaved(items: [RecentSavedContentItem])
 
-        current[1] = newSection1
-        sections.send(current)
+        case ctaButton(title: String)
     }
 
-    private static func makeInitialSections(userName: String) -> [HomeSectionModel] {
+    public let sections: [SectionModel]
 
-        let dummyFlinerEntities: [CollectionInfoEntity] = [
-            .init(imageUrlString: "", profileImageUrlString: "", title: "사랑에 빠지기 10초 전", userName: "사용자 이름"),
-            .init(imageUrlString: "", profileImageUrlString: "", title: "한번 보면 못 빠져나오는…", userName: "사용자 이름"),
-            .init(imageUrlString: "", profileImageUrlString: "", title: "주말에 보기 좋은 영화", userName: "사용자 이름")
-        ]
+    public init(userName: String) {
 
-        let dummyRecentSavedItems: [RecentSavedContentItem] = [
+        let dummyFlinerItems: [CollectionEntity] = [
             .init(
-                posterImageName: "img_background_gradiant_large",
-                title: "듄: 파트 2",
-                year: 2024,
-                availableOn: [.netflix, .disneyPlus, .watcha],
-                subscribedOn: [.netflix, .wave]
+                id: "1",
+                thumbnailUrl: "https://example.com/thumbnail1.jpg",
+                title: "사랑에 빠지기 10초 전",
+                description: "",
+                imageList: [],
+                bookmarkCount: 0,
+                isBookmarked: false,
+                userId: "123",
+                nickname: "사용자 이름",
+                profileImageUrl: "https://example.com/profile.jpg"
             ),
             .init(
-                posterImageName: "img_background_gradiant_large",
-                title: "오펜하이머",
-                year: 2023,
-                availableOn: [.wave, .tving, .netflix, .disneyPlus, .watcha],
-                subscribedOn: [.tving, .wave, .netflix, .disneyPlus, .watcha]
+                id: "2",
+                thumbnailUrl: "https://example.com/thumbnail2.jpg",
+                title: "한번 보면 못 빠져나오는…",
+                description: "",
+                imageList: [],
+                bookmarkCount: 0,
+                isBookmarked: false,
+                userId: "123",
+                nickname: "사용자 이름",
+                profileImageUrl: "https://example.com/profile.jpg"
             ),
             .init(
-                posterImageName: "img_background_gradiant_large",
-                title: "스즈메의 문단속",
-                year: 2022,
-                availableOn: [.netflix, .watcha, .disneyPlus],
-                subscribedOn: [.netflix, .disneyPlus, .watcha]
+                id: "3",
+                thumbnailUrl: "https://example.com/thumbnail3.jpg",
+                title: "주말에 보기 좋은 영화",
+                description: "",
+                imageList: [],
+                bookmarkCount: 0,
+                isBookmarked: false,
+                userId: "123",
+                nickname: "사용자 이름",
+                profileImageUrl: "https://example.com/profile.jpg"
             )
         ]
 
-        let watchingCollectionEntities: [CollectionInfoEntity] = [
-            .init(imageUrlString: "", profileImageUrlString: "", title: "요즘 빠진 스릴러만 모았어요", userName: "키키"),
-            .init(imageUrlString: "", profileImageUrlString: "", title: "주말에 보기 좋은 힐링 영화", userName: "소은"),
-            .init(imageUrlString: "", profileImageUrlString: "", title: "한 번 보면 끝까지 보는 시리즈", userName: "소은")
+        // ⚠️ 이 타입이 어디 레이어인지 불명확(지금 코드만으로)
+//        let dummyRecentSavedItems: [RecentSavedContentItem] = [
+//            .init(posterImageName: "img_background_gradiant_large",
+//                  title: "듄: 파트 2",
+//                  year: 2024,
+//                  availableOn: [.netflix, .disneyPlus, .watcha],
+//                  subscribedOn: [.netflix, .wavve])
+//        ]
+
+        // ✅ "눈여겨보는 컬렉션"도 CollectionEntity로
+        let watchingCollectionItems: [CollectionEntity] = [
+            .init(
+                id: "10",
+                thumbnailUrl: "https://example.com/thumbnail10.jpg",
+                title: "요즘 빠진 스릴러만 모았어요",
+                description: "",
+                imageList: [],
+                bookmarkCount: 0,
+                isBookmarked: false,
+                userId: "999",
+                nickname: "키키",
+                profileImageUrl: "https://example.com/profile2.jpg"
+            )
         ]
 
-        let watchingSectionRows: [HomeRow] = watchingCollectionEntities.isEmpty
-        ? [
-            .header(style: .normal, title: "아직 읽어본 컬렉션이 없어요", subtitle: "천천히 둘러보며 끌리는 취향을 발견해보세요"),
-            .ctaButton(title: "취향발견하러가기")
-        ]
-        : [
-            .header(style: .more, title: "눈여겨보고 있는 컬렉션", subtitle: "\(userName)님이 최근 살펴본 컬렉션이에요"),
-            .fliner(items: watchingCollectionEntities)
-        ]
+        let watchingSectionRows: [Row]
+        if watchingCollectionItems.isEmpty {
+            watchingSectionRows = [
+                .header(
+                    style: .normal,
+                    title: "아직 읽어본 컬렉션이 없어요",
+                    subtitle: "천천히 둘러보며 끌리는 취향을 발견해보세요"
+                ),
+                .ctaButton(title: "취향발견하러가기")
+            ]
+        } else {
+            watchingSectionRows = [
+                .header(
+                    style: .more,
+                    title: "눈여겨보고 있는 컬렉션",
+                    subtitle: "\(userName)님이 최근 살펴본 컬렉션이에요"
+                ),
+                .fliner(items: watchingCollectionItems)
+            ]
+        }
 
-        return [
+        sections = [
             .init(rows: [
                 .greeting(userName: userName)
             ]),
@@ -181,7 +131,7 @@ public final class DefaultHomeViewModel: HomeViewModel {
                     title: "Fliner의 추천 컬렉션을 만나보세요",
                     subtitle: "Fliner는 콘텐츠에 진심인, 플린트의 큐레이터들이에요"
                 ),
-                .fliner(items: dummyFlinerEntities)
+                .fliner(items: dummyFlinerItems)
             ]),
             .init(rows: [
                 .header(
@@ -189,7 +139,7 @@ public final class DefaultHomeViewModel: HomeViewModel {
                     title: "최근 저장한 콘텐츠",
                     subtitle: "현재 구독 중인 OTT에서 볼 수 있는 작품들이에요"
                 ),
-                .recentSaved(items: dummyRecentSavedItems)
+//                .recentSaved(items: dummyRecentSavedItems)
             ]),
             .init(rows: watchingSectionRows)
         ]

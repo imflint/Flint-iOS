@@ -11,7 +11,7 @@ public enum OTTPlatform: String, CaseIterable, Hashable {
 
     case netflix = "NETFLIX"
     case tving = "TVING"
-    case wave = "WAVVE"
+    case wavve = "WAVVE"
     case coupangPlay = "COUPANG_PLAY"
     case watcha = "WATCHA"
     case disneyPlus = "DISNEY_PLUS"
@@ -20,7 +20,7 @@ public enum OTTPlatform: String, CaseIterable, Hashable {
         switch self {
         case .netflix: return "넷플릭스"
         case .tving: return "티빙"
-        case .wave: return "웨이브"
+        case .wavve: return "웨이브"
         case .coupangPlay: return "쿠팡플레이"
         case .watcha: return "왓차"
         case .disneyPlus: return "디즈니+"
@@ -31,7 +31,7 @@ public enum OTTPlatform: String, CaseIterable, Hashable {
         switch self {
         case .netflix: return UIImage.imgSmallNetflix1
         case .tving: return UIImage.imgSmallTving1
-        case .wave: return UIImage.imgSmallWave1
+        case .wavve: return UIImage.imgSmallWavve1
         case .coupangPlay: return UIImage.imgSmallCoupang1
         case .watcha: return UIImage.imgSmallWatcha1
         case .disneyPlus: return UIImage.imgSmallDisney1
@@ -46,7 +46,7 @@ public enum OTTPlatform: String, CaseIterable, Hashable {
             switch self {
             case .netflix: return "https://www.netflix.com"
             case .tving: return "https://www.tving.com"
-            case .wave: return "https://www.wavve.com"
+            case .wavve: return "https://www.wavve.com"
             case .coupangPlay: return "https://www.coupangplay.com"
             case .watcha: return "https://watcha.com"
             case .disneyPlus: return "https://www.disneyplus.com"
@@ -61,7 +61,7 @@ extension OTTPlatform {
         switch circle {
         case .netflix: self = .netflix
         case .tving: self = .tving
-        case .wave: self = .wave
+        case .wavve: self = .wavve
         case .watcha: self = .watcha
         case .disneyPlus: self = .disneyPlus
         case .coupangPlay: self = .coupangPlay
