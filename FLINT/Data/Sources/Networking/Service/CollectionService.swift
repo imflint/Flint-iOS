@@ -18,6 +18,7 @@ import DTO
 public protocol CollectionService {
     func fetchCollections(cursor: UInt?, size: Int) -> AnyPublisher<CollectionsDTO, Error>
     func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error>
+    func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailDTO.DataDTO, Error>
 }
 
 public final class DefaultCollectionService: CollectionService {
@@ -45,6 +46,9 @@ public final class DefaultCollectionService: CollectionService {
             .map { _ in () }
             .eraseToAnyPublisher()
     }
-
+    public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailDTO.DataDTO, Error> {
+        provider.requestPublisher(.fetchCollectionDetail(collectionId: collectionId))
+            .extractData(CollectionDetailDTO.DataDTO.self)
+    }
 }
 

@@ -30,4 +30,10 @@ public final class DefaultCollectionRepository: CollectionRepository {
     public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
         return collectionService.createCollection(entity)
     }
+    
+    public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error> {
+        collectionService.fetchCollectionDetail(collectionId: collectionId)
+            .tryMap { try $0.entity }
+            .eraseToAnyPublisher()
+    }
 }

@@ -15,8 +15,7 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & HomeFactory
-
+typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & HomeFactory & CollectionDetailFactory & LoginViewModelFactory
 
 final class DIContainer: AppFactory {
     func makeHomeViewModel(homeUseCase: any UseCase.HomeUseCase) -> ViewModel.HomeViewModel {
@@ -26,7 +25,8 @@ final class DIContainer: AppFactory {
     
     // MARK: - Root Dependency
     
-    private lazy var tokenStorage: TokenStorage = TestTokenStorage()
+    private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
+//    private lazy var tokenStorage: TokenStorage = TestTokenStorage()
     
     private lazy var authInterceptor: AuthInterceptor = AuthInterceptor(tokenStorage: tokenStorage)
     private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()
@@ -49,6 +49,13 @@ final class DIContainer: AppFactory {
             networkLoggerPlugin
         ]
     )
+    private lazy var bookmarkAPIProvider = MoyaProvider<BookmarkAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
+
     private lazy var authAPIProvider = MoyaProvider<AuthAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
@@ -66,10 +73,18 @@ final class DIContainer: AppFactory {
     // MARK: - Init
     
     init() {
-        
+        tokenStorage.clearAll()
     }
     
     // MARK: - ViewControllerFactory
+    
+    func makeSplashViewController() -> SplashViewController {
+        return SplashViewController(viewControllerFactory: self)
+    }
+    
+    func makeLoginViewController() -> LoginViewController {
+        return LoginViewController(loginViewModel: makeLoginViewModel(), viewControllerFactory: self)
+    }
     
     func makeTabBarViewController() -> TabBarViewController {
         return TabBarViewController(viewControllerFactory: self)
@@ -114,6 +129,12 @@ final class DIContainer: AppFactory {
         return ProfileViewController(profileViewModel: makeProfileViewModel(), viewControllerFactory: self)
     }
     
+    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
+        let vm = makeCollectionDetailViewModel(collectionId: collectionId)
+        return CollectionDetailViewController(viewModel: vm)
+    }
+    
+    
     // MARK: - Root Dependency Injection
     
     func makeTokenStorage() -> TokenStorage {
@@ -130,6 +151,10 @@ final class DIContainer: AppFactory {
     
     func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI> {
         return collectionAPIProvider
+    }
+    
+    func makeBookmarkAPIProvider() -> MoyaProvider<BookmarkAPI> {
+        return bookmarkAPIProvider
     }
     
     func makeAuthAPIProvider() -> MoyaProvider<AuthAPI> {

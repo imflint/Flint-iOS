@@ -10,7 +10,16 @@ import Security
 
 import Domain
 
+public enum TokenError: Error, LocalizedError {
+    case noToken
+    
+    public var errorDescription: String? {
+        return "Token Error: - no Token"
+    }
+}
+
 public enum TokenType: String, CaseIterable {
+    case tempToken
     case accessToken
     case refreshToken
 }
@@ -38,6 +47,7 @@ public final class DefaultTokenStorage: TokenStorage {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,  // 일반 데이터 저장
             kSecAttrAccount as String: type.rawValue,             // 계정 이름
+            kSecAttrService as String: Bundle.main.bundleIdentifier!,             // 서비스 이름
             kSecValueData as String: tokenData,             // 실제 토큰 데이터
         ]
         
@@ -47,12 +57,14 @@ public final class DefaultTokenStorage: TokenStorage {
         if status == errSecSuccess {
             Log.d("Keychain \(type.rawValue) 저장 완료")
         }
+        Log.e(status)
     }
     
     public func load(type: TokenType) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: type.rawValue,
+            kSecAttrService as String: Bundle.main.bundleIdentifier!,             // 서비스 이름
             kSecReturnData as String: true,                 // 데이터를 반환하도록 설정
             kSecMatchLimit as String: kSecMatchLimitOne     // 하나의 결과만 반환
         ]
@@ -79,6 +91,7 @@ public final class DefaultTokenStorage: TokenStorage {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: type.rawValue,
+            kSecAttrService as String: Bundle.main.bundleIdentifier!,             // 서비스 이름
         ]
         
         let status = SecItemDelete(query as CFDictionary)
@@ -107,7 +120,14 @@ public final class TestTokenStorage: TokenStorage {
     }
     
     public func load(type: TokenType) -> String? {
-        return NetworkConfig.testToken
+        switch type {
+        case .tempToken:
+            return NetworkConfig.tempToken
+        case .accessToken:
+            return NetworkConfig.testToken
+        case .refreshToken:
+            return nil
+        }
     }
     
     public func delete(type: TokenType) {

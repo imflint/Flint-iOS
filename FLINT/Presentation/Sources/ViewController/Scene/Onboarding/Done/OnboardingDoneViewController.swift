@@ -7,6 +7,8 @@
 
 import UIKit
 
+import Domain
+
 import View
 import ViewModel
 
@@ -35,7 +37,16 @@ public final class OnboardingDoneViewController: BaseViewController<OnboardingDo
         rootView.startButton.addAction(UIAction(handler: completeOnboarding(_:)), for: .touchUpInside)
     }
     
+    public override func bind() {
+        onboardingViewModel.userId.sink(receiveValue: { [weak self] userId in
+            Log.d(userId)
+            guard let userId, let tabBarViewController = self?.viewControllerFactory?.makeTabBarViewController() else { return }
+            self?.navigationController?.setViewControllers([tabBarViewController], animated: false)
+        })
+        .store(in: &cancellables)
+    }
+    
     private func completeOnboarding(_ action: UIAction) {
-        
+        onboardingViewModel.signup()
     }
 }

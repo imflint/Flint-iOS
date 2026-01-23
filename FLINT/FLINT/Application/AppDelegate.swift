@@ -7,16 +7,21 @@
 
 import UIKit
 
+import KakaoSDKCommon
+import KakaoSDKAuth
+import KakaoSDKUser
+
+import Data
+import Domain
 import Presentation
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         UIFont.registerPretendardFonts()
+        KakaoSDK.initSDK(appKey: NetworkConfig.kakaoAppKey)
         return true
     }
 
