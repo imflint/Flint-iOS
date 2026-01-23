@@ -41,6 +41,7 @@ public final class OnboardingFilmCollectionViewCell: BaseCollectionViewCell {
     
     public let checkImageView = UIImageView().then {
         $0.image = .icPlainCheck
+        $0.contentMode = .scaleAspectFill
     }
     
     // MARK: - Basic

@@ -65,6 +65,14 @@ final class DIContainer: AppFactory {
         return FilmSelectViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
     }
     
+    func makeOttSelectViewController(onboardingViewModel: OnboardingViewModel) -> OttSelectViewController {
+        return OttSelectViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
+    }
+    
+    func makeOnboardingDoneViewController(onboardingViewModel: OnboardingViewModel) -> OnboardingDoneViewController {
+        return OnboardingDoneViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
+    }
+    
     func makeExploreViewController() -> ViewController.ExploreViewController {
         return ExploreViewController(exploreViewModel: makeExploreViewModel(), viewControllerFactory: self)
     }

@@ -13,5 +13,7 @@ public protocol ViewControllerFactory {
     func makeTabBarViewController() -> TabBarViewController
     func makeNicknameViewController() -> NicknameViewController
     func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController
+    func makeOttSelectViewController(onboardingViewModel: OnboardingViewModel) -> OttSelectViewController
+    func makeOnboardingDoneViewController(onboardingViewModel: OnboardingViewModel) -> OnboardingDoneViewController
     func makeExploreViewController() -> ExploreViewController
 }

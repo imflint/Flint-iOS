@@ -19,7 +19,7 @@ public class OttSelectView: BaseView {
         $0.numberOfLines = 0
     }
     
-    public let filmCollectionView: UICollectionView = {
+    public let ottCollectionView: UICollectionView = {
         let uselessHeight: CGFloat = 130
         let item = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
@@ -73,7 +73,7 @@ public class OttSelectView: BaseView {
     }
     
     public override func setHierarchy() {
-        addSubviews(titleLabel, filmCollectionView, nextButton)
+        addSubviews(titleLabel, ottCollectionView, nextButton)
     }
     
     public override func setLayout() {
@@ -81,13 +81,13 @@ public class OttSelectView: BaseView {
             $0.top.equalToSuperview().inset(12)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
-        filmCollectionView.snp.makeConstraints {
+        ottCollectionView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(40)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         nextButton.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.top.equalTo(filmCollectionView.snp.bottom).offset(8)
+            $0.top.equalTo(ottCollectionView.snp.bottom).offset(8)
             $0.height.equalTo(48)
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }

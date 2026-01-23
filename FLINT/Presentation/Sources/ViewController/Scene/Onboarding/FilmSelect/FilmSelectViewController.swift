@@ -82,6 +82,7 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         rootView.filmCollectionView.contentOffset.y = -rootView.filmCollectionView.contentInset.top
         
         rootView.filmCollectionView.panGestureRecognizer.addTarget(self, action: #selector(filmCollectionViewPanGesture))
+        rootView.nextButton.addAction(UIAction(handler: pushOttSelectViewController(_:)), for: .touchUpInside)
     }
     
     public override func bind() {
@@ -107,6 +108,8 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
             rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(selectedContents.count)/\(onboardingViewModel.filmSelectQuestions.count)")
             rootView.progressView.progress = Float(selectedContents.count) / Float(onboardingViewModel.filmSelectQuestions.count)
             rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.filmSelectQuestions[min(selectedContents.count, onboardingViewModel.filmSelectQuestions.count-1)])
+            
+            rootView.nextButton.isEnabled = selectedContents.count == 7
         }
         .store(in: &cancellables)
     }
@@ -159,6 +162,11 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
                 rootView.layoutIfNeeded()
             })
         }
+    }
+    
+    private func pushOttSelectViewController(_ action: UIAction) {
+        guard let ottSelectViewController = viewControllerFactory?.makeOttSelectViewController(onboardingViewModel: onboardingViewModel) else { return }
+        navigationController?.pushViewController(ottSelectViewController, animated: true)
     }
 }
 

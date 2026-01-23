@@ -20,15 +20,22 @@ public protocol OnboardingViewModelInput {
     func clickContent(_ content: ContentEntity)
     func deleteContent(_ content: ContentEntity) 
     
+    // ott select
+    func clickOtt(_ ott: Ott)
 }
 
 public protocol OnboardingViewModelOutput {
+    // nickname
     var nickname: CurrentValueSubject<String, Never> { get }
     var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> { get }
     
+    // film select
     var filmSelectQuestions: [String] { get set }
     var contents: CurrentValueSubject<[ContentEntity], Never> { get set }
     var selectedContents: CurrentValueSubject<[ContentEntity], Never> { get set }
+    
+    // ott select
+    var selectedOtt: CurrentValueSubject<[Ott], Never> { get set }
 }
 
 public typealias OnboardingViewModel = OnboardingViewModelInput & OnboardingViewModelOutput
@@ -53,6 +60,8 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     ]
     public var contents: CurrentValueSubject<[ContentEntity], Never> = .init([])
     public var selectedContents: CurrentValueSubject<[ContentEntity], Never> = .init([])
+    
+    public var selectedOtt: CurrentValueSubject<[Ott], Never> = .init([])
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
@@ -108,5 +117,13 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         selectedContents.value.removeAll(where: {
             content == $0
         })
+    }
+    
+    public func clickOtt(_ ott: Ott) {
+        if let index = selectedOtt.value.firstIndex(of: ott) {
+            selectedOtt.value.remove(at: index)
+        } else {
+            selectedOtt.value.append(ott)
+        }
     }
 }

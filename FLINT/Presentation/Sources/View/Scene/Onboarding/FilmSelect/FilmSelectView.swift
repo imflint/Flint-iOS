@@ -106,7 +106,9 @@ public final class FilmSelectView: BaseView {
         return collectionView
     }()
     
-    public let nextButton = FlintButton(style: .able, title: "다음")
+    public let nextButton = FlintButton(style: .able, title: "다음").then {
+        $0.isEnabled = false
+    }
     
     public let emptyView = UIView().then {
         $0.isHidden = true
