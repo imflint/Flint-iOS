@@ -19,6 +19,8 @@ public protocol UserService {
     func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error>
     func fetchUserProfile(userId: Int64) -> AnyPublisher<UserProfileDTO, Error>
     func fetchMyProfile() -> AnyPublisher<UserProfileDTO, Error>
+    func fetchMyKeywords() -> AnyPublisher<KeywordsDTO, Error>
+    func fetchUserKeywords(userId: Int64) -> AnyPublisher<KeywordsDTO, Error>
 }
 
 public final class DefaultUserService: UserService {
@@ -42,5 +44,15 @@ public final class DefaultUserService: UserService {
     public func fetchMyProfile() -> AnyPublisher<UserProfileDTO, Error> {
         return userAPIProvider.requestPublisher(.fetchMyProfile)
             .extractData(UserProfileDTO.self)
+    }
+    
+    public func fetchMyKeywords() -> AnyPublisher<KeywordsDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchMyKeywords)
+            .extractData(KeywordsDTO.self)
+    }
+
+    public func fetchUserKeywords(userId: Int64) -> AnyPublisher<KeywordsDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchUserKeywords(userId: userId))
+            .extractData(KeywordsDTO.self)
     }
 }

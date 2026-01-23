@@ -15,6 +15,8 @@ public enum UserAPI {
     case checkNickname(_ nickname: String)
     case fetchUserProfile(userId: Int64)
     case fetchMyProfile
+    case fetchMyKeywords
+        case fetchUserKeywords(userId: Int64)
 }
 
 extension UserAPI: TargetType {
@@ -30,6 +32,10 @@ extension UserAPI: TargetType {
             return "/api/v1/users/\(userId)"
         case .fetchMyProfile:
             return "/api/v1/users/me"
+        case .fetchMyKeywords:
+            return "/api/v1/users/me/keywords"
+        case let .fetchUserKeywords(userId):
+            return "/api/v1/users/\(userId)/keywords"
         }
     }
     
@@ -40,6 +46,10 @@ extension UserAPI: TargetType {
         case .fetchUserProfile:
             return .get
         case .fetchMyProfile:
+            return .get
+        case .fetchMyKeywords:
+            return .get
+        case .fetchUserKeywords:
             return .get
         }
     }
@@ -53,6 +63,10 @@ extension UserAPI: TargetType {
         case .fetchUserProfile:
             return .requestPlain
         case .fetchMyProfile:
+            return .requestPlain
+        case .fetchMyKeywords:
+            return .requestPlain
+        case .fetchUserKeywords:
             return .requestPlain
         }
     }

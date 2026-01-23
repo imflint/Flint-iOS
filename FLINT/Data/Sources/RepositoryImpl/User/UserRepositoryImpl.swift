@@ -38,4 +38,20 @@ public final class DefaultUserRepository: UserRepository {
             .tryMap { try $0.entity }
             .eraseToAnyPublisher()
     }
+    
+    public func fetchMyKeywords() -> AnyPublisher<[KeywordEntity], Error> {
+        userService.fetchMyKeywords()
+            .tryMap { dto in
+                try (dto.keywords ?? []).map { try $0.entity }
+            }
+            .eraseToAnyPublisher()
+    }
+
+    public func fetchUserKeywords(userId: Int64) -> AnyPublisher<[KeywordEntity], Error> {
+        userService.fetchUserKeywords(userId: userId)
+            .tryMap { dto in
+                try (dto.keywords ?? []).map { try $0.entity }
+            }
+            .eraseToAnyPublisher()
+    }
 }
