@@ -9,8 +9,9 @@ import UIKit
 
 import SnapKit
 import Then
+import Kingfisher
 
-import Entity
+import Domain
 
 public final class MoreNoMoreCollectionItemCell: BaseCollectionViewCell {
 
