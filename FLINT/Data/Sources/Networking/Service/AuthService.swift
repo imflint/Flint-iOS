@@ -31,7 +31,9 @@ public final class DefaultAuthService: AuthService {
     }
     
     public func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error> {
-        return authAPIProvider.requestPublisher(.signup(signupInfoEntity))
+        let tempSignupInfoEntity = SignupInfoEntity(tempToken: NetworkConfig.tempToken, nickname: signupInfoEntity.nickname, favoriteContentIds: signupInfoEntity.favoriteContentIds, subscribedOttIds: signupInfoEntity.subscribedOttIds)
+//        return authAPIProvider.requestPublisher(.signup(signupInfoEntity))
+        return authAPIProvider.requestPublisher(.signup(tempSignupInfoEntity))
             .extractData(SignupDTO.self)
             .tryMap({ [weak self] in
                 let loginEntity = try $0.loginEntity

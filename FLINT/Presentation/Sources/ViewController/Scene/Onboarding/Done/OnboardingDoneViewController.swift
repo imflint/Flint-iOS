@@ -36,6 +36,8 @@ public final class OnboardingDoneViewController: BaseViewController<OnboardingDo
     }
     
     private func completeOnboarding(_ action: UIAction) {
-        
+        onboardingViewModel.signup()
+        guard let tabBarViewController = viewControllerFactory?.makeTabBarViewController() else { return }
+        navigationController?.setViewControllers([tabBarViewController], animated: false)
     }
 }

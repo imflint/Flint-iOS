@@ -138,13 +138,20 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func signup() {
-//        signupUseCase.signup(
-//            SignupInfoEntity(
-//                tempToken: "",
-//                nickname: nickname.value,
-//                favoriteContentIds: [],
-//                subscribedOttIds: []
-//            )
-//        )
+        signupUseCase.signup(
+            SignupInfoEntity(
+                tempToken: "비밀이얌 ㅎㅎ;;",
+                nickname: nickname.value,
+                favoriteContentIds: selectedContents.value.compactMap({ content in
+                    Int(content.id)
+                }),
+                subscribedOttIds: selectedOtt.value.map(\.id)
+            )
+        )
+        .manageThread()
+        .sinkHandledCompletion { userId in
+            Log.d(userId)
+        }
+        .store(in: &cancellables)
     }
 }
