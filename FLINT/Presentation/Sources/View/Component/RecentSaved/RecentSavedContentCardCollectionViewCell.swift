@@ -85,7 +85,7 @@ public final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewC
     
     //MARK: - configure
     
-    public func configure(with item: ContentEntity) {
+    public func configure(with item: ContentInfoEntity) {
         if let url = URL(string: item.imageUrl) {
             posterImageView.kf.setImage(with: url)
         } else {
@@ -109,7 +109,7 @@ public final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewC
     }
 }
 
-public extension ContentEntity {
+public extension ContentInfoEntity {
     
     var logoDisplayModel: (leading: [String], remainingCount: Int) {
         let urls = ottList.map { $0.logoUrl }.filter { !$0.isEmpty }

@@ -17,14 +17,6 @@ public enum HomeAPI {
 
 extension HomeAPI: TargetType {
     
-    public var baseURL: URL {
-        guard let baseURL = URL(string: "https://flint.r-e.kr") else {
-            Log.f("Invalid BaseURL")
-            fatalError("Invalid BaseURL")
-        }
-        return baseURL
-    }
-    
     public var path: String {
         switch self {
         case .fetchRecommendedCollections:

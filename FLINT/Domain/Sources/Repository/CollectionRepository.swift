@@ -11,5 +11,6 @@ import Foundation
 import Entity
 
 public protocol CollectionRepository {
+    func fetchCollections(cursor: UInt?, size: Int) -> AnyPublisher<CollectionPagingEntity, Error>
     func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error>
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ContentEntity: Equatable {
+public struct ContentInfoEntity: Equatable {
     public let id: String
     public let title: String
     public let imageUrl: String

@@ -19,7 +19,7 @@ public final class ProfileViewModel {
         case preferenceChips(keywords: [KeywordEntity])
         case myCollections(items: [CollectionEntity])
         case savedCollections(items: [CollectionEntity])
-        case savedContents(items: [ContentEntity])
+        case savedContents(items: [ContentInfoEntity])
     }
 
     public enum TitleHeaderStyle {
@@ -42,7 +42,7 @@ public final class ProfileViewModel {
     private var keywords: [KeywordEntity] = []
     private var myCollections: [CollectionEntity] = []
     private var savedCollections: [CollectionEntity] = []
-    private var savedContents: [ContentEntity] = []
+    private var savedContents: [ContentInfoEntity] = []
 
     public init(
         userProfileUseCase: UserProfileUseCase,

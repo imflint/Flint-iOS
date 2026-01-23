@@ -72,7 +72,7 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
             .store(in: &cancellables)
     }
     
-    private func map(_ style: ProfileViewModel.TitleHeaderStyle) -> TitleHeaderTableViewCell.HeaderStyle {
+    private func map(_ style: ProfileViewModel.TitleHeaderStyle) -> TitleHeaderTableViewCell.TitleHeaderStyle {
         switch style {
         case .normal: return .normal
         case .more: return .more

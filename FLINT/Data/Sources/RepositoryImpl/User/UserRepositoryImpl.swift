@@ -87,7 +87,7 @@ public final class DefaultUserRepository: UserRepository {
             .eraseToAnyPublisher()
     }
     
-    public func fetchMyBookmarkedContents() -> AnyPublisher<[ContentEntity], Error> {
+    public func fetchMyBookmarkedContents() -> AnyPublisher<[ContentInfoEntity], Error> {
         userService.fetchMyBookmarkedContents()
             .tryMap { dto in
                 try (dto.contents ?? []).map { try $0.entity }
@@ -95,7 +95,7 @@ public final class DefaultUserRepository: UserRepository {
             .eraseToAnyPublisher()
     }
     
-    public func fetchBookmarkedContents(userId: Int64) -> AnyPublisher<[ContentEntity], Error> {
+    public func fetchBookmarkedContents(userId: Int64) -> AnyPublisher<[ContentInfoEntity], Error> {
         userService.fetchBookmarkedContents(userId: userId)
             .tryMap { dto in
                 try (dto.contents ?? []).map { try $0.entity }

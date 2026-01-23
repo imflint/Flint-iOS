@@ -31,9 +31,9 @@ public extension ContentsDTO {
 // MARK: - DTO -> Entity
 
 public extension ContentsDTO.ContentDTO {
-    var entity: ContentEntity {
+    var entity: ContentInfoEntity {
         get throws {
-            return try ContentEntity(
+            return try ContentInfoEntity(
                 id: unwrap(id, key: CodingKeys.id),
                 title: title ?? "",
                 imageUrl: imageUrl ?? "",

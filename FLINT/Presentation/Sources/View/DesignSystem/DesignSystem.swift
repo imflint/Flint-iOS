@@ -112,6 +112,7 @@ public enum DesignSystem {
             public static let checkboxFill: UIImage = .icBookmark
             public static let deselect: UIImage = .icBookmark
             public static let profileChange: UIImage = .icBookmark
+            public static let plainCheck: UIImage = .icPlainCheck
         }
         
         public enum Gradient {

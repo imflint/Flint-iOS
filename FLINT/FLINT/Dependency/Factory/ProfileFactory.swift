@@ -12,7 +12,7 @@ import Data
 import Domain
 import Presentation
 
-protocol ProfileFactory: OnboardingFactory {
+protocol ProfileFactory: UserRepositoryFactory {
 
     // MARK: - UseCase
     func makeUserProfileUseCase() -> UserProfileUseCase
