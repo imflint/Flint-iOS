@@ -68,3 +68,13 @@ extension OTTPlatform {
         }
     }
 }
+
+extension OTTPlatform {
+   public static func fromServerName(_ name: String) -> OTTPlatform? {
+        // 서버가 "NETFLIX" 같은 raw value로 내려주는 경우
+        if let p = OTTPlatform(rawValue: name) { return p }
+
+        // 혹시 서버가 소문자/다른 케이스면 보정
+        return OTTPlatform(rawValue: name.uppercased())
+    }
+}
