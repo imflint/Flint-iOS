@@ -45,6 +45,13 @@ final class DIContainer: AppFactory {
             networkLoggerPlugin
         ]
     )
+    private lazy var bookmarkAPIProvider = MoyaProvider<BookmarkAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
+
     private lazy var authAPIProvider = MoyaProvider<AuthAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
@@ -123,6 +130,10 @@ final class DIContainer: AppFactory {
     
     func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI> {
         return collectionAPIProvider
+    }
+    
+    func makeBookmarkAPIProvider() -> MoyaProvider<BookmarkAPI> {
+        return bookmarkAPIProvider
     }
     
     func makeAuthAPIProvider() -> MoyaProvider<AuthAPI> {

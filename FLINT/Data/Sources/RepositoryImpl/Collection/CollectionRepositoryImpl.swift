@@ -32,8 +32,8 @@ public final class DefaultCollectionRepository: CollectionRepository {
     }
     
     public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error> {
-            collectionService.fetchCollectionDetail(collectionId: collectionId)
-                .tryMap { try $0.entity }
-                .eraseToAnyPublisher()
-        }
+        collectionService.fetchCollectionDetail(collectionId: collectionId)
+            .tryMap { try $0.entity }
+            .eraseToAnyPublisher()
+    }
 }

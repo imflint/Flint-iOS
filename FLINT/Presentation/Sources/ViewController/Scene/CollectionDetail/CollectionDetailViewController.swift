@@ -31,6 +31,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
 
     private var entity: CollectionDetailEntity?
     private var rows: [Row] = [.header, .description, .saveUsers]
+    private var bookmarkedUsers: CollectionBookmarkUsersEntity?
 
     // Input
     private let viewDidLoadSubject = PassthroughSubject<Void, Never>()
@@ -54,9 +55,6 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         view.backgroundColor = DesignSystem.Color.background
         setupTableView()
         setNavigationBar(.init(left: .back, backgroundStyle: .clear))
-
-        bind()
-        viewDidLoadSubject.send(())
     }
 
     // MARK: - Bind
@@ -77,16 +75,18 @@ public final class CollectionDetailViewController: BaseViewController<Collection
                 case .idle:
                     break
                 case .loading:
-                    // 필요하면 로딩 UI
                     break
-                case .loaded(let entity):
-                    self.apply(entity: entity)
+                case .loaded(let detail, let bookmarkedUsers):
+                    self.entity = detail
+                    self.bookmarkedUsers = bookmarkedUsers
+                    self.apply(entity: detail)
                 case .failed(let message):
-                    // 필요하면 토스트/얼럿
                     print("Collection detail load failed:", message)
                 }
             }
             .store(in: &cancellables)
+
+        viewDidLoadSubject.send(())
     }
 
     private func apply(entity: CollectionDetailEntity) {
@@ -223,18 +223,9 @@ extension CollectionDetailViewController: UITableViewDataSource {
 
             cell.selectionStyle = .none
 
-            // 이 API엔 “저장한 사람들” 데이터가 없음(확실)
-            // 기존 더미를 유지하거나, 별도 API 붙이면 여기 갱신
-            let dummyImages: [UIImage] = [
-                DesignSystem.Image.Common.profileGray,
-                DesignSystem.Image.Background.backgroundGradientLarge,
-                DesignSystem.Image.Common.profileGray,
-                DesignSystem.Image.Background.backgroundGradientMiddle,
-                DesignSystem.Image.Common.profileGray,
-                DesignSystem.Image.Background.backgroundGradientLarge,
-            ]
+            let urls = (bookmarkedUsers?.users ?? []).map { $0.profileImageUrl }   // [URL?]
+            cell.configure(title: "이 컬렉션을 저장한 사람들", profileImageURLs: urls)
 
-            cell.configure(title: "이 컬렉션을 저장한 사람들", images: dummyImages)
             cell.onTapMore = { print("Tap more (save users)") }
             return cell
         }

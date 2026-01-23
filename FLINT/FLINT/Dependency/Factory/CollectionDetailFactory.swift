@@ -7,13 +7,11 @@
 
 import Foundation
 
-import Moya
-
 import Data
 import Domain
 import Presentation
 
-protocol CollectionDetailFactory: CollectionRepositoryFactory {
+protocol CollectionDetailFactory: CollectionRepositoryFactory, BookmarkFactory {
 
     // MARK: - UseCase
     func makeCollectionDetailUseCase(collectionRepository: CollectionRepository) -> CollectionDetailUseCase
@@ -52,7 +50,8 @@ extension CollectionDetailFactory {
     ) -> CollectionDetailViewModel {
         return CollectionDetailViewModel(
             collectionId: collectionId,
-            collectionDetailUseCase: collectionDetailUseCase
+            collectionDetailUseCase: collectionDetailUseCase,
+            fetchBookmarkedUserUseCase: makeFetchBookmarkedUserUseCase()
         )
     }
 }

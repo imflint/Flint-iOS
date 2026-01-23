@@ -14,4 +14,6 @@ public protocol BookmarkRepository {
     func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, Error>
     
     func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, Error>
+    
+    func fetchCollectionBookmarkUsers(_ collectionId: Int64) -> AnyPublisher<CollectionBookmarkUsersEntity, Error>
 }
