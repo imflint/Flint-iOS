@@ -37,8 +37,11 @@ public final class LoginViewController: BaseViewController<LoginView> {
     public override func bind() {
         loginViewModel.socialVerifyResultEntity.sink { [weak self] socialVerifyResultEntity in
             Log.d(socialVerifyResultEntity)
-            if let socialVerifyResultEntity, !socialVerifyResultEntity.isRegistered {
+            guard let socialVerifyResultEntity else { return }
+            if !socialVerifyResultEntity.isRegistered {
                 self?.register()
+            } else {
+                self?.pushToTabBar()
             }
         }
         .store(in: &cancellables)
@@ -57,5 +60,10 @@ public final class LoginViewController: BaseViewController<LoginView> {
     private func register() {
         guard let nicknameViewController = viewControllerFactory?.makeNicknameViewController() else { return }
         navigationController?.pushViewController(nicknameViewController, animated: true)
+    }
+    
+    private func pushToTabBar() {
+        guard let tabBarViewController = viewControllerFactory?.makeTabBarViewController() else { return }
+        navigationController?.pushViewController(tabBarViewController, animated: true)
     }
 }
