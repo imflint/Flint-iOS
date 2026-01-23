@@ -14,6 +14,16 @@ public final class NicknameView: BaseView {
     
     // MARK: - Component
     
+    public lazy var successToast = Toast.success("사용 가능한 닉네임입니다", customConstraints: { [weak self] in
+        guard let self else { return }
+        $0.bottom.equalTo(nextButton.snp.top).offset(-8)
+    })
+    
+    public lazy var failureToast = Toast.failure("이미 사용 중인 닉네임입니다", customConstraints: { [weak self] in
+        guard let self else { return }
+        $0.bottom.equalTo(nextButton.snp.top).offset(-8)
+    })
+    
     public let profileImageSettingView = ProfileImageSettingView()
     
     public let nicknameStackView = UIStackView().then {
@@ -36,6 +46,11 @@ public final class NicknameView: BaseView {
     }
     
     public let nicknameTextField = FlintTextField(placeholder: "닉네임", maxLength: 8, showLength: true)
+    public let nicknameWarningLabel = UILabel().then {
+        $0.textColor = .flintError500
+        $0.isHidden = true
+        $0.attributedText = .pretendard(.body2_r_14, text: "닉네임은 한글, 영어, 숫자만 사용할 수 있어요.")
+    }
     
     public let verifyButton = BasicButton(title: "확인").then {
         $0.isEnabled = false
@@ -64,7 +79,7 @@ public final class NicknameView: BaseView {
     }
     
     public override func setHierarchy() {
-        addSubviews(profileImageSettingView, nicknameStackView, nextButton)
+        addSubviews(profileImageSettingView, nicknameStackView, nextButton, nicknameWarningLabel)
         nicknameStackView.addArrangedSubviews(nicknameTitleLabel, nicknameVerifyStackView)
         nicknameVerifyStackView.addArrangedSubviews(nicknameTextField, verifyButton)
     }
@@ -77,6 +92,10 @@ public final class NicknameView: BaseView {
         nicknameStackView.snp.makeConstraints {
             $0.top.equalTo(profileImageSettingView.snp.bottom).offset(24)
             $0.horizontalEdges.equalToSuperview().inset(16)
+        }
+        nicknameWarningLabel.snp.makeConstraints {
+            $0.leading.equalTo(nicknameVerifyStackView.snp.leading)
+            $0.top.equalTo(nicknameVerifyStackView.snp.bottom).offset(8)
         }
         verifyButton.snp.makeConstraints {
             $0.width.equalTo(60)
@@ -93,6 +112,6 @@ public final class NicknameView: BaseView {
         nextButton.isEnabled = false
         guard let textField = action.sender as? FlintTextField else { return }
         guard let count = textField.text?.count else { return }
-        verifyButton.isEnabled = count > 0
+        verifyButton.isEnabled = count >= 2
     }
 }

@@ -29,10 +29,11 @@ public final class ExploreCollectionViewCell: BaseCollectionViewCell {
     
     public let collectionTitleLabel = UILabel().then {
         $0.textColor = .flintWhite
+        $0.numberOfLines = 2
     }
     public let collectionDescriptionLabel = UILabel().then {
         $0.textColor = .flintWhite
-        $0.numberOfLines = 0
+        $0.numberOfLines = 8
     }
     
     // MARK: - Basic

@@ -24,6 +24,15 @@ public final class OnboardingOttCollectionViewCell: BaseCollectionViewCell {
         $0.textAlignment = .center
     }
     
+    public let overlayView = UIView().then {
+        $0.isHidden = true
+        $0.backgroundColor = .flintOverlay
+    }
+    
+    public let checkImageView = UIImageView().then {
+        $0.image = .icPlainCheck
+        $0.contentMode = .scaleAspectFill
+    }
     
     // MARK: - Basic
     
@@ -43,7 +52,9 @@ public final class OnboardingOttCollectionViewCell: BaseCollectionViewCell {
         contentView.addSubviews(
             imageView,
             titleLabel,
+            overlayView,
         )
+        overlayView.addSubview(checkImageView)
     }
     
     public override func setLayout() {
@@ -55,6 +66,13 @@ public final class OnboardingOttCollectionViewCell: BaseCollectionViewCell {
             $0.top.equalTo(imageView.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
+        }
+        overlayView.snp.makeConstraints {
+            $0.edges.equalTo(imageView)
+        }
+        checkImageView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(32)
         }
     }
 }

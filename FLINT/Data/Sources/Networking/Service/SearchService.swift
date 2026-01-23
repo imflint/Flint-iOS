@@ -16,8 +16,7 @@ import Domain
 import DTO
 
 public protocol SearchService {
-    func searchContents(
-        _ query: String) -> AnyPublisher<SearchContentsDTO, Error>
+    func searchContents(_ keyword: String?) -> AnyPublisher<SearchContentsDTO, Error>
 }
 
 public final class DefaultSearchService: SearchService {
@@ -28,10 +27,9 @@ public final class DefaultSearchService: SearchService {
         self.provider = provider
     }
     
-    public func searchContents(_ keyword: String) -> AnyPublisher<SearchContentsDTO, Error> {
+    public func searchContents(_ keyword: String?) -> AnyPublisher<SearchContentsDTO, Error> {
         provider.requestPublisher(.searchContents(keyword))
             .extractData(SearchContentsDTO.self)
     }
-        
 }
 

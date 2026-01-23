@@ -43,22 +43,32 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     // MARK: - Bind
     
     public override func bind() {
-        onboardingViewModel.isValidNickname.sink(receiveValue: { [weak self] isValidNickname in
-            guard let self, let isValidNickname else { return }
-            Log.d(isValidNickname)
-            rootView.nextButton.isEnabled = isValidNickname
-            if isValidNickname {
+        onboardingViewModel.nicknameValidState.sink(receiveValue: { [weak self] nicknameValidState in
+            Log.d(nicknameValidState)
+            guard let self else { return }
+            switch nicknameValidState {
+            case .valid:
+                rootView.nextButton.isEnabled = true
+                rootView.nicknameWarningLabel.isHidden = true
                 rootView.nicknameTextField.layer.borderWidth = 0
                 rootView.nicknameTextField.layer.borderColor = nil
-                Toast.success("사용 가능한 닉네임입니다", customConstraints: {
-                    $0.bottom.equalTo(self.rootView.nextButton.snp.top).offset(-8)
-                }).show()
-            } else {
+                rootView.successToast.show()
+            case .invalid:
+                rootView.nextButton.isEnabled = false
+                rootView.nicknameWarningLabel.isHidden = false
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
-                Toast.failure("이미 사용 중인 닉네임입니다", customConstraints: {
-                    $0.bottom.equalTo(self.rootView.nextButton.snp.top).offset(-8)
-                }).show()
+            case .duplicate:
+                rootView.nextButton.isEnabled = false
+                rootView.nicknameWarningLabel.isHidden = true
+                rootView.nicknameTextField.layer.borderWidth = 1
+                rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
+                rootView.failureToast.show()
+            case .none:
+                rootView.nextButton.isEnabled = false
+                rootView.nicknameWarningLabel.isHidden = true
+                rootView.nicknameTextField.layer.borderWidth = 0
+                rootView.nicknameTextField.layer.borderColor = nil
             }
         })
         .store(in: &cancellables)
@@ -149,8 +159,10 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     }
     
     private func nextButtonTapped(_ action: UIAction) {
-        // TODO: - FilmSelect 연결
-//        viewControllerFactory.
+        rootView.successToast.close(animated: false)
+        rootView.failureToast.close(animated: false)
+        guard let filmSelectViewController = viewControllerFactory?.makeFilmSelectViewController(onboardingViewModel: onboardingViewModel) else { return }
+        navigationController?.pushViewController(filmSelectViewController, animated: true)
     }
 }
 

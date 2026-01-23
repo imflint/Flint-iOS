@@ -15,9 +15,12 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingFactory & ExploreFactory
+typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory
 
 final class DIContainer: AppFactory {
+    
+    
+    
     
     // MARK: - Root Dependency
     
@@ -33,6 +36,18 @@ final class DIContainer: AppFactory {
         ]
     )
     private lazy var collectionAPIProvider = MoyaProvider<CollectionAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
+    private lazy var searchAPIProvider = MoyaProvider<SearchAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
+    private lazy var authAPIProvider = MoyaProvider<AuthAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
             networkLoggerPlugin
@@ -55,12 +70,27 @@ final class DIContainer: AppFactory {
         return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
     }
     
+    func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController {
+        return FilmSelectViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
+    }
+    
+    func makeOttSelectViewController(onboardingViewModel: OnboardingViewModel) -> OttSelectViewController {
+        return OttSelectViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
+    }
+    
+    func makeOnboardingDoneViewController(onboardingViewModel: OnboardingViewModel) -> OnboardingDoneViewController {
+        return OnboardingDoneViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
+    }
+    
     func makeExploreViewController() -> ViewController.ExploreViewController {
         return ExploreViewController(exploreViewModel: makeExploreViewModel(), viewControllerFactory: self)
     }
     
-    
     // MARK: - Root Dependency Injection
+    
+    func makeTokenStorage() -> TokenStorage {
+        return tokenStorage
+    }
     
     func makeUserAPIProvider() -> MoyaProvider<UserAPI> {
         return userAPIProvider
@@ -70,4 +100,11 @@ final class DIContainer: AppFactory {
         return collectionAPIProvider
     }
     
+    func makeSearchAPIProvider() -> Moya.MoyaProvider<Networking.SearchAPI> {
+        return searchAPIProvider
+    }
+    
+    func makeAuthAPIProvider() -> MoyaProvider<AuthAPI> {
+        return authAPIProvider
+    }
 }

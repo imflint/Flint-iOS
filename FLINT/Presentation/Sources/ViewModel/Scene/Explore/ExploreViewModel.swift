@@ -54,6 +54,7 @@ public final class DefaultExploreViewModel: ExploreViewModel {
     
     private func fetchCollections() {
         exploreUseCase.fetchExplore(cursor: cursor)
+            .manageThread()
             .sinkHandledCompletion { [weak self] collectionPagingEntity in
                 guard let self else { return }
                 collections.value.append(contentsOf: collectionPagingEntity.collections)

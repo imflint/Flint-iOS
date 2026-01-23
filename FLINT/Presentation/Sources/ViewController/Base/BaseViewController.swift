@@ -55,7 +55,7 @@ public class BaseViewController<RootView: UIView>: UIViewController {
     }
     
     func setBaseHierarchy() {
-        view.addSubviews(statusBarBackgroundView, rootView, navigationBarView)
+        view.addSubviews(rootView, statusBarBackgroundView, navigationBarView)
     }
     
     public func setBaseLayout() {
