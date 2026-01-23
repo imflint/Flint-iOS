@@ -1,5 +1,5 @@
 //
-//  RecentCollectionTableViewCell.swift
+//  MoreNoMoreCollectionTableViewCell.swift
 //  FLINT
 //
 //  Created by 소은 on 1/16/26.

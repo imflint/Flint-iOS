@@ -108,6 +108,7 @@ private extension CreateCollectionViewController {
             .sink { [weak self] in
                 // TODO: 성공 처리 
                 self?.navigationController?.popViewController(animated: true)
+                print("CreateCollection 성공")
             }
             .store(in: &cancellables)
         
@@ -117,6 +118,12 @@ private extension CreateCollectionViewController {
                 print("CreateCollection 실패:", error)
             }
             .store(in: &cancellables)
+        
+        rootView.onTapComplete = { [weak self] in
+            guard let self else { return }
+            self.updateCreatePayload()
+            self.viewModel.createCollection()
+        }
     }
     func updateCreatePayload() {
         viewModel.updateTitle(collectionTitleText)
@@ -127,10 +134,9 @@ private extension CreateCollectionViewController {
     
     func makeContentList() -> [CreateCollectionEntity.CreateCollectionContents] {
         return selectedReasonItems.map { item in
-            let contentId: Int64 = 0 // TODO: 실제 contentId 연결 필요
             
             return CreateCollectionEntity.CreateCollectionContents(
-                contentId: contentId,
+                contentId: item.contentId,
                 isSpoiler: item.isSpoiler,
                 reason: item.reasonText ?? ""
             )
@@ -156,6 +162,7 @@ private extension CreateCollectionViewController {
             }
             
             return SelectedContentReasonTableViewCellItem(
+                contentId: model.contentId,
                 posterURL: model.posterURL,
                 posterImage: model.posterImage, title: model.title,
                 director: model.director,

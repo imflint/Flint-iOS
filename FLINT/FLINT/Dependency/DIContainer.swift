@@ -15,9 +15,13 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & CollectionDetailFactory & LoginViewModelFactory
+typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & HomeFactory & CollectionDetailFactory & LoginViewModelFactory
 
 final class DIContainer: AppFactory {
+    func makeHomeViewModel(homeUseCase: any UseCase.HomeUseCase) -> ViewModel.HomeViewModel {
+        return makeHomeViewModel(homeUseCase: makeHomeUseCase())
+    }
+    
     
     // MARK: - Root Dependency
     
@@ -59,6 +63,13 @@ final class DIContainer: AppFactory {
         ]
     )
     
+    private lazy var homeAPIProvider = MoyaProvider<HomeAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
+    
     // MARK: - Init
     
     init() {
@@ -92,8 +103,10 @@ final class DIContainer: AppFactory {
         let vm = makeCreateCollectionViewModel()
         return CreateCollectionViewController(viewModel: vm, viewControllerFactory: self)
     }
+    
     func makeHomeViewController() -> HomeViewController {
-        return HomeViewController()
+        let vm = makeHomeViewModel()
+        return HomeViewController(viewModel: vm, viewControllerFactory: self)
     }
     
     func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController {
@@ -146,5 +159,9 @@ final class DIContainer: AppFactory {
     
     func makeAuthAPIProvider() -> MoyaProvider<AuthAPI> {
         return authAPIProvider
+    }
+    
+    func makeHomeAPIProvider() -> Moya.MoyaProvider<Networking.HomeAPI> {
+        return homeAPIProvider
     }
 }
