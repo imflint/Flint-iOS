@@ -162,7 +162,15 @@ extension HomeViewController: UITableViewDataSource {
             ) as! HomeCTAButtonTableViewCell
             cell.configure(title: title)
             return cell
+        case .recentSavedContents(let items):
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,
+                for: indexPath
+            ) as! RecentSavedContentTableViewCell
+            cell.configure(items: items)
+            return cell
         }
+        
     }
 }
 

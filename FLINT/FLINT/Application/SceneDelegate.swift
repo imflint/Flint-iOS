@@ -20,14 +20,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        let viewController = diContainer.makeTabBarViewController()
         
         
         let navigationController = UINavigationController(rootViewController: diContainer.makeTabBarViewController()).configured({
             $0.navigationBar.isHidden = true
         })
         
-//        navigationController?.pushViewController(vc, animated: true)
 
         
         window?.rootViewController = navigationController

@@ -19,6 +19,10 @@ typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & Expl
 
 
 final class DIContainer: AppFactory {
+    func makeHomeViewModel(homeUseCase: any UseCase.HomeUseCase) -> ViewModel.HomeViewModel {
+        return makeHomeViewModel(homeUseCase: makeHomeUseCase())
+    }
+    
     
     // MARK: - Root Dependency
     

@@ -10,7 +10,7 @@ import Data
 import Domain
 import Presentation
 
-public protocol HomeFactory {
+protocol HomeFactory: ProfileFactory {
 
     // MARK: - Home (Recommended)
 
@@ -35,7 +35,7 @@ public protocol HomeFactory {
     func makeHomeViewModel(homeUseCase: HomeUseCase) -> HomeViewModel
 }
 
-public extension HomeFactory {
+extension HomeFactory {
 
     // MARK: - Home (Recommended)
 
@@ -65,14 +65,21 @@ public extension HomeFactory {
 
     // MARK: - ViewModel
 
+//    func makeHomeViewModel() -> HomeViewModel {
+//        makeHomeViewModel(
+//            homeUseCase: makeHomeUseCase()
+//        )
+//    }
+    
+//    func makeHomeViewModel(homeUseCase: HomeUseCase) -> HomeViewModel {
+//            HomeViewModel(homeUseCase: homeUseCase, initialUserName: "안비")
+//    }
     func makeHomeViewModel() -> HomeViewModel {
-        makeHomeViewModel(
-            homeUseCase: makeHomeUseCase()
+        HomeViewModel(
+            homeUseCase: makeHomeUseCase(),
+            userProfileUseCase: makeUserProfileUseCase()
         )
     }
-    
-    func makeHomeViewModel(homeUseCase: HomeUseCase) -> HomeViewModel {
-            HomeViewModel(homeUseCase: homeUseCase, initialUserName: "안비")
-    }
+
 }
 
