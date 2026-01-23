@@ -20,6 +20,7 @@ import Entity
 
 public final class HomeViewModel {
 
+    
     // MARK: - Section / Row
 
     public struct SectionModel {
@@ -45,6 +46,7 @@ public final class HomeViewModel {
     // MARK: - Output
 
     @Published public private(set) var sections: [SectionModel] = []
+    private var watchingCollections: [CollectionEntity] = []
 
     // MARK: - Dependencies
 
@@ -160,16 +162,29 @@ public final class HomeViewModel {
 
         result.append(.init(rows: recentRows))
 
-        // 4) 눈여겨보고 있는 컬렉션 (지금은 헤더만 유지)
-        result.append(
-            .init(rows: [
-                .header(
-                    style: .more,
-                    title: "눈여겨보고 있는 컬렉션",
-                    subtitle: "\(userName)님이 최근 살펴본 컬렉션이에요"
-                )
-            ])
-        )
+        let watchingRows: [Row]
+
+                if watchingCollections.isEmpty {
+                    watchingRows = [
+                        .header(
+                            style: .normal,
+                            title: "아직 읽어본 컬렉션이 없어요",
+                            subtitle: "천천히 둘러보며 끌리는 취향을 발견해보세요"
+                        ),
+                        .ctaButton(title: "취향 발견하러 가기")
+                    ]
+                } else {
+                    watchingRows = [
+                        .header(
+                            style: .more,
+                            title: "눈여겨보고 있는 컬렉션",
+                            subtitle: "\(userName)님이 최근 살펴본 컬렉션이에요"
+                        ),
+                        .fliner(items: watchingCollections)
+                    ]
+                }
+
+                result.append(.init(rows: watchingRows))
 
         return result
     }
