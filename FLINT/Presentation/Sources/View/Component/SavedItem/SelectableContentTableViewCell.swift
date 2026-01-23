@@ -144,4 +144,10 @@ public final class SelectableContentTableViewCell: BaseTableViewCell {
         updateCheckbox(isSelected: isSelectedItem)
         onTapCheckbox?(isSelectedItem)
     }
+    
+    public func setDisabled(_ isDisabled: Bool) {
+        checkboxButton.isEnabled = !isDisabled
+        contentView.alpha = isDisabled ? 0.8 : 1.0
+    }
+
 }

@@ -37,6 +37,8 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
     private var selectedEntities: [ContentEntity] = []
     private var selectedViewModels: [SavedContentItemViewModel] = []
     private var isSearching: Bool = false
+    
+    private let maxSelectionCount: Int = 10
 
     // MARK: - Init
 
@@ -230,7 +232,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         var modal: Modal?
 
         modal = Modal(
-            image: DesignSystem.Icon.Gradient.none,
+            image: DesignSystem.Icon.Gradient.trash,
             title: "작품을 삭제할까요?",
             caption: "작성한 내용이 모두 삭제돼요.",
             leftButtonTitle: "취소",
@@ -277,8 +279,12 @@ extension AddContentSelectViewController: UITableViewDataSource {
         let entity = results[indexPath.section]
         let isSelected = selectedViewModels.contains(where: { key(of: $0) == key(of: entity) })
 
+        let isFull = selectedViewModels.count >= maxSelectionCount
+        let shouldDisable = isFull && !isSelected
+        
         let vm = toViewModel(entity)
         cell.configure(model: vm, isSelected: isSelected)
+        cell.setDisabled(shouldDisable)
 
         if let url = entity.posterUrl {
             cell.posterImageView.kf.setImage(with: url)
@@ -322,7 +328,7 @@ extension AddContentSelectViewController: UITableViewDelegate {
             selectedViewModels.remove(at: idx)
             selectedEntities.removeAll { key(of: $0) == k }
         } else {
-            guard selectedViewModels.count < 10 else { return }
+            guard selectedViewModels.count < maxSelectionCount else { return }
             selectedViewModels.append(toViewModel(entity))
             selectedEntities.append(entity)
         }

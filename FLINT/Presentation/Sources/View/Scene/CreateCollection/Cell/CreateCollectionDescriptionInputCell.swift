@@ -60,7 +60,7 @@ public final class CreateCollectionDescriptionInputCell: BaseTableViewCell {
     
     public override func setLayout() {
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(36)
+            $0.top.equalToSuperview()
             $0.leading.equalToSuperview().inset(16)
             $0.trailing.lessThanOrEqualTo(selectionLabel.snp.leading).offset(-4)
         }
@@ -80,7 +80,7 @@ public final class CreateCollectionDescriptionInputCell: BaseTableViewCell {
         countLabel.snp.makeConstraints {
             $0.top.equalTo(descriptionTextView.snp.bottom).offset(8)
             $0.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(16)
         }
     }
     

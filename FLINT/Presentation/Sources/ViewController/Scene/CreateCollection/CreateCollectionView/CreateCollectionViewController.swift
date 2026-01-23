@@ -90,7 +90,8 @@ private extension CreateCollectionViewController {
         rootView.tableView.register(CreateCollectionTitleInputCell.self)
         rootView.tableView.register(CreateCollectionDescriptionInputCell.self)
         rootView.tableView.register(CreateCollectionVisibilityCell.self)
-        rootView.tableView.register(CreateCollectionAddContentCell.self)
+        rootView.tableView.register(CreateCollectionAddContentHeaderCell.self)
+        rootView.tableView.register(CreateCollectionAddContentButtonCell.self)
         rootView.tableView.register(SelectedContentReasonTableViewCell.self)
     }
     
@@ -241,7 +242,7 @@ extension CreateCollectionViewController: UITableViewDataSource {
         if section == 0 {
             return CreateCollectionRow.allCases.count - 1
         } else {
-            return selectedReasonItems.count + 1
+            return selectedReasonItems.count + 2
         }
     }
     
@@ -302,54 +303,75 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 return UITableViewCell()
             }
         }
-        
-        if indexPath.row < selectedReasonItems.count {
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: SelectedContentReasonTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! SelectedContentReasonTableViewCell
+
+        if indexPath.section == 1 {
             
-            let item = selectedReasonItems[indexPath.row]
-            cell.configure(with: item)
-            
-            cell.onTapClose = { [weak self, weak cell] in
-                guard let self, let cell,
-                      let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+            if indexPath.row == 0 {
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: CreateCollectionAddContentHeaderCell.reuseIdentifier,
+                    for: indexPath
+                ) as! CreateCollectionAddContentHeaderCell
                 
-                let item = self.selectedReasonItems[indexPath.row]
-                self.deleteReasonItem(item, at: indexPath.row)
+                cell.configure(selectedCount: selectedReasonItems.count, maxCount: 10)
+                return cell
             }
             
-            cell.onTapCloseWithDraft = { [weak self, weak cell] in
-                guard let self, let cell,
-                      let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+            let reasonIndex = indexPath.row - 1
+            
+            if reasonIndex < selectedReasonItems.count {
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: SelectedContentReasonTableViewCell.reuseIdentifier,
+                    for: indexPath
+                ) as! SelectedContentReasonTableViewCell
                 
-                let item = self.selectedReasonItems[indexPath.row]
-                self.presentDeleteConfirmModal {
-                    self.deleteReasonItem(item, at: indexPath.row)
+                let item = selectedReasonItems[reasonIndex]
+                cell.configure(with: item)
+                
+                cell.onTapClose = { [weak self, weak cell] in
+                    guard let self, let cell,
+                          let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+                    
+                    let reasonIndex = indexPath.row - 1
+                    let item = self.selectedReasonItems[reasonIndex]
+                    self.deleteReasonItem(item, at: reasonIndex)
                 }
+                
+                cell.onTapCloseWithDraft = { [weak self, weak cell] in
+                    guard let self, let cell,
+                          let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+                    
+                    let reasonIndex = indexPath.row - 1
+                    let item = self.selectedReasonItems[reasonIndex]
+                    self.presentDeleteConfirmModal {
+                        self.deleteReasonItem(item, at: reasonIndex)
+                    }
+                }
+                
+                cell.onToggleSpoiler = { [weak self, weak cell] isOn in
+                    guard let self, let cell,
+                          let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+                    
+                    let reasonIndex = indexPath.row - 1
+                    self.selectedReasonItems[reasonIndex].isSpoiler = isOn
+                    self.updateCreatePayload()
+                }
+                
+                cell.onChangeReasonText = { [weak self, weak cell] text in
+                    guard let self, let cell,
+                          let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+                    
+                    let reasonIndex = indexPath.row - 1
+                    self.selectedReasonItems[reasonIndex].reasonText = text
+                    self.updateCreatePayload()
+                }
+                
+                return cell
             }
             
-            cell.onToggleSpoiler = { [weak self, weak cell] isOn in
-                guard let self, let cell,
-                      let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
-                self.selectedReasonItems[indexPath.row].isSpoiler = isOn
-                self.updateCreatePayload()
-            }
-            
-            cell.onChangeReasonText = { [weak self, weak cell] text in
-                guard let self, let cell,
-                      let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
-                self.selectedReasonItems[indexPath.row].reasonText = text
-                self.updateCreatePayload()
-            }
-            
-            return cell
-        } else {
             let cell = tableView.dequeueReusableCell(
-                withIdentifier: CreateCollectionAddContentCell.reuseIdentifier,
+                withIdentifier: CreateCollectionAddContentButtonCell.reuseIdentifier,
                 for: indexPath
-            ) as! CreateCollectionAddContentCell
+            ) as! CreateCollectionAddContentButtonCell
             
             cell.onTapAdd = { [weak self] in
                 self?.presentAddContentSelect()
@@ -357,6 +379,8 @@ extension CreateCollectionViewController: UITableViewDataSource {
             
             return cell
         }
+        
+        return UITableViewCell()
     }
 }
 
