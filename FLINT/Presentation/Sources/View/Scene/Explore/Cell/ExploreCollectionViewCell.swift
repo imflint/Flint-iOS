@@ -12,6 +12,8 @@ import Then
 
 public final class ExploreCollectionViewCell: BaseCollectionViewCell {
     
+    public var onTapMakeCollection: (() -> Void)?
+    
     // MARK: - Component
     
     public let collectionImageView = UIImageView().then {
@@ -41,7 +43,8 @@ public final class ExploreCollectionViewCell: BaseCollectionViewCell {
     public override init(frame: CGRect) {
         super.init(frame: frame)
         
-        
+        collectionDetailButton.addTarget(self, action: #selector(didTapMakeCollection), for: .touchUpInside)
+
     }
     
     required init?(coder: NSCoder) {
@@ -86,5 +89,10 @@ public final class ExploreCollectionViewCell: BaseCollectionViewCell {
         collectionImageView.image = nil
         collectionTitleLabel.text = nil
         collectionDescriptionLabel.text = nil
+    }
+    
+    @objc
+    private func didTapMakeCollection() {
+        onTapMakeCollection?()
     }
 }
