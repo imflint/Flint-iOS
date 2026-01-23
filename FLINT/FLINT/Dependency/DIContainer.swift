@@ -17,6 +17,7 @@ import Presentation
 
 typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory
 
+
 final class DIContainer: AppFactory {
     
     // MARK: - Root Dependency

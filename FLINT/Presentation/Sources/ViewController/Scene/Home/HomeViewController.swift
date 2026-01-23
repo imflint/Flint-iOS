@@ -88,6 +88,13 @@ public final class HomeViewController: BaseViewController<HomeView> {
         case .more: return .more
         }
     }
+    
+    private func map(_ style: HomeViewModel.TitleHeaderStyle) -> TitleHeaderTableViewCell.TitleHeaderStyle {
+        switch style {
+        case .normal: return .normal
+        case .more: return .more
+        }
+    }
 }
 
 
@@ -154,7 +161,7 @@ extension HomeViewController: UITableViewDataSource {
 //            ) as! RecentSavedContentTableViewCell
 //
 //            cell.configure(items: items)
-//
+//            
 //            cell.onTapItem = { [weak self] item in
 //                let circles = item.availableOn.intersection(item.subscribedOn)
 //
