@@ -22,6 +22,9 @@ public protocol OnboardingViewModelInput {
     
     // ott select
     func clickOtt(_ ott: Ott)
+    
+    // onboardingDone
+    func signup()
 }
 
 public protocol OnboardingViewModelOutput {
@@ -45,6 +48,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     private let nicknameUseCase: NicknameUseCase
     private let contentsUseCase: ContentsUseCase
     private let searchContentsUseCase: SearchContentsUseCase
+    private let signupUseCase: SignupUseCase
     
     public var nickname: CurrentValueSubject<String, Never> = .init("")
     public var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
@@ -65,10 +69,16 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
-    public init(nicknameUseCase: NicknameUseCase, contentsUseCase: ContentsUseCase, searchContentsUseCase: SearchContentsUseCase) {
+    public init(
+        nicknameUseCase: NicknameUseCase,
+        contentsUseCase: ContentsUseCase,
+        searchContentsUseCase: SearchContentsUseCase,
+        signupUseCase: SignupUseCase
+    ) {
         self.nicknameUseCase = nicknameUseCase
         self.contentsUseCase = contentsUseCase
         self.searchContentsUseCase = searchContentsUseCase
+        self.signupUseCase = signupUseCase
     }
     
     public func checkNickname(_ nickname: String) {
@@ -125,5 +135,16 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         } else {
             selectedOtt.value.append(ott)
         }
+    }
+    
+    public func signup() {
+//        signupUseCase.signup(
+//            SignupInfoEntity(
+//                tempToken: "",
+//                nickname: nickname.value,
+//                favoriteContentIds: [],
+//                subscribedOttIds: []
+//            )
+//        )
     }
 }

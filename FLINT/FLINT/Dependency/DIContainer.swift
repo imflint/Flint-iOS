@@ -19,6 +19,9 @@ typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & Expl
 
 final class DIContainer: AppFactory {
     
+    
+    
+    
     // MARK: - Root Dependency
     
     private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
@@ -39,6 +42,12 @@ final class DIContainer: AppFactory {
         ]
     )
     private lazy var searchAPIProvider = MoyaProvider<SearchAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
+    private lazy var authAPIProvider = MoyaProvider<AuthAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
             networkLoggerPlugin
@@ -79,6 +88,10 @@ final class DIContainer: AppFactory {
     
     // MARK: - Root Dependency Injection
     
+    func makeTokenStorage() -> TokenStorage {
+        return tokenStorage
+    }
+    
     func makeUserAPIProvider() -> MoyaProvider<UserAPI> {
         return userAPIProvider
     }
@@ -89,5 +102,9 @@ final class DIContainer: AppFactory {
     
     func makeSearchAPIProvider() -> Moya.MoyaProvider<Networking.SearchAPI> {
         return searchAPIProvider
+    }
+    
+    func makeAuthAPIProvider() -> MoyaProvider<AuthAPI> {
+        return authAPIProvider
     }
 }
