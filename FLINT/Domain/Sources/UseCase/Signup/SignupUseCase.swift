@@ -17,7 +17,7 @@ public protocol SignupUseCase {
 
 public final class DefaultSignupUseCase: SignupUseCase {
     
-    let authRepository: AuthRepository
+    private let authRepository: AuthRepository
     
     public init(authRepository: AuthRepository) {
         self.authRepository = authRepository

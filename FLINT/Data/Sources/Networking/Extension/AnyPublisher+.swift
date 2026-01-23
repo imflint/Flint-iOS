@@ -19,6 +19,7 @@ public extension AnyPublisher where Output == Response, Failure == MoyaError {
     func extractData<D: Codable>(_ type: D.Type, atKeyPath keyPath: String? = nil, using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true) -> AnyPublisher<D, Error> {
         return map(BaseResponse<D>.self)
             .tryMap({ baseResponse in
+                Log.d(baseResponse)
                 guard (200..<300).contains(baseResponse.status) else {
                     throw NetworkError.httpStatusCode(baseResponse.serverError)
                 }

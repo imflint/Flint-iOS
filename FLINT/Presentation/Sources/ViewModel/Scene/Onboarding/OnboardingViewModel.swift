@@ -39,6 +39,7 @@ public protocol OnboardingViewModelOutput {
     
     // ott select
     var selectedOtt: CurrentValueSubject<[Ott], Never> { get set }
+    var userId: CurrentValueSubject<String?, Never> { get set }
 }
 
 public typealias OnboardingViewModel = OnboardingViewModelInput & OnboardingViewModelOutput
@@ -66,6 +67,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     public var selectedContents: CurrentValueSubject<[ContentEntity], Never> = .init([])
     
     public var selectedOtt: CurrentValueSubject<[Ott], Never> = .init([])
+    public var userId: CurrentValueSubject<String?, Never> = .init(nil)
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
@@ -138,13 +140,19 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func signup() {
-//        signupUseCase.signup(
-//            SignupInfoEntity(
-//                tempToken: "",
-//                nickname: nickname.value,
-//                favoriteContentIds: [],
-//                subscribedOttIds: []
-//            )
-//        )
+        signupUseCase.signup(
+            SignupInfoEntity(
+                nickname: nickname.value,
+                favoriteContentIds: selectedContents.value.compactMap({ content in
+                    Int(content.id)
+                }),
+                subscribedOttIds: selectedOtt.value.map(\.id)
+            )
+        )
+        .manageThread()
+        .sinkHandledCompletion { [weak self] userId in
+            self?.userId.send(userId)
+        }
+        .store(in: &cancellables)
     }
 }

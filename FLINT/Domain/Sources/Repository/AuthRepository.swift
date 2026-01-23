@@ -12,4 +12,5 @@ import Entity
 
 public protocol AuthRepository {
     func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<String, Error>
+    func socialVerify(socialVerifyEntity: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error>
 }

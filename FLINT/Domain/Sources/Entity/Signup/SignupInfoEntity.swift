@@ -8,13 +8,11 @@
 import Foundation
 
 public struct SignupInfoEntity: Codable {
-    public let tempToken: String
     public let nickname: String
     public let favoriteContentIds: [Int] // Java Long
     public let subscribedOttIds: [Int] // Java Long
     
-    public init(tempToken: String, nickname: String, favoriteContentIds: [Int], subscribedOttIds: [Int]) {
-        self.tempToken = tempToken
+    public init(nickname: String, favoriteContentIds: [Int], subscribedOttIds: [Int]) {
         self.nickname = nickname
         self.favoriteContentIds = favoriteContentIds
         self.subscribedOttIds = subscribedOttIds

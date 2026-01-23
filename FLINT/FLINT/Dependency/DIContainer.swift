@@ -15,14 +15,14 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & CollectionDetailFactory
-
+typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & CollectionDetailFactory & LoginViewModelFactory
 
 final class DIContainer: AppFactory {
     
     // MARK: - Root Dependency
     
-    private lazy var tokenStorage: TokenStorage = TestTokenStorage()
+    private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
+//    private lazy var tokenStorage: TokenStorage = TestTokenStorage()
     
     private lazy var authInterceptor: AuthInterceptor = AuthInterceptor(tokenStorage: tokenStorage)
     private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()
@@ -62,10 +62,18 @@ final class DIContainer: AppFactory {
     // MARK: - Init
     
     init() {
-        
+        tokenStorage.clearAll()
     }
     
     // MARK: - ViewControllerFactory
+    
+    func makeSplashViewController() -> SplashViewController {
+        return SplashViewController(viewControllerFactory: self)
+    }
+    
+    func makeLoginViewController() -> LoginViewController {
+        return LoginViewController(loginViewModel: makeLoginViewModel(), viewControllerFactory: self)
+    }
     
     func makeTabBarViewController() -> TabBarViewController {
         return TabBarViewController(viewControllerFactory: self)

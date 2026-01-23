@@ -13,7 +13,16 @@ import View
 import ViewModel
 
 public final class SplashViewController: BaseViewController<SplashView> {
-
+    
+    public init(viewControllerFactory: ViewControllerFactory) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewControllerFactory = viewControllerFactory
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,8 +37,7 @@ public final class SplashViewController: BaseViewController<SplashView> {
     }
 
     private func showLogin() {
-        let vc = LoginViewController() // 아래 참고
-        vc.modalPresentationStyle = .fullScreen
-        present(vc, animated: false)
+        guard let loginViewController = viewControllerFactory?.makeLoginViewController() else { return }
+        navigationController?.setViewControllers([loginViewController], animated: false)
     }
 }

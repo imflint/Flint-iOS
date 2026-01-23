@@ -10,7 +10,9 @@ import UIKit
 import ViewModel
 
 public protocol ViewControllerFactory {
-    
+    func makeSplashViewController() -> SplashViewController
+    func makeLoginViewController() -> LoginViewController
+
     func makeNicknameViewController() -> NicknameViewController
     
     func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController

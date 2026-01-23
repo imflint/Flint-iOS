@@ -20,7 +20,7 @@ public final class LoginView: BaseView {
         $0.image = UIImage(named: "img_background_login", in: .module, compatibleWith: nil)
     }
 
-    private let kakaoButton = UIButton(type: .custom).then {
+    public let kakaoButton = UIButton(type: .custom).then {
         $0.backgroundColor = UIColor(red: 254/255, green: 229/255, blue: 0/255, alpha: 1.0)
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
@@ -40,15 +40,10 @@ public final class LoginView: BaseView {
         $0.numberOfLines = 1
     }
 
-    // MARK: - Callback
-
-    public var onTapKakao: (() -> Void)?
-
     // MARK: - Override
 
     public override func setUI() {
-        kakaoButton.addTarget(self, action: #selector(didTapKakao), for: .touchUpInside)
-        kakaoButton.accessibilityLabel = "카카오로 시작하기"
+//        kakaoButton.accessibilityLabel = "카카오로 시작하기"
     }
 
     public override func setHierarchy() {
@@ -79,11 +74,5 @@ public final class LoginView: BaseView {
         kakaoTitleLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-    }
-
-    // MARK: - Action
-
-    @objc private func didTapKakao() {
-        onTapKakao?()
     }
 }
