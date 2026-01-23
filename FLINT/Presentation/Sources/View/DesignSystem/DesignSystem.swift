@@ -179,14 +179,14 @@ public enum DesignSystem {
             public static let netflix: UIImage = .imgNetflix
             public static let tving: UIImage = .imgTving
             public static let watcha: UIImage = .imgWatcha
-            public static let wave: UIImage = .imgWave
+            public static let wavve: UIImage = .imgWavve
             
             public static let coupangSmall: UIImage = .imgSmallCoupang1
             public static let disneySmall: UIImage = .imgSmallDisney1
             public static let netflixSmall: UIImage = .imgSmallNetflix1
             public static let tvingSmall: UIImage = .imgSmallTving1
             public static let watchaSmall: UIImage = .imgSmallWatcha1
-            public static let waveSmall: UIImage = .imgSmallWave1
+            public static let wavveSmall: UIImage = .imgSmallWavve1
         }
         
         public enum Tag {

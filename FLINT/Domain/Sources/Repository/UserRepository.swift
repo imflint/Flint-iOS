@@ -20,4 +20,6 @@ public protocol UserRepository {
     func fetchUserCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error>
     func fetchMyBookmarkedCollections() -> AnyPublisher<[CollectionEntity], Error>
     func fetchBookmarkedCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error>
+    func fetchMyBookmarkedContents() -> AnyPublisher<[ContentEntity], Error>
+    func fetchBookmarkedContents(userId: Int64) -> AnyPublisher<[ContentEntity], Error>
 }

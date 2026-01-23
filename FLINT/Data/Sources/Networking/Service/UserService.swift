@@ -25,6 +25,8 @@ public protocol UserService {
     func fetchUserCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error>
     func fetchMyBookmarkedCollections() -> AnyPublisher<UserCollectionsDTO, Error>
     func fetchBookmarkedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error>
+    func fetchMyBookmarkedContents() -> AnyPublisher<ContentsDTO, Error>
+    func fetchBookmarkedContents(userId: Int64) -> AnyPublisher<ContentsDTO, Error>
 }
 
 public final class DefaultUserService: UserService {
@@ -77,5 +79,15 @@ public final class DefaultUserService: UserService {
     public func fetchBookmarkedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error> {
         return userAPIProvider.requestPublisher(.fetchBookmarkedCollections(userId: userId))
             .extractData(UserCollectionsDTO.self)
+    }
+    
+    public func fetchMyBookmarkedContents() -> AnyPublisher<ContentsDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchMyBookmarkedContents)
+            .extractData(ContentsDTO.self)
+    }
+    
+    public func fetchBookmarkedContents(userId: Int64) -> AnyPublisher<ContentsDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchBookmarkedContents(userId: userId))
+            .extractData(ContentsDTO.self)
     }
 }

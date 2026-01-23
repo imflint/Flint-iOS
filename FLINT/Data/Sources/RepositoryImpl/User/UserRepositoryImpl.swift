@@ -46,7 +46,7 @@ public final class DefaultUserRepository: UserRepository {
             }
             .eraseToAnyPublisher()
     }
-
+    
     public func fetchUserKeywords(userId: Int64) -> AnyPublisher<[KeywordEntity], Error> {
         userService.fetchUserKeywords(userId: userId)
             .tryMap { dto in
@@ -62,7 +62,7 @@ public final class DefaultUserRepository: UserRepository {
             }
             .eraseToAnyPublisher()
     }
-
+    
     public func fetchUserCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error> {
         userService.fetchUserCollections(userId: userId)
             .tryMap { dto in
@@ -72,18 +72,35 @@ public final class DefaultUserRepository: UserRepository {
     }
     
     public func fetchMyBookmarkedCollections() -> AnyPublisher<[CollectionEntity], Error> {
-            userService.fetchMyBookmarkedCollections()
-                .tryMap { dto in
-                    try (dto.collections ?? []).map { try $0.entity }
-                }
-                .eraseToAnyPublisher()
-        }
-
-        public func fetchBookmarkedCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error> {
-            userService.fetchBookmarkedCollections(userId: userId)
-                .tryMap { dto in
-                    try (dto.collections ?? []).map { try $0.entity }
-                }
-                .eraseToAnyPublisher()
-        }
+        userService.fetchMyBookmarkedCollections()
+            .tryMap { dto in
+                try (dto.collections ?? []).map { try $0.entity }
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    public func fetchBookmarkedCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error> {
+        userService.fetchBookmarkedCollections(userId: userId)
+            .tryMap { dto in
+                try (dto.collections ?? []).map { try $0.entity }
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    public func fetchMyBookmarkedContents() -> AnyPublisher<[ContentEntity], Error> {
+        userService.fetchMyBookmarkedContents()
+            .tryMap { dto in
+                try (dto.contents ?? []).map { try $0.entity }
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    public func fetchBookmarkedContents(userId: Int64) -> AnyPublisher<[ContentEntity], Error> {
+        userService.fetchBookmarkedContents(userId: userId)
+            .tryMap { dto in
+                try (dto.contents ?? []).map { try $0.entity }
+            }
+            .eraseToAnyPublisher()
+    }
+    
 }

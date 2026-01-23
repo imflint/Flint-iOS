@@ -47,7 +47,7 @@ public class OttSelectViewController: BaseViewController<OttSelectView> {
             case .coupangPlay:
                 return DesignSystem.Image.Logo.coupang
             case .wavve:
-                return DesignSystem.Image.Logo.wave
+                return DesignSystem.Image.Logo.wavve
             case .disneyPlus:
                 return DesignSystem.Image.Logo.disney
             case .watchapedia:

@@ -15,12 +15,11 @@ public final class ProfileViewModel {
 
     public enum Row {
         case profileHeader(nickname: String, profileImageUrl: String, isFliner: Bool)
-
         case titleHeader(style: TitleHeaderStyle, title: String, subtitle: String)
         case preferenceChips(keywords: [KeywordEntity])
-
         case myCollections(items: [CollectionEntity])
         case savedCollections(items: [CollectionEntity])
+        case savedContents(items: [ContentEntity])
     }
 
     public enum TitleHeaderStyle {
@@ -43,6 +42,7 @@ public final class ProfileViewModel {
     private var keywords: [KeywordEntity] = []
     private var myCollections: [CollectionEntity] = []
     private var savedCollections: [CollectionEntity] = []
+    private var savedContents: [ContentEntity] = []
 
     public init(
         userProfileUseCase: UserProfileUseCase,
@@ -115,6 +115,19 @@ public final class ProfileViewModel {
                     self.rows = self.makeRows()
                 }
                 .store(in: &cancellables)
+        userProfileUseCase.fetchMyBookmarkedContents()
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("❌ fetchSavedContents failed:", error)
+                }
+            } receiveValue: { [weak self] items in
+                guard let self else { return }
+                self.savedContents = items
+                self.rows = self.makeRows()
+            }
+            .store(in: &cancellables)
+
     }
 
     // MARK: - Row builder
@@ -155,6 +168,16 @@ public final class ProfileViewModel {
             )
         )
         result.append(.savedCollections(items: savedCollections))
+        
+        result.append(
+            .titleHeader(
+                style: .more,
+                title: "저장한 콘텐츠",
+                subtitle: "\(nickname)님이 저장한 콘텐츠에요"
+            )
+        )
+        result.append(.savedContents(items: savedContents))
+
 
         return result
     }

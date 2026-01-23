@@ -21,20 +21,22 @@ public protocol UserProfileUseCase {
     func fetchUserCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error>
     func fetchMyBookmarkedCollections() -> AnyPublisher<[CollectionEntity], Error>
     func fetchBookmarkedCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error>
+    func fetchMyBookmarkedContents() -> AnyPublisher<[ContentEntity], Error>
+    func fetchBookmarkedContents(userId: Int64) -> AnyPublisher<[ContentEntity], Error>
 }
 
 public final class DefaultUserProfileUseCase: UserProfileUseCase {
-
+    
     private let userRepository: UserRepository
-
+    
     public init(userRepository: UserRepository) {
         self.userRepository = userRepository
     }
-
+    
     public func fetchUserProfile(userId: Int64) -> AnyPublisher<UserProfileEntity, Error> {
         return userRepository.fetchUserProfile(userId: userId)
     }
-
+    
     public func fetchMyProfile() -> AnyPublisher<UserProfileEntity, Error> {
         return userRepository.fetchMyProfile()
     }
@@ -61,5 +63,13 @@ public final class DefaultUserProfileUseCase: UserProfileUseCase {
     
     public func fetchBookmarkedCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error> {
         return userRepository.fetchBookmarkedCollections(userId: userId)
+    }
+    
+    public func fetchMyBookmarkedContents() -> AnyPublisher<[ContentEntity], Error> {
+        return userRepository.fetchMyBookmarkedContents()
+    }
+    
+    public func fetchBookmarkedContents(userId: Int64) -> AnyPublisher<[ContentEntity], Error> {
+        return userRepository.fetchBookmarkedContents(userId: userId)
     }
 }

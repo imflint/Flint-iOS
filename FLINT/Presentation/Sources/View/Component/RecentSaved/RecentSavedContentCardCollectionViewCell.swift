@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 import Then
 
+import Entity
+
 public final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewCell {
     
     //MARK: - UI
@@ -83,9 +85,12 @@ public final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewC
     
     //MARK: - configure
     
-    public func configure(with item: RecentSavedContentItem) {
-        
-        posterImageView.image = UIImage(named: item.posterImageName)
+    public func configure(with item: ContentEntity) {
+        if let url = URL(string: item.imageUrl) {
+            posterImageView.kf.setImage(with: url)
+        } else {
+            posterImageView.image = nil
+        }
         
         titleLabel.attributedText = .pretendard(.body1_b_16,
                                                 text: item.title,
@@ -93,8 +98,23 @@ public final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewC
         
         yearLabel.attributedText = .pretendard(.caption1_r_12,
                                                text: "\(item.year)",
-                                               color: .flintGray300 )
-        let display = item.logoDisplayModel
-        logoStripView.configure(leading: display.leading, remainingCount: display.remainingCount)
+                                               color: .flintGray300)
+        
+        let names = item.ottList.map { $0.ottName }
+        let leading = Array(names.prefix(2))
+        let remaining = max(names.count - leading.count, 0)
+        logoStripView.configure(leadingServerNames: leading, remainingCount: remaining)
+        
+        logoStripView.isHidden = leading.isEmpty && remaining == 0
+    }
+}
+
+public extension ContentEntity {
+    
+    var logoDisplayModel: (leading: [String], remainingCount: Int) {
+        let urls = ottList.map { $0.logoUrl }.filter { !$0.isEmpty }
+        let leading = Array(urls.prefix(2))
+        let remaining = max(urls.count - leading.count, 0)
+        return (leading, remaining)
     }
 }

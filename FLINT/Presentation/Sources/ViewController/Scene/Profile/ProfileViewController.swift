@@ -57,8 +57,10 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
             MoreNoMoreCollectionTableViewCell.self,
             forCellReuseIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier
         )
-
-        
+        tableView.register(
+            RecentSavedContentTableViewCell.self,
+            forCellReuseIdentifier: RecentSavedContentTableViewCell.reuseIdentifier
+        )
     }
     
     public override func bind() {
@@ -96,6 +98,8 @@ extension ProfileViewController: UITableViewDelegate {
         case .preferenceChips:
             return 48
         case .myCollections, .savedCollections:
+            return 24
+        case .savedContents:
             return 24
         }
     }
@@ -173,6 +177,16 @@ extension ProfileViewController: UITableViewDataSource {
 
             cell.onSelectItem = { entity in
                 print("저장 컬렉션 선택:", entity.id)
+            }
+            return cell
+            
+        case let .savedContents(items):
+            let cell = tableView.dequeueReusableCell(withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,
+                                                     for: indexPath) as! RecentSavedContentTableViewCell
+            cell.selectionStyle = .none
+            cell.configure(items: items)
+            cell.onTapItem = {entity in
+                print("저장 컨텐츠 선택: ", entity.id)
             }
             return cell
         }

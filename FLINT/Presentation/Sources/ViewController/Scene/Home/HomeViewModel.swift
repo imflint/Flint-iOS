@@ -81,7 +81,7 @@ public final class HomeViewModel {
 //                  title: "듄: 파트 2",
 //                  year: 2024,
 //                  availableOn: [.netflix, .disneyPlus, .watcha],
-//                  subscribedOn: [.netflix, .wave])
+//                  subscribedOn: [.netflix, .wavve])
 //        ]
 
         // ✅ "눈여겨보는 컬렉션"도 CollectionEntity로
