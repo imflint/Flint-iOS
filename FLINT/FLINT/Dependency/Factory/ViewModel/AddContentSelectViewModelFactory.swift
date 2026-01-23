@@ -10,17 +10,30 @@ import Foundation
 import Domain
 import Presentation
 
-protocol AddContentSelectViewModelFactory: SearchContentsUseCaseFactory {
+protocol AddContentSelectViewModelFactory: SearchContentsUseCaseFactory, ContentsUseCaseFactory {
     func makeAddContentSelectViewModel() -> AddContentSelectViewModel
-    func makeAddContentSelectViewModel(searchContentsUseCase: SearchContentsUseCase) -> AddContentSelectViewModel
+    func makeAddContentSelectViewModel(
+        contentsUseCase: ContentsUseCase,
+        searchContentsUseCase: SearchContentsUseCase
+    ) -> AddContentSelectViewModel
 }
 
 extension AddContentSelectViewModelFactory {
+
     func makeAddContentSelectViewModel() -> AddContentSelectViewModel {
-        return makeAddContentSelectViewModel(searchContentsUseCase: makeSearchContentsUseCase())
+        return makeAddContentSelectViewModel(
+            contentsUseCase: makeContentsUseCase(),
+            searchContentsUseCase: makeSearchContentsUseCase()
+        )
     }
 
-    func makeAddContentSelectViewModel(searchContentsUseCase: SearchContentsUseCase) -> AddContentSelectViewModel {
-        return DefaultAddContentSelectViewModel(useCase: searchContentsUseCase)
+    func makeAddContentSelectViewModel(
+        contentsUseCase: ContentsUseCase,
+        searchContentsUseCase: SearchContentsUseCase
+    ) -> AddContentSelectViewModel {
+        return DefaultAddContentSelectViewModel(
+            contentsUseCase: contentsUseCase,
+            searchContentsUseCase: searchContentsUseCase
+        )
     }
 }

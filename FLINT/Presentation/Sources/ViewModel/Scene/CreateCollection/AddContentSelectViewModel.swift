@@ -12,11 +12,11 @@ import Domain
 
 public protocol AddContentSelectViewModelInput {
     func updateKeyword(keyword: String)
+    func fetchContents()
 }
 
 public protocol AddContentSelectViewModelOutput {
     var results: CurrentValueSubject<[ContentEntity], Never> { get }
-
     var isSearching: CurrentValueSubject<Bool, Never> { get }
 }
 
@@ -24,21 +24,47 @@ public typealias AddContentSelectViewModel = AddContentSelectViewModelInput & Ad
 
 public final class DefaultAddContentSelectViewModel: AddContentSelectViewModel {
 
-    private let useCase: SearchContentsUseCase
+    // MARK: - Dependency
+
+    private let contentsUseCase: ContentsUseCase
+    private let searchContentsUseCase: SearchContentsUseCase
+
+    // MARK: - Output
 
     public var results: CurrentValueSubject<[ContentEntity], Never> = .init([])
     public var isSearching: CurrentValueSubject<Bool, Never> = .init(false)
 
+    // MARK: - Private
+
     private let keywordSubject = CurrentValueSubject<String, Never>("")
     private var cancellables = Set<AnyCancellable>()
 
-    public init(useCase: SearchContentsUseCase) {
-        self.useCase = useCase
+    // MARK: - Init
+
+    public init(
+        contentsUseCase: ContentsUseCase,
+        searchContentsUseCase: SearchContentsUseCase
+    ) {
+        self.contentsUseCase = contentsUseCase
+        self.searchContentsUseCase = searchContentsUseCase
         bind()
     }
 
+    // MARK: - Input
+
     public func updateKeyword(keyword: String) {
         keywordSubject.send(keyword)
+    }
+
+    public func fetchContents() {
+        isSearching.send(false)
+
+        contentsUseCase.fetchContents()
+            .manageThread()
+            .sinkHandledCompletion { [weak self] contents in
+                self?.results.send(contents)
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -56,15 +82,14 @@ public extension DefaultAddContentSelectViewModel {
     }
 
     func searchIfNeeded(keyword: String) {
-        guard !keyword.isEmpty else {
-            isSearching.send(false)
-            results.send([])
+        if keyword.isEmpty {
+            fetchContents()
             return
         }
 
         isSearching.send(true)
-        
-        useCase.searchContents(keyword)
+
+        searchContentsUseCase.searchContents(keyword)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.results.send(contents)

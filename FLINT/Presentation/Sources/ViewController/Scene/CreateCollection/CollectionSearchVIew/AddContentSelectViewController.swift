@@ -35,9 +35,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 
     private var results: [ContentEntity] = []
     private var selectedEntities: [ContentEntity] = []
-
     private var selectedViewModels: [SavedContentItemViewModel] = []
-
     private var isSearching: Bool = false
 
     // MARK: - Init
@@ -71,7 +69,8 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         selectedViewModels = initialSelected
         selectedEntities = []
         isSearching = false
-        results = makePopularResults()
+
+        viewModel.fetchContents()
 
         applyUI()
     }
@@ -91,10 +90,6 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
             .sink { [weak self] searching in
                 guard let self else { return }
                 self.isSearching = searching
-
-                if !searching {
-                    self.results = self.makePopularResults()
-                }
                 self.applyUI()
             }
             .store(in: &cancellables)
@@ -104,14 +99,11 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
             .sink { [weak self] newResults in
                 guard let self else { return }
 
-                guard self.isSearching else { return }
-
                 self.results = newResults
                 self.syncSelectedEntitiesFromResultsIfNeeded()
                 self.applyUI()
             }
             .store(in: &cancellables)
-
     }
 
     // MARK: - Setup
@@ -133,7 +125,6 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         rootView.setPreviewHidden(selectedViewModels.isEmpty)
 
         let hasResult = !results.isEmpty
-
         if isSearching {
             rootView.setEmptyHidden(hasResult)
         } else {
@@ -169,16 +160,6 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         "\(entity.title)|\(entity.author)|\(entity.year)"
     }
 
-    private func makePopularResults() -> [ContentEntity] {
-        [
-            .init(id: "popular-1", title: "듄: 파트 2", author: "드니 빌뇌브", posterUrl: nil, year: 2024),
-            .init(id: "popular-2", title: "오펜하이머", author: "크리스토퍼 놀란", posterUrl: nil, year: 2023),
-            .init(id: "popular-3", title: "스즈메의 문단속", author: "신카이 마코토", posterUrl: nil, year: 2022),
-            .init(id: "popular-4", title: "어바웃 타임", author: "리처드 커티스", posterUrl: nil, year: 2013),
-            .init(id: "popular-5", title: "헤어질 결심", author: "박찬욱", posterUrl: nil, year: 2022)
-        ]
-    }
-
     private func toViewModel(_ entity: ContentEntity) -> SavedContentItemViewModel {
         SavedContentItemViewModel(
             posterURL: entity.posterUrl,
@@ -191,6 +172,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 
     private func syncSelectedEntitiesFromResultsIfNeeded() {
         guard !results.isEmpty else { return }
+
         let selectedKeys = Set(selectedViewModels.map(key(of:)))
         let matched = results.filter { selectedKeys.contains(key(of: $0)) }
 
@@ -206,12 +188,11 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if trimmed.isEmpty {
-            isSearching = true
+            isSearching = false
             viewModel.updateKeyword(keyword: "")
             applyUI()
             return
         }
-
 
         isSearching = true
         viewModel.updateKeyword(keyword: trimmed)
@@ -297,7 +278,6 @@ extension AddContentSelectViewController: UITableViewDataSource {
         let isSelected = selectedViewModels.contains(where: { key(of: $0) == key(of: entity) })
 
         let vm = toViewModel(entity)
-
         cell.configure(model: vm, isSelected: isSelected)
 
         if let url = entity.posterUrl {
@@ -388,6 +368,7 @@ extension AddContentSelectViewController: UICollectionViewDataSource {
         }
 
         cell.xButton.tag = indexPath.item
+        cell.xButton.removeTarget(nil, action: nil, for: .touchUpInside)
         cell.xButton.addTarget(self, action: #selector(didTapRemovePreview(_:)), for: .touchUpInside)
 
         return cell
