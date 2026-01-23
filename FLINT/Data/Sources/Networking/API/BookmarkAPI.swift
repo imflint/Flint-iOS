@@ -14,6 +14,7 @@ import Moya
 public enum BookmarkAPI {
     case toggleCollectionBookmark(_ collectionId: Int64)
     case toggleContentBookmark(_ contentId: Int64)
+    case fetchCollectionBookmarkUsers(collectionId: Int64)
 }
 
 extension BookmarkAPI: TargetType {
@@ -24,6 +25,8 @@ extension BookmarkAPI: TargetType {
             return "/api/v1/bookmarks/collections/\(collectionId)"
         case .toggleContentBookmark(let contentId):
             return "/api/v1/bookmarks/contents/\(contentId)"
+        case let .fetchCollectionBookmarkUsers(collectionId):
+            return "/api/v1/bookmarks/\(collectionId)"
         }
     }
     
@@ -33,6 +36,8 @@ extension BookmarkAPI: TargetType {
             return .post
         case .toggleContentBookmark:
             return .post
+        case .fetchCollectionBookmarkUsers:
+            return .get
         }
     }
     
@@ -41,6 +46,8 @@ extension BookmarkAPI: TargetType {
         case .toggleCollectionBookmark:
             return .requestPlain
         case .toggleContentBookmark:
+            return .requestPlain
+        case .fetchCollectionBookmarkUsers:
             return .requestPlain
         }
     }

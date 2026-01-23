@@ -15,7 +15,7 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory
+typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & CollectionDetailFactory
 
 
 final class DIContainer: AppFactory {
@@ -45,6 +45,13 @@ final class DIContainer: AppFactory {
             networkLoggerPlugin
         ]
     )
+    private lazy var bookmarkAPIProvider = MoyaProvider<BookmarkAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
+
     private lazy var authAPIProvider = MoyaProvider<AuthAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
@@ -101,6 +108,12 @@ final class DIContainer: AppFactory {
         return ProfileViewController(profileViewModel: makeProfileViewModel(), viewControllerFactory: self)
     }
     
+    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
+        let vm = makeCollectionDetailViewModel(collectionId: collectionId)
+        return CollectionDetailViewController(viewModel: vm)
+    }
+    
+    
     // MARK: - Root Dependency Injection
     
     func makeTokenStorage() -> TokenStorage {
@@ -117,6 +130,10 @@ final class DIContainer: AppFactory {
     
     func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI> {
         return collectionAPIProvider
+    }
+    
+    func makeBookmarkAPIProvider() -> MoyaProvider<BookmarkAPI> {
+        return bookmarkAPIProvider
     }
     
     func makeAuthAPIProvider() -> MoyaProvider<AuthAPI> {

@@ -20,10 +20,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        let viewController = diContainer.makeTabBarViewController()
+//        let viewController = diContainer.makeTabBarViewController()
         
         
-        let navigationController = UINavigationController(rootViewController: diContainer.makeTabBarViewController()).configured({
+        let navigationController = UINavigationController(rootViewController: diContainer.makeCollectionDetailViewController(collectionId: 2)).configured({
             $0.navigationBar.isHidden = true
         })
         

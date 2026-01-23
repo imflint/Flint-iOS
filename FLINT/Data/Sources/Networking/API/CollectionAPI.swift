@@ -14,6 +14,7 @@ import Moya
 public enum CollectionAPI {
     case fetchCollections(cursor: UInt?, size: Int)
     case createCollection(_ request: CreateCollectionEntity)
+    case fetchCollectionDetail(collectionId: Int64)
 }
 
 extension CollectionAPI: TargetType {
@@ -24,6 +25,8 @@ extension CollectionAPI: TargetType {
             return "/api/v1/collections"
         case .createCollection:
             return "/api/v1/collections"
+        case let .fetchCollectionDetail(collectionId):
+            return "/api/v1/collections/\(collectionId)"
         }
     }
     
@@ -33,6 +36,8 @@ extension CollectionAPI: TargetType {
             return .get
         case .createCollection:
             return .post
+        case .fetchCollectionDetail:
+            return .get
         }
     }
     
@@ -51,6 +56,8 @@ extension CollectionAPI: TargetType {
             )
         case .createCollection(let request):
             return .requestJSONEncodable(request)
+        case .fetchCollectionDetail:
+            return .requestPlain
         }
     }
 }
