@@ -6,9 +6,7 @@
 //
 
 import Foundation
-import UIKit
-
-import View
+import Entity
 
 public final class HomeViewModel {
 
@@ -16,11 +14,21 @@ public final class HomeViewModel {
         public let rows: [Row]
     }
 
+    public enum TitleHeaderStyle {
+        case normal
+        case more
+    }
+
     public enum Row {
         case greeting(userName: String)
-        case header(style: TitleHeaderTableViewCell.HeaderStyle, title: String, subtitle: String)
-        case fliner(items: [MoreNoMoreCollectionItem])
-        case recentSaved(items: [RecentSavedContentItem])
+        case header(style: TitleHeaderStyle, title: String, subtitle: String)
+
+        case fliner(items: [CollectionEntity])
+
+        // ⚠️ RecentSavedContentItem이 어느 레이어 타입인지 불명확해서 유지
+        // 가능하면 이것도 Entity로 바꾸는 게 방향상 맞음
+//        case recentSaved(items: [RecentSavedContentItem])
+
         case ctaButton(title: String)
     }
 
@@ -28,71 +36,69 @@ public final class HomeViewModel {
 
     public init(userName: String) {
 
-        let dummyFlinerItems: [MoreNoMoreCollectionItem] = [
-            .init(id: UUID(),
-                  image: UIImage(named: "img_background_gradiant_middle"),
-                  profileImage: UIImage(named: "img_profile_blue"),
-                  title: "사랑에 빠지기 10초 전",
-                  userName: "사용자 이름"),
-            .init(id: UUID(),
-                  image: UIImage(named: "img_background_gradiant_middle"),
-                  profileImage: UIImage(named: "img_profile_blue"),
-                  title: "한번 보면 못 빠져나오는…",
-                  userName: "사용자 이름"),
-            .init(id: UUID(),
-                  image: UIImage(named: "img_background_gradiant_middle"),
-                  profileImage: UIImage(named: "img_profile_blue"),
-                  title: "주말에 보기 좋은 영화",
-                  userName: "사용자 이름")
-        ]
-
-        let dummyRecentSavedItems: [RecentSavedContentItem] = [
-            .init(posterImageName: "img_background_gradiant_large",
-                  title: "듄: 파트 2",
-                  year: 2024,
-                  availableOn: [.netflix, .disneyPlus, .watcha],
-                  subscribedOn: [.netflix, .wave]),
-            .init(posterImageName: "img_background_gradiant_large",
-                  title: "오펜하이머",
-                  year: 2023,
-                  availableOn: [.wave, .tving, .netflix,.disneyPlus, .watcha],
-                  subscribedOn: [.tving, .wave, .netflix,.disneyPlus, .watcha]),
-            .init(posterImageName: "img_background_gradiant_large",
-                  title: "스즈메의 문단속",
-                  year: 2022,
-                  availableOn: [.netflix, .watcha, .disneyPlus, .watcha],
-                  subscribedOn: [.netflix,.disneyPlus, .watcha]),
-            .init(posterImageName: "img_background_gradiant_large",
-                  title: "스즈메의 문단속",
-                  year: 2022,
-                  availableOn: [.netflix, .watcha],
-                  subscribedOn: [.netflix])
-        ]
-
-
-        let watchingCollectionItems: [MoreNoMoreCollectionItem] = [
-            //데이터가있는경우는 여기 .init을 채우면 나옵니다
+        // ✅ CollectionEntity 더미는 이제 "String / url / ..." 기반으로 생성해야 함
+        let dummyFlinerItems: [CollectionEntity] = [
             .init(
-                    id: UUID(),
-                    image: UIImage(named: "img_background_gradiant_middle"),
-                    profileImage: UIImage(named: "img_profile_blue"),
-                    title: "요즘 빠진 스릴러만 모았어요",
-                    userName: "키키"
-                ),
-                .init(
-                    id: UUID(),
-                    image: UIImage(named: "img_background_gradiant_middle"),
-                    profileImage: UIImage(named: "img_profile_blue"),
-                    title: "주말에 보기 좋은 힐링 영화",
-                    userName: "소은"
-                ),
-                .init(
-                    id: UUID(),
-                    image: UIImage(named: "img_background_gradiant_middle"),
-                    profileImage: UIImage(named: "img_profile_blue"),
-                    title: "한 번 보면 끝까지 보는 시리즈",
-                    userName: "소은"
-                )
+                id: "1",
+                thumbnailUrl: "https://example.com/thumbnail1.jpg",
+                title: "사랑에 빠지기 10초 전",
+                description: "",
+                imageList: [],
+                bookmarkCount: 0,
+                isBookmarked: false,
+                userId: "123",
+                nickname: "사용자 이름",
+                profileImageUrl: "https://example.com/profile.jpg"
+            ),
+            .init(
+                id: "2",
+                thumbnailUrl: "https://example.com/thumbnail2.jpg",
+                title: "한번 보면 못 빠져나오는…",
+                description: "",
+                imageList: [],
+                bookmarkCount: 0,
+                isBookmarked: false,
+                userId: "123",
+                nickname: "사용자 이름",
+                profileImageUrl: "https://example.com/profile.jpg"
+            ),
+            .init(
+                id: "3",
+                thumbnailUrl: "https://example.com/thumbnail3.jpg",
+                title: "주말에 보기 좋은 영화",
+                description: "",
+                imageList: [],
+                bookmarkCount: 0,
+                isBookmarked: false,
+                userId: "123",
+                nickname: "사용자 이름",
+                profileImageUrl: "https://example.com/profile.jpg"
+            )
+        ]
+
+        // ⚠️ 이 타입이 어디 레이어인지 불명확(지금 코드만으로)
+//        let dummyRecentSavedItems: [RecentSavedContentItem] = [
+//            .init(posterImageName: "img_background_gradiant_large",
+//                  title: "듄: 파트 2",
+//                  year: 2024,
+//                  availableOn: [.netflix, .disneyPlus, .watcha],
+//                  subscribedOn: [.netflix, .wave])
+//        ]
+
+        // ✅ "눈여겨보는 컬렉션"도 CollectionEntity로
+        let watchingCollectionItems: [CollectionEntity] = [
+            .init(
+                id: "10",
+                thumbnailUrl: "https://example.com/thumbnail10.jpg",
+                title: "요즘 빠진 스릴러만 모았어요",
+                description: "",
+                imageList: [],
+                bookmarkCount: 0,
+                isBookmarked: false,
+                userId: "999",
+                nickname: "키키",
+                profileImageUrl: "https://example.com/profile2.jpg"
+            )
         ]
 
         let watchingSectionRows: [Row]
@@ -134,7 +140,7 @@ public final class HomeViewModel {
                     title: "최근 저장한 콘텐츠",
                     subtitle: "현재 구독 중인 OTT에서 볼 수 있는 작품들이에요"
                 ),
-                .recentSaved(items: dummyRecentSavedItems)
+//                .recentSaved(items: dummyRecentSavedItems)
             ]),
             .init(rows: watchingSectionRows)
         ]

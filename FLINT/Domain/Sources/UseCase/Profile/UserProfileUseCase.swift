@@ -17,6 +17,8 @@ public protocol UserProfileUseCase {
     func fetchMyProfile() -> AnyPublisher<UserProfileEntity, Error>
     func fetchMyKeywords() -> AnyPublisher<[KeywordEntity], Error>
     func fetchUserKeywords(userId: Int64) -> AnyPublisher<[KeywordEntity], Error>
+    func fetchMyCollections() -> AnyPublisher<[CollectionEntity], Error>
+    func fetchUserCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error>
 }
 
 public final class DefaultUserProfileUseCase: UserProfileUseCase {
@@ -41,5 +43,13 @@ public final class DefaultUserProfileUseCase: UserProfileUseCase {
     
     public func fetchMyKeywords() -> AnyPublisher<[KeywordEntity], Error> {
         return userRepository.fetchMyKeywords()
+    }
+    
+    public func fetchMyCollections() -> AnyPublisher<[CollectionEntity], Error> {
+        userRepository.fetchMyCollections()
+    }
+    
+    public func fetchUserCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error> {
+        userRepository.fetchUserCollections(userId: userId)
     }
 }

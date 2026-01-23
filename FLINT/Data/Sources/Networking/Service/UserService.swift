@@ -21,9 +21,13 @@ public protocol UserService {
     func fetchMyProfile() -> AnyPublisher<UserProfileDTO, Error>
     func fetchMyKeywords() -> AnyPublisher<KeywordsDTO, Error>
     func fetchUserKeywords(userId: Int64) -> AnyPublisher<KeywordsDTO, Error>
+    func fetchMyCollections() -> AnyPublisher<UserCollectionsDTO, Error>
+    func fetchUserCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error>
 }
 
 public final class DefaultUserService: UserService {
+
+    
     
     private let userAPIProvider: MoyaProvider<UserAPI>
     
@@ -50,9 +54,19 @@ public final class DefaultUserService: UserService {
         return userAPIProvider.requestPublisher(.fetchMyKeywords)
             .extractData(KeywordsDTO.self)
     }
-
-    public func fetchUserKeywords(userId: Int64) -> AnyPublisher<KeywordsDTO, Error> {
+    
+    public func fetchUserKeywords(userId: Int64) -> AnyPublisher<KeywordsDTO, any Error> {
         return userAPIProvider.requestPublisher(.fetchUserKeywords(userId: userId))
             .extractData(KeywordsDTO.self)
+    }
+
+    public func fetchMyCollections() -> AnyPublisher<UserCollectionsDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchMyCollections)
+            .extractData(UserCollectionsDTO.self)
+    }
+
+    public func fetchUserCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchUserCollections(userId: userId))
+            .extractData(UserCollectionsDTO.self)
     }
 }

@@ -23,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let viewController = diContainer.makeNicknameViewController()
         
         
-        let navigationController = UINavigationController(rootViewController: diContainer.makeProfileViewController()).configured({
+        let navigationController = UINavigationController(rootViewController: diContainer.makeTabBarViewController()).configured({
             $0.navigationBar.isHidden = true
         })
         

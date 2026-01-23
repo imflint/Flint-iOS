@@ -22,7 +22,7 @@ public class TabBarViewController: UIViewController {
     
     private let homeViewController = HomeViewController()
     private let exploreViewController = ExploreViewController()
-    private let myViewController = MyViewController()
+    private let myViewController: ProfileViewController
     
     // MARK: - Component
     
@@ -39,6 +39,7 @@ public class TabBarViewController: UIViewController {
     
     public init(viewControllerFactory: ViewControllerFactory) {
         self.viewControllerFactory = viewControllerFactory
+        myViewController = viewControllerFactory.makeProfileViewController()
         super.init(nibName: nil, bundle: nil)
     }
     

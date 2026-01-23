@@ -12,28 +12,38 @@ import Domain
 import Entity
 
 public final class ProfileViewModel {
-    
+
     public enum Row {
         case profileHeader(nickname: String, profileImageUrl: String, isFliner: Bool)
-        case preferenceChips(keywords: [KeywordEntity])
+
         case titleHeader(style: TitleHeaderStyle, title: String, subtitle: String)
+        case preferenceChips(keywords: [KeywordEntity])
+
+        case myCollections(items: [CollectionEntity])
+        case savedCollections(items: [CollectionEntity])
     }
-    
+
     public enum TitleHeaderStyle {
         case normal
         case more
     }
-    
+
+    // MARK: - Output
     @Published public private(set) var rows: [Row] = []
-    
+
+    // MARK: - Dependencies
     private let userProfileUseCase: UserProfileUseCase
     private var cancellables = Set<AnyCancellable>()
-    
+
+    // MARK: - State
     private var nickname: String
     private var isFliner: Bool
     private var profileImageUrl: String?
+
     private var keywords: [KeywordEntity] = []
-    
+    private var myCollections: [CollectionEntity] = []
+    private var savedCollections: [CollectionEntity] = []
+
     public init(
         userProfileUseCase: UserProfileUseCase,
         initialNickname: String = "플링",
@@ -45,59 +55,95 @@ public final class ProfileViewModel {
         self.profileImageUrl = ""
         self.rows = makeRows()
     }
-    
+
+    // MARK: - Input
     public func load() {
-        // 1) 프로필 먼저
+
+        // 1️⃣ 프로필
         userProfileUseCase.fetchUserProfile(userId: 1)
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchUserProfile failed:", error)
+                    print("❌ fetchProfile failed:", error)
                 }
             } receiveValue: { [weak self] profile in
                 guard let self else { return }
-                
                 self.nickname = profile.nickname
                 self.isFliner = profile.isFliner
                 self.profileImageUrl = profile.profileImageUrl
-                
-                // 프로필만으로 1차 렌더
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
-        
-        // 2) 키워드 따로
-        userProfileUseCase.fetchUserKeywords(userId: 2)
-        //        userProfileUseCase.fetchMyKeywords()
+
+        // 2️⃣ 키워드
+        userProfileUseCase.fetchUserKeywords(userId: 1)
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchUserKeywords failed:", error)
+                    print("❌ fetchKeywords failed:", error)
                 }
             } receiveValue: { [weak self] keywords in
                 guard let self else { return }
-                
                 self.keywords = keywords
-                
-                // 키워드까지 포함해서 갱신
+                self.rows = self.makeRows()
+            }
+            .store(in: &cancellables)
+
+        // 3️⃣ 내 컬렉션
+//        userProfileUseCase.fetchMyCollections()
+        userProfileUseCase.fetchUserCollections(userId: 1)
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("❌ fetchMyCollections failed:", error)
+                }
+            } receiveValue: { [weak self] items in
+                guard let self else { return }
+                self.myCollections = items
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
     }
-    
+
+    // MARK: - Row builder
     private func makeRows() -> [Row] {
-        [
+        var result: [Row] = []
+
+        result.append(
             .profileHeader(
                 nickname: nickname,
                 profileImageUrl: profileImageUrl ?? "",
                 isFliner: isFliner
-            ),
-            .titleHeader(style: .normal, title: "\(nickname)님의 취향키워드", subtitle: "\(nickname)님이 관심 있어 하는 키워드에요"),
-            .preferenceChips(keywords: keywords),
-            .titleHeader(style: .normal, title: "\(nickname)님의 컬렉션", subtitle: "\(nickname)님이 생성한 컬렉션이에요"),
-            
-                .titleHeader(style: .normal, title: "저장한 컬렉션", subtitle: "\(nickname)님이 저장한 컬렉션이에요"),
-            .titleHeader(style: .normal, title: "저장한 작품", subtitle: "\(nickname)님이 저장한 작품이에요"),
-        ]
+            )
+        )
+
+        result.append(
+            .titleHeader(
+                style: .normal,
+                title: "\(nickname)님의 취향 키워드",
+                subtitle: "\(nickname)님이 관심 있어 하는 키워드에요"
+            )
+        )
+        result.append(.preferenceChips(keywords: keywords))
+
+        result.append(
+            .titleHeader(
+                style: .more,
+                title: "\(nickname)님의 컬렉션",
+                subtitle: "\(nickname)님이 생성한 컬렉션이에요"
+            )
+        )
+        result.append(.myCollections(items: myCollections))
+
+        result.append(
+            .titleHeader(
+                style: .more,
+                title: "저장한 컬렉션",
+                subtitle: "\(nickname)님이 저장한 컬렉션이에요"
+            )
+        )
+        result.append(.savedCollections(items: savedCollections))
+
+        return result
     }
 }

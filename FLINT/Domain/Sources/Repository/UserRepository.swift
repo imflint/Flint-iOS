@@ -16,4 +16,6 @@ public protocol UserRepository {
     func fetchMyProfile() -> AnyPublisher<UserProfileEntity, Error>
     func fetchMyKeywords() -> AnyPublisher<[KeywordEntity], Error>
     func fetchUserKeywords(userId: Int64) -> AnyPublisher<[KeywordEntity], Error>
+    func fetchMyCollections() -> AnyPublisher<[CollectionEntity], Error>
+    func fetchUserCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error>
 }

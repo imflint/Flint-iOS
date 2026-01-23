@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 import Then
 
+import Entity
+
 public final class MoreNoMoreCollectionItemCell: BaseCollectionViewCell {
 
     private let posterImageView = UIImageView().then {
@@ -107,11 +109,40 @@ public final class MoreNoMoreCollectionItemCell: BaseCollectionViewCell {
         userNameLabel.attributedText = nil
     }
 
-    public func configure(with item: MoreNoMoreCollectionItem) {
-        posterImageView.image = item.image
-        profileImageView.image = item.profileImage
+    public func configure(entity: CollectionEntity) {
 
-        titleLabel.attributedText = .pretendard(.body2_m_14, text: item.title, color: .flintGray50)
-        userNameLabel.attributedText = .pretendard(.caption1_r_12, text: item.userName, color: .flintGray200)
+        // 썸네일
+        if let url = URL(string: entity.thumbnailUrl) {
+            posterImageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(resource: .imgBackgroundGradiantMiddle)
+            )
+        } else {
+            posterImageView.image = UIImage(resource: .imgBackgroundGradiantMiddle)
+        }
+
+        // 프로필 이미지
+        if let url = URL(string: entity.profileImageUrl) {
+            profileImageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(resource: .imgProfileGray)
+            )
+        } else {
+            profileImageView.image = UIImage(resource: .imgProfileGray)
+        }
+
+        // 텍스트
+        titleLabel.attributedText = .pretendard(
+            .body2_m_14,
+            text: entity.title,
+            color: .flintGray50
+        )
+
+        userNameLabel.attributedText = .pretendard(
+            .caption1_r_12,
+            text: entity.nickname,
+            color: .flintGray200
+        )
     }
+
 }
