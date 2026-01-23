@@ -54,8 +54,8 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
     // MARK: - Setup
     
     public override func bind() {
-        exploreViewModel.collections.sink { [weak self] collectionInfoEntities in
-            Log.d(collectionInfoEntities)
+        exploreViewModel.collections.sink { [weak self] exploreInfoEntity in
+            Log.d(exploreInfoEntity)
             self?.rootView.mainCollectionView.reloadData()
         }
         .store(in: &cancellables)

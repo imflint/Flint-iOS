@@ -23,7 +23,7 @@ public final class DefaultExploreUseCase: ExploreUseCase {
         self.collectionRepository = collectionRepository
     }
     
-    public func fetchExplore(cursor: UInt?) -> AnyPublisher<Entity.CollectionPagingEntity, any Error> {
+    public func fetchExplore(cursor: UInt?) -> AnyPublisher<CollectionPagingEntity, any Error> {
         collectionRepository.fetchCollections(cursor: cursor, size: 3)
     }
 }

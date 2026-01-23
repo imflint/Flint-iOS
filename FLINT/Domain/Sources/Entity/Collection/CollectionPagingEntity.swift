@@ -8,10 +8,10 @@
 import Foundation
 
 public struct CollectionPagingEntity {
-    public let collections: [CollectionInfoEntity]
+    public let collections: [ExploreInfoEntity]
     public let cursor: UInt
     
-    public init(collections: [CollectionInfoEntity], cursor: UInt) {
+    public init(collections: [ExploreInfoEntity], cursor: UInt) {
         self.collections = collections
         self.cursor = cursor
     }

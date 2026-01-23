@@ -10,9 +10,9 @@ import UIKit
 import SnapKit
 import Then
 
-final class ProfileView: UIView {
+public final class ProfileView: UIView {
 
-    let tableView = UITableView(frame: .zero, style: .plain).then {
+    public let tableView = UITableView(frame: .zero, style: .plain).then {
         $0.separatorStyle = .none
         $0.showsVerticalScrollIndicator = false
         $0.backgroundColor = .clear

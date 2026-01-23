@@ -15,7 +15,7 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & LoginViewModelFactory
+typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & CollectionDetailFactory & LoginViewModelFactory
 
 final class DIContainer: AppFactory {
     
@@ -45,6 +45,13 @@ final class DIContainer: AppFactory {
             networkLoggerPlugin
         ]
     )
+    private lazy var bookmarkAPIProvider = MoyaProvider<BookmarkAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
+
     private lazy var authAPIProvider = MoyaProvider<AuthAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
@@ -76,6 +83,19 @@ final class DIContainer: AppFactory {
         return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
     }
     
+    func makeAddContentSelectViewController() -> AddContentSelectViewController {
+        let vm = makeAddContentSelectViewModel()
+        return AddContentSelectViewController(viewModel: vm, viewControllerFactory: self)
+    }
+    
+    func makeCreateCollectionViewController() -> CreateCollectionViewController {
+        let vm = makeCreateCollectionViewModel()
+        return CreateCollectionViewController(viewModel: vm, viewControllerFactory: self)
+    }
+    func makeHomeViewController() -> HomeViewController {
+        return HomeViewController()
+    }
+    
     func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController {
         return FilmSelectViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
     }
@@ -92,6 +112,16 @@ final class DIContainer: AppFactory {
         return ExploreViewController(exploreViewModel: makeExploreViewModel(), viewControllerFactory: self)
     }
     
+    func makeProfileViewController() -> ProfileViewController {
+        return ProfileViewController(profileViewModel: makeProfileViewModel(), viewControllerFactory: self)
+    }
+    
+    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
+        let vm = makeCollectionDetailViewModel(collectionId: collectionId)
+        return CollectionDetailViewController(viewModel: vm)
+    }
+    
+    
     // MARK: - Root Dependency Injection
     
     func makeTokenStorage() -> TokenStorage {
@@ -102,12 +132,16 @@ final class DIContainer: AppFactory {
         return userAPIProvider
     }
     
-    func makeCollectionAPIProvider() -> Moya.MoyaProvider<Networking.CollectionAPI> {
+    func makeSearchAPIProvider() -> MoyaProvider<SearchAPI> {
+        return searchAPIProvider
+    }
+    
+    func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI> {
         return collectionAPIProvider
     }
     
-    func makeSearchAPIProvider() -> Moya.MoyaProvider<Networking.SearchAPI> {
-        return searchAPIProvider
+    func makeBookmarkAPIProvider() -> MoyaProvider<BookmarkAPI> {
+        return bookmarkAPIProvider
     }
     
     func makeAuthAPIProvider() -> MoyaProvider<AuthAPI> {

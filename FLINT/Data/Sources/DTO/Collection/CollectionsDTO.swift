@@ -48,9 +48,9 @@ extension CollectionsDTO {
 }
 
 extension CollectionsDTO.CollectionDTO {
-    public var entity: CollectionInfoEntity {
+    public var entity: ExploreInfoEntity {
         get throws {
-            return try CollectionInfoEntity(
+            return try ExploreInfoEntity(
                 id: unwrap(collectionId, key: CodingKeys.collectionId),
                 imageUrl: URL(string: imageUrl ?? ""),
                 title: contentTitle ?? "",

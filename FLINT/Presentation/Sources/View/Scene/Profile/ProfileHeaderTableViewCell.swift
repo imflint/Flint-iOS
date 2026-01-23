@@ -21,6 +21,8 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
     
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(resource: .imgProfileGray)
+        $0.layer.cornerRadius = 64
+        $0.layer.masksToBounds = true
     }
     
     private let gradientView = GradientView().then {
@@ -43,11 +45,6 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
     
     private let verificationBadge = UIImageView().then {
         $0.image = UIImage(resource: .icQuilified)
-    }
-    
-    public override func prepareForReuse() {
-        super.prepareForReuse()
-        verificationBadge.isHidden = false
     }
     
     public override func setHierarchy() {
@@ -83,8 +80,26 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
         }
     }
     
-    public func configure(name: String, isVerified: Bool) {
-        nameLabel.attributedText = .pretendard(.display2_m_28, text: name)
-        verificationBadge.isHidden = !isVerified
+    public override func prepareForReuse() {
+            super.prepareForReuse()
+            profileImageView.kf.cancelDownloadTask()
+            profileImageView.image = UIImage(resource: .imgProfileGray)
+        }
+
+    public func configure(
+        nickname: String = "",
+        profileImageUrl: String? = nil,
+        isFliner: Bool = false
+    ) {
+        nameLabel.attributedText = .pretendard(.display2_m_28, text: nickname)
+        verificationBadge.isHidden = !isFliner
+
+        let placeholder = UIImage(resource: .imgProfileGray)
+        guard let urlString = profileImageUrl, let url = URL(string: urlString) else {
+            profileImageView.image = placeholder
+            return
+        }
+        profileImageView.kf.setImage(with: url, placeholder: placeholder)
     }
+
 }

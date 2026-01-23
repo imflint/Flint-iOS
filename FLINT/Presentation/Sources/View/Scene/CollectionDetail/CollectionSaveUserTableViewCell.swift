@@ -7,6 +7,7 @@
 
 import UIKit
 
+import Kingfisher
 import SnapKit
 import Then
 
@@ -111,6 +112,11 @@ public final class CollectionSaveUserTableViewCell: BaseTableViewCell {
     
     // MARK: - Configure
     
+    public func configure(title: String = "이 컬렉션을 저장한 사람들", profileImageURLs: [URL?]) {
+        titleLabel.attributedText = .pretendard(.head2_sb_20, text: title, color: .white)
+        setAvatars(urls: profileImageURLs)
+    }
+    
     public func configure(title: String = "이 컬렉션을 저장한 사람들", images: [UIImage]) {
         titleLabel.attributedText = .pretendard(.head2_sb_20, text: title, color: .white)
         setAvatars(images: images)
@@ -118,6 +124,53 @@ public final class CollectionSaveUserTableViewCell: BaseTableViewCell {
     
     // MARK: - Private
     
+    private func setAvatars(urls: [URL?]) {
+        clearAvatars()
+
+        let displayURLs = Array(urls.prefix(maxAvatarCount))
+
+        var previous: UIImageView?
+
+        for (idx, url) in displayURLs.enumerated() {
+            let iv = UIImageView().then {
+                $0.contentMode = .scaleAspectFill
+                $0.clipsToBounds = true
+                $0.layer.cornerRadius = avatarSize / 2
+                $0.backgroundColor = .flintGray300
+                $0.layer.borderWidth = 3
+                $0.layer.borderColor = UIColor.flintBackground.cgColor
+            }
+
+            iv.kf.setImage(
+                with: url,
+                placeholder: DesignSystem.Image.Common.profileGray
+            )
+
+            avatarsContainerView.addSubview(iv)
+            avatarImageViews.append(iv)
+
+            iv.snp.makeConstraints {
+                $0.centerY.equalToSuperview()
+                $0.size.equalTo(avatarSize)
+
+                if let previous {
+                    $0.leading.equalTo(previous.snp.trailing).offset(-overlap)
+                } else {
+                    $0.leading.equalToSuperview()
+                }
+            }
+
+            iv.layer.zPosition = CGFloat(idx)
+            previous = iv
+        }
+
+        if let last = previous {
+            avatarsContainerView.snp.makeConstraints {
+                $0.trailing.greaterThanOrEqualTo(last.snp.trailing)
+            }
+        }
+    }
+
     private func setAvatars(images: [UIImage]) {
         clearAvatars()
         

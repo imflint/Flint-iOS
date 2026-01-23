@@ -10,11 +10,12 @@ import UIKit
 import SnapKit
 import Then
 
+import Entity
+
 public final class MoreNoMoreCollectionTableViewCell: BaseTableViewCell {
-    
-    public var onSelectItem: ((MoreNoMoreCollectionItem) -> Void)?
-    
-    private var items: [MoreNoMoreCollectionItem] = []
+
+    public var onSelectItem: ((CollectionEntity) -> Void)?
+    private var items: [CollectionEntity] = []
     
     // MARK: - UI
     
@@ -61,7 +62,7 @@ public final class MoreNoMoreCollectionTableViewCell: BaseTableViewCell {
     
     // MARK: - Public
     
-    public func configure(items: [MoreNoMoreCollectionItem]) {
+    public func configure(items: [CollectionEntity]) {
         self.items = items
         collectionView.reloadData()
     }
@@ -86,7 +87,8 @@ extension MoreNoMoreCollectionTableViewCell: UICollectionViewDataSource, UIColle
             return UICollectionViewCell()
         }
         
-        cell.configure(with: items[indexPath.item])
+        cell.configure(entity: items[indexPath.item])
+
         return cell
     }
     

@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		969B6C042F1E498400177B52 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 969B6C032F1E498400177B52 /* Presentation */; };
 		969B6FE62F1E733200177B52 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 969B6FE52F1E733200177B52 /* Domain */; };
 		969B6FE92F1E746000177B52 /* Data in Frameworks */ = {isa = PBXBuildFile; productRef = 969B6FE82F1E746000177B52 /* Data */; };
+		B0D0C7792F23810E008CB37E /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = B0D0C7782F23810E008CB37E /* Presentation */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,7 +69,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				969B6FE62F1E733200177B52 /* Domain in Frameworks */,
-				969B6C042F1E498400177B52 /* Presentation in Frameworks */,
+				B0D0C7792F23810E008CB37E /* Presentation in Frameworks */,
 				969B6FE92F1E746000177B52 /* Data in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -149,9 +149,9 @@
 			);
 			name = FLINT;
 			packageProductDependencies = (
-				969B6C032F1E498400177B52 /* Presentation */,
 				969B6FE52F1E733200177B52 /* Domain */,
 				969B6FE82F1E746000177B52 /* Data */,
+				B0D0C7782F23810E008CB37E /* Presentation */,
 			);
 			productName = FLINT;
 			productReference = B0E5931C2F0A427A009D7980 /* FLINT.app */;
@@ -304,9 +304,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = JU27F4BHH8;
+				DEVELOPMENT_TEAM = 7673J645BX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FLINT/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flint에서 이미지를 등록하려면 사진 접근 권한이 필요해요.";
@@ -322,6 +323,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.imflint.flint;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -339,9 +341,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = JU27F4BHH8;
+				DEVELOPMENT_TEAM = 7673J645BX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FLINT/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flint에서 이미지를 등록하려면 사진 접근 권한이 필요해요.";
@@ -357,6 +360,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.imflint.flint;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -525,10 +529,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		969B6C032F1E498400177B52 /* Presentation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Presentation;
-		};
 		969B6FE52F1E733200177B52 /* Domain */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Domain;
@@ -536,6 +536,10 @@
 		969B6FE82F1E746000177B52 /* Data */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Data;
+		};
+		B0D0C7782F23810E008CB37E /* Presentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Presentation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

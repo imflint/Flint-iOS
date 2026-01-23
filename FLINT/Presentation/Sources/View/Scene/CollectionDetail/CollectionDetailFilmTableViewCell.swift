@@ -11,6 +11,8 @@ import Kingfisher
 import SnapKit
 import Then
 
+import Entity
+
 public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
 
     // MARK: - Property
@@ -225,16 +227,27 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
     }
 
     // MARK: - Public
+    
+    public override func prepareForReuse() {
+            super.prepareForReuse()
 
-    public func configureSpoiler(isSpoiler: Bool) {
-        self.isSpoiler = isSpoiler
-        
-        spoilerOverlayView.isHidden = !isSpoiler
-        
-        UIView.animate(withDuration: 0.3) {
-            self.spoilerOverlayView.alpha = isSpoiler ? 1.0 : 0.0
+            poster.kf.cancelDownloadTask()
+            poster.image = UIImage(resource: .imgBackgroundGradiantLarge)
+
+            configureSpoiler(isSpoiler: false)
+            onTapRevealSpoiler = nil
         }
-    }
+
+        public func configureSpoiler(isSpoiler: Bool) {
+            self.isSpoiler = isSpoiler
+
+            spoilerOverlayView.isHidden = !isSpoiler
+            spoilerOverlayView.alpha = isSpoiler ? 1.0 : 0.0
+
+            UIView.animate(withDuration: 0.3) {
+                self.spoilerOverlayView.alpha = isSpoiler ? 1.0 : 0.0
+            }
+        }
 
 }
 
@@ -262,5 +275,43 @@ extension UIButton {
     public static func flintMoreButton(title: String = "보기") -> UIButton {
         let button = UIButton(configuration: .flintMore(title: title))
         return button
+    }
+}
+
+public extension CollectionDetailFilmTableViewCell {
+
+    func configure(item: CollectionContentEntity) {
+        // 이미지
+        if let url = item.imageUrl {
+            poster.kf.setImage(with: url)
+        } else {
+            poster.image = UIImage(resource: .imgBackgroundGradiantLarge)
+        }
+
+        titleLabel.attributedText = .pretendard(.head2_sb_20, text: item.title, color: .white)
+
+        yearLabel.attributedText = .pretendard(
+            .body1_r_16,
+            text: "\(item.year)",
+            color: .flintGray300,
+            lineBreakMode: .byWordWrapping,
+            lineBreakStrategy: .hangulWordPriority
+        )
+
+        directorLabel.attributedText = .pretendard(
+            .body1_r_16,
+            text: item.director,
+            color: .flintGray300
+        )
+
+        descriptionLabel.attributedText = .pretendard(
+            .body1_r_16,
+            text: item.reason,
+            color: .flintGray100,
+            lineBreakMode: .byWordWrapping,
+            lineBreakStrategy: .hangulWordPriority
+        )
+
+        configureSpoiler(isSpoiler: item.isSpoiler)
     }
 }

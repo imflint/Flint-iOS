@@ -14,7 +14,7 @@ public final class TitleHeaderTableViewCell: BaseTableViewCell {
     
     // MARK: - Type
     
-    public enum HeaderStyle {
+    public enum TitleHeaderStyle {
         case normal
         case more
     }
@@ -99,7 +99,7 @@ public final class TitleHeaderTableViewCell: BaseTableViewCell {
     
     // MARK: - Configure
     
-    public func configure(style: HeaderStyle, title: String, subtitle: String) {
+    public func configure(style: TitleHeaderStyle, title: String, subtitle: String) {
         moreButton.isHidden = (style != .more)
         
         titleLabel.attributedText = .pretendard(.head3_sb_18, text: title)

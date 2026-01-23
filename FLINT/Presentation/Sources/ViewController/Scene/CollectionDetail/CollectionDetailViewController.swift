@@ -6,13 +6,16 @@
 //
 
 import UIKit
+import Combine
 
 import SnapKit
 
+import Entity
 import View
+import ViewModel
 
 public final class CollectionDetailViewController: BaseViewController<CollectionDetailView> {
-    
+
     // MARK: - Enum
 
     private enum Row {
@@ -21,18 +24,30 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         case film(Int)
         case saveUsers
     }
-    
+
     // MARK: - Property
 
-    private let filmCount: Int = 3
+    private let viewModel: CollectionDetailViewModel
 
-    private lazy var rows: [Row] = {
-        var result: [Row] = [.header, .description]
-        result += (0..<filmCount).map { .film($0) }
-        result += [.saveUsers]
-        return result
-    }()
-    
+    private var entity: CollectionDetailEntity?
+    private var rows: [Row] = [.header, .description, .saveUsers]
+    private var bookmarkedUsers: CollectionBookmarkUsersEntity?
+
+    // Input
+    private let viewDidLoadSubject = PassthroughSubject<Void, Never>()
+    private let tapHeaderSaveSubject = PassthroughSubject<Bool, Never>()
+
+    // MARK: - Init
+
+    public init(viewModel: CollectionDetailViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - Lifecycle
 
     public override func viewDidLoad() {
@@ -41,7 +56,50 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         setupTableView()
         setNavigationBar(.init(left: .back, backgroundStyle: .clear))
     }
-    
+
+    // MARK: - Bind
+
+    public override func bind() {
+        let input = CollectionDetailViewModel.Input(
+            viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher(),
+            tapHeaderSave: tapHeaderSaveSubject.eraseToAnyPublisher()
+        )
+
+        let output = viewModel.transform(input: input)
+
+        output.state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .idle:
+                    break
+                case .loading:
+                    break
+                case .loaded(let detail, let bookmarkedUsers):
+                    self.entity = detail
+                    self.bookmarkedUsers = bookmarkedUsers
+                    self.apply(entity: detail)
+                case .failed(let message):
+                    print("Collection detail load failed:", message)
+                }
+            }
+            .store(in: &cancellables)
+
+        viewDidLoadSubject.send(())
+    }
+
+    private func apply(entity: CollectionDetailEntity) {
+        self.entity = entity
+
+        var result: [Row] = [.header, .description]
+        result += (0..<entity.contents.count).map { .film($0) }
+        result += [.saveUsers]
+        self.rows = result
+
+        rootView.tableView.reloadData()
+    }
+
     // MARK: - Setup
 
     public override func setBaseLayout() {
@@ -67,9 +125,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.keyboardDismissMode = .onDrag
-
         tableView.insetsContentViewsToSafeArea = false
-
         tableView.rowHeight = UITableView.automaticDimension
 
         tableView.dataSource = self
@@ -94,7 +150,7 @@ extension CollectionDetailViewController: UITableViewDataSource {
     }
 
     public func tableView(_ tableView: UITableView,
-                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+                          cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         switch rows[indexPath.row] {
 
@@ -105,9 +161,13 @@ extension CollectionDetailViewController: UITableViewDataSource {
             ) as! CollectionDetailHeaderTableViewCell
 
             cell.selectionStyle = .none
-            cell.configure(title: "한 번 보면 못 빠져나오는\n사랑 이야기", isSaved: false)
-            cell.onTapSave = { isSaved in
-                print("Header save tapped:", isSaved)
+
+            let title = entity?.title ?? ""
+            let isSaved = entity?.isBookmarked ?? false
+
+            cell.configure(title: title, isSaved: isSaved)
+            cell.onTapSave = { [weak self] isSaved in
+                self?.tapHeaderSaveSubject.send(isSaved)
             }
             return cell
 
@@ -118,11 +178,17 @@ extension CollectionDetailViewController: UITableViewDataSource {
             ) as! CollectionDetailDescriptionTableViewCell
 
             cell.selectionStyle = .none
+
+            let author = entity?.author?.nickname ?? ""
+            let dateText = entity?.createdAt ?? ""
+            let description = entity?.description ?? ""
+            let isVerified = (entity?.author?.userRole == "FLINER")
+
             cell.configure(
-                author: "키카",
-                isVerified: true,
-                dateText: "2026. 01. 07.",
-                description: "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다"
+                author: author,
+                isVerified: isVerified,
+                dateText: dateText,
+                description: description
             )
             return cell
 
@@ -133,7 +199,16 @@ extension CollectionDetailViewController: UITableViewDataSource {
             ) as! CollectionDetailFilmTableViewCell
 
             cell.selectionStyle = .none
-            cell.configureSpoiler(isSpoiler: true)
+
+            guard let item = entity?.contents[safe: idx] else {
+                // 데이터 없으면 재사용 셀 초기화만
+                cell.configureSpoiler(isSpoiler: false)
+                cell.onTapRevealSpoiler = nil
+                return cell
+            }
+
+            cell.configure(item: item)
+
             cell.onTapRevealSpoiler = { [weak cell] in
                 cell?.configureSpoiler(isSpoiler: false)
             }
@@ -148,16 +223,9 @@ extension CollectionDetailViewController: UITableViewDataSource {
 
             cell.selectionStyle = .none
 
-            let dummyImages: [UIImage] = [
-                DesignSystem.Image.Common.profileGray,
-                DesignSystem.Image.Background.backgroundGradientLarge,
-                DesignSystem.Image.Common.profileGray,
-                DesignSystem.Image.Background.backgroundGradientMiddle,
-                DesignSystem.Image.Common.profileGray,
-                DesignSystem.Image.Background.backgroundGradientLarge,
-            ]
+            let urls = (bookmarkedUsers?.users ?? []).map { $0.profileImageUrl }   // [URL?]
+            cell.configure(title: "이 컬렉션을 저장한 사람들", profileImageURLs: urls)
 
-            cell.configure(title: "이 컬렉션을 저장한 사람들", images: dummyImages)
             cell.onTapMore = { print("Tap more (save users)") }
             return cell
         }
@@ -170,5 +238,14 @@ extension CollectionDetailViewController: UITableViewDelegate {
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+// MARK: - Safe Index
+
+private extension Array {
+    subscript(safe index: Int) -> Element? {
+        guard indices.contains(index) else { return nil }
+        return self[index]
     }
 }

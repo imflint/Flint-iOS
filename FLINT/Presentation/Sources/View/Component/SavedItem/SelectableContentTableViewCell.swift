@@ -17,11 +17,11 @@ public final class SelectableContentTableViewCell: BaseTableViewCell {
     public var onTapCheckbox: ((Bool) -> Void)?
     
     //MARK: - State
-    private var isSelectedItem: Bool = false
+    public var isSelectedItem: Bool = false
 
     // MARK: - UI Component
 
-    private let posterImageView = UIImageView().then {
+    public let posterImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.backgroundColor = .flintGray100
@@ -29,22 +29,22 @@ public final class SelectableContentTableViewCell: BaseTableViewCell {
 
     private let infoContainerView = UIView()
 
-    private let titleLabel = UILabel().then {
+    public let titleLabel = UILabel().then {
         $0.numberOfLines = 2
         $0.lineBreakMode = .byTruncatingTail
     }
 
-    private let directorLabel = UILabel().then {
+    public let directorLabel = UILabel().then {
         $0.numberOfLines = 1
         $0.lineBreakMode = .byTruncatingTail
     }
 
-    private let yearLabel = UILabel().then {
+    public let yearLabel = UILabel().then {
         $0.numberOfLines = 1
         $0.lineBreakMode = .byTruncatingTail
     }
 
-    private let checkboxButton = UIButton(type: .system).then {
+    public let checkboxButton = UIButton(type: .system).then {
         $0.tintColor = .clear
         $0.setImage(UIImage.icCheckboxEmpty.withRenderingMode(.alwaysOriginal), for: .normal)
     }
@@ -102,6 +102,7 @@ public final class SelectableContentTableViewCell: BaseTableViewCell {
     public override func prepare() {
         onTapCheckbox = nil
         
+        posterImageView.kf.cancelDownloadTask()  
         posterImageView.image = nil
         titleLabel.attributedText = nil
         directorLabel.attributedText = nil
@@ -133,14 +134,20 @@ public final class SelectableContentTableViewCell: BaseTableViewCell {
 
     // MARK: - apply
 
-    private func updateCheckbox(isSelected: Bool) {
+    public func updateCheckbox(isSelected: Bool) {
         let image = isSelected ? UIImage.icCheckboxFill : UIImage.icCheckboxEmpty
         checkboxButton.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
     }
     
-    private func toggleSelection() {
+    public func toggleSelection() {
         isSelectedItem.toggle()
         updateCheckbox(isSelected: isSelectedItem)
         onTapCheckbox?(isSelectedItem)
     }
+    
+    public func setDisabled(_ isDisabled: Bool) {
+        checkboxButton.isEnabled = !isDisabled
+        contentView.alpha = isDisabled ? 0.8 : 1.0
+    }
+
 }

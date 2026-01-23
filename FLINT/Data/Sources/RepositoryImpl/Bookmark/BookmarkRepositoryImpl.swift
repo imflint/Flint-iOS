@@ -26,6 +26,14 @@ public final class DefaultBookmarkRepository: BookmarkRepository {
     }
     
     public func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, Error> {
-           return bookmarkService.toggleContentBookmark(contentId)
-       }
+        return bookmarkService.toggleContentBookmark(contentId)
+    }
+
+    public func fetchCollectionBookmarkUsers(_ collectionId: Int64)
+    -> AnyPublisher<CollectionBookmarkUsersEntity, Error> {
+        bookmarkService.fetchCollectionBookmarkUsers(collectionId)
+            .tryMap { try $0.entity }
+            .eraseToAnyPublisher()
+    }
+
 }

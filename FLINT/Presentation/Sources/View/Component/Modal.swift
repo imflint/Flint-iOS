@@ -158,8 +158,6 @@ public class Modal: BaseView {
         
         captionLabel.attributedText = NSAttributedString.pretendard(.body1_m_16, text: caption)
         
-        
-        
         if let leftButtonTitle {
             leftButton.isHidden = false
             leftButton.setAttributedTitle(NSAttributedString.pretendard(.body1_sb_16, text: leftButtonTitle), for: .normal)

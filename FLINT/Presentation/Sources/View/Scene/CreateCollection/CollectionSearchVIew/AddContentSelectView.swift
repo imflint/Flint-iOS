@@ -120,4 +120,5 @@ public final class AddContentSelectView: BaseView {
         emptyView.isHidden = hidden
         tableView.isHidden = !hidden
     }
+    
 }
