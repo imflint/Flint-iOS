@@ -62,6 +62,13 @@ public final class HomeViewController: BaseViewController<HomeView> {
         let vc = CreateCollectionViewController(viewModel: CreateCollectionViewModel())
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    private func map(_ style: HomeViewModel.TitleHeaderStyle) -> TitleHeaderTableViewCell.TitleHeaderStyle {
+        switch style {
+        case .normal: return .normal
+        case .more: return .more
+        }
+    }
 }
 
 
@@ -97,7 +104,7 @@ extension HomeViewController: UITableViewDataSource {
                 for: indexPath
             ) as! TitleHeaderTableViewCell
 
-            cell.configure(style: style, title: title, subtitle: subtitle)
+            cell.configure(style: map(style), title: title, subtitle: subtitle)
 
             if style == .more {
                 //TODO: - collectionFolderListView 연결하기
@@ -121,24 +128,24 @@ extension HomeViewController: UITableViewDataSource {
             cell.configure(items: items)
             return cell
             
-        case .recentSaved(let items):
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! RecentSavedContentTableViewCell
-            
-            cell.configure(items: items)
-            
-            cell.onTapItem = { [weak self] item in
-                let circles = item.availableOn.intersection(item.subscribedOn)
-
-                let platforms = CircleOTTPlatform.order
-                    .filter { circles.contains($0) }
-                    .map { OTTPlatform(circle: $0) }     
-
-                self?.presentOTTBottomSheet(platforms: platforms)
-            }
-            return cell
+//        case .recentSaved(let items):
+//            let cell = tableView.dequeueReusableCell(
+//                withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,
+//                for: indexPath
+//            ) as! RecentSavedContentTableViewCell
+//            
+//            cell.configure(items: items)
+//            
+//            cell.onTapItem = { [weak self] item in
+//                let circles = item.availableOn.intersection(item.subscribedOn)
+//
+//                let platforms = CircleOTTPlatform.order
+//                    .filter { circles.contains($0) }
+//                    .map { OTTPlatform(circle: $0) }     
+//
+//                self?.presentOTTBottomSheet(platforms: platforms)
+//            }
+//            return cell
 
         case .ctaButton(let title):
             let cell = tableView.dequeueReusableCell(

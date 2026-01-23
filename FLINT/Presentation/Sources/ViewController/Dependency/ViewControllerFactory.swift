@@ -16,4 +16,5 @@ public protocol ViewControllerFactory {
     func makeOttSelectViewController(onboardingViewModel: OnboardingViewModel) -> OttSelectViewController
     func makeOnboardingDoneViewController(onboardingViewModel: OnboardingViewModel) -> OnboardingDoneViewController
     func makeExploreViewController() -> ExploreViewController
+    func makeProfileViewController() -> ProfileViewController
 }

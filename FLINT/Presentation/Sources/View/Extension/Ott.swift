@@ -19,7 +19,7 @@ extension Ott {
         case .coupangPlay:
             return DesignSystem.Image.Logo.coupang
         case .wavve:
-            return DesignSystem.Image.Logo.wave
+            return DesignSystem.Image.Logo.wavve
         case .disneyPlus:
             return DesignSystem.Image.Logo.disney
         case .watchapedia:
@@ -36,7 +36,7 @@ extension Ott {
         case .coupangPlay:
             return DesignSystem.Image.Logo.coupangSmall
         case .wavve:
-            return DesignSystem.Image.Logo.waveSmall
+            return DesignSystem.Image.Logo.wavveSmall
         case .disneyPlus:
             return DesignSystem.Image.Logo.disneySmall
         case .watchapedia:

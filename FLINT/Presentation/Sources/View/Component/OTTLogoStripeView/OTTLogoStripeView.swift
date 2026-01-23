@@ -5,10 +5,13 @@
 //  Created by 소은 on 1/13/26.
 //
 
+
 import UIKit
 
 import SnapKit
 import Then
+
+import Entity
 
 public final class OTTLogoStripeView: BaseView {
 
@@ -35,8 +38,6 @@ public final class OTTLogoStripeView: BaseView {
         $0.isHidden = true
     }
 
-    // MARK: - Setup
-
     public override func setUI() {
         isUserInteractionEnabled = false
         isHidden = true
@@ -45,7 +46,7 @@ public final class OTTLogoStripeView: BaseView {
     public override func setHierarchy() {
         addSubviews(firstLogoImageView, secondLogoImageView, remainingBadgeView)
     }
-    
+
     public override func layoutSubviews() {
         super.layoutSubviews()
         applyShadowIfNeeded(to: remainingBadgeView)
@@ -75,27 +76,38 @@ public final class OTTLogoStripeView: BaseView {
         }
     }
 
-    // MARK: - Configure
+    
+    public func configure(leadingServerNames names: [String], remainingCount: Int) {
+        let platforms = names.compactMap { CircleOTTPlatform(serverName: $0) }
 
-    public func configure(leading platforms: [CircleOTTPlatform], remainingCount: Int) {
-        guard !platforms.isEmpty else {
+        // 고정 순서 유지
+        let ordered = CircleOTTPlatform.order.filter { platforms.contains($0) }
+
+        guard !ordered.isEmpty else {
+            // asset 기반이라 cancelDownloadTask 필요 없음
+            firstLogoImageView.image = nil
+            secondLogoImageView.image = nil
+            firstLogoImageView.isHidden = true
+            secondLogoImageView.isHidden = true
+            remainingBadgeView.isHidden = true
             isHidden = true
             return
         }
 
         isHidden = false
 
-        if let first = platforms.first {
+        if let first = ordered.first {
             firstLogoImageView.image = first.smallLogoImage
-            firstLogoImageView.isHidden = false
+            firstLogoImageView.isHidden = (first.smallLogoImage == nil)
         } else {
             firstLogoImageView.image = nil
             firstLogoImageView.isHidden = true
         }
 
-        if platforms.count >= 2 {
-            secondLogoImageView.image = platforms[1].smallLogoImage
-            secondLogoImageView.isHidden = false
+        if ordered.count >= 2 {
+            let second = ordered[1]
+            secondLogoImageView.image = second.smallLogoImage
+            secondLogoImageView.isHidden = (second.smallLogoImage == nil)
         } else {
             secondLogoImageView.image = nil
             secondLogoImageView.isHidden = true
@@ -108,7 +120,18 @@ public final class OTTLogoStripeView: BaseView {
             remainingBadgeView.isHidden = true
         }
     }
-    
+
+    private func resetAndHide() {
+        isHidden = true
+        firstLogoImageView.kf.cancelDownloadTask()
+        secondLogoImageView.kf.cancelDownloadTask()
+        firstLogoImageView.image = nil
+        secondLogoImageView.image = nil
+        firstLogoImageView.isHidden = true
+        secondLogoImageView.isHidden = true
+        remainingBadgeView.isHidden = true
+    }
+
     private func applyShadowIfNeeded(to view: UIView) {
         view.layer.masksToBounds = false
         view.layer.shadowColor = UIColor.black.cgColor
