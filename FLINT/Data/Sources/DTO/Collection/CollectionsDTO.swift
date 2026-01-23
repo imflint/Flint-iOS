@@ -23,9 +23,8 @@ extension CollectionsDTO {
     public struct CollectionDTO: Codable {
         public let collectionId: String?
         public let imageUrl: String?
-        public let title: String?
-        public let description: String?
-        public let createdAt: String?
+        public let contentTitle: String?
+        public let contentDescription: String?
     }
 }
 
@@ -54,8 +53,8 @@ extension CollectionsDTO.CollectionDTO {
             return try CollectionInfoEntity(
                 id: unwrap(collectionId, key: CodingKeys.collectionId),
                 imageUrl: URL(string: imageUrl ?? ""),
-                title: title ?? "",
-                description: description ?? ""
+                title: contentTitle ?? "",
+                description: contentDescription ?? ""
             )
         }
     }

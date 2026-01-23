@@ -7,11 +7,19 @@
 
 import UIKit
 
+import Domain
+
 import View
+import ViewModel
 
 public final class LoginViewController: BaseViewController<LoginView> {
     
-    public init(viewControllerFactory: ViewControllerFactory) {
+    // MARK: - ViewModel
+    
+    private let loginViewModel: LoginViewModel
+    
+    public init(loginViewModel: LoginViewModel, viewControllerFactory: ViewControllerFactory) {
+        self.loginViewModel = loginViewModel
         super.init(nibName: nil, bundle: nil)
         self.viewControllerFactory = viewControllerFactory
     }
@@ -26,6 +34,16 @@ public final class LoginViewController: BaseViewController<LoginView> {
         rootView.kakaoButton.addAction(UIAction(handler: kakaoLogin(_:)), for: .touchUpInside)
     }
     
+    public override func bind() {
+        loginViewModel.socialVerifyResultEntity.sink { [weak self] socialVerifyResultEntity in
+            Log.d(socialVerifyResultEntity)
+            if let socialVerifyResultEntity, !socialVerifyResultEntity.isRegistered {
+                self?.register()
+            }
+        }
+        .store(in: &cancellables)
+    }
+    
     public override func setBaseLayout() {
         rootView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -33,6 +51,10 @@ public final class LoginViewController: BaseViewController<LoginView> {
     }
     
     private func kakaoLogin(_ action: UIAction) {
+        loginViewModel.kakaoLogin()
+    }
+    
+    private func register() {
         guard let nicknameViewController = viewControllerFactory?.makeNicknameViewController() else { return }
         navigationController?.pushViewController(nicknameViewController, animated: true)
     }

@@ -11,12 +11,14 @@ import Moya
 
 import Domain
 
+import DTO
+
 public enum AuthAPI {
     case logout
     case logoutAll
     case refresh
-    case signup(_ signupInfoEntity: SignupInfoEntity)
-    case socialVerify
+    case signup(_ signupInfoEntity: SignupRequestDTO)
+    case socialVerify(_socialVerifyRequestDTO: SocialVerifyRequestDTO)
 }
 
 extension AuthAPI: TargetType {
@@ -25,8 +27,10 @@ extension AuthAPI: TargetType {
         switch self {
         case .signup:
             return "/api/v1/auth/signup"
-        case .logout, .logoutAll, .refresh, .socialVerify:
+        case .logout, .logoutAll, .refresh:
             return "TODO"
+        case .socialVerify:
+            return "/api/v1/auth/social/verify"
         }
     }
     
@@ -41,8 +45,10 @@ extension AuthAPI: TargetType {
         switch self {
         case .signup(let signupInfoEntity):
             return .requestJSONEncodable(signupInfoEntity)
-        case .logout, .logoutAll, .refresh, .socialVerify:
+        case .logout, .logoutAll, .refresh:
             return .requestPlain
+        case .socialVerify(let socialVerifyRequestDTO):
+            return .requestJSONEncodable(socialVerifyRequestDTO)
         }
     }
 }

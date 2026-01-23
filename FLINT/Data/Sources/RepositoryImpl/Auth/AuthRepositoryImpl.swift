@@ -10,6 +10,7 @@ import Foundation
 
 import Domain
 
+import DTO
 import Networking
 
 public final class DefaultAuthRepository: AuthRepository {
@@ -23,6 +24,12 @@ public final class DefaultAuthRepository: AuthRepository {
     public func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<String, Error> {
         return authService.signup(signupInfoEntity)
             .tryMap({ try $0.userIdValue })
+            .eraseToAnyPublisher()
+    }
+    
+    public func socialVerify(socialVerifyEntity: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error> {
+        return authService.socialVerify(socialVerifyRequestDTO: SocialVerifyRequestDTO(entity: socialVerifyEntity))
+            .tryMap({ try $0.entity })
             .eraseToAnyPublisher()
     }
 }

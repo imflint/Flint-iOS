@@ -243,6 +243,8 @@
 /* Begin XCBuildConfiguration section */
 		969B74152F1E7B6D00177B52 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B0E5931E2F0A427A009D7980 /* FLINT */;
+			baseConfigurationReferenceRelativePath = "Flint-iOS-Private/Secret.xcconfig";
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -269,6 +271,8 @@
 		};
 		969B74162F1E7B6D00177B52 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B0E5931E2F0A427A009D7980 /* FLINT */;
+			baseConfigurationReferenceRelativePath = "Flint-iOS-Private/Secret.xcconfig";
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -295,6 +299,8 @@
 		};
 		B0E593302F0A427C009D7980 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B0E5931E2F0A427A009D7980 /* FLINT */;
+			baseConfigurationReferenceRelativePath = "Flint-iOS-Private/Secret.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -303,6 +309,7 @@
 				DEVELOPMENT_TEAM = JU27F4BHH8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FLINT/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flint에서 이미지를 등록하려면 사진 접근 권한이 필요해요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -313,7 +320,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.flint.flint;
+				PRODUCT_BUNDLE_IDENTIFIER = com.imflint.flint;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -327,6 +334,8 @@
 		};
 		B0E593312F0A427C009D7980 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B0E5931E2F0A427A009D7980 /* FLINT */;
+			baseConfigurationReferenceRelativePath = "Flint-iOS-Private/Secret.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -335,6 +344,7 @@
 				DEVELOPMENT_TEAM = JU27F4BHH8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FLINT/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flint에서 이미지를 등록하려면 사진 접근 권한이 필요해요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -345,7 +355,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.flint.flint;
+				PRODUCT_BUNDLE_IDENTIFIER = com.imflint.flint;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -359,6 +369,8 @@
 		};
 		B0E593322F0A427C009D7980 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B0E5931E2F0A427A009D7980 /* FLINT */;
+			baseConfigurationReferenceRelativePath = "Flint-iOS-Private/Secret.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -423,6 +435,8 @@
 		};
 		B0E593332F0A427C009D7980 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B0E5931E2F0A427A009D7980 /* FLINT */;
+			baseConfigurationReferenceRelativePath = "Flint-iOS-Private/Secret.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
