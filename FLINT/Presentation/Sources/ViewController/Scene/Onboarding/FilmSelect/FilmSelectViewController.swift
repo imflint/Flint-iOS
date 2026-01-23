@@ -58,9 +58,16 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         super.viewDidLoad()
         
         setNavigationBar(.init(left: .back, backgroundStyle: .solid(DesignSystem.Color.background)))
-        hideKeyboardWhenTappedAround()
+        hideKeyboardWhenTappedAround(activeOnAction: false)
         
         onboardingViewModel.fetchContents()
+        
+        rootView.searchTextField.searchAction = { [weak self] keyword in
+            self?.onboardingViewModel.searchContents(keyword ?? "")
+        }
+        rootView.searchTextField.clearAction = { [weak self] in
+            self?.onboardingViewModel.fetchContents()
+        }
         
         rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(onboardingViewModel.selectedContents.value.count)/\(onboardingViewModel.filmSelectQuestions.count)")
         rootView.progressView.progress = Float(onboardingViewModel.selectedContents.value.count) / Float(onboardingViewModel.filmSelectQuestions.count)
@@ -85,6 +92,7 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         .store(in: &cancellables)
         
         onboardingViewModel.contents.sink { [weak self] contents in
+            self?.rootView.emptyView.isHidden = !contents.isEmpty
             self?.rootView.filmCollectionView.reloadData()
         }
         .store(in: &cancellables)

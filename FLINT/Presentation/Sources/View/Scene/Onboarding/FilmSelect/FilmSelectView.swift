@@ -108,6 +108,24 @@ public final class FilmSelectView: BaseView {
     
     public let nextButton = FlintButton(style: .able, title: "다음")
     
+    public let emptyView = UIView().then {
+        $0.isHidden = true
+    }
+    public let emptyStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 8
+        $0.alignment = .center
+        $0.distribution = .equalSpacing
+    }
+    public let emptyImageView = UIImageView().then {
+        $0.image = .icNoneGradient
+        $0.contentMode = .scaleAspectFit
+    }
+    public let emptyTitleLabel = UILabel().then {
+        $0.textColor = .flintWhite
+        $0.attributedText = .pretendard(.head3_m_18, text: "아직 준비 중인 작품이에요")
+    }
+    
     // MARK: - Basic
     
     public override init(frame: CGRect) {
@@ -135,6 +153,7 @@ public final class FilmSelectView: BaseView {
             progressInfoView,
             searchView,
             nextButton,
+            emptyView
         )
         collectionViewStackView.addArrangedSubviews(
             filmPreviewCollectionView,
@@ -144,6 +163,11 @@ public final class FilmSelectView: BaseView {
         foldableView.addSubview(titleLabel)
         subtitleLabelView.addSubview(subtitleLabel)
         searchView.addSubview(searchTextField)
+        emptyView.addSubviews(emptyStackView)
+        emptyStackView.addArrangedSubviews(
+            emptyImageView,
+            emptyTitleLabel,
+        )
     }
     
     public override func setLayout() {
@@ -202,6 +226,12 @@ public final class FilmSelectView: BaseView {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(48)
             $0.bottom.equalTo(safeAreaLayoutGuide)
+        }
+        emptyView.snp.makeConstraints {
+            $0.edges.equalTo(filmCollectionView)
+        }
+        emptyStackView.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
     
