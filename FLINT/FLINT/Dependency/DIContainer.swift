@@ -19,9 +19,6 @@ typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & Expl
 
 final class DIContainer: AppFactory {
     
-    
-    
-    
     // MARK: - Root Dependency
     
     private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
@@ -61,6 +58,14 @@ final class DIContainer: AppFactory {
     }
     
     // MARK: - ViewControllerFactory
+    
+    func makeSplashViewController() -> SplashViewController {
+        return SplashViewController(viewControllerFactory: self)
+    }
+    
+    func makeLoginViewController() -> LoginViewController {
+        return LoginViewController(viewControllerFactory: self)
+    }
     
     func makeTabBarViewController() -> TabBarViewController {
         return TabBarViewController(viewControllerFactory: self)
