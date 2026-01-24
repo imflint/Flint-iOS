@@ -156,7 +156,11 @@ extension HomeViewController: UITableViewDataSource {
                 cell.onTapMore = { [weak self] in
                     guard let self else { return }
 
-                    let vc = CollectionFolderListViewController()
+                    let factory = self.viewControllerFactory
+                        ?? (self.parent as? TabBarViewController)?.viewControllerFactory
+                    guard let factory else { return }
+
+                    let vc = factory.makeCollectionFolderListViewController()
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             } else {

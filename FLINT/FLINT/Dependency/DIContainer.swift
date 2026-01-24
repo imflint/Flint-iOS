@@ -130,6 +130,12 @@ final class DIContainer: AppFactory {
         return CollectionDetailViewController(viewModel: vm)
     }
     
+    func makeCollectionFolderListViewController() -> CollectionFolderListViewController {
+        let vm = CollectionFolderListViewModel(fetchWatchingCollectionsUseCase: makeFetchWatchingCollectionsUseCase())
+        return CollectionFolderListViewController(viewModel: vm, viewControllerFactory: self)
+    }
+
+    
     
     // MARK: - Root Dependency Injection
     
