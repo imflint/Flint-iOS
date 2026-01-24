@@ -89,6 +89,7 @@ public final class ExploreCollectionViewCell: BaseCollectionViewCell {
         collectionImageView.image = nil
         collectionTitleLabel.text = nil
         collectionDescriptionLabel.text = nil
+        collectionDetailButton.removeTarget(nil, action: nil, for: .allEvents)
     }
     
     @objc

@@ -60,6 +60,7 @@ public final class DefaultAuthService: AuthService {
                     Log.d(tempToken)
                     tokenStorage.save(tempToken, type: .tempToken)
                 } else if let accessToken = socialVerifyResponseDTO.accessToken, let refreshToken = socialVerifyResponseDTO.refreshToken {
+                    Log.d(accessToken)
                     tokenStorage.save(accessToken, type: .accessToken)
                     tokenStorage.save(refreshToken, type: .refreshToken)
                 }
