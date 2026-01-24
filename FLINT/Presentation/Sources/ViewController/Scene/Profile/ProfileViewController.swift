@@ -79,6 +79,11 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         }
     }
     
+    private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
+        let vc = BaseBottomSheetViewController(content: .ott(platforms: platforms))
+        present(vc, animated: false)
+    }
+    
 }
 
 // MARK: - UITableViewDelegate
@@ -185,8 +190,21 @@ extension ProfileViewController: UITableViewDataSource {
                                                      for: indexPath) as! RecentSavedContentTableViewCell
             cell.selectionStyle = .none
             cell.configure(items: items)
-            cell.onTapItem = {entity in
-                print("저장 컨텐츠 선택: ", entity.id)
+//            cell.onTapItem = {entity in
+//                print("저장 컨텐츠 선택: ", entity.id)
+//            }
+            cell.onTapItem = { [weak self] content in
+                guard let self else { return }
+                
+                let platforms: [OTTPlatform] = content.ottList.compactMap { ott in
+                    OTTPlatform.fromServerName(ott.ottName)
+                }
+                
+                if platforms.isEmpty {
+                    print("ottList 비어있음 or 매핑 실패. contentId:", content.id)
+                }
+                
+                self.presentOTTBottomSheet(platforms: platforms)
             }
             return cell
         }
