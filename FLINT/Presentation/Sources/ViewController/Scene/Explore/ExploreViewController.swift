@@ -95,6 +95,12 @@ extension ExploreViewController: UICollectionViewDataSource {
         cell.collectionImageView.kf.setImage(with: collection.imageUrl)
         cell.collectionTitleLabel.attributedText = .pretendard(.display2_m_28, text: collection.title)
         cell.collectionDescriptionLabel.attributedText = .pretendard(.body1_r_16, text: collection.description)
+        cell.collectionDetailButton.addAction(UIAction(handler: { [weak self] _ in
+            guard let id = Int64(collection.id) else { return }
+            guard let vc = self?.viewControllerFactory?.makeCollectionDetailViewController(collectionId: id) else { return }
+            self?.navigationController?.pushViewController(vc, animated: true)
+            
+        }), for: .touchUpInside)
         return cell
     }
 }

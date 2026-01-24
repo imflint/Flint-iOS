@@ -28,4 +28,6 @@ public protocol ViewControllerFactory {
     func makeCreateCollectionViewController() -> CreateCollectionViewController
     
     func makeProfileViewController() -> ProfileViewController
+    
+    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController
 }
