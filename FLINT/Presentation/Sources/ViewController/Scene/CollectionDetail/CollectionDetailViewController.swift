@@ -39,10 +39,13 @@ public final class CollectionDetailViewController: BaseViewController<Collection
 
     // MARK: - Init
 
-    public init(viewModel: CollectionDetailViewModel) {
+    public init(viewModel: CollectionDetailViewModel, viewControllerFactory: ViewControllerFactory) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        self.viewControllerFactory = viewControllerFactory
     }
+
+
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -101,13 +104,26 @@ public final class CollectionDetailViewController: BaseViewController<Collection
     }
     
     private func presentSavedUsersBottomSheet(users: [SavedUserRowItem]) {
-        guard !users.isEmpty else {
-            print("saved users empty")
-            return
+        guard !users.isEmpty else { return }
+        
+        let sheet = BaseBottomSheetViewController(content: .savedUsers(users: users))
+        
+        sheet.onSelectSavedUser = { [weak self, weak sheet] user in
+            guard let self else { return }
+            
+            sheet?.dismiss(animated: false) { [weak self] in
+                guard let self else { return }
+                
+                guard let factory = self.viewControllerFactory else { return }
+                let profileVC = factory.makeProfileViewController(target: .user(userId: user.userId))
+                navigationController?.setNavigationBarHidden(false, animated: false)
+                navigationController?.pushViewController(profileVC, animated: true)
+            }
         }
-        let vc = BaseBottomSheetViewController(content: .savedUsers(users: users))
-        present(vc, animated: false)
+        
+        present(sheet, animated: false)
     }
+
     
     private func makeSavedUserRowItems() -> [SavedUserRowItem] {
         let users = bookmarkedUsers?.users ?? []

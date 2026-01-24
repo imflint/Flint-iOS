@@ -17,14 +17,17 @@ import ViewModel
 
 public final class ProfileViewController: BaseViewController<ProfileView> {
     
-    private let profileViewModel: ProfileViewModel
     
-    public init(profileViewModel: ProfileViewModel,
-                viewControllerFactory: ViewControllerFactory) {
+    private let profileViewModel: ProfileViewModel
+    public init(
+        profileViewModel: ProfileViewModel,
+        viewControllerFactory: ViewControllerFactory,
+    ) {
         self.profileViewModel = profileViewModel
         super.init(nibName: nil, bundle: nil)
         self.viewControllerFactory = viewControllerFactory
     }
+
     
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -35,6 +38,13 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         bind()
         profileViewModel.load()
     }
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setNavigationBar(.init(left: .back, backgroundStyle: .clear))
+
+    }
+
     
     private func setupTableView() {
         let tableView = rootView.tableView

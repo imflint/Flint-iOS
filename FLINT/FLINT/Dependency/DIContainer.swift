@@ -140,10 +140,15 @@ final class DIContainer: AppFactory {
     }
 
     
+//    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
+//        let vm = makeCollectionDetailViewModel(collectionId: collectionId)
+//        return CollectionDetailViewController(viewModel: vm)
+//    }
     func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
         let vm = makeCollectionDetailViewModel(collectionId: collectionId)
-        return CollectionDetailViewController(viewModel: vm)
+        return CollectionDetailViewController(viewModel: vm, viewControllerFactory: self)
     }
+
     
     
     // MARK: - Root Dependency Injection

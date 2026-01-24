@@ -15,7 +15,7 @@ public final class ProfileViewModel {
     
     public enum Target: Equatable {
         case me
-        case user(userId: Int)
+        case user(userId: String)
     }
     
     private let target: Target
@@ -139,8 +139,12 @@ public final class ProfileViewModel {
             
             
             
-        case .user(let userId):
-            userProfileUseCase.fetchUserProfile(userId: Int64(userId))
+        case .user(let userIdString):
+            guard let userId = Int64(userIdString) else {
+                print("❌ invalid userId:", userIdString)
+                return
+            }
+            userProfileUseCase.fetchUserProfile(userId: userId)
                 .receive(on: DispatchQueue.main)
                 .sink { completion in
                     if case let .failure(error) = completion {
@@ -167,7 +171,7 @@ public final class ProfileViewModel {
                 }
                 .store(in: &cancellables)
             
-            userProfileUseCase.fetchUserCollections(userId: Int64(userId))
+            userProfileUseCase.fetchUserCollections(userId: userId)
                 .receive(on: DispatchQueue.main)
                 .sink { completion in
                     if case let .failure(error) = completion {
@@ -180,7 +184,7 @@ public final class ProfileViewModel {
                 }
                 .store(in: &cancellables)
             
-            userProfileUseCase.fetchBookmarkedCollections(userId: Int64(userId))
+            userProfileUseCase.fetchBookmarkedCollections(userId: userId)
                 .receive(on: DispatchQueue.main)
                 .sink { completion in
                     if case let .failure(error) = completion {
@@ -194,7 +198,7 @@ public final class ProfileViewModel {
                 }
                 .store(in: &cancellables)
             
-            userProfileUseCase.fetchBookmarkedContents(userId: Int64(userId))
+            userProfileUseCase.fetchBookmarkedContents(userId: userId)
                 .receive(on: DispatchQueue.main)
                 .sink { completion in
                     if case let .failure(error) = completion {

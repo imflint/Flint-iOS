@@ -89,7 +89,26 @@ public final class SavedUserListView: BaseView {
                 $0.height.equalTo(rowHeight)
             }
 
+            row.isUserInteractionEnabled = true
+            let tap = UITapGestureRecognizer(target: self, action: #selector(didTapUserRow(_:)))
+            row.addGestureRecognizer(tap)
+
+            row.accessibilityIdentifier = user.userId  // String이라면 OK (Int면 String(userId))
+
             contentStackView.addArrangedSubview(row)
         }
     }
+
+    @objc private func didTapUserRow(_ sender: UITapGestureRecognizer) {
+        guard let view = sender.view else { return }
+
+        guard let id = view.accessibilityIdentifier,
+              let user = users.first(where: { $0.userId == id }) else {
+            print("❌ didTapUserRow: user not found")
+            return
+        }
+
+        onTapUser?(user)
+    }
+
 }
