@@ -107,7 +107,8 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
         let entity = viewModel.items[indexPath.item]
 
         let firstURL = URL(string: entity.imageList.first ?? entity.thumbnailUrl)
-        let secondURL = URL(string: entity.imageList.dropFirst().first ?? "")
+        let secondString = entity.imageList.count > 1 ? entity.imageList[1] : nil
+        let secondURL = secondString.flatMap(URL.init(string:))
         let profileURL = URL(string: entity.profileImageUrl)
 
         cell.configure(
@@ -122,10 +123,15 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
                 bookmarkedCountText: "\(entity.bookmarkCount)"
             )
         )
-
         
-        cell.onTapCard = { [weak self] in
-            self?.didSelectItem(at: indexPath)
+        cell.onTapCard = { [weak self, weak collectionView, weak cell] in
+            guard
+                let self,
+                let collectionView,
+                let cell,
+                let currentIndexPath = collectionView.indexPath(for: cell)
+            else { return }
+            self.didSelectItem(at: currentIndexPath)
         }
         
         cell.onTapBookmark = { [weak self, weak cell] isBookmarked, count in
