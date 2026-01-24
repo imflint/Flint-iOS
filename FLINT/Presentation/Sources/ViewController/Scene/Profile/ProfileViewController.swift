@@ -190,9 +190,6 @@ extension ProfileViewController: UITableViewDataSource {
                                                      for: indexPath) as! RecentSavedContentTableViewCell
             cell.selectionStyle = .none
             cell.configure(items: items)
-//            cell.onTapItem = {entity in
-//                print("저장 컨텐츠 선택: ", entity.id)
-//            }
             cell.onTapItem = { [weak self] content in
                 guard let self else { return }
                 
