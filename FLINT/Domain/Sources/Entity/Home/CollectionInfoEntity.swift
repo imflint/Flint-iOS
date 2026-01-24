@@ -8,17 +8,20 @@
 import Foundation
 
 public struct CollectionInfoEntity {
+    public let id: String?
     public let imageUrlString: String
     public let profileImageUrlString: String
     public let title: String
     public let userName: String
 
     public init(
+        id: String,
         imageUrlString: String,
         profileImageUrlString: String,
         title: String,
         userName: String
     ) {
+        self.id = id
         self.imageUrlString = imageUrlString
         self.profileImageUrlString = profileImageUrlString
         self.title = title

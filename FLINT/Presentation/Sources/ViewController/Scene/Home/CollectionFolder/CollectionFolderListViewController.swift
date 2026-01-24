@@ -16,7 +16,6 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
     
     // MARK: - Data
     
-  //  private var items: [FolderItem] = FolderItem.mock()
     private let viewModel: CollectionFolderListViewModel
     
     public init(viewModel: CollectionFolderListViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
@@ -124,16 +123,6 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
             )
         )
         
-        cell.onTapCard = { [weak self, weak collectionView, weak cell] in
-            guard
-                let self,
-                let collectionView,
-                let cell,
-                let currentIndexPath = collectionView.indexPath(for: cell)
-            else { return }
-            self.didSelectItem(at: currentIndexPath)
-        }
-        
         cell.onTapBookmark = { [weak self, weak cell] isBookmarked, count in
             guard let self, let cell,
                   let indexPath = collectionView.indexPath(for: cell) else { return }
@@ -171,7 +160,19 @@ extension CollectionFolderListViewController: UICollectionViewDelegate {
     }
     
     private func didSelectItem(at indexPath: IndexPath) {
-        // TODO: 컬렉션 상세화면 이동
+        let entity = viewModel.items[indexPath.item]
+
+        guard let collectionId = Int64(entity.id) else {
+            print("invalid collectionId:", entity.id)
+            return
+        }
+
+        let factory = viewControllerFactory
+            ?? (parent as? TabBarViewController)?.viewControllerFactory
+        guard let factory else { return }
+
+        let vc = factory.makeCollectionDetailViewController(collectionId: collectionId)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 

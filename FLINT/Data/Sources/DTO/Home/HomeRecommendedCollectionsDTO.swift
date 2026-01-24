@@ -38,6 +38,7 @@ public extension HomeRecommendedCollectionsDTO {
 public extension HomeRecommendedCollectionsDTO.CollectionDTO {
     var entity: CollectionInfoEntity {
         CollectionInfoEntity(
+            id: id ?? "",
             imageUrlString: thumbnailUrl ?? "",
             profileImageUrlString: profileUrl ?? "",
             title: title ?? "",

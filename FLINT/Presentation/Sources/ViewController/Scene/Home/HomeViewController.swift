@@ -175,6 +175,23 @@ extension HomeViewController: UITableViewDataSource {
                 for: indexPath
             ) as! MoreNoMoreCollectionTableViewCell
             cell.configure(items: items)
+            
+            cell.onSelectItem = { [weak self] entity in
+                    guard let self else { return }
+
+                    guard let collectionId = Int64(entity.id) else {
+                        print("invalid collectionId:", entity.id)
+                        return
+                    }
+
+                    let factory = self.viewControllerFactory
+                        ?? (self.parent as? TabBarViewController)?.viewControllerFactory
+                    guard let factory else { return }
+
+                    let vc = factory.makeCollectionDetailViewController(collectionId: collectionId)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+
             return cell
             
         case .ctaButton(let title):
