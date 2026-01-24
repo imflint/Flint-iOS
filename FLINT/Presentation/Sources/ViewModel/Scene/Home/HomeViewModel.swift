@@ -49,6 +49,7 @@ public final class HomeViewModel {
 
     private let homeUseCase: HomeUseCase
     private let userProfileUseCase: UserProfileUseCase
+    private let fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - State
@@ -62,10 +63,12 @@ public final class HomeViewModel {
     public init(
         homeUseCase: HomeUseCase,
         userProfileUseCase: UserProfileUseCase,
+        fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase,
         initialUserName: String = "얀비"
     ) {
         self.homeUseCase = homeUseCase
         self.userProfileUseCase = userProfileUseCase
+        self.fetchWatchingCollectionsUseCase = fetchWatchingCollectionsUseCase
         self.userName = initialUserName
         self.sections = makeSections()
     }
@@ -110,18 +113,19 @@ public final class HomeViewModel {
                         nickname: info.userName,
                         profileImageUrl: info.profileImageUrlString
                     )
+                    
                 }
 
                 self.sections = self.makeSections()
             }
             .store(in: &cancellables)
 
-        // 2) 최근 저장한 콘텐츠 (북마크 콘텐츠)
+        // 2) 최근 저장한 콘텐츠
         userProfileUseCase.fetchMyBookmarkedContents()
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchMyBookmarkedContents failed:", error)
+                    print("fetchMyBookmarkedContents failed:", error)
                 }
             } receiveValue: { [weak self] contents in
                 guard let self else { return }
@@ -129,6 +133,21 @@ public final class HomeViewModel {
                 self.sections = self.makeSections()
             }
             .store(in: &cancellables)
+        
+        fetchWatchingCollectionsUseCase.fetchWatchingCollections()
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("fetchWatchingCollections failed:", error)
+                }
+            } receiveValue: { [weak self] items in
+                guard let self else { return }
+                self.watchingCollections = items
+                self.sections = self.makeSections()
+            }
+            .store(in: &cancellables)
+        
+        
     }
 
     // MARK: - Builder
