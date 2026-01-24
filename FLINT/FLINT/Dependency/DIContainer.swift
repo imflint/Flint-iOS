@@ -21,8 +21,10 @@ final class DIContainer: AppFactory {
     
     // MARK: - Root Dependency
     
+
     private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
   //  private lazy var tokenStorage: TokenStorage = TestTokenStorage()
+
     
     private lazy var authInterceptor: AuthInterceptor = AuthInterceptor(tokenStorage: tokenStorage)
     private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()

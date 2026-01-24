@@ -59,7 +59,8 @@ public final class ProfileViewModel {
     // MARK: - Input
     public func load() {
 
-        userProfileUseCase.fetchUserProfile(userId: 1)
+//        userProfileUseCase.fetchUserProfile(userId: 1)
+        userProfileUseCase.fetchMyProfile()
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {
@@ -74,7 +75,8 @@ public final class ProfileViewModel {
             }
             .store(in: &cancellables)
 
-        userProfileUseCase.fetchUserKeywords(userId: 1)
+//        userProfileUseCase.fetchUserKeywords(userId: 1)
+        userProfileUseCase.fetchMyKeywords()
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {
@@ -153,7 +155,7 @@ public final class ProfileViewModel {
 
         result.append(
             .titleHeader(
-                style: .more,
+                style: .normal,
                 title: "\(nickname)님의 컬렉션",
                 subtitle: "\(nickname)님이 생성한 컬렉션이에요"
             )
@@ -162,7 +164,7 @@ public final class ProfileViewModel {
 
         result.append(
             .titleHeader(
-                style: .more,
+                style: .normal,
                 title: "저장한 컬렉션",
                 subtitle: "\(nickname)님이 저장한 컬렉션이에요"
             )
@@ -171,7 +173,7 @@ public final class ProfileViewModel {
         
         result.append(
             .titleHeader(
-                style: .more,
+                style: .normal,
                 title: "저장한 콘텐츠",
                 subtitle: "\(nickname)님이 저장한 콘텐츠에요"
             )
