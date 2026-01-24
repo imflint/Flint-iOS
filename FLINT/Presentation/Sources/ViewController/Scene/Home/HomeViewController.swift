@@ -165,8 +165,16 @@ extension HomeViewController: UITableViewDataSource {
                 withIdentifier: HomeCTAButtonTableViewCell.reuseIdentifier,
                 for: indexPath
             ) as! HomeCTAButtonTableViewCell
+
             cell.configure(title: title)
+
+            cell.onTap = { [weak self] in
+                guard let self else { return }
+                (self.parent as? TabBarViewController)?.selectTab(.explore)
+            }
+
             return cell
+            
         case .recentSavedContents(let items):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,

@@ -18,15 +18,13 @@ import Presentation
 typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & HomeFactory & CollectionDetailFactory & LoginViewModelFactory
 
 final class DIContainer: AppFactory {
-    func makeHomeViewModel(homeUseCase: any UseCase.HomeUseCase) -> ViewModel.HomeViewModel {
-        return makeHomeViewModel(homeUseCase: makeHomeUseCase())
-    }
-    
     
     // MARK: - Root Dependency
     
-//    private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
-    private lazy var tokenStorage: TokenStorage = TestTokenStorage()
+
+    private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
+  //  private lazy var tokenStorage: TokenStorage = TestTokenStorage()
+
     
     private lazy var authInterceptor: AuthInterceptor = AuthInterceptor(tokenStorage: tokenStorage)
     private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()
@@ -161,7 +159,7 @@ final class DIContainer: AppFactory {
         return authAPIProvider
     }
     
-    func makeHomeAPIProvider() -> Moya.MoyaProvider<Networking.HomeAPI> {
+    func makeHomeAPIProvider() -> MoyaProvider<HomeAPI> {
         return homeAPIProvider
     }
 }

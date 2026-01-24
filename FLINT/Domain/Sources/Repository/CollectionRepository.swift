@@ -14,4 +14,5 @@ public protocol CollectionRepository {
     func fetchCollections(cursor: UInt?, size: Int) -> AnyPublisher<CollectionPagingEntity, Error>
     func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error>
     func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error>
+    func fetchWatchingCollections() -> AnyPublisher<[CollectionEntity], Error>
 }

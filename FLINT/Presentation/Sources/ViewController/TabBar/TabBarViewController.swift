@@ -106,6 +106,12 @@ public class TabBarViewController: UIViewController {
         containerView.addSubview(newContainerViewController.view)
         newContainerViewController.didMove(toParent: self)
         
+        containerViewController = newContainerViewController
+        
         tabBarView.selectedTab = tab
+    }
+    
+    public func selectTab(_ tab: TabBarView.Tab) {
+        switchTab(to: tab)
     }
 }

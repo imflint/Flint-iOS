@@ -15,6 +15,7 @@ public enum CollectionAPI {
     case fetchCollections(cursor: UInt?, size: Int)
     case createCollection(_ request: CreateCollectionEntity)
     case fetchCollectionDetail(collectionId: Int64)
+    case fetchWatchingCollections
 }
 
 extension CollectionAPI: TargetType {
@@ -27,6 +28,8 @@ extension CollectionAPI: TargetType {
             return "/api/v1/collections"
         case let .fetchCollectionDetail(collectionId):
             return "/api/v1/collections/\(collectionId)"
+        case let .fetchWatchingCollections:
+            return "/api/v1/collections/recent"
         }
     }
     
@@ -37,6 +40,8 @@ extension CollectionAPI: TargetType {
         case .createCollection:
             return .post
         case .fetchCollectionDetail:
+            return .get
+        case .fetchWatchingCollections:
             return .get
         }
     }
@@ -57,6 +62,8 @@ extension CollectionAPI: TargetType {
         case .createCollection(let request):
             return .requestJSONEncodable(request)
         case .fetchCollectionDetail:
+            return .requestPlain
+        case .fetchWatchingCollections:
             return .requestPlain
         }
     }

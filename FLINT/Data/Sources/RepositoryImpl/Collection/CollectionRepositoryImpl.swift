@@ -36,4 +36,11 @@ public final class DefaultCollectionRepository: CollectionRepository {
             .tryMap { try $0.entity }
             .eraseToAnyPublisher()
     }
+    
+    public func fetchWatchingCollections() -> AnyPublisher<[CollectionEntity], Error> {
+        return collectionService.fetchWatchingCollections()
+            .map(\.entities)
+            .eraseToAnyPublisher()
+    }
+
 }

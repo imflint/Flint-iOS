@@ -10,7 +10,9 @@ import Data
 import Domain
 import Presentation
 
-protocol HomeFactory: ProfileFactory {
+// MARK: - HomeFactory
+
+protocol HomeFactory: ProfileFactory, CreateCollectionFactory {
 
     // MARK: - Home (Recommended)
 
@@ -29,11 +31,23 @@ protocol HomeFactory: ProfileFactory {
     func makeHomeUseCase() -> HomeUseCase
     func makeHomeUseCase(homeRepository: HomeRepository) -> HomeUseCase
 
+    // MARK: - Watching Collections (Collection Swagger)
+
+    // UseCase
+    func makeFetchWatchingCollectionsUseCase() -> FetchWatchingCollectionsUseCase
+    func makeFetchWatchingCollectionsUseCase(collectionRepository: CollectionRepository) -> FetchWatchingCollectionsUseCase
+
     // MARK: - ViewModel
 
     func makeHomeViewModel() -> HomeViewModel
-    func makeHomeViewModel(homeUseCase: HomeUseCase) -> HomeViewModel
+    func makeHomeViewModel(
+        homeUseCase: HomeUseCase,
+        userProfileUseCase: UserProfileUseCase,
+        fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase
+    ) -> HomeViewModel
 }
+
+// MARK: - Default Implementations
 
 extension HomeFactory {
 
@@ -63,23 +77,36 @@ extension HomeFactory {
         DefaultHomeUseCase(homeRepository: homeRepository)
     }
 
+    // MARK: - Watching Collections (Collection Swagger)
+
+    func makeFetchWatchingCollectionsUseCase() -> FetchWatchingCollectionsUseCase {
+        makeFetchWatchingCollectionsUseCase(collectionRepository: makeCollectionRepository())
+    }
+
+    func makeFetchWatchingCollectionsUseCase(collectionRepository: CollectionRepository) -> FetchWatchingCollectionsUseCase {
+        DefaultFetchWatchingCollectionsUseCase(collectionRepository: collectionRepository)
+    }
+
     // MARK: - ViewModel
 
-//    func makeHomeViewModel() -> HomeViewModel {
-//        makeHomeViewModel(
-//            homeUseCase: makeHomeUseCase()
-//        )
-//    }
-    
-//    func makeHomeViewModel(homeUseCase: HomeUseCase) -> HomeViewModel {
-//            HomeViewModel(homeUseCase: homeUseCase, initialUserName: "안비")
-//    }
     func makeHomeViewModel() -> HomeViewModel {
-        HomeViewModel(
+        makeHomeViewModel(
             homeUseCase: makeHomeUseCase(),
-            userProfileUseCase: makeUserProfileUseCase()
+            userProfileUseCase: makeUserProfileUseCase(),
+            fetchWatchingCollectionsUseCase: makeFetchWatchingCollectionsUseCase()
         )
     }
 
+    func makeHomeViewModel(
+        homeUseCase: HomeUseCase,
+        userProfileUseCase: UserProfileUseCase,
+        fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase
+    ) -> HomeViewModel {
+        HomeViewModel(
+            homeUseCase: homeUseCase,
+            userProfileUseCase: userProfileUseCase,
+            fetchWatchingCollectionsUseCase: fetchWatchingCollectionsUseCase,
+            initialUserName: "얀비"
+        )
+    }
 }
-
