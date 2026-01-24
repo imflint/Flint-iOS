@@ -12,7 +12,7 @@ import Domain
 import Entity
 
 public final class ProfileViewModel {
-
+    
     public enum Row {
         case profileHeader(nickname: String, profileImageUrl: String, isFliner: Bool)
         case titleHeader(style: TitleHeaderStyle, title: String, subtitle: String)
@@ -21,29 +21,29 @@ public final class ProfileViewModel {
         case savedCollections(items: [CollectionEntity])
         case savedContents(items: [ContentInfoEntity])
     }
-
+    
     public enum TitleHeaderStyle {
         case normal
         case more
     }
-
+    
     // MARK: - Output
     @Published public private(set) var rows: [Row] = []
-
+    
     // MARK: - Dependencies
     private let userProfileUseCase: UserProfileUseCase
     private var cancellables = Set<AnyCancellable>()
-
+    
     // MARK: - State
     private var nickname: String
     private var isFliner: Bool
     private var profileImageUrl: String?
-
+    
     private var keywords: [KeywordEntity] = []
     private var myCollections: [CollectionEntity] = []
     private var savedCollections: [CollectionEntity] = []
     private var savedContents: [ContentInfoEntity] = []
-
+    
     public init(
         userProfileUseCase: UserProfileUseCase,
         initialNickname: String = "플링",
@@ -55,11 +55,11 @@ public final class ProfileViewModel {
         self.profileImageUrl = ""
         self.rows = makeRows()
     }
-
+    
     // MARK: - Input
     public func load() {
-
-//        userProfileUseCase.fetchUserProfile(userId: 1)
+        
+        //        userProfileUseCase.fetchUserProfile(userId: 1)
         userProfileUseCase.fetchMyProfile()
             .receive(on: DispatchQueue.main)
             .sink { completion in
@@ -74,8 +74,8 @@ public final class ProfileViewModel {
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
-
-//        userProfileUseCase.fetchUserKeywords(userId: 1)
+        
+        //        userProfileUseCase.fetchUserKeywords(userId: 1)
         userProfileUseCase.fetchMyKeywords()
             .receive(on: DispatchQueue.main)
             .sink { completion in
@@ -88,8 +88,8 @@ public final class ProfileViewModel {
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
-
-//        userProfileUseCase.fetchMyCollections()
+        
+        //        userProfileUseCase.fetchMyCollections()
         userProfileUseCase.fetchUserCollections(userId: 1)
             .receive(on: DispatchQueue.main)
             .sink { completion in
@@ -103,20 +103,20 @@ public final class ProfileViewModel {
             }
             .store(in: &cancellables)
         
-//        userProfileUseCase.fetchBookmarkedCollections(userId: 1)
-            userProfileUseCase.fetchMyBookmarkedCollections()
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchSavedCollections failed:", error)
-                    }
-                } receiveValue: { [weak self] items in
-                    print("asdf", items.count)
-                    guard let self else { return }
-                    self.savedCollections = items
-                    self.rows = self.makeRows()
+        //        userProfileUseCase.fetchBookmarkedCollections(userId: 1)
+        userProfileUseCase.fetchMyBookmarkedCollections()
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("❌ fetchSavedCollections failed:", error)
                 }
-                .store(in: &cancellables)
+            } receiveValue: { [weak self] items in
+                print("asdf", items.count)
+                guard let self else { return }
+                self.savedCollections = items
+                self.rows = self.makeRows()
+            }
+            .store(in: &cancellables)
         userProfileUseCase.fetchMyBookmarkedContents()
             .receive(on: DispatchQueue.main)
             .sink { completion in
@@ -129,13 +129,16 @@ public final class ProfileViewModel {
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
-
+        
     }
-
+    
+    //
+    
     // MARK: - Row builder
     private func makeRows() -> [Row] {
         var result: [Row] = []
-
+        
+        // 프로필 헤더는 항상 노출
         result.append(
             .profileHeader(
                 nickname: nickname,
@@ -143,44 +146,62 @@ public final class ProfileViewModel {
                 isFliner: isFliner
             )
         )
-
-        result.append(
-            .titleHeader(
+        
+        // items가 비어있으면 header와 content 둘 다 추가하지 않음
+        func appendSectionIfNotEmpty(
+            _ isEmpty: Bool,
+            header: Row,
+            content: Row
+        ) {
+            guard !isEmpty else { return }
+            result.append(header)
+            result.append(content)
+        }
+        
+        // 취향 키워드
+        appendSectionIfNotEmpty(
+            keywords.isEmpty,
+            header: .titleHeader(
                 style: .normal,
                 title: "\(nickname)님의 취향 키워드",
                 subtitle: "\(nickname)님이 관심 있어 하는 키워드에요"
-            )
+            ),
+            content: .preferenceChips(keywords: keywords)
         )
-        result.append(.preferenceChips(keywords: keywords))
-
-        result.append(
-            .titleHeader(
+        
+        // 내가 만든 컬렉션
+        appendSectionIfNotEmpty(
+            myCollections.isEmpty,
+            header: .titleHeader(
                 style: .normal,
                 title: "\(nickname)님의 컬렉션",
                 subtitle: "\(nickname)님이 생성한 컬렉션이에요"
-            )
+            ),
+            content: .myCollections(items: myCollections)
         )
-        result.append(.myCollections(items: myCollections))
-
-        result.append(
-            .titleHeader(
+        
+        // 저장한 컬렉션
+        appendSectionIfNotEmpty(
+            savedCollections.isEmpty,
+            header: .titleHeader(
                 style: .normal,
                 title: "저장한 컬렉션",
                 subtitle: "\(nickname)님이 저장한 컬렉션이에요"
-            )
+            ),
+            content: .savedCollections(items: savedCollections)
         )
-        result.append(.savedCollections(items: savedCollections))
         
-        result.append(
-            .titleHeader(
+        // 저장한 콘텐츠
+        appendSectionIfNotEmpty(
+            savedContents.isEmpty,
+            header: .titleHeader(
                 style: .normal,
                 title: "저장한 콘텐츠",
                 subtitle: "\(nickname)님이 저장한 콘텐츠에요"
-            )
+            ),
+            content: .savedContents(items: savedContents)
         )
-        result.append(.savedContents(items: savedContents))
-
-
+        
         return result
     }
 }
