@@ -20,7 +20,9 @@ protocol ProfileFactory: UserRepositoryFactory {
 
     // MARK: - ViewModel
     func makeProfileViewModel() -> ProfileViewModel
-    func makeProfileViewModel(userProfileUseCase: UserProfileUseCase) -> ProfileViewModel
+    func makeProfileViewModel(
+            target: ProfileViewModel.Target
+        ) -> ProfileViewModel
 }
 
 extension ProfileFactory {
@@ -35,11 +37,17 @@ extension ProfileFactory {
     }
 
     // MARK: - ViewModel
-    func makeProfileViewModel() -> ProfileViewModel {
-        return makeProfileViewModel(userProfileUseCase: makeUserProfileUseCase())
-    }
 
-    func makeProfileViewModel(userProfileUseCase: UserProfileUseCase) -> ProfileViewModel {
-        return ProfileViewModel(userProfileUseCase: userProfileUseCase)
+    func makeProfileViewModel() -> ProfileViewModel {
+        makeProfileViewModel(target: .me)
+    }
+    
+    func makeProfileViewModel(
+        target: ProfileViewModel.Target
+    ) -> ProfileViewModel {
+        ProfileViewModel(
+            target: target,
+            userProfileUseCase: makeUserProfileUseCase()
+        )
     }
 }

@@ -17,14 +17,17 @@ import ViewModel
 
 public final class ProfileViewController: BaseViewController<ProfileView> {
     
-    private let profileViewModel: ProfileViewModel
     
-    public init(profileViewModel: ProfileViewModel,
-                viewControllerFactory: ViewControllerFactory) {
+    private let profileViewModel: ProfileViewModel
+    public init(
+        profileViewModel: ProfileViewModel,
+        viewControllerFactory: ViewControllerFactory,
+    ) {
         self.profileViewModel = profileViewModel
         super.init(nibName: nil, bundle: nil)
         self.viewControllerFactory = viewControllerFactory
     }
+
     
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -35,6 +38,13 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         bind()
         profileViewModel.load()
     }
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setNavigationBar(.init(left: .back, backgroundStyle: .clear))
+
+    }
+
     
     private func setupTableView() {
         let tableView = rootView.tableView
@@ -77,6 +87,11 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         case .normal: return .normal
         case .more: return .more
         }
+    }
+    
+    private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
+        let vc = BaseBottomSheetViewController(content: .ott(platforms: platforms))
+        present(vc, animated: false)
     }
     
 }
@@ -185,8 +200,18 @@ extension ProfileViewController: UITableViewDataSource {
                                                      for: indexPath) as! RecentSavedContentTableViewCell
             cell.selectionStyle = .none
             cell.configure(items: items)
-            cell.onTapItem = {entity in
-                print("저장 컨텐츠 선택: ", entity.id)
+            cell.onTapItem = { [weak self] content in
+                guard let self else { return }
+                
+                let platforms: [OTTPlatform] = content.ottList.compactMap { ott in
+                    OTTPlatform.fromServerName(ott.ottName)
+                }
+                
+                if platforms.isEmpty {
+                    print("ottList 비어있음 or 매핑 실패. contentId:", content.id)
+                }
+                
+                self.presentOTTBottomSheet(platforms: platforms)
             }
             return cell
         }

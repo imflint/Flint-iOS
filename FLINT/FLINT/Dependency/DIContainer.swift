@@ -120,15 +120,31 @@ final class DIContainer: AppFactory {
     func makeExploreViewController() -> ViewController.ExploreViewController {
         return ExploreViewController(exploreViewModel: makeExploreViewModel(), viewControllerFactory: self)
     }
+
     
     func makeProfileViewController() -> ProfileViewController {
-        return ProfileViewController(profileViewModel: makeProfileViewModel(), viewControllerFactory: self)
+        makeProfileViewController(target: .me)
     }
+
+    func makeProfileViewController(
+        target: ProfileViewModel.Target = .me
+    ) -> ProfileViewController {
+        return ProfileViewController(
+            profileViewModel: makeProfileViewModel(target: target),
+            viewControllerFactory: self
+        )
+    }
+
     
+//    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
+//        let vm = makeCollectionDetailViewModel(collectionId: collectionId)
+//        return CollectionDetailViewController(viewModel: vm)
+//    }
     func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
         let vm = makeCollectionDetailViewModel(collectionId: collectionId)
-        return CollectionDetailViewController(viewModel: vm)
+        return CollectionDetailViewController(viewModel: vm, viewControllerFactory: self)
     }
+
     
     func makeCollectionFolderListViewController() -> CollectionFolderListViewController {
         let vm = CollectionFolderListViewModel(fetchWatchingCollectionsUseCase: makeFetchWatchingCollectionsUseCase())

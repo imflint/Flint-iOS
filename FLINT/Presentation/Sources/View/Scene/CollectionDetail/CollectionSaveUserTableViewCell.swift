@@ -31,7 +31,6 @@ public final class CollectionSaveUserTableViewCell: BaseTableViewCell {
     }
     
     private let headerView = UIView()
-    
     private let avatarsContainerView = UIView()
     
     private var avatarImageViews: [UIImageView] = []
@@ -71,10 +70,6 @@ public final class CollectionSaveUserTableViewCell: BaseTableViewCell {
     }
     
     public override func setLayout() {
-        contentView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
         headerView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(20)
             $0.horizontalEdges.equalToSuperview().inset(16)
@@ -126,11 +121,13 @@ public final class CollectionSaveUserTableViewCell: BaseTableViewCell {
     
     private func setAvatars(urls: [URL?]) {
         clearAvatars()
-
+        
         let displayURLs = Array(urls.prefix(maxAvatarCount))
-
         var previous: UIImageView?
-
+        
+        // placeholder 타입 이슈 대비: UIImage?로 명시
+        let placeholderImage: UIImage? = DesignSystem.Image.Common.profileGray
+        
         for (idx, url) in displayURLs.enumerated() {
             let iv = UIImageView().then {
                 $0.contentMode = .scaleAspectFill
@@ -140,42 +137,44 @@ public final class CollectionSaveUserTableViewCell: BaseTableViewCell {
                 $0.layer.borderWidth = 3
                 $0.layer.borderColor = UIColor.flintBackground.cgColor
             }
-
-            iv.kf.setImage(
-                with: url,
-                placeholder: DesignSystem.Image.Common.profileGray
-            )
-
+            
+            iv.kf.setImage(with: url, placeholder: placeholderImage)
+            
             avatarsContainerView.addSubview(iv)
             avatarImageViews.append(iv)
-
+            
             iv.snp.makeConstraints {
                 $0.centerY.equalToSuperview()
                 $0.size.equalTo(avatarSize)
-
+                
                 if let previous {
                     $0.leading.equalTo(previous.snp.trailing).offset(-overlap)
                 } else {
                     $0.leading.equalToSuperview()
                 }
             }
-
+            
             iv.layer.zPosition = CGFloat(idx)
             previous = iv
         }
-
+        
+        // trailing 제약은 한 번만, 누적되지 않게 remake로 처리
         if let last = previous {
-            avatarsContainerView.snp.makeConstraints {
+            avatarsContainerView.snp.remakeConstraints {
+                $0.top.equalTo(headerView.snp.bottom).offset(16)
+                $0.leading.equalToSuperview().inset(16)
+                $0.trailing.equalToSuperview().inset(16)
+                $0.height.equalTo(avatarSize)
+                $0.bottom.equalToSuperview().inset(20)
                 $0.trailing.greaterThanOrEqualTo(last.snp.trailing)
             }
         }
     }
-
+    
     private func setAvatars(images: [UIImage]) {
         clearAvatars()
         
         let displayImages = Array(images.prefix(maxAvatarCount))
-        
         var previous: UIImageView?
         
         for (idx, image) in displayImages.enumerated() {
@@ -204,12 +203,16 @@ public final class CollectionSaveUserTableViewCell: BaseTableViewCell {
             }
             
             iv.layer.zPosition = CGFloat(idx)
-            
             previous = iv
         }
         
         if let last = previous {
-            avatarsContainerView.snp.makeConstraints {
+            avatarsContainerView.snp.remakeConstraints {
+                $0.top.equalTo(headerView.snp.bottom).offset(16)
+                $0.leading.equalToSuperview().inset(16)
+                $0.trailing.equalToSuperview().inset(16)
+                $0.height.equalTo(avatarSize)
+                $0.bottom.equalToSuperview().inset(20)
                 $0.trailing.greaterThanOrEqualTo(last.snp.trailing)
             }
         }
