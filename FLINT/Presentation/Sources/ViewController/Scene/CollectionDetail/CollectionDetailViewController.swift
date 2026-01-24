@@ -99,6 +99,28 @@ public final class CollectionDetailViewController: BaseViewController<Collection
 
         rootView.tableView.reloadData()
     }
+    
+    private func presentSavedUsersBottomSheet(users: [SavedUserRowItem]) {
+        guard !users.isEmpty else {
+            print("saved users empty")
+            return
+        }
+        let vc = BaseBottomSheetViewController(content: .savedUsers(users: users))
+        present(vc, animated: false)
+    }
+    
+    private func makeSavedUserRowItems() -> [SavedUserRowItem] {
+        let users = bookmarkedUsers?.users ?? []
+        return users.map { user in
+            SavedUserRowItem(
+                userId: user.userId,
+                profileImageURL: user.profileImageUrl,
+                nickname: user.nickname,
+                isVerified: user.userRole == "FLINER"
+            )
+        }
+    }
+
 
     // MARK: - Setup
 
@@ -223,10 +245,14 @@ extension CollectionDetailViewController: UITableViewDataSource {
 
             cell.selectionStyle = .none
 
-            let urls = (bookmarkedUsers?.users ?? []).map { $0.profileImageUrl }   // [URL?]
+            let urls = (bookmarkedUsers?.users ?? []).map { $0.profileImageUrl }
             cell.configure(title: "이 컬렉션을 저장한 사람들", profileImageURLs: urls)
 
-            cell.onTapMore = { print("Tap more (save users)") }
+            cell.onTapMore = { [weak self] in
+                guard let self else { return }
+                    let items = self.makeSavedUserRowItems()
+                    self.presentSavedUsersBottomSheet(users: items)
+            }
             return cell
         }
     }

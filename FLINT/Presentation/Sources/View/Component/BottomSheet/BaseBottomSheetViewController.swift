@@ -11,6 +11,8 @@ import SnapKit
 
 public final class BaseBottomSheetViewController: UIViewController {
     
+    public var onTapUser: ((SavedUserRowItem) -> Void)?
+    
     private let content: BottomSheetContent
     private let titleText: String?
     private let titleCount: Int?
@@ -76,8 +78,12 @@ public final class BaseBottomSheetViewController: UIViewController {
             
         case .savedUsers(let users):
             let usersView = SavedUserListView()
+            usersView.onTapUser = { [weak self] user in
+                self?.onTapUser?(user)
+            }
             usersView.configure(users: users)
             sheetView.setContentView(usersView)
+            
         }
         
         sheetView.setNeedsLayout()

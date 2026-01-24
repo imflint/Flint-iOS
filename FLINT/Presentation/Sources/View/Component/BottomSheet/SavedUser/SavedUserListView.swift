@@ -11,6 +11,8 @@ import SnapKit
 import Then
 
 public final class SavedUserListView: BaseView {
+    
+    public var onTapUser: ((SavedUserRowItem) -> Void)?
 
     private let rowSpacing: CGFloat = 8
     private let maxVisibleCount: CGFloat = 9

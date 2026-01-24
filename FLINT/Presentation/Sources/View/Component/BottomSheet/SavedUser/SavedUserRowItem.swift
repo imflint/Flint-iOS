@@ -8,8 +8,15 @@
 import UIKit
 
 public struct SavedUserRowItem: Hashable {
-    let id: UUID
-    let profileImage: UIImage?
-    let nickname: String
-    let isVerified: Bool
+    public let userId: String
+    public let profileImageURL: URL?
+    public let nickname: String
+    public let isVerified: Bool
+
+    public init(userId: String, profileImageURL: URL?, nickname: String, isVerified: Bool) {
+        self.userId = userId
+        self.profileImageURL = profileImageURL
+        self.nickname = nickname
+        self.isVerified = isVerified
+    }
 }

@@ -57,8 +57,12 @@ public final class SavedUserRowView: BaseView {
     }
 
     public func configure(user: SavedUserRowItem) {
-        profileImageView.image = user.profileImage
         nameLabel.text = user.nickname
         badgeImageView.isHidden = !user.isVerified
+
+        profileImageView.kf.setImage(
+            with: user.profileImageURL,
+            placeholder: DesignSystem.Image.Common.profileGray
+        )
     }
 }
