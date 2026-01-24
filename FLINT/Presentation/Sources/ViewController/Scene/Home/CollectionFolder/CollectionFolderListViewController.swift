@@ -16,7 +16,6 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
     
     // MARK: - Data
     
-  //  private var items: [FolderItem] = FolderItem.mock()
     private let viewModel: CollectionFolderListViewModel
     
     public init(viewModel: CollectionFolderListViewModel, viewControllerFactory: ViewControllerFactory? = nil) {

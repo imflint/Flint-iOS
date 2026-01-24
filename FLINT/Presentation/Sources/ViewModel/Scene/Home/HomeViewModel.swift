@@ -43,7 +43,6 @@ public final class HomeViewModel {
     // MARK: - Output
 
     @Published public private(set) var sections: [SectionModel] = []
-    private var watchingCollections: [CollectionEntity] = []
 
     // MARK: - Dependencies
 
@@ -57,6 +56,7 @@ public final class HomeViewModel {
     private var userName: String
     private var flinerCollections: [CollectionEntity] = []
     private var recentSavedContents: [ContentInfoEntity] = []
+    private var watchingCollections: [CollectionEntity] = []
 
     // MARK: - Init
 
@@ -102,7 +102,7 @@ public final class HomeViewModel {
 
                 self.flinerCollections = items.map { info in
                     CollectionEntity(
-                        id: "",
+                        id: info.id ?? "",
                         thumbnailUrl: info.imageUrlString,
                         title: info.title,
                         description: "",
