@@ -70,11 +70,28 @@ extension OTTPlatform {
 }
 
 extension OTTPlatform {
-   public static func fromServerName(_ name: String) -> OTTPlatform? {
-        // 서버가 "NETFLIX" 같은 raw value로 내려주는 경우
-        if let p = OTTPlatform(rawValue: name) { return p }
+    public static func fromServerName(_ name: String) -> OTTPlatform? {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let upper = trimmed.uppercased()
 
-        // 혹시 서버가 소문자/다른 케이스면 보정
-        return OTTPlatform(rawValue: name.uppercased())
+        if let p = OTTPlatform(rawValue: upper) { return p }
+
+        let normalized = upper
+            .replacingOccurrences(of: "-", with: "_")
+            .replacingOccurrences(of: " ", with: "_")
+
+        if let p = OTTPlatform(rawValue: normalized) { return p }
+
+        if normalized == "COUPANGPLAY" { return .coupangPlay }
+
+        switch trimmed {
+        case "쿠팡플레이": return .coupangPlay
+        case "넷플릭스": return .netflix
+        case "티빙": return .tving
+        case "웨이브": return .wavve
+        case "왓차": return .watcha
+        case "디즈니+", "디즈니플러스": return .disneyPlus
+        default: return nil
+        }
     }
 }

@@ -8,12 +8,26 @@
 import UIKit
 
 import View
+import ViewModel
+
+import Domain
 
 public final class CollectionFolderListViewController: BaseViewController<CollectionFolderListView> {
     
     // MARK: - Data
     
-    private var items: [FolderItem] = FolderItem.mock()
+  //  private var items: [FolderItem] = FolderItem.mock()
+    private let viewModel: CollectionFolderListViewModel
+    
+    public init(viewModel: CollectionFolderListViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        self.viewControllerFactory = viewControllerFactory
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
     
     // MARK: - Lifecycle
     
@@ -21,6 +35,7 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
         super.viewDidLoad()
         bind()
         applyCount()
+        viewModel.load()
     }
     
     // MARK: - Override
@@ -28,6 +43,15 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
     public override func bind() {
         rootView.collectionView.dataSource = self
         rootView.collectionView.delegate = self
+
+        viewModel.$items
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.rootView.collectionView.reloadData()
+                self.applyCount()
+            }
+            .store(in: &cancellables)
     }
     
     public override func setUI() {
@@ -55,7 +79,7 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
     private func applyCount() {
         rootView.countLabel.attributedText = .pretendard(
             .body2_r_14,
-            text: "총 \(items.count)개",
+            text: "총 \(viewModel.items.count)개",
             color: DesignSystem.Color.gray100
         )
     }
@@ -66,7 +90,7 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
 extension CollectionFolderListViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        items.count
+        viewModel.items.count
     }
     
     public func collectionView(
@@ -80,32 +104,43 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        let item = items[indexPath.item]
-        
+        let entity = viewModel.items[indexPath.item]
+
+        let firstURL = URL(string: entity.imageList.first ?? entity.thumbnailUrl)
+        let secondString = entity.imageList.count > 1 ? entity.imageList[1] : nil
+        let secondURL = secondString.flatMap(URL.init(string:))
+        let profileURL = URL(string: entity.profileImageUrl)
+
         cell.configure(
             .init(
-                firstPosterImage: item.firstPosterImage,
-                secondPosterImage: item.secondPosterImage,
-                profileImage: item.profileImage,
-                name: item.name,
-                title: item.title,
-                description: item.description,
-                isBookmarked: item.isBookmarked,
-                bookmarkedCountText: item.bookmarkedCountText
+                firstPosterURL: firstURL,
+                secondPosterURL: secondURL,
+                profileImageURL: profileURL,
+                name: entity.nickname,
+                title: entity.title,
+                description: entity.description,
+                isBookmarked: entity.isBookmarked,
+                bookmarkedCountText: "\(entity.bookmarkCount)"
             )
         )
         
-        cell.onTapCard = { [weak self] in
-            self?.didSelectItem(at: indexPath)
+        cell.onTapCard = { [weak self, weak collectionView, weak cell] in
+            guard
+                let self,
+                let collectionView,
+                let cell,
+                let currentIndexPath = collectionView.indexPath(for: cell)
+            else { return }
+            self.didSelectItem(at: currentIndexPath)
         }
         
         cell.onTapBookmark = { [weak self, weak cell] isBookmarked, count in
             guard let self, let cell,
                   let indexPath = collectionView.indexPath(for: cell) else { return }
 
-            let wasBookmarked = self.items[indexPath.item].isBookmarked
+            let wasBookmarked = self.viewModel.items[indexPath.item].isBookmarked
 
-            self.items[indexPath.item].isBookmarked = isBookmarked
+            self.viewModel.updateBookmark(at: indexPath.item, isBookmarked: isBookmarked)
 
             if wasBookmarked == false, isBookmarked == true {
                 Toast.action(
@@ -274,3 +309,4 @@ private extension CollectionFolderListViewController {
         }
     }
 }
+

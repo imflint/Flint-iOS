@@ -30,4 +30,7 @@ public protocol ViewControllerFactory {
     func makeProfileViewController() -> ProfileViewController
     
     func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController
+    
+    func makeCollectionFolderListViewController() -> CollectionFolderListViewController
+
 }

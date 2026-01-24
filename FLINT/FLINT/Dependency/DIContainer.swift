@@ -21,10 +21,8 @@ final class DIContainer: AppFactory {
     
     // MARK: - Root Dependency
     
-
     private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
-  //  private lazy var tokenStorage: TokenStorage = TestTokenStorage()
-
+//    private lazy var tokenStorage: TokenStorage = TestTokenStorage()
     
     private lazy var authInterceptor: AuthInterceptor = AuthInterceptor(tokenStorage: tokenStorage)
     private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()
@@ -131,6 +129,12 @@ final class DIContainer: AppFactory {
         let vm = makeCollectionDetailViewModel(collectionId: collectionId)
         return CollectionDetailViewController(viewModel: vm)
     }
+    
+    func makeCollectionFolderListViewController() -> CollectionFolderListViewController {
+        let vm = CollectionFolderListViewModel(fetchWatchingCollectionsUseCase: makeFetchWatchingCollectionsUseCase())
+        return CollectionFolderListViewController(viewModel: vm, viewControllerFactory: self)
+    }
+
     
     
     // MARK: - Root Dependency Injection

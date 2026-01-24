@@ -9,6 +9,7 @@ import UIKit
 
 import SnapKit
 import Then
+import Kingfisher
 
 public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
     
@@ -206,6 +207,10 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
     }
     
     public override func prepare() {
+        firstPosterImageView.kf.cancelDownloadTask()
+        secondPosterImageView.kf.cancelDownloadTask()
+        profileImageVIew.kf.cancelDownloadTask()
+        
         firstPosterImageView.image = nil
         secondPosterImageView.image = nil
         profileImageVIew.image = nil
@@ -231,9 +236,12 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
     // MARK: - Configure
     
     public struct Configuration {
+        public let firstPosterURL: URL?
+        public let secondPosterURL: URL?
+        public let profileImageURL: URL?
+
         public let firstPosterImage: UIImage?
         public let secondPosterImage: UIImage?
-        
         public let profileImage: UIImage?
         public let name: String
         public let title: String
@@ -251,19 +259,78 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
             self.description = description
             self.isBookmarked = isBookmarked
             self.bookmarkedCountText = bookmarkedCountText
+            
+            self.firstPosterURL = nil
+            self.secondPosterURL = nil
+            self.profileImageURL = nil
         }
+        
+        public init(
+            firstPosterURL: URL?,
+            secondPosterURL: URL?,
+            profileImageURL: URL?,
+            name: String,
+            title: String,
+            description: String,
+            isBookmarked: Bool,
+            bookmarkedCountText: String?,
+            placeholderFirstImage: UIImage? = nil,
+            placeholderSecondImage: UIImage? = nil,
+            placeholderProfileImage: UIImage? = nil
+        ) {
+            self.firstPosterURL = firstPosterURL
+            self.secondPosterURL = secondPosterURL
+            self.profileImageURL = profileImageURL
+
+            self.firstPosterImage = placeholderFirstImage
+            self.secondPosterImage = placeholderSecondImage
+            self.profileImage = placeholderProfileImage
+
+            self.name = name
+            self.title = title
+            self.description = description
+            self.isBookmarked = isBookmarked
+            self.bookmarkedCountText = bookmarkedCountText
+        }
+
     }
     
     public func configure(_ configuration: Configuration) {
-        firstPosterImageView.image = configuration.firstPosterImage
-        secondPosterImageView.image = configuration.secondPosterImage
-        
-        profileImageVIew.image = configuration.profileImage
-        
+
+        // 1) first poster
+        if let url = configuration.firstPosterURL {
+            firstPosterImageView.kf.setImage(
+                with: url,
+                placeholder: configuration.firstPosterImage
+            )
+        } else {
+            firstPosterImageView.image = configuration.firstPosterImage
+        }
+
+        // 2) second poster
+        if let url = configuration.secondPosterURL {
+            secondPosterImageView.kf.setImage(
+                with: url,
+                placeholder: configuration.secondPosterImage
+            )
+        } else {
+            secondPosterImageView.image = configuration.secondPosterImage
+        }
+
+        // 3) profile
+        if let url = configuration.profileImageURL {
+            profileImageVIew.kf.setImage(
+                with: url,
+                placeholder: configuration.profileImage
+            )
+        } else {
+            profileImageVIew.image = configuration.profileImage
+        }
+
         nameLabel.attributedText = .pretendard(.caption1_m_12, text: configuration.name, color: .flintGray50)
         titleLabel.attributedText = .pretendard(.body1_m_16, text: configuration.title, color: .flintWhite)
         descriptionLabel.attributedText = .pretendard(.caption1_r_12, text: configuration.description, color: .flintGray300)
-        
+
         bookmarkView.configure(
             isBookmarked: configuration.isBookmarked,
             countText: configuration.bookmarkedCountText
