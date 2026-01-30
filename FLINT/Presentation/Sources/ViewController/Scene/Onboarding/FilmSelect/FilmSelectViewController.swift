@@ -14,7 +14,11 @@ import Domain
 import View
 import ViewModel
 
-// TODO: - shadow & select logic
+public protocol FilmSelectViewControllerFactory {
+    func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController
+}
+
+// TODO: - shadow
 
 public final class FilmSelectViewController: BaseViewController<FilmSelectView> {
     

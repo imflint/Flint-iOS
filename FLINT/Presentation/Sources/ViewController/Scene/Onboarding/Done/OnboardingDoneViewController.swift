@@ -12,6 +12,10 @@ import Domain
 import View
 import ViewModel
 
+public protocol OnboardingDoneViewControllerFactory {
+    func makeOnboardingDoneViewController(onboardingViewModel: OnboardingViewModel) -> OnboardingDoneViewController
+}
+
 public final class OnboardingDoneViewController: BaseViewController<OnboardingDoneView> {
     
     // MARK: - ViewModel

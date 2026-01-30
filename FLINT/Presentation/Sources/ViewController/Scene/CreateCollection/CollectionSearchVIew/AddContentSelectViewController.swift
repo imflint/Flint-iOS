@@ -16,6 +16,10 @@ import Domain
 import View
 import ViewModel
 
+public protocol AddContentSelectViewControllerFactory {
+    func makeAddContentSelectViewController() -> AddContentSelectViewController
+}
+
 public final class AddContentSelectViewController: BaseViewController<AddContentSelectView> {
 
     // MARK: - Output

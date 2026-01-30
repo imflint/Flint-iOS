@@ -12,6 +12,10 @@ import ViewModel
 
 import Domain
 
+public protocol CollectionFolderListViewControllerFactory {
+    func makeCollectionFolderListViewController() -> CollectionFolderListViewController
+}
+
 public final class CollectionFolderListViewController: BaseViewController<CollectionFolderListView> {
     
     // MARK: - Data

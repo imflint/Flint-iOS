@@ -12,6 +12,10 @@ import Domain
 import View
 import ViewModel
 
+public protocol LoginViewControllerFactory {
+    func makeLoginViewController() -> LoginViewController
+}
+
 public final class LoginViewController: BaseViewController<LoginView> {
     
     // MARK: - ViewModel

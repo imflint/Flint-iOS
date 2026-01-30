@@ -16,6 +16,10 @@ import Domain
 import View
 import ViewModel
 
+public protocol ExploreViewControllerFactory {
+    func makeExploreViewController() -> ExploreViewController
+}
+
 public final class ExploreViewController: BaseViewController<ExploreView> {
     
     public let exploreViewModel: ExploreViewModel

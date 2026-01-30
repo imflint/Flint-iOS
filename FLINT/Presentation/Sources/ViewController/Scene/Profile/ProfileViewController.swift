@@ -15,6 +15,11 @@ import Domain
 import View
 import ViewModel
 
+public protocol ProfileViewControllerFactory {
+    func makeProfileViewController() -> ProfileViewController
+    func makeProfileViewController(target: ProfileViewModel.Target) -> ProfileViewController
+}
+
 public final class ProfileViewController: BaseViewController<ProfileView> {
     
     

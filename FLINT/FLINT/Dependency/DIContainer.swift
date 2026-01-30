@@ -15,9 +15,9 @@ import Data
 import Domain
 import Presentation
 
-typealias AppFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & HomeFactory & CollectionDetailFactory & LoginViewModelFactory
+typealias DependencyFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & HomeFactory & CollectionDetailFactory & LoginViewModelFactory
 
-final class DIContainer: AppFactory {
+final class DIContainer: DependencyFactory {
     
     // MARK: - Root Dependency
     
@@ -69,89 +69,8 @@ final class DIContainer: AppFactory {
     // MARK: - Init
     
     init() {
-        tokenStorage.clearAll()
+//        tokenStorage.clearAll()
     }
-    
-    // MARK: - ViewControllerFactory
-    
-    func makeSplashViewController() -> SplashViewController {
-        return SplashViewController(viewControllerFactory: self)
-    }
-    
-    func makeLoginViewController() -> LoginViewController {
-        return LoginViewController(loginViewModel: makeLoginViewModel(), viewControllerFactory: self)
-    }
-    
-    func makeTabBarViewController() -> TabBarViewController {
-        return TabBarViewController(viewControllerFactory: self)
-    }
-    
-    func makeNicknameViewController() -> NicknameViewController {
-        return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
-    }
-    
-    func makeAddContentSelectViewController() -> AddContentSelectViewController {
-        let vm = makeAddContentSelectViewModel()
-        return AddContentSelectViewController(viewModel: vm, viewControllerFactory: self)
-    }
-    
-    func makeCreateCollectionViewController() -> CreateCollectionViewController {
-        let vm = makeCreateCollectionViewModel()
-        return CreateCollectionViewController(viewModel: vm, viewControllerFactory: self)
-    }
-    
-    func makeHomeViewController() -> HomeViewController {
-        let vm = makeHomeViewModel()
-        return HomeViewController(viewModel: vm, viewControllerFactory: self)
-    }
-    
-    func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController {
-        return FilmSelectViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
-    }
-    
-    func makeOttSelectViewController(onboardingViewModel: OnboardingViewModel) -> OttSelectViewController {
-        return OttSelectViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
-    }
-    
-    func makeOnboardingDoneViewController(onboardingViewModel: OnboardingViewModel) -> OnboardingDoneViewController {
-        return OnboardingDoneViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
-    }
-    
-    func makeExploreViewController() -> ViewController.ExploreViewController {
-        return ExploreViewController(exploreViewModel: makeExploreViewModel(), viewControllerFactory: self)
-    }
-
-    
-    func makeProfileViewController() -> ProfileViewController {
-        makeProfileViewController(target: .me)
-    }
-
-    func makeProfileViewController(
-        target: ProfileViewModel.Target = .me
-    ) -> ProfileViewController {
-        return ProfileViewController(
-            profileViewModel: makeProfileViewModel(target: target),
-            viewControllerFactory: self
-        )
-    }
-
-    
-//    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
-//        let vm = makeCollectionDetailViewModel(collectionId: collectionId)
-//        return CollectionDetailViewController(viewModel: vm)
-//    }
-    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
-        let vm = makeCollectionDetailViewModel(collectionId: collectionId)
-        return CollectionDetailViewController(viewModel: vm, viewControllerFactory: self)
-    }
-
-    
-    func makeCollectionFolderListViewController() -> CollectionFolderListViewController {
-        let vm = CollectionFolderListViewModel(fetchWatchingCollectionsUseCase: makeFetchWatchingCollectionsUseCase())
-        return CollectionFolderListViewController(viewModel: vm, viewControllerFactory: self)
-    }
-
-    
     
     // MARK: - Root Dependency Injection
     
