@@ -11,7 +11,7 @@ import Data
 import Domain
 import Presentation
 
-protocol CollectionDetailFactory: CollectionRepositoryFactory, BookmarkFactory {
+protocol CollectionDetailFactory: CollectionRepositoryFactory, FetchBookmarkedUserUseCaseFactory {
 
     // MARK: - UseCase
     func makeCollectionDetailUseCase(collectionRepository: CollectionRepository) -> CollectionDetailUseCase

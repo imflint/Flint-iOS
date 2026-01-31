@@ -12,19 +12,15 @@ import Data
 import Domain
 import Presentation
 
-protocol BookmarkFactory: BookmarkRepositoryFactory {
-
-    // UseCase
+protocol FetchBookmarkedUserUseCaseFactory: BookmarkRepositoryFactory {
     func makeFetchBookmarkedUserUseCase() -> FetchBookmarkedUserUseCase
     func makeFetchBookmarkedUserUseCase(bookmarkRepository: BookmarkRepository) -> FetchBookmarkedUserUseCase
 }
 
-extension BookmarkFactory {
-
+extension FetchBookmarkedUserUseCaseFactory {
     func makeFetchBookmarkedUserUseCase() -> FetchBookmarkedUserUseCase {
         return makeFetchBookmarkedUserUseCase(bookmarkRepository: makeBookmarkRepository())
     }
-
     func makeFetchBookmarkedUserUseCase(bookmarkRepository: BookmarkRepository) -> FetchBookmarkedUserUseCase {
         return DefaultFetchBookmarkedUserUseCase(bookmarkRepository: bookmarkRepository)
     }

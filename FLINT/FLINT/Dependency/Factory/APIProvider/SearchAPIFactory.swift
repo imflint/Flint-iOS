@@ -12,5 +12,13 @@ import Moya
 import Data
 
 protocol SearchAPIFactory {
+    var searchAPIProvider: MoyaProvider<SearchAPI> { get set }
+    
     func makeSearchAPIProvider() -> MoyaProvider<SearchAPI>
+}
+
+extension SearchAPIFactory {
+    func makeSearchAPIProvider() -> MoyaProvider<SearchAPI> {
+        return searchAPIProvider
+    }
 }

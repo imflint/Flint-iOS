@@ -15,44 +15,53 @@ import Data
 import Domain
 import Presentation
 
-typealias DependencyFactory = ViewControllerFactory & OnboardingViewModelFactory & ExploreViewModelFactory & CreateCollectionFactory & AddContentSelectViewModelFactory & ProfileFactory & HomeFactory & CollectionDetailFactory & LoginViewModelFactory
+typealias DependencyFactory = ViewControllerFactory &
+                              
+                              OnboardingViewModelFactory &
+                              ExploreViewModelFactory &
+                              CreateCollectionFactory &
+                              AddContentSelectViewModelFactory &
+                              ProfileFactory &
+                              HomeFactory &
+                              CollectionDetailFactory &
+                              LoginViewModelFactory
 
 final class DIContainer: DependencyFactory {
     
     // MARK: - Root Dependency
     
-//    private lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
-    private lazy var tokenStorage: TokenStorage = TestTokenStorage()
+//    lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
+    lazy var tokenStorage: TokenStorage = TestTokenStorage()
     
     private lazy var authInterceptor: AuthInterceptor = AuthInterceptor(tokenStorage: tokenStorage)
     private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()
     
-    private lazy var userAPIProvider = MoyaProvider<UserAPI>(
+    lazy var userAPIProvider = MoyaProvider<UserAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
             networkLoggerPlugin
         ]
     )
-    private lazy var collectionAPIProvider = MoyaProvider<CollectionAPI>(
+    lazy var collectionAPIProvider = MoyaProvider<CollectionAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
             networkLoggerPlugin
         ]
     )
-    private lazy var searchAPIProvider = MoyaProvider<SearchAPI>(
+    lazy var searchAPIProvider = MoyaProvider<SearchAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
             networkLoggerPlugin
         ]
     )
-    private lazy var bookmarkAPIProvider = MoyaProvider<BookmarkAPI>(
+    lazy var bookmarkAPIProvider = MoyaProvider<BookmarkAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
             networkLoggerPlugin
         ]
     )
 
-    private lazy var authAPIProvider = MoyaProvider<AuthAPI>(
+    lazy var authAPIProvider = MoyaProvider<AuthAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
             networkLoggerPlugin
@@ -70,32 +79,6 @@ final class DIContainer: DependencyFactory {
     
     init() {
 //        tokenStorage.clearAll()
-    }
-    
-    // MARK: - Root Dependency Injection
-    
-    func makeTokenStorage() -> TokenStorage {
-        return tokenStorage
-    }
-    
-    func makeUserAPIProvider() -> MoyaProvider<UserAPI> {
-        return userAPIProvider
-    }
-    
-    func makeSearchAPIProvider() -> MoyaProvider<SearchAPI> {
-        return searchAPIProvider
-    }
-    
-    func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI> {
-        return collectionAPIProvider
-    }
-    
-    func makeBookmarkAPIProvider() -> MoyaProvider<BookmarkAPI> {
-        return bookmarkAPIProvider
-    }
-    
-    func makeAuthAPIProvider() -> MoyaProvider<AuthAPI> {
-        return authAPIProvider
     }
     
     func makeHomeAPIProvider() -> MoyaProvider<HomeAPI> {

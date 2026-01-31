@@ -12,5 +12,13 @@ import Moya
 import Data
 
 protocol UserAPIFactory {
+    var userAPIProvider: MoyaProvider<UserAPI> { get set }
+    
     func makeUserAPIProvider() -> MoyaProvider<UserAPI>
+}
+
+extension UserAPIFactory {
+    func makeUserAPIProvider() -> MoyaProvider<UserAPI> {
+        return userAPIProvider
+    }
 }
