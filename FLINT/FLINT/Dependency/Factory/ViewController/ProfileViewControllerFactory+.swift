@@ -9,7 +9,7 @@ import Foundation
 
 import Presentation
 
-extension ProfileViewControllerFactory where Self: ProfileFactory & ViewControllerFactory {
+extension ProfileViewControllerFactory where Self: ProfileViewModelFactory & ViewControllerFactory {
     func makeProfileViewController() -> ProfileViewController {
         makeProfileViewController(target: .me)
     }

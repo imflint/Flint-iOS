@@ -9,7 +9,7 @@ import Foundation
 
 import Presentation
 
-extension HomeViewControllerFactory where Self: HomeFactory & ViewControllerFactory {
+extension HomeViewControllerFactory where Self: HomeViewModelFactory & ViewControllerFactory {
     func makeHomeViewController() -> HomeViewController {
         return HomeViewController(viewModel: makeHomeViewModel(), viewControllerFactory: self)
     }

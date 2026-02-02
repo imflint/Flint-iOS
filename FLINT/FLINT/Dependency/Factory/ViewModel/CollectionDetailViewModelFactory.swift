@@ -1,23 +1,16 @@
 //
-//  CollectionDetailFactory.swift
+//  CollectionDetailViewModel.swift
 //  FLINT
 //
-//  Created by 진소은 on 1/23/26.
+//  Created by 김호성 on 2026.02.02.
 //
 
 import Foundation
 
-import Data
 import Domain
 import Presentation
 
-protocol CollectionDetailFactory: CollectionRepositoryFactory, FetchBookmarkedUserUseCaseFactory {
-
-    // MARK: - UseCase
-    func makeCollectionDetailUseCase(collectionRepository: CollectionRepository) -> CollectionDetailUseCase
-    func makeCollectionDetailUseCase() -> CollectionDetailUseCase
-
-    // MARK: - ViewModel
+protocol CollectionDetailViewModelFactory: CollectionDetailUseCaseFactory, FetchBookmarkedUserUseCaseFactory {
     func makeCollectionDetailViewModel(collectionId: Int64) -> CollectionDetailViewModel
     func makeCollectionDetailViewModel(
         collectionId: Int64,
@@ -25,25 +18,13 @@ protocol CollectionDetailFactory: CollectionRepositoryFactory, FetchBookmarkedUs
     ) -> CollectionDetailViewModel
 }
 
-extension CollectionDetailFactory {
-
-    // MARK: - UseCase
-    func makeCollectionDetailUseCase() -> CollectionDetailUseCase {
-        return makeCollectionDetailUseCase(collectionRepository: makeCollectionRepository())
-    }
-
-    func makeCollectionDetailUseCase(collectionRepository: CollectionRepository) -> CollectionDetailUseCase {
-        return DefaultCollectionDetailUseCase(collectionRepository: collectionRepository)
-    }
-
-    // MARK: - ViewModel
+extension CollectionDetailViewModelFactory {
     func makeCollectionDetailViewModel(collectionId: Int64) -> CollectionDetailViewModel {
         return makeCollectionDetailViewModel(
             collectionId: collectionId,
             collectionDetailUseCase: makeCollectionDetailUseCase()
         )
     }
-
     func makeCollectionDetailViewModel(
         collectionId: Int64,
         collectionDetailUseCase: CollectionDetailUseCase

@@ -9,9 +9,8 @@ import Foundation
 
 import Presentation
 
-extension CollectionFolderListViewControllerFactory where Self: HomeFactory & ViewControllerFactory {
+extension CollectionFolderListViewControllerFactory where Self: CollectionFolderListViewModelFactory & ViewControllerFactory {
     func makeCollectionFolderListViewController() -> CollectionFolderListViewController {
-        let vm = CollectionFolderListViewModel(fetchWatchingCollectionsUseCase: makeFetchWatchingCollectionsUseCase())
-        return CollectionFolderListViewController(viewModel: vm, viewControllerFactory: self)
+        return CollectionFolderListViewController(viewModel: makeCollectionFolderListViewModel(), viewControllerFactory: self)
     }
 }

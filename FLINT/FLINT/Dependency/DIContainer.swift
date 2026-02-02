@@ -17,14 +17,17 @@ import Presentation
 
 typealias DependencyFactory = ViewControllerFactory &
                               
+                              LoginViewModelFactory &
                               OnboardingViewModelFactory &
+                              
+                              HomeViewModelFactory &
                               ExploreViewModelFactory &
-                              CreateCollectionFactory &
+                              ProfileViewModelFactory &
+                              
+                              CreateCollectionViewModelFactory &
                               AddContentSelectViewModelFactory &
-                              ProfileFactory &
-                              HomeFactory &
-                              CollectionDetailFactory &
-                              LoginViewModelFactory
+                              CollectionFolderListViewModelFactory &
+                              CollectionDetailViewModelFactory
 
 final class DIContainer: DependencyFactory {
     
@@ -68,7 +71,7 @@ final class DIContainer: DependencyFactory {
         ]
     )
     
-    private lazy var homeAPIProvider = MoyaProvider<HomeAPI>(
+    lazy var homeAPIProvider = MoyaProvider<HomeAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [
             networkLoggerPlugin
@@ -79,9 +82,5 @@ final class DIContainer: DependencyFactory {
     
     init() {
 //        tokenStorage.clearAll()
-    }
-    
-    func makeHomeAPIProvider() -> MoyaProvider<HomeAPI> {
-        return homeAPIProvider
     }
 }

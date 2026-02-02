@@ -9,7 +9,7 @@ import Foundation
 
 import Presentation
 
-extension CollectionDetailViewControllerFactory where Self: CollectionDetailFactory & ViewControllerFactory {
+extension CollectionDetailViewControllerFactory where Self: CollectionDetailViewModelFactory & ViewControllerFactory {
     func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
         return CollectionDetailViewController(viewModel: makeCollectionDetailViewModel(collectionId: collectionId), viewControllerFactory: self)
     }
