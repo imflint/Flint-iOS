@@ -7,9 +7,9 @@
 
 import Foundation
 
-import Domain
-
 import Moya
+
+import Domain
 
 public enum BookmarkAPI {
     case fetchCollectionBookmarkUsers(collectionId: Int64)
