@@ -12,42 +12,36 @@ import Domain
 import Moya
 
 public enum BookmarkAPI {
-    case toggleCollectionBookmark(_ collectionId: Int64)
-    case toggleContentBookmark(_ contentId: Int64)
     case fetchCollectionBookmarkUsers(collectionId: Int64)
+    case toggleCollectionBookmark(collectionId: Int64)
+    case toggleContentBookmark(contentId: Int64)
 }
 
 extension BookmarkAPI: TargetType {
     
     public var path: String {
         switch self {
+        case .fetchCollectionBookmarkUsers(let collectionId):
+            return "/api/v1/bookmarks/\(collectionId)"
         case .toggleCollectionBookmark(let collectionId):
             return "/api/v1/bookmarks/collections/\(collectionId)"
         case .toggleContentBookmark(let contentId):
             return "/api/v1/bookmarks/contents/\(contentId)"
-        case let .fetchCollectionBookmarkUsers(collectionId):
-            return "/api/v1/bookmarks/\(collectionId)"
         }
     }
     
     public var method: Moya.Method {
         switch self {
-        case .toggleCollectionBookmark:
-            return .post
-        case .toggleContentBookmark:
-            return .post
         case .fetchCollectionBookmarkUsers:
             return .get
+        case .toggleCollectionBookmark, .toggleContentBookmark:
+            return .post
         }
     }
     
     public var task: Moya.Task {
         switch self {
-        case .toggleCollectionBookmark:
-            return .requestPlain
-        case .toggleContentBookmark:
-            return .requestPlain
-        case .fetchCollectionBookmarkUsers:
+        case .fetchCollectionBookmarkUsers, .toggleCollectionBookmark, .toggleContentBookmark:
             return .requestPlain
         }
     }

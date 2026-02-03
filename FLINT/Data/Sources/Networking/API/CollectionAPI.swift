@@ -12,37 +12,31 @@ import Domain
 import Moya
 
 public enum CollectionAPI {
-    case fetchCollections(cursor: UInt?, size: Int)
-    case createCollection(_ request: CreateCollectionEntity)
+    case fetchCollections(cursor: Int64?, size: Int32)
+    case createCollection(collectionInfo: CreateCollectionEntity)
     case fetchCollectionDetail(collectionId: Int64)
-    case fetchWatchingCollections
+    case fetchRecentCollections
 }
 
 extension CollectionAPI: TargetType {
     
     public var path: String {
         switch self {
-        case .fetchCollections:
-            return "/api/v1/collections"
-        case .createCollection:
+        case .fetchCollections, .createCollection:
             return "/api/v1/collections"
         case let .fetchCollectionDetail(collectionId):
             return "/api/v1/collections/\(collectionId)"
-        case let .fetchWatchingCollections:
+        case .fetchRecentCollections:
             return "/api/v1/collections/recent"
         }
     }
     
     public var method: Moya.Method {
         switch self {
-        case .fetchCollections:
+        case .fetchCollections, .fetchCollectionDetail, .fetchRecentCollections:
             return .get
         case .createCollection:
             return .post
-        case .fetchCollectionDetail:
-            return .get
-        case .fetchWatchingCollections:
-            return .get
         }
     }
     
@@ -59,11 +53,9 @@ extension CollectionAPI: TargetType {
                 parameters: parameters,
                 encoding: URLEncoding.queryString
             )
-        case .createCollection(let request):
-            return .requestJSONEncodable(request)
-        case .fetchCollectionDetail:
-            return .requestPlain
-        case .fetchWatchingCollections:
+        case .createCollection(let collectionInfo):
+            return .requestJSONEncodable(collectionInfo)
+        case .fetchCollectionDetail, .fetchRecentCollections:
             return .requestPlain
         }
     }

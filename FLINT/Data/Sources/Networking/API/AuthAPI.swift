@@ -17,8 +17,9 @@ public enum AuthAPI {
     case logout
     case logoutAll
     case refresh
-    case signup(_ signupInfoEntity: SignupRequestDTO)
-    case socialVerify(_socialVerifyRequestDTO: SocialVerifyRequestDTO)
+    case signup(userInfo: SignupRequestDTO)
+    case socialVerify(socialAuthCredential: SocialVerifyRequestDTO)
+    case withdraw
 }
 
 extension AuthAPI: TargetType {
@@ -31,6 +32,8 @@ extension AuthAPI: TargetType {
             return "TODO"
         case .socialVerify:
             return "/api/v1/auth/social/verify"
+        case .withdraw:
+            return "/api/v1/auth/withdraw"
         }
     }
     
@@ -38,17 +41,19 @@ extension AuthAPI: TargetType {
         switch self {
         case .logout, .logoutAll, .refresh, .signup, .socialVerify:
             return .post
+        case .withdraw:
+            return .delete
         }
     }
     
     public var task: Moya.Task {
         switch self {
-        case .signup(let signupInfoEntity):
-            return .requestJSONEncodable(signupInfoEntity)
-        case .logout, .logoutAll, .refresh:
+        case .signup(let userInfo):
+            return .requestJSONEncodable(userInfo)
+        case .socialVerify(let socialAuthCredential):
+            return .requestJSONEncodable(socialAuthCredential)
+        case .logout, .logoutAll, .refresh, .withdraw:
             return .requestPlain
-        case .socialVerify(let socialVerifyRequestDTO):
-            return .requestJSONEncodable(socialVerifyRequestDTO)
         }
     }
 }
