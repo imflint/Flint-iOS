@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  AuthAPI.swift
 //  Data
 //
 //  Created by 김호성 on 2026.01.21.
@@ -23,7 +23,6 @@ public enum AuthAPI {
 }
 
 extension AuthAPI: TargetType {
-    
     public var path: String {
         switch self {
         case .signup:

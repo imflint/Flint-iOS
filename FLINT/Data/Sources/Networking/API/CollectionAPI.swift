@@ -19,7 +19,6 @@ public enum CollectionAPI {
 }
 
 extension CollectionAPI: TargetType {
-    
     public var path: String {
         switch self {
         case .fetchCollections, .createCollection:
@@ -60,4 +59,3 @@ extension CollectionAPI: TargetType {
         }
     }
 }
-

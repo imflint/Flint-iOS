@@ -17,7 +17,6 @@ public enum ContentAPI {
 }
 
 extension ContentAPI: TargetType {
-    
     public var path: String {
         switch self {
         case .fetchMyBookmarkedContents:
@@ -41,4 +40,3 @@ extension ContentAPI: TargetType {
         }
     }
 }
-

@@ -18,7 +18,6 @@ public enum BookmarkAPI {
 }
 
 extension BookmarkAPI: TargetType {
-    
     public var path: String {
         switch self {
         case let .fetchCollectionBookmarkUsers(collectionId):

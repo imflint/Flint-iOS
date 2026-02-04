@@ -16,7 +16,6 @@ public enum HomeAPI {
 }
 
 extension HomeAPI: TargetType {
-    
     public var path: String {
         switch self {
         case .fetchRecommendedCollections:
