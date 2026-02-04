@@ -21,11 +21,11 @@ extension BookmarkAPI: TargetType {
     
     public var path: String {
         switch self {
-        case .fetchCollectionBookmarkUsers(let collectionId):
+        case let .fetchCollectionBookmarkUsers(collectionId):
             return "/api/v1/bookmarks/\(collectionId)"
-        case .toggleCollectionBookmark(let collectionId):
+        case let .toggleCollectionBookmark(collectionId):
             return "/api/v1/bookmarks/collections/\(collectionId)"
-        case .toggleContentBookmark(let contentId):
+        case let .toggleContentBookmark(contentId):
             return "/api/v1/bookmarks/contents/\(contentId)"
         }
     }

@@ -48,9 +48,9 @@ extension AuthAPI: TargetType {
     
     public var task: Moya.Task {
         switch self {
-        case .signup(let userInfo):
+        case let .signup(userInfo):
             return .requestJSONEncodable(userInfo)
-        case .socialVerify(let socialAuthCredential):
+        case let .socialVerify(socialAuthCredential):
             return .requestJSONEncodable(socialAuthCredential)
         case .logout, .logoutAll, .refresh, .withdraw:
             return .requestPlain

@@ -42,7 +42,7 @@ extension CollectionAPI: TargetType {
     
     public var task: Moya.Task {
         switch self {
-        case .fetchCollections(let cursor, let size):
+        case let .fetchCollections(cursor, size):
             var parameters: [String: Any] = [
                 "size": size,
             ]
@@ -53,7 +53,7 @@ extension CollectionAPI: TargetType {
                 parameters: parameters,
                 encoding: URLEncoding.queryString
             )
-        case .createCollection(let collectionInfo):
+        case let .createCollection(collectionInfo):
             return .requestJSONEncodable(collectionInfo)
         case .fetchCollectionDetail, .fetchRecentCollections:
             return .requestPlain
