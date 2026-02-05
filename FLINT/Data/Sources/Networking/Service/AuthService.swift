@@ -15,10 +15,10 @@ import Domain
 
 import DTO
 
-
 public protocol AuthService {
     func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error>
     func socialVerify(socialVerifyRequestDTO: SocialVerifyRequestDTO) -> AnyPublisher<SocialVerifyResponseDTO, Error>
+    func withDraw() -> AnyPublisher<Void, Error>
 }
 
 public final class DefaultAuthService: AuthService {
@@ -36,9 +36,8 @@ public final class DefaultAuthService: AuthService {
             return Fail(error: TokenError.noToken).eraseToAnyPublisher()
         }
         let signupRequestDTO = SignupRequestDTO(tempToken: tempToken, signupEntity: signupInfoEntity)
-        Log.d(signupRequestDTO)
-        return authAPIProvider.requestPublisher(.signup(signupRequestDTO))
-            .extractData(SignupDTO.self)
+        return authAPIProvider.requestPublisher(.signup(userInfo: signupRequestDTO))
+            .mapBaseResponseData(SignupDTO.self)
             .tryMap({ [weak self] in
                 let loginEntity = try $0.loginEntity
                 self?.tokenStorage.save(loginEntity.accessToken, type: .accessToken)
@@ -49,23 +48,27 @@ public final class DefaultAuthService: AuthService {
     }
     
     public func socialVerify(socialVerifyRequestDTO: SocialVerifyRequestDTO) -> AnyPublisher<SocialVerifyResponseDTO, Error> {
-        return authAPIProvider.requestPublisher(.socialVerify(_socialVerifyRequestDTO: socialVerifyRequestDTO))
-            .extractData(SocialVerifyResponseDTO.self)
+        return authAPIProvider.requestPublisher(.socialVerify(socialAuthCredential: socialVerifyRequestDTO))
+            .mapBaseResponseData(SocialVerifyResponseDTO.self)
             .map({ [weak self] socialVerifyResponseDTO in
-                Log.d(socialVerifyResponseDTO)
                 guard let self, let isRegister = socialVerifyResponseDTO.isRegistered else {
                     return socialVerifyResponseDTO
                 }
                 if !isRegister, let tempToken = socialVerifyResponseDTO.tempToken {
-                    Log.d(tempToken)
                     tokenStorage.save(tempToken, type: .tempToken)
                 } else if let accessToken = socialVerifyResponseDTO.accessToken, let refreshToken = socialVerifyResponseDTO.refreshToken {
-                    Log.d(accessToken)
                     tokenStorage.save(accessToken, type: .accessToken)
                     tokenStorage.save(refreshToken, type: .refreshToken)
                 }
                 return socialVerifyResponseDTO
             })
+            .eraseToAnyPublisher()
+    }
+    
+    public func withDraw() -> AnyPublisher<Void, Error> {
+        authAPIProvider.requestPublisher(.withdraw)
+            .mapBaseResponseData(BlankData.self)
+            .map({ _ in })
             .eraseToAnyPublisher()
     }
 }

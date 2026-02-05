@@ -5,8 +5,6 @@
 //  Created by 소은 on 1/21/26.
 //
 
-
-
 import Combine
 import Foundation
 
@@ -18,34 +16,33 @@ import Domain
 import DTO
 
 public protocol BookmarkService {
-    func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, Error>
-    func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, Error>
-
-    func fetchCollectionBookmarkUsers(_ collectionId: Int64)
-    -> AnyPublisher<CollectionBookmarkUsersDTO.DataDTO, Error>
+    func fetchCollectionBookmarkUsers(collectionId: Int64)
+    -> AnyPublisher<CollectionBookmarkUsersDTO, Error>
+    func toggleCollectionBookmark(collectionId: Int64) -> AnyPublisher<Bool, Error>
+    func toggleContentBookmark(contentId: Int64) -> AnyPublisher<Bool, Error>
 }
 
 public final class DefaultBookmarkService: BookmarkService {
-
-    private let provider: MoyaProvider<BookmarkAPI>
-
-    public init(provider: MoyaProvider<BookmarkAPI>) {
-        self.provider = provider
+    
+    private let bookmarkAPIProvider: MoyaProvider<BookmarkAPI>
+    
+    public init(bookmarkAPIProvider: MoyaProvider<BookmarkAPI>) {
+        self.bookmarkAPIProvider = bookmarkAPIProvider
     }
-
-    public func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, Error> {
-        provider.requestPublisher(.toggleCollectionBookmark(collectionId))
-            .extractData(Bool.self)
+    
+    public func fetchCollectionBookmarkUsers(collectionId: Int64)
+    -> AnyPublisher<CollectionBookmarkUsersDTO, Error> {
+        return bookmarkAPIProvider.requestPublisher(.fetchCollectionBookmarkUsers(collectionId: collectionId))
+            .mapBaseResponseData(CollectionBookmarkUsersDTO.self)
     }
-
-    public func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, Error> {
-        provider.requestPublisher(.toggleContentBookmark(contentId))
-            .extractData(Bool.self)
+    
+    public func toggleCollectionBookmark(collectionId: Int64) -> AnyPublisher<Bool, Error> {
+        bookmarkAPIProvider.requestPublisher(.toggleCollectionBookmark(collectionId: collectionId))
+            .mapBaseResponseData(Bool.self)
     }
-
-    public func fetchCollectionBookmarkUsers(_ collectionId: Int64)
-    -> AnyPublisher<CollectionBookmarkUsersDTO.DataDTO, Error> {
-        provider.requestPublisher(.fetchCollectionBookmarkUsers(collectionId: collectionId))
-            .extractData(CollectionBookmarkUsersDTO.DataDTO.self)
+    
+    public func toggleContentBookmark(contentId: Int64) -> AnyPublisher<Bool, Error> {
+        bookmarkAPIProvider.requestPublisher(.toggleContentBookmark(contentId: contentId))
+            .mapBaseResponseData(Bool.self)
     }
 }
