@@ -10,40 +10,24 @@ import Foundation
 import Entity
 
 public struct CollectionDetailDTO: Codable {
-
-    public let status: Int?
-    public let message: String?
-    public let data: DataDTO?
-
-    public init(status: Int?, message: String?, data: DataDTO?) {
-        self.status = status
-        self.message = message
-        self.data = data
-    }
+    public let id: String?
+    public let title: String?
+    public let description: String?
+    public let thumbnailUrl: String?
+    public let createdAt: String?
+    public let isBookmarked: Bool?
+    public let author: AuthorDTO?
+    public let contents: [ContentDTO]?
 }
 
-// MARK: - Nested DTOs
-
 public extension CollectionDetailDTO {
-
-    struct DataDTO: Codable {
-        public let id: String?
-        public let title: String?
-        public let description: String?
-        public let thumbnailUrl: String?
-        public let createdAt: String?
-        public let isBookmarked: Bool?
-        public let author: AuthorDTO?
-        public let contents: [ContentDTO]?
-    }
-
     struct AuthorDTO: Codable {
         public let id: String?
         public let nickname: String?
         public let profileImageUrl: String?
         public let userRole: String?
     }
-
+    
     struct ContentDTO: Codable {
         public let id: String?
         public let title: String?
@@ -57,7 +41,7 @@ public extension CollectionDetailDTO {
     }
 }
 
-extension CollectionDetailDTO.DataDTO {
+extension CollectionDetailDTO {
     public var entity: CollectionDetailEntity {
         get throws {
             return try CollectionDetailEntity(
@@ -67,8 +51,8 @@ extension CollectionDetailDTO.DataDTO {
                 thumbnailUrl: URL(string: thumbnailUrl ?? ""),
                 createdAt: createdAt ?? "",
                 isBookmarked: isBookmarked ?? false,
-                author: try author?.entity,
-                contents: try (contents ?? []).map { try $0.entity }
+                author: author?.entity,
+                contents: contents?.map { try $0.entity } ?? []
             )
         }
     }

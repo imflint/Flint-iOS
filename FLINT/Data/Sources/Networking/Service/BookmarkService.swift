@@ -16,8 +16,7 @@ import Domain
 import DTO
 
 public protocol BookmarkService {
-    func fetchCollectionBookmarkUsers(collectionId: Int64)
-    -> AnyPublisher<CollectionBookmarkUsersDTO, Error>
+    func fetchCollectionBookmarkUsers(collectionId: Int64) -> AnyPublisher<CollectionBookmarkUsersDTO, Error>
     func toggleCollectionBookmark(collectionId: Int64) -> AnyPublisher<Bool, Error>
     func toggleContentBookmark(contentId: Int64) -> AnyPublisher<Bool, Error>
 }
@@ -30,8 +29,7 @@ public final class DefaultBookmarkService: BookmarkService {
         self.bookmarkAPIProvider = bookmarkAPIProvider
     }
     
-    public func fetchCollectionBookmarkUsers(collectionId: Int64)
-    -> AnyPublisher<CollectionBookmarkUsersDTO, Error> {
+    public func fetchCollectionBookmarkUsers(collectionId: Int64) -> AnyPublisher<CollectionBookmarkUsersDTO, Error> {
         return bookmarkAPIProvider.requestPublisher(.fetchCollectionBookmarkUsers(collectionId: collectionId))
             .mapBaseResponseData(CollectionBookmarkUsersDTO.self)
     }

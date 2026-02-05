@@ -15,7 +15,7 @@ public enum CollectionAPI {
     case fetchCollections(cursor: Int64?, size: Int32)
     case createCollection(collectionInfo: CreateCollectionEntity)
     case fetchCollectionDetail(collectionId: Int64)
-    case fetchRecentCollections
+    case fetchRecentViewedCollections
 }
 
 extension CollectionAPI: TargetType {
@@ -25,14 +25,14 @@ extension CollectionAPI: TargetType {
             return "/api/v1/collections"
         case let .fetchCollectionDetail(collectionId):
             return "/api/v1/collections/\(collectionId)"
-        case .fetchRecentCollections:
+        case .fetchRecentViewedCollections:
             return "/api/v1/collections/recent"
         }
     }
     
     public var method: Moya.Method {
         switch self {
-        case .fetchCollections, .fetchCollectionDetail, .fetchRecentCollections:
+        case .fetchCollections, .fetchCollectionDetail, .fetchRecentViewedCollections:
             return .get
         case .createCollection:
             return .post
@@ -54,7 +54,7 @@ extension CollectionAPI: TargetType {
             )
         case let .createCollection(collectionInfo):
             return .requestJSONEncodable(collectionInfo)
-        case .fetchCollectionDetail, .fetchRecentCollections:
+        case .fetchCollectionDetail, .fetchRecentViewedCollections:
             return .requestPlain
         }
     }
