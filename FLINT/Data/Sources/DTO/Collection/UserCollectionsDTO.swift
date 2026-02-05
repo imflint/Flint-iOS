@@ -32,14 +32,14 @@ public extension UserCollectionsDTO.CollectionDTO {
     var entity: CollectionEntity {
         get throws {
             return try CollectionEntity(
-                id: unwrap(id, key: CodingKeys.id),
+                id: unwrap(id),
                 thumbnailUrl: thumbnailUrl ?? "",
                 title: title ?? "",
                 description: description ?? "",
                 imageList: imageList ?? [],
                 bookmarkCount: bookmarkCount ?? 0,
                 isBookmarked: isBookmarked ?? false,
-                userId: userId ?? "",
+                userId: unwrap(userId),
                 nickname: nickname ?? "",
                 profileImageUrl: profileImageUrl ?? ""
             )

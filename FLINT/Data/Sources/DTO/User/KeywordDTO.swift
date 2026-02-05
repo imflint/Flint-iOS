@@ -8,7 +8,6 @@
 import Foundation
 
 import Entity
-// Data 모듈
 
 public struct KeywordsDTO: Codable {
     public let keywords: [KeywordDTO]?
@@ -27,7 +26,7 @@ extension KeywordDTO {
         get throws {
             return try KeywordEntity(
                 color: color ?? "",
-                rank: unwrap(rank, key: CodingKeys.rank),
+                rank: unwrap(rank),
                 name: name ?? "",
                 percentage: percentage ?? 0,
                 imageUrl: imageUrl ?? ""

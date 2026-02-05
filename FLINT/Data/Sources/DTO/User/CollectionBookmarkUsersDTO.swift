@@ -43,6 +43,5 @@ extension CollectionBookmarkUsersDTO.UserDTO {
                 profileImageUrl: URL(string: profileImageUrl ?? ""),
                 userRole: userRole ?? ""
             )
-        }
     }
 }
