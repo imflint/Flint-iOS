@@ -33,12 +33,12 @@ public final class DefaultBookmarkService: BookmarkService {
     }
     
     public func toggleCollectionBookmark(collectionId: Int64) -> AnyPublisher<Bool, Error> {
-        bookmarkAPIProvider.requestPublisher(.toggleCollectionBookmark(collectionId: collectionId))
+        return bookmarkAPIProvider.requestPublisher(.toggleCollectionBookmark(collectionId: collectionId))
             .mapBaseResponseData(Bool.self)
     }
     
     public func toggleContentBookmark(contentId: Int64) -> AnyPublisher<Bool, Error> {
-        bookmarkAPIProvider.requestPublisher(.toggleContentBookmark(contentId: contentId))
+        return bookmarkAPIProvider.requestPublisher(.toggleContentBookmark(contentId: contentId))
             .mapBaseResponseData(Bool.self)
     }
 }

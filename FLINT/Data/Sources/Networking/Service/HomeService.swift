@@ -26,7 +26,7 @@ public final class DefaultHomeService: HomeService {
     }
     
     public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, Error> {
-        homeAPIProvider.requestPublisher(.fetchRecommendedCollections)
+        return homeAPIProvider.requestPublisher(.fetchRecommendedCollections)
             .mapBaseResponseData(HomeRecommendedCollectionsDTO.self)
     }
 }

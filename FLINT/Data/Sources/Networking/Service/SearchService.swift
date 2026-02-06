@@ -26,7 +26,7 @@ public final class DefaultSearchService: SearchService {
     }
     
     public func searchContents(keyword: String?) -> AnyPublisher<SearchContentsDTO, Error> {
-        searchAPIProvider.requestPublisher(.searchContents(keyword: keyword))
+        return searchAPIProvider.requestPublisher(.searchContents(keyword: keyword))
             .mapBaseResponseData(SearchContentsDTO.self)
     }
 }
