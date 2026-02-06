@@ -16,8 +16,8 @@ import Domain
 import DTO
 
 public protocol AuthService {
-    func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error>
-    func socialVerify(socialVerifyRequestDTO: SocialVerifyRequestDTO) -> AnyPublisher<SocialVerifyResponseDTO, Error>
+    func signup(userInfo: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error>
+    func socialVerify(socialAuthCredential: SocialVerifyRequestDTO) -> AnyPublisher<SocialVerifyResponseDTO, Error>
     func withDraw() -> AnyPublisher<Void, Error>
 }
 
@@ -31,11 +31,11 @@ public final class DefaultAuthService: AuthService {
         self.authAPIProvider = authAPIProvider
     }
     
-    public func signup(_ signupInfoEntity: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error> {
+    public func signup(userInfo: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error> {
         guard let tempToken = tokenStorage.load(type: .tempToken) else {
             return Fail(error: TokenError.noToken).eraseToAnyPublisher()
         }
-        let signupRequestDTO = SignupRequestDTO(tempToken: tempToken, signupEntity: signupInfoEntity)
+        let signupRequestDTO = SignupRequestDTO(tempToken: tempToken, signupEntity: userInfo)
         return authAPIProvider.requestPublisher(.signup(userInfo: signupRequestDTO))
             .mapBaseResponseData(SignupDTO.self)
             .tryMap({ [weak self] in
@@ -47,8 +47,8 @@ public final class DefaultAuthService: AuthService {
             .eraseToAnyPublisher()
     }
     
-    public func socialVerify(socialVerifyRequestDTO: SocialVerifyRequestDTO) -> AnyPublisher<SocialVerifyResponseDTO, Error> {
-        return authAPIProvider.requestPublisher(.socialVerify(socialAuthCredential: socialVerifyRequestDTO))
+    public func socialVerify(socialAuthCredential: SocialVerifyRequestDTO) -> AnyPublisher<SocialVerifyResponseDTO, Error> {
+        return authAPIProvider.requestPublisher(.socialVerify(socialAuthCredential: socialAuthCredential))
             .mapBaseResponseData(SocialVerifyResponseDTO.self)
             .map({ [weak self] socialVerifyResponseDTO in
                 guard let self, let isRegister = socialVerifyResponseDTO.isRegistered else {
