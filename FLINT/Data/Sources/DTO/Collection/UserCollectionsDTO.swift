@@ -13,8 +13,8 @@ public struct UserCollectionsDTO: Codable {
     public let collections: [CollectionDTO]?
 }
 
-public extension UserCollectionsDTO {
-    struct CollectionDTO: Codable {
+extension UserCollectionsDTO {
+    public struct CollectionDTO: Codable {
         public let id: String?
         public let thumbnailUrl: String?
         public let title: String?
@@ -28,8 +28,8 @@ public extension UserCollectionsDTO {
     }
 }
 
-public extension UserCollectionsDTO.CollectionDTO {
-    var entity: CollectionEntity {
+extension UserCollectionsDTO.CollectionDTO {
+    public var entity: CollectionEntity {
         get throws {
             return try CollectionEntity(
                 id: unwrap(id),

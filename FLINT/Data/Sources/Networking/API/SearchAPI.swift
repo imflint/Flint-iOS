@@ -9,8 +9,6 @@ import Foundation
 
 import Moya
 
-import Domain
-
 public enum SearchAPI {
     /// keyword가 nil인 경우 인기 순 작품 리스트를 받는다.
     case searchContents(keyword: String?)

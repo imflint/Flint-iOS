@@ -9,8 +9,6 @@ import Foundation
 
 import Moya
 
-import Domain
-
 public enum UserAPI {
     case fetchUserProfile(userId: Int64)
     case fetchUserBookmarkedCollections(userId: Int64)

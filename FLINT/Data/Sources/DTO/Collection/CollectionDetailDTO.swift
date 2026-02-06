@@ -20,15 +20,15 @@ public struct CollectionDetailDTO: Codable {
     public let contents: [ContentDTO]?
 }
 
-public extension CollectionDetailDTO {
-    struct AuthorDTO: Codable {
+extension CollectionDetailDTO {
+    public struct AuthorDTO: Codable {
         public let id: String?
         public let nickname: String?
         public let profileImageUrl: String?
         public let userRole: String?
     }
     
-    struct ContentDTO: Codable {
+    public struct ContentDTO: Codable {
         public let id: String?
         public let title: String?
         public let imageUrl: String?

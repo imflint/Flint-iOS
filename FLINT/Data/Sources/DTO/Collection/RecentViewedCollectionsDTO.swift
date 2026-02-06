@@ -6,14 +6,17 @@
 //
 
 import Foundation
+
 import Entity
+
+// TODO: - RecentViewedCollectionsDTO & HomeRecommendedCollectionsDTO & UserCollectionsDTO 유사
 
 public struct RecentViewedCollectionsDTO: Codable {
     public let collections: [CollectionDTO]?
 }
 
-public extension RecentViewedCollectionsDTO {
-    struct CollectionDTO: Codable {
+extension RecentViewedCollectionsDTO {
+    public struct CollectionDTO: Codable {
         public let id: String?
         public let thumbnailUrl: String?
         public let title: String?
@@ -27,16 +30,16 @@ public extension RecentViewedCollectionsDTO {
     }
 }
 
-public extension RecentViewedCollectionsDTO {
-    var entities: [CollectionEntity] {
+extension RecentViewedCollectionsDTO {
+    public var entities: [CollectionEntity] {
         get throws {
             return try collections?.compactMap { try $0.entity } ?? []
         }
     }
 }
 
-public extension RecentViewedCollectionsDTO.CollectionDTO {
-    var entity: CollectionEntity {
+extension RecentViewedCollectionsDTO.CollectionDTO {
+    public var entity: CollectionEntity {
         get throws {
             return try CollectionEntity(
                 id: unwrap(id),

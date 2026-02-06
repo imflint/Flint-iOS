@@ -9,8 +9,6 @@ import Foundation
 
 import Moya
 
-import Domain
-
 import DTO
 
 public enum AuthAPI {

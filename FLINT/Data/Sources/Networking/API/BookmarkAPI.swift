@@ -9,8 +9,6 @@ import Foundation
 
 import Moya
 
-import Domain
-
 public enum BookmarkAPI {
     case fetchCollectionBookmarkUsers(collectionId: Int64)
     case toggleCollectionBookmark(collectionId: Int64)

@@ -7,7 +7,7 @@
 
 import Foundation
 
-import Domain
+import Entity
 
 public struct PagedCollectionsDTO: Codable {
     public let data: [CollectionDTO]?

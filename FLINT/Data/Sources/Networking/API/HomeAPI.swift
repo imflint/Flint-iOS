@@ -9,8 +9,6 @@ import Foundation
 
 import Moya
 
-import Domain
-
 public enum HomeAPI {
     case fetchRecommendedCollections
 }

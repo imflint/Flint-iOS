@@ -14,8 +14,8 @@ public struct CollectionBookmarkUsersDTO: Codable {
     public let userList: [UserDTO]?
 }
 
-public extension CollectionBookmarkUsersDTO {
-    struct UserDTO: Codable {
+extension CollectionBookmarkUsersDTO {
+    public struct UserDTO: Codable {
         public let userId: String?
         public let nickName: String?
         public let profileImageUrl: String?
@@ -43,5 +43,6 @@ extension CollectionBookmarkUsersDTO.UserDTO {
                 profileImageUrl: URL(string: profileImageUrl ?? ""),
                 userRole: userRole ?? ""
             )
+        }
     }
 }

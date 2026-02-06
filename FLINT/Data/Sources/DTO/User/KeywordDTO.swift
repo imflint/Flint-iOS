@@ -13,15 +13,17 @@ public struct KeywordsDTO: Codable {
     public let keywords: [KeywordDTO]?
 }
 
-public struct KeywordDTO: Codable {
-    public let color: String?
-    public let rank: Int?
-    public let name: String?
-    public let percentage: Int?
-    public let imageUrl: String?
+extension KeywordsDTO {
+    public struct KeywordDTO: Codable {
+        public let color: String?
+        public let rank: Int?
+        public let name: String?
+        public let percentage: Int?
+        public let imageUrl: String?
+    }
 }
 
-extension KeywordDTO {
+extension KeywordsDTO.KeywordDTO {
     public var entity: KeywordEntity {
         get throws {
             return try KeywordEntity(

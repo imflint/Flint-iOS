@@ -7,7 +7,7 @@
 
 import Foundation
 
-import Domain
+import Entity
 
 public struct SignupRequestDTO: Codable {
     public let tempToken: String

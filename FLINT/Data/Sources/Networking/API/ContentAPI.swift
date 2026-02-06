@@ -9,8 +9,6 @@ import Foundation
 
 import Moya
 
-import Domain
-
 public enum ContentAPI {
     case fetchMyBookmarkedContents
     case fetchOTTPlatformsForContent(contentId: Int64)

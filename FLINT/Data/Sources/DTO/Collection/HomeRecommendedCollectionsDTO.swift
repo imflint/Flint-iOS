@@ -5,7 +5,6 @@
 //  Created by 소은 on 1/20/26.
 //
 
-import Combine
 import Foundation
 
 import Entity
@@ -14,8 +13,8 @@ public struct HomeRecommendedCollectionsDTO: Codable {
     public let collections: [CollectionDTO]?
 }
 
-public extension HomeRecommendedCollectionsDTO {
-    struct CollectionDTO: Codable {
+extension HomeRecommendedCollectionsDTO {
+    public struct CollectionDTO: Codable {
         public let id: String?
         public let thumbnailUrl: String?
         public let title: String?
@@ -29,20 +28,24 @@ public extension HomeRecommendedCollectionsDTO {
     }
 }
 
-public extension HomeRecommendedCollectionsDTO {
-    var entities: [CollectionInfoEntity] {
-        (collections ?? []).map { $0.entity }
+extension HomeRecommendedCollectionsDTO {
+    public var entities: [CollectionInfoEntity] {
+        get throws {
+            return try collections?.map { try $0.entity } ?? []
+        }
     }
 }
 
-public extension HomeRecommendedCollectionsDTO.CollectionDTO {
-    var entity: CollectionInfoEntity {
-        CollectionInfoEntity(
-            id: id ?? "",
-            imageUrlString: thumbnailUrl ?? "",
-            profileImageUrlString: profileUrl ?? "",
-            title: title ?? "",
-            userName: nickname ?? ""
-        )
+extension HomeRecommendedCollectionsDTO.CollectionDTO {
+    public var entity: CollectionInfoEntity {
+        get throws {
+            return try CollectionInfoEntity(
+                id: unwrap(id),
+                imageUrlString: thumbnailUrl ?? "",
+                profileImageUrlString: profileUrl ?? "",
+                title: title ?? "",
+                userName: nickname ?? ""
+            )
+        }
     }
 }

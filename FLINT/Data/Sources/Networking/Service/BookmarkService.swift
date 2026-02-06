@@ -11,8 +11,6 @@ import Foundation
 import CombineMoya
 import Moya
 
-import Domain
-
 import DTO
 
 public protocol BookmarkService {
