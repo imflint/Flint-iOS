@@ -13,4 +13,3 @@ import Entity
 public protocol HomeRepository {
     func fetchRecommendedCollections() -> AnyPublisher<[CollectionInfoEntity], Error>
 }
-
