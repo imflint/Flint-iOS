@@ -28,6 +28,14 @@ extension UserCollectionsDTO {
     }
 }
 
+extension UserCollectionsDTO {
+    public var entities: [CollectionEntity] {
+        get throws {
+            return try collections?.map { try $0.entity } ?? []
+        }
+    }
+}
+
 extension UserCollectionsDTO.CollectionDTO {
     public var entity: CollectionEntity {
         get throws {

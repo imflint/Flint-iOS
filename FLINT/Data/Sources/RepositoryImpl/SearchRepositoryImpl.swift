@@ -1,5 +1,5 @@
 //
-//  SearchContentsImpl.swift
+//  SearchRepositoryImpl.swift
 //  Data
 //
 //  Created by 소은 on 1/20/26.
@@ -21,8 +21,8 @@ public final class DefaultSearchRepository: SearchRepository {
         self.searchService = searchService
     }
     
-    public func searchContents(_ keyword: String?) -> AnyPublisher<[ContentEntity], Error> {
-        searchService.searchContents(keyword)
+    public func searchContents(keyword: String?) -> AnyPublisher<[ContentEntity], Error> {
+        return searchService.searchContents(keyword: keyword)
             .tryMap({ try $0.entities })
             .eraseToAnyPublisher()
     }

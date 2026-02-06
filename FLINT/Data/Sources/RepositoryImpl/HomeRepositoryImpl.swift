@@ -14,16 +14,16 @@ import DTO
 import Networking
 
 public final class DefaultHomeRepository: HomeRepository {
-
+    
     private let homeService: HomeService
-
+    
     public init(homeService: HomeService) {
         self.homeService = homeService
     }
-
+    
     public func fetchRecommendedCollections() -> AnyPublisher<[CollectionInfoEntity], Error> {
-        homeService.fetchRecommendedCollections()
-            .map { $0.entities }
+        return homeService.fetchRecommendedCollections()
+            .tryMap { try $0.entities }
             .eraseToAnyPublisher()
     }
 }

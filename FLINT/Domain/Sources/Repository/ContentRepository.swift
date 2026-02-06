@@ -11,5 +11,6 @@ import Foundation
 import Entity
 
 public protocol ContentRepository {
-    func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<[OTTPlatformEntity], Error>
+    func fetchMyBookmarkedContents() -> AnyPublisher<[ContentInfoEntity], Error>
+    func fetchOTTPlatformsForContent(contentId: Int64) -> AnyPublisher<[OTTPlatformEntity], Error>
 }

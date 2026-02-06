@@ -1,5 +1,5 @@
 //
-//  SearchContentsService.swift
+//  SearchService.swift
 //  Data
 //
 //  Created by 소은 on 1/20/26.

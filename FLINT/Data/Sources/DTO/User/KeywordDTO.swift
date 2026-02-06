@@ -23,6 +23,14 @@ extension KeywordsDTO {
     }
 }
 
+extension KeywordsDTO {
+    public var entities: [KeywordEntity] {
+        get throws {
+            return try keywords?.map { try $0.entity } ?? []
+        }
+    }
+}
+
 extension KeywordsDTO.KeywordDTO {
     public var entity: KeywordEntity {
         get throws {

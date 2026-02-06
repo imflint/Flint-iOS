@@ -21,26 +21,25 @@ public final class DefaultCollectionRepository: CollectionRepository {
         self.collectionService = collectionService
     }
     
-    public func fetchCollections(cursor: UInt?, size: Int) -> AnyPublisher<CollectionPagingEntity, Error> {
+    public func fetchCollections(cursor: Int64?, size: Int32) -> AnyPublisher<CollectionPagingEntity, Error> {
         return collectionService.fetchCollections(cursor: cursor, size: size)
             .tryMap({ try $0.entity })
             .eraseToAnyPublisher()
     }
     
-    public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
-        return collectionService.createCollection(entity)
+    public func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
+        return collectionService.createCollection(collectionInfo: collectionInfo)
     }
     
     public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error> {
-        collectionService.fetchCollectionDetail(collectionId: collectionId)
+        return collectionService.fetchCollectionDetail(collectionId: collectionId)
             .tryMap { try $0.entity }
             .eraseToAnyPublisher()
     }
     
     public func fetchWatchingCollections() -> AnyPublisher<[CollectionEntity], Error> {
         return collectionService.fetchWatchingCollections()
-            .map(\.entities)
+            .tryMap { try $0.entities }
             .eraseToAnyPublisher()
     }
-
 }

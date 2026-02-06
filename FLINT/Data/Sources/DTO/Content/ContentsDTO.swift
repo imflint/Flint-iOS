@@ -28,6 +28,14 @@ extension ContentsDTO {
     }
 }
 
+extension ContentsDTO {
+    public var entities: [ContentInfoEntity] {
+        get throws {
+            return try contents?.map { try $0.entity } ?? []
+        }
+    }
+}
+
 extension ContentsDTO.ContentDTO {
     public var entity: ContentInfoEntity {
         get throws {
