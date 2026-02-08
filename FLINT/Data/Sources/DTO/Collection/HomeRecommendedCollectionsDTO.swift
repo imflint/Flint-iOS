@@ -41,8 +41,8 @@ extension HomeRecommendedCollectionsDTO.CollectionDTO {
         get throws {
             return try CollectionInfoEntity(
                 id: unwrap(id),
-                imageUrlString: thumbnailUrl ?? "",
-                profileImageUrlString: profileUrl ?? "",
+                imageUrl: URL(string: thumbnailUrl ?? ""),
+                profileImageUrl: URL(string: profileUrl ?? ""),
                 title: title ?? "",
                 userName: nickname ?? ""
             )
