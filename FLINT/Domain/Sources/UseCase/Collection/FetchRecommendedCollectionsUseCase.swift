@@ -1,20 +1,21 @@
 //
-//  HomeUsecase.swift
+//  FetchRecommendedCollectionsUseCase.swift
 //  Domain
 //
-//  Created by 소은 on 1/20/26.
+//  Created by 김호성 on 2026.02.08.
 //
+
 import Combine
 import Foundation
 
 import Entity
 import Repository
 
-public protocol HomeUseCase {
+public protocol FetchRecommendedCollectionsUseCase {
     func fetchRecommendedCollections() -> AnyPublisher<[CollectionInfoEntity], Error>
 }
 
-public class DefaultHomeUseCase: HomeUseCase {
+public final class DefaultFetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase {
     
     private let homeRepository: HomeRepository
     
