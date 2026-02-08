@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  SocialVerifyUseCase.swift
 //  Domain
 //
 //  Created by 김호성 on 2026.01.23.
@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol SocialVerifyUseCase {
-    func socialVerify(socialVerifyEntity: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error>
+    func socialVerify(socialAuthCredential: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error>
 }
 
 public final class DefaultSocialVerifyUseCase: SocialVerifyUseCase {
@@ -23,7 +23,7 @@ public final class DefaultSocialVerifyUseCase: SocialVerifyUseCase {
         self.authRepository = authRepository
     }
     
-    public func socialVerify(socialVerifyEntity: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error> {
-        return authRepository.socialVerify(socialVerifyEntity: socialVerifyEntity)
+    public func socialVerify(socialAuthCredential: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error> {
+        return authRepository.socialVerify(socialAuthCredential: socialAuthCredential)
     }
 }
