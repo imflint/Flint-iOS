@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  CheckNicknameUseCase.swift
 //  Domain
 //
 //  Created by 김호성 on 2026.01.20.
@@ -11,11 +11,11 @@ import Foundation
 import Entity
 import Repository
 
-public protocol NicknameUseCase {
+public protocol CheckNicknameUseCase {
     func checkNickname(_ nickname: String) -> AnyPublisher<Bool, Error>
 }
 
-public final class DefaultNicknameUseCase: NicknameUseCase {
+public final class DefaultCheckNicknameUseCase: CheckNicknameUseCase {
     
     private let userRepository: UserRepository
     
