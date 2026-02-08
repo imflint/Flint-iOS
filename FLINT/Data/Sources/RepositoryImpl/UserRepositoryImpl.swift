@@ -39,8 +39,8 @@ public final class DefaultUserRepository: UserRepository {
             .eraseToAnyPublisher()
     }
     
-    public func fetchUserCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error> {
-        return userService.fetchUserCollections(userId: userId)
+    public func fetchUserCreatedCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error> {
+        return userService.fetchUserCreatedCollections(userId: userId)
             .tryMap { try $0.entities }
             .eraseToAnyPublisher()
     }
@@ -63,8 +63,8 @@ public final class DefaultUserRepository: UserRepository {
             .eraseToAnyPublisher()
     }
     
-    public func fetchMyCollections() -> AnyPublisher<[CollectionEntity], Error> {
-        return userService.fetchMyCollections()
+    public func fetchMyCreatedCollections() -> AnyPublisher<[CollectionEntity], Error> {
+        return userService.fetchMyCreatedCollections()
             .tryMap { try $0.entities }
             .eraseToAnyPublisher()
     }

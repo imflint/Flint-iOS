@@ -13,12 +13,12 @@ public enum UserAPI {
     case fetchUserProfile(userId: Int64)
     case fetchUserBookmarkedCollections(userId: Int64)
     case fetchUserBookmarkedContents(userId: Int64)
-    case fetchUserCollections(userId: Int64)
+    case fetchUserCreatedCollections(userId: Int64)
     case fetchUserKeywords(userId: Int64)
     
     case fetchMyProfile
     case fetchMyBookmarkedCollections
-    case fetchMyCollections
+    case fetchMyCreatedCollections
     case fetchMyKeywords
     case recalculateMyKeywords
     
@@ -34,7 +34,7 @@ extension UserAPI: TargetType {
             return "/api/v1/users/\(userId)/bookmarked-collections"
         case let .fetchUserBookmarkedContents(userId):
             return "/api/v1/users/\(userId)/bookmarked-contents"
-        case let .fetchUserCollections(userId):
+        case let .fetchUserCreatedCollections(userId):
             return "/api/v1/users/\(userId)/collections"
         case let .fetchUserKeywords(userId):
             return "/api/v1/users/\(userId)/keywords"
@@ -43,7 +43,7 @@ extension UserAPI: TargetType {
             return "/api/v1/users/me"
         case .fetchMyBookmarkedCollections:
             return "/api/v1/users/me/bookmarked-collections"
-        case .fetchMyCollections:
+        case .fetchMyCreatedCollections:
             return "/api/v1/users/me/collections"
         case .fetchMyKeywords:
             return "/api/v1/users/me/keywords"
@@ -57,7 +57,7 @@ extension UserAPI: TargetType {
     
     public var method: Moya.Method {
         switch self {
-        case .fetchUserProfile, .fetchUserBookmarkedCollections, .fetchUserBookmarkedContents, .fetchUserCollections, .fetchUserKeywords, .fetchMyProfile, .fetchMyBookmarkedCollections, .fetchMyCollections, .fetchMyKeywords, .checkNickname:
+        case .fetchUserProfile, .fetchUserBookmarkedCollections, .fetchUserBookmarkedContents, .fetchUserCreatedCollections, .fetchUserKeywords, .fetchMyProfile, .fetchMyBookmarkedCollections, .fetchMyCreatedCollections, .fetchMyKeywords, .checkNickname:
             return .get
         case .recalculateMyKeywords:
             return .patch
@@ -71,7 +71,7 @@ extension UserAPI: TargetType {
                 parameters: ["nickname": nickname],
                 encoding: URLEncoding.queryString
             )
-        case .fetchUserProfile, .fetchUserBookmarkedCollections, .fetchUserBookmarkedContents, .fetchUserCollections, .fetchUserKeywords, .fetchMyProfile, .fetchMyBookmarkedCollections, .fetchMyCollections, .fetchMyKeywords, .recalculateMyKeywords:
+        case .fetchUserProfile, .fetchUserBookmarkedCollections, .fetchUserBookmarkedContents, .fetchUserCreatedCollections, .fetchUserKeywords, .fetchMyProfile, .fetchMyBookmarkedCollections, .fetchMyCreatedCollections, .fetchMyKeywords, .recalculateMyKeywords:
             return .requestPlain
         }
     }

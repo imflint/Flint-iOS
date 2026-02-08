@@ -17,12 +17,12 @@ public protocol UserService {
     func fetchUserProfile(userId: Int64) -> AnyPublisher<UserProfileDTO, Error>
     func fetchUserBookmarkedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error>
     func fetchUserBookmarkedContents(userId: Int64) -> AnyPublisher<ContentsDTO, Error>
-    func fetchUserCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error>
+    func fetchUserCreatedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error>
     func fetchUserKeywords(userId: Int64) -> AnyPublisher<KeywordsDTO, Error>
     
     func fetchMyProfile() -> AnyPublisher<UserProfileDTO, Error>
     func fetchMyBookmarkedCollections() -> AnyPublisher<UserCollectionsDTO, Error>
-    func fetchMyCollections() -> AnyPublisher<UserCollectionsDTO, Error>
+    func fetchMyCreatedCollections() -> AnyPublisher<UserCollectionsDTO, Error>
     func fetchMyKeywords() -> AnyPublisher<KeywordsDTO, Error>
     func recalculateMyKeywords() -> AnyPublisher<Void, Error>
     
@@ -57,8 +57,8 @@ public final class DefaultUserService: UserService {
             .mapBaseResponseData(KeywordsDTO.self)
     }
     
-    public func fetchUserCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error> {
-        return userAPIProvider.requestPublisher(.fetchUserCollections(userId: userId))
+    public func fetchUserCreatedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchUserCreatedCollections(userId: userId))
             .mapBaseResponseData(UserCollectionsDTO.self)
     }
     
@@ -72,8 +72,8 @@ public final class DefaultUserService: UserService {
             .mapBaseResponseData(UserCollectionsDTO.self)
     }
     
-    public func fetchMyCollections() -> AnyPublisher<UserCollectionsDTO, Error> {
-        return userAPIProvider.requestPublisher(.fetchMyCollections)
+    public func fetchMyCreatedCollections() -> AnyPublisher<UserCollectionsDTO, Error> {
+        return userAPIProvider.requestPublisher(.fetchMyCreatedCollections)
             .mapBaseResponseData(UserCollectionsDTO.self)
     }
     
