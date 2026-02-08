@@ -1,5 +1,5 @@
 //
-//  WatchingCollections.swift
+//  FetchRecentViewedCollectionsUseCase.swift
 //  Domain
 //
 //  Created by 소은 on 1/24/26.
@@ -11,19 +11,19 @@ import Foundation
 import Entity
 import Repository
 
-public protocol FetchWatchingCollectionsUseCase {
+public protocol FetchRecentViewedCollectionsUseCase {
     func fetchWatchingCollections() -> AnyPublisher<[CollectionEntity], Error>
 }
 
-public final class DefaultFetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase {
-
+public final class DefaultFetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase {
+    
     private let collectionRepository: CollectionRepository
-
+    
     public init(collectionRepository: CollectionRepository) {
         self.collectionRepository = collectionRepository
     }
-
+    
     public func fetchWatchingCollections() -> AnyPublisher<[CollectionEntity], Error> {
-        collectionRepository.fetchWatchingCollections()
+        return collectionRepository.fetchRecentViewedCollections()
     }
 }

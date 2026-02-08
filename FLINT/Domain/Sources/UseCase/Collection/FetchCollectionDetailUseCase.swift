@@ -1,5 +1,5 @@
 //
-//  CollectionDetailUseCase.swift
+//  FetchCollectionDetailUseCase.swift
 //  Domain
 //
 //  Created by 진소은 on 1/23/26.
@@ -11,18 +11,18 @@ import Foundation
 import Entity
 import Repository
 
-public protocol CollectionDetailUseCase {
+public protocol FetchCollectionDetailUseCase {
     func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error>
 }
 
-public class DefaultCollectionDetailUseCase: CollectionDetailUseCase {
-
+public class DefaultFetchCollectionDetailUseCase: FetchCollectionDetailUseCase {
+    
     private let collectionRepository: CollectionRepository
-
+    
     public init(collectionRepository: CollectionRepository) {
         self.collectionRepository = collectionRepository
     }
-
+    
     public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error> {
         return collectionRepository.fetchCollectionDetail(collectionId: collectionId)
     }

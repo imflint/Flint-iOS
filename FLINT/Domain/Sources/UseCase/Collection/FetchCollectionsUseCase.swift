@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  FetchCollectionsUseCase.swift
 //  Domain
 //
 //  Created by 김호성 on 2026.01.22.
@@ -11,11 +11,11 @@ import Foundation
 import Entity
 import Repository
 
-public protocol ExploreUseCase {
-    func fetchExplore(cursor: UInt?) -> AnyPublisher<CollectionPagingEntity, Error>
+public protocol FetchCollectionsUseCase {
+    func fetchExplore(cursor: Int64?) -> AnyPublisher<CollectionPagingEntity, Error>
 }
 
-public final class DefaultExploreUseCase: ExploreUseCase {
+public final class DefaultFetchCollectionsUseCase: FetchCollectionsUseCase {
     
     private let collectionRepository: CollectionRepository
     
@@ -23,7 +23,7 @@ public final class DefaultExploreUseCase: ExploreUseCase {
         self.collectionRepository = collectionRepository
     }
     
-    public func fetchExplore(cursor: UInt?) -> AnyPublisher<CollectionPagingEntity, any Error> {
+    public func fetchExplore(cursor: Int64?) -> AnyPublisher<CollectionPagingEntity, Error> {
         collectionRepository.fetchCollections(cursor: cursor, size: 3)
     }
 }
