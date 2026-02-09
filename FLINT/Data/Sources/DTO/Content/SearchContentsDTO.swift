@@ -13,8 +13,8 @@ public struct SearchContentsDTO: Codable {
     public let contents: [ContentDTO]?
 }
 
-public extension SearchContentsDTO {
-    struct ContentDTO: Codable {
+extension SearchContentsDTO {
+    public struct ContentDTO: Codable {
         public let id: String?
         public let title: String?
         public let author: String?

@@ -11,9 +11,7 @@ import Foundation
 import Entity
 
 public protocol BookmarkRepository {
-    func toggleCollectionBookmark(_ collectionId: Int64) -> AnyPublisher<Bool, Error>
-    
-    func toggleContentBookmark(_ contentId: Int64) -> AnyPublisher<Bool, Error>
-    
-    func fetchCollectionBookmarkUsers(_ collectionId: Int64) -> AnyPublisher<CollectionBookmarkUsersEntity, Error>
+    func fetchCollectionBookmarkUsers(collectionId: Int64) -> AnyPublisher<CollectionBookmarkUsersEntity, Error>
+    func toggleCollectionBookmark(collectionId: Int64) -> AnyPublisher<Bool, Error>
+    func toggleContentBookmark(contentId: Int64) -> AnyPublisher<Bool, Error>
 }

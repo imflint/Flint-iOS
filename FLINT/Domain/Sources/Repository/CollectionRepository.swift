@@ -11,8 +11,8 @@ import Foundation
 import Entity
 
 public protocol CollectionRepository {
-    func fetchCollections(cursor: UInt?, size: Int) -> AnyPublisher<CollectionPagingEntity, Error>
-    func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error>
+    func fetchCollections(cursor: Int64?, size: Int32) -> AnyPublisher<CollectionPagingEntity, Error>
+    func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<Void, Error>
     func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error>
-    func fetchWatchingCollections() -> AnyPublisher<[CollectionEntity], Error>
+    func fetchRecentViewedCollections() -> AnyPublisher<[CollectionEntity], Error>
 }

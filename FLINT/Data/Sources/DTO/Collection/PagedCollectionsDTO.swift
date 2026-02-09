@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  PagedCollectionsDTO.swift
 //  Data
 //
 //  Created by 김호성 on 2026.01.22.
@@ -7,19 +7,14 @@
 
 import Foundation
 
-import Domain
+import Entity
 
-public struct CollectionsDTO: Codable {
+public struct PagedCollectionsDTO: Codable {
     public let data: [CollectionDTO]?
     public let meta: CollectionsMetaDTO?
-    
-    public init(data: [CollectionDTO]?, meta: CollectionsMetaDTO?) {
-        self.data = data
-        self.meta = meta
-    }
 }
 
-extension CollectionsDTO {
+extension PagedCollectionsDTO {
     public struct CollectionDTO: Codable {
         public let collectionId: String?
         public let imageUrl: String?
@@ -28,7 +23,7 @@ extension CollectionsDTO {
     }
 }
 
-extension CollectionsDTO {
+extension PagedCollectionsDTO {
     public struct CollectionsMetaDTO: Codable {
         public let type: String?
         public let returned: Int?
@@ -36,7 +31,7 @@ extension CollectionsDTO {
     }
 }
 
-extension CollectionsDTO {
+extension PagedCollectionsDTO {
     public var entity: CollectionPagingEntity {
         get throws {
             return try CollectionPagingEntity(
@@ -47,11 +42,11 @@ extension CollectionsDTO {
     }
 }
 
-extension CollectionsDTO.CollectionDTO {
+extension PagedCollectionsDTO.CollectionDTO {
     public var entity: ExploreInfoEntity {
         get throws {
             return try ExploreInfoEntity(
-                id: unwrap(collectionId, key: CodingKeys.collectionId),
+                id: unwrap(collectionId),
                 imageUrl: URL(string: imageUrl ?? ""),
                 title: contentTitle ?? "",
                 description: contentDescription ?? ""

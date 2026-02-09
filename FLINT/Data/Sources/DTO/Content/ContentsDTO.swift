@@ -13,42 +13,48 @@ public struct ContentsDTO: Codable {
     public let contents: [ContentDTO]?
 }
 
-public extension ContentsDTO {
-    struct ContentDTO: Codable {
+extension ContentsDTO {
+    public struct ContentDTO: Codable {
         public let id: String?
         public let title: String?
         public let imageUrl: String?
         public let year: Int?
         public let getOttSimpleList: [OttSimpleDTO]?
     }
-
-    struct OttSimpleDTO: Codable {
+    
+    public struct OttSimpleDTO: Codable {
         public let ottName: String?
         public let logoUrl: String?
     }
 }
 
-// MARK: - DTO -> Entity
+extension ContentsDTO {
+    public var entities: [ContentInfoEntity] {
+        get throws {
+            return try contents?.map { try $0.entity } ?? []
+        }
+    }
+}
 
-public extension ContentsDTO.ContentDTO {
-    var entity: ContentInfoEntity {
+extension ContentsDTO.ContentDTO {
+    public var entity: ContentInfoEntity {
         get throws {
             return try ContentInfoEntity(
-                id: unwrap(id, key: CodingKeys.id),
+                id: unwrap(id),
                 title: title ?? "",
                 imageUrl: imageUrl ?? "",
                 year: year ?? 0,
-                ottList: try (getOttSimpleList ?? []).map { try $0.entity }
+                ottList: getOttSimpleList?.map { try $0.entity } ?? []
             )
         }
     }
 }
 
-public extension ContentsDTO.OttSimpleDTO {
-    var entity: OttSimpleEntity {
+extension ContentsDTO.OttSimpleDTO {
+    public var entity: OttSimpleEntity {
         get throws {
             return try OttSimpleEntity(
-                ottName: unwrap(ottName, key: CodingKeys.ottName),
+                ottName: unwrap(ottName),
                 logoUrl: logoUrl ?? ""
             )
         }
