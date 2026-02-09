@@ -11,7 +11,7 @@ import Moya
 
 import Data
 
-protocol AuthServiceFactory: AuthAPIFactory, TokenStorageFactory {
+protocol AuthServiceFactory: AuthAPIProviderFactory, TokenStorageFactory {
     func makeAuthService() -> AuthService
     func makeAuthService(tokenStorage: TokenStorage, authAPIProvider: MoyaProvider<AuthAPI>) -> AuthService
 }

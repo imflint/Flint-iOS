@@ -11,7 +11,7 @@ import Moya
 
 import Data
 
-protocol HomeServiceFactory: HomeAPIFactory {
+protocol HomeServiceFactory: HomeAPIProviderFactory {
     func makeHomeService() -> HomeService
     func makeHomeService(homeAPIProvider: MoyaProvider<HomeAPI>) -> HomeService
 }

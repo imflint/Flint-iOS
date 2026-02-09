@@ -11,13 +11,13 @@ import Moya
 
 import Data
 
-protocol CollectionAPIFactory {
+protocol CollectionAPIProviderFactory {
     var collectionAPIProvider: MoyaProvider<CollectionAPI> { get set }
     
     func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI>
 }
 
-extension CollectionAPIFactory {
+extension CollectionAPIProviderFactory {
     func makeCollectionAPIProvider() -> MoyaProvider<CollectionAPI> {
         return collectionAPIProvider
     }

@@ -11,7 +11,7 @@ import Moya
 
 import Data
 
-protocol SearchServiceFactory: SearchAPIFactory {
+protocol SearchServiceFactory: SearchAPIProviderFactory {
     func makeSearchService() -> SearchService
     func makeSearchService(searchAPIProvider: MoyaProvider<SearchAPI>) -> SearchService
 }
