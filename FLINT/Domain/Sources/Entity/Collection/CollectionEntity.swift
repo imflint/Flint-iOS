@@ -9,7 +9,7 @@ import Foundation
 
 public struct CollectionEntity: Equatable {
     public let id: String
-    public let thumbnailUrl: String
+    public let thumbnailUrl: URL?
     public let title: String
     public let description: String
     public let imageList: [String]
@@ -17,11 +17,11 @@ public struct CollectionEntity: Equatable {
     public let isBookmarked: Bool
     public let userId: String
     public let nickname: String
-    public let profileImageUrl: String
-
+    public let profileImageUrl: URL?
+    
     public init(
         id: String,
-        thumbnailUrl: String,
+        thumbnailUrl: URL?,
         title: String,
         description: String,
         imageList: [String],
@@ -29,7 +29,7 @@ public struct CollectionEntity: Equatable {
         isBookmarked: Bool,
         userId: String,
         nickname: String,
-        profileImageUrl: String
+        profileImageUrl: URL?
     ) {
         self.id = id
         self.thumbnailUrl = thumbnailUrl

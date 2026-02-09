@@ -51,7 +51,7 @@ extension CollectionDetailDTO {
                 thumbnailUrl: URL(string: thumbnailUrl ?? ""),
                 createdAt: createdAt ?? "",
                 isBookmarked: isBookmarked ?? false,
-                author: author?.entity,
+                author: unwrap(author?.entity),
                 contents: contents?.map { try $0.entity } ?? []
             )
         }
@@ -59,13 +59,13 @@ extension CollectionDetailDTO {
 }
 
 extension CollectionDetailDTO.AuthorDTO {
-    public var entity: CollectionAuthorEntity {
+    public var entity: UserProfileEntity {
         get throws {
-            return try CollectionAuthorEntity(
+            return try UserProfileEntity(
                 id: unwrap(id),
                 nickname: nickname ?? "",
                 profileImageUrl: URL(string: profileImageUrl ?? ""),
-                userRole: userRole ?? ""
+                role: unwrap(UserRole(rawValue: userRole ?? ""))
             )
         }
     }

@@ -27,8 +27,10 @@ public final class DefaultCollectionRepository: CollectionRepository {
             .eraseToAnyPublisher()
     }
     
-    public func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
+    public func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<Int64, Error> {
         return collectionService.createCollection(collectionInfo: collectionInfo)
+            .tryMap { try $0.createdCollectionId }
+            .eraseToAnyPublisher()
     }
     
     public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error> {

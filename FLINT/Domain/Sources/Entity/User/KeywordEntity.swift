@@ -12,9 +12,9 @@ public struct KeywordEntity {
     public let rank: Int
     public let name: String
     public let percentage: Int
-    public let imageUrl: String
+    public let imageUrl: URL?
 
-    public init(color: String, rank: Int, name: String, percentage: Int, imageUrl: String) {
+    public init(color: String, rank: Int, name: String, percentage: Int, imageUrl: URL?) {
         self.color = color
         self.rank = rank
         self.name = name

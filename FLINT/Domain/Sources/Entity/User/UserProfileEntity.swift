@@ -10,13 +10,13 @@ import Foundation
 public struct UserProfileEntity {
     public let id: String
     public let nickname: String
-    public let profileImageUrl: String
-    public let isFliner: Bool
+    public let profileImageUrl: URL?
+    public let role: UserRole
 
-    public init(id: String, nickname: String, profileImageUrl: String, isFliner: Bool) {
+    public init(id: String, nickname: String, profileImageUrl: URL?, role: UserRole) {
         self.id = id
         self.nickname = nickname
         self.profileImageUrl = profileImageUrl
-        self.isFliner = isFliner
+        self.role = role
     }
 }
