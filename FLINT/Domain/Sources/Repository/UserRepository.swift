@@ -14,12 +14,12 @@ public protocol UserRepository {
     func fetchUserProfile(userId: Int64) -> AnyPublisher<UserProfileEntity, Error>
     func fetchUserBookmarkedCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error>
     func fetchUserBookmarkedContents(userId: Int64) -> AnyPublisher<[ContentInfoEntity], Error>
-    func fetchUserCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error>
+    func fetchUserCreatedCollections(userId: Int64) -> AnyPublisher<[CollectionEntity], Error>
     func fetchUserKeywords(userId: Int64) -> AnyPublisher<[KeywordEntity], Error>
     
     func fetchMyProfile() -> AnyPublisher<UserProfileEntity, Error>
     func fetchMyBookmarkedCollections() -> AnyPublisher<[CollectionEntity], Error>
-    func fetchMyCollections() -> AnyPublisher<[CollectionEntity], Error>
+    func fetchMyCreatedCollections() -> AnyPublisher<[CollectionEntity], Error>
     func fetchMyKeywords() -> AnyPublisher<[KeywordEntity], Error>
     func recalculateMyKeywords() -> AnyPublisher<Void, Error>
     

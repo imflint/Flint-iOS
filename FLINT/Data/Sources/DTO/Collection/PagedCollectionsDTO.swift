@@ -36,7 +36,7 @@ extension PagedCollectionsDTO {
         get throws {
             return try CollectionPagingEntity(
                 collections: data?.map({ try $0.entity }) ?? [],
-                cursor: unwrap(UInt(unwrap(meta?.nextCursor)))
+                cursor: unwrap(Int64(meta?.nextCursor ?? ""))
             )
         }
     }

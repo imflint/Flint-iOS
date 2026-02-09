@@ -7,14 +7,14 @@
 
 import Foundation
 
-public struct CollectionDetailEntity: Equatable {
+public struct CollectionDetailEntity {
     public let id: String
     public let title: String
     public let description: String
     public let thumbnailUrl: URL?
     public let createdAt: String
     public let isBookmarked: Bool
-    public let author: CollectionAuthorEntity?
+    public let author: UserProfileEntity
     public let contents: [CollectionContentEntity]
 
     public init(
@@ -24,7 +24,7 @@ public struct CollectionDetailEntity: Equatable {
         thumbnailUrl: URL?,
         createdAt: String,
         isBookmarked: Bool,
-        author: CollectionAuthorEntity?,
+        author: UserProfileEntity,
         contents: [CollectionContentEntity]
     ) {
         self.id = id
@@ -35,25 +35,6 @@ public struct CollectionDetailEntity: Equatable {
         self.isBookmarked = isBookmarked
         self.author = author
         self.contents = contents
-    }
-}
-
-public struct CollectionAuthorEntity: Equatable {
-    public let id: String
-    public let nickname: String
-    public let profileImageUrl: URL?
-    public let userRole: String
-
-    public init(
-        id: String,
-        nickname: String,
-        profileImageUrl: URL?,
-        userRole: String
-    ) {
-        self.id = id
-        self.nickname = nickname
-        self.profileImageUrl = profileImageUrl
-        self.userRole = userRole
     }
 }
 

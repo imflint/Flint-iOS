@@ -7,26 +7,12 @@
 
 import Foundation
 
-public struct CollectionBookmarkUsersEntity: Equatable {
+public struct CollectionBookmarkUsersEntity {
     public let bookmarkCount: Int
-    public let users: [CollectionBookmarkUserEntity]
+    public let users: [UserProfileEntity]
 
-    public init(bookmarkCount: Int, users: [CollectionBookmarkUserEntity]) {
+    public init(bookmarkCount: Int, users: [UserProfileEntity]) {
         self.bookmarkCount = bookmarkCount
         self.users = users
-    }
-}
-
-public struct CollectionBookmarkUserEntity: Equatable {
-    public let userId: String
-    public let nickname: String
-    public let profileImageUrl: URL?
-    public let userRole: String
-
-    public init(userId: String, nickname: String, profileImageUrl: URL?, userRole: String) {
-        self.userId = userId
-        self.nickname = nickname
-        self.profileImageUrl = profileImageUrl
-        self.userRole = userRole
     }
 }
