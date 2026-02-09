@@ -1,5 +1,5 @@
 //
-//  BookmarkFactory.swift
+//  FetchCollectionBookmarkUsersUseCaseFactory.swift
 //  FLINT
 //
 //  Created by 진소은 on 1/23/26.
