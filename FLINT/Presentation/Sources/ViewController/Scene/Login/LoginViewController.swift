@@ -41,7 +41,6 @@ public final class LoginViewController: BaseViewController<LoginView> {
     public override func bind() {
         loginViewModel.socialVerifyResultEntity.sink { [weak self] socialVerifyResultEntity in
             Log.d(socialVerifyResultEntity)
-            guard let socialVerifyResultEntity else { return }
             if !socialVerifyResultEntity.isRegistered {
                 self?.register()
             } else {

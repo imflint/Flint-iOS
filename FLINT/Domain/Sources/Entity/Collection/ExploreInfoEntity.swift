@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ExploreInfoEntity {
+public struct ExploreInfoEntity: Equatable, Hashable, Sendable {
     public let id: String
     public let imageUrl: URL?
     public let title: String

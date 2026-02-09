@@ -24,6 +24,8 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
     
     public let exploreViewModel: ExploreViewModel
     
+    private var mainCollectionViewDataSource: UICollectionViewDiffableDataSource<MainCollectionViewSection, MainCollectionViewItem>?
+    
     // MARK: - Component
     
     private let gradientBackgroundView = FixedGradientView().then {
@@ -49,10 +51,7 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
         super.viewDidLoad()
         
         setNavigationBar(.init(left: .logo))
-        rootView.mainCollectionView.register(ExploreCollectionViewCell.self)
-        rootView.mainCollectionView.register(ExploreEmptyCollectionViewCell.self)
-        rootView.mainCollectionView.delegate = self
-        rootView.mainCollectionView.dataSource = self
+        setupMainCollectionView()
     }
     
     // MARK: - Setup
@@ -60,7 +59,8 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
     public override func bind() {
         exploreViewModel.collections.sink { [weak self] exploreInfoEntity in
             Log.d(exploreInfoEntity)
-            self?.rootView.mainCollectionView.reloadData()
+            guard let self else { return }
+            mainCollectionViewDataSource?.apply(makeSnapshot(exploreInfoEntities: exploreViewModel.collections.value), animatingDifferences: false)
         }
         .store(in: &cancellables)
     }
@@ -75,6 +75,57 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
         gradientBackgroundView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+}
+
+extension ExploreViewController {
+    private enum MainCollectionViewSection: Int {
+        case main
+        case empty
+    }
+    
+    private enum MainCollectionViewItem: Equatable, Hashable, Sendable {
+        case collection(ExploreInfoEntity)
+        case empty
+    }
+    
+    private func setupMainCollectionView() {
+        rootView.mainCollectionView.register(ExploreCollectionViewCell.self)
+        rootView.mainCollectionView.register(ExploreEmptyCollectionViewCell.self)
+        rootView.mainCollectionView.delegate = self
+        rootView.mainCollectionView.dataSource = mainCollectionViewDataSource
+        
+        mainCollectionViewDataSource = UICollectionViewDiffableDataSource<MainCollectionViewSection, MainCollectionViewItem>(collectionView: rootView.mainCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+            switch itemIdentifier {
+            case let .collection(collection):
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExploreCollectionViewCell.reuseIdentifier, for: indexPath) as? ExploreCollectionViewCell else {
+                    return UICollectionViewCell()
+                }
+                cell.collectionImageView.kf.setImage(with: collection.imageUrl)
+                cell.collectionTitleLabel.attributedText = .pretendard(.display2_m_28, text: collection.title)
+                cell.collectionDescriptionLabel.attributedText = .pretendard(.body1_r_16, text: collection.description)
+                cell.collectionDetailButton.addAction(UIAction(handler: { [weak self] _ in
+                    guard let id = Int64(collection.id) else { return }
+                    guard let vc = self?.viewControllerFactory?.makeCollectionDetailViewController(collectionId: id) else { return }
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }), for: .touchUpInside)
+                return cell
+            case .empty:
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExploreEmptyCollectionViewCell.reuseIdentifier, for: indexPath) as? ExploreEmptyCollectionViewCell else {
+                    return UICollectionViewCell()
+                }
+                return cell
+            }
+        })
+        mainCollectionViewDataSource?.apply(makeSnapshot(exploreInfoEntities: exploreViewModel.collections.value), animatingDifferences: false)
+    }
+    
+    private func makeSnapshot(exploreInfoEntities: [ExploreInfoEntity]) -> NSDiffableDataSourceSnapshot<MainCollectionViewSection, MainCollectionViewItem> {
+        var snapshot = NSDiffableDataSourceSnapshot<MainCollectionViewSection, MainCollectionViewItem>()
+        snapshot.appendSections([.main, .empty])
+        snapshot.appendItems(exploreInfoEntities.map({ MainCollectionViewItem.collection($0) }), toSection: .main)
+        snapshot.appendItems([MainCollectionViewItem.empty], toSection: .empty)
+        return snapshot
     }
 }
 

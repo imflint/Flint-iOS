@@ -21,6 +21,6 @@ extension SearchServiceFactory {
         return makeSearchService(searchAPIProvider: makeSearchAPIProvider())
     }
     func makeSearchService(searchAPIProvider: MoyaProvider<SearchAPI>) -> SearchService {
-        return DefaultSearchService(provider: searchAPIProvider)
+        return DefaultSearchService(searchAPIProvider: searchAPIProvider)
     }
 }

@@ -18,7 +18,7 @@ public protocol LoginViewModelInput {
 }
 
 public protocol LoginViewModelOutput {
-    var socialVerifyResultEntity: CurrentValueSubject<SocialVerifyResultEntity?, Never> { get set }
+    var socialVerifyResultEntity: PassthroughSubject<SocialVerifyResultEntity, Never> { get }
 }
 
 public typealias LoginViewModel = LoginViewModelInput & LoginViewModelOutput
@@ -27,7 +27,7 @@ public final class DefaultLoginViewModel: LoginViewModel {
     
     private let socialVerifyUseCase: SocialVerifyUseCase
     
-    public var socialVerifyResultEntity: CurrentValueSubject<SocialVerifyResultEntity?, Never> = .init(nil)
+    public var socialVerifyResultEntity: PassthroughSubject<SocialVerifyResultEntity, Never> = .init()
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     

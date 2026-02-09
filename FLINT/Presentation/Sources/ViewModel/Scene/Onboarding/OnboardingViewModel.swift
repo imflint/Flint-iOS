@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  OnboardingViewModel.swift
 //  Presentation
 //
 //  Created by 김호성 on 2026.01.20.

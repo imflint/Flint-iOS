@@ -10,15 +10,15 @@ import Foundation
 import Domain
 
 protocol FetchExploreCollectionsUseCaseFactory: CollectionRepositoryFactory {
-    func makeFetchCollectionsUseCase() -> FetchExploreCollectionsUseCase
-    func makeFetchCollectionsUseCase(collectionRepository: CollectionRepository) -> FetchExploreCollectionsUseCase
+    func makeFetchExploreCollectionsUseCase() -> FetchExploreCollectionsUseCase
+    func makeFetchExploreCollectionsUseCase(collectionRepository: CollectionRepository) -> FetchExploreCollectionsUseCase
 }
 
 extension FetchExploreCollectionsUseCaseFactory {
-    func makeFetchCollectionsUseCase() -> FetchExploreCollectionsUseCase {
-        return makeFetchCollectionsUseCase(collectionRepository: makeCollectionRepository())
+    func makeFetchExploreCollectionsUseCase() -> FetchExploreCollectionsUseCase {
+        return makeFetchExploreCollectionsUseCase(collectionRepository: makeCollectionRepository())
     }
-    func makeFetchCollectionsUseCase(collectionRepository: CollectionRepository) -> FetchExploreCollectionsUseCase {
+    func makeFetchExploreCollectionsUseCase(collectionRepository: CollectionRepository) -> FetchExploreCollectionsUseCase {
         return DefaultFetchExploreCollectionsUseCase(collectionRepository: collectionRepository)
     }
 }

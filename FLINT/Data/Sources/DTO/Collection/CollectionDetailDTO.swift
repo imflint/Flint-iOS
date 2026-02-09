@@ -65,7 +65,7 @@ extension CollectionDetailDTO.AuthorDTO {
                 id: unwrap(id),
                 nickname: nickname ?? "",
                 profileImageUrl: URL(string: profileImageUrl ?? ""),
-                role: unwrap(UserRole(rawValue: userRole ?? ""))
+                role: UserRole(rawValue: userRole ?? "") ?? .unknown
             )
         }
     }

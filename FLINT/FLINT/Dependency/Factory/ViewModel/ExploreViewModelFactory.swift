@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ExploreViewModelFactory.swift
 //  FLINT
 //
 //  Created by 김호성 on 2026.01.22.
@@ -10,16 +10,16 @@ import Foundation
 import Domain
 import Presentation
 
-protocol ExploreViewModelFactory: ExploreUseCaseFactory {
+protocol ExploreViewModelFactory: FetchExploreCollectionsUseCaseFactory {
     func makeExploreViewModel() -> ExploreViewModel
-    func makeExploreViewModel(exploreUseCase: ExploreUseCase) -> ExploreViewModel
+    func makeExploreViewModel(fetchExploreCollectionsUseCase: FetchExploreCollectionsUseCase) -> ExploreViewModel
 }
 
 extension ExploreViewModelFactory {
     func makeExploreViewModel() -> ExploreViewModel {
-        return makeExploreViewModel(exploreUseCase: makeExploreUseCase())
+        return makeExploreViewModel(fetchExploreCollectionsUseCase: makeFetchExploreCollectionsUseCase())
     }
-    func makeExploreViewModel(exploreUseCase: ExploreUseCase) -> ExploreViewModel {
-        return DefaultExploreViewModel(exploreUseCase: exploreUseCase)
+    func makeExploreViewModel(fetchExploreCollectionsUseCase: FetchExploreCollectionsUseCase) -> ExploreViewModel {
+        return DefaultExploreViewModel(fetchExploreCollectionsUseCase: fetchExploreCollectionsUseCase)
     }
 }

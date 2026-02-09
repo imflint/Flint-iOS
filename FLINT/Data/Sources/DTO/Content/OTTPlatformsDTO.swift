@@ -36,8 +36,8 @@ extension OTTPlatformsDTO.OTTPlatformDTO {
             return try OTTPlatformEntity(
                 ottId: unwrap(ottId),
                 name: name ?? "",
-                logoUrl: logoUrl ?? "",
-                contentUrl: contentUrl ?? ""
+                logoUrl: URL(string: logoUrl ?? ""),
+                contentUrl: URL(string: contentUrl ?? "")
             )
         }
     }

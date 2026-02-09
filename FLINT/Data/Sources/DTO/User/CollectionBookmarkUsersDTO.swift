@@ -35,13 +35,13 @@ extension CollectionBookmarkUsersDTO {
 }
 
 extension CollectionBookmarkUsersDTO.UserDTO {
-    public var entity: CollectionBookmarkUserEntity {
+    public var entity: UserProfileEntity {
         get throws {
-            return try CollectionBookmarkUserEntity(
-                userId: unwrap(userId),
+            return try UserProfileEntity(
+                id: unwrap(userId),
                 nickname: nickName ?? "",
                 profileImageUrl: URL(string: profileImageUrl ?? ""),
-                userRole: userRole ?? ""
+                role: UserRole(rawValue: userRole ?? "") ?? .unknown
             )
         }
     }

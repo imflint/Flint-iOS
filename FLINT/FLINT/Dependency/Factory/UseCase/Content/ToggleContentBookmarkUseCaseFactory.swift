@@ -19,6 +19,6 @@ extension ToggleContentBookmarkUseCaseFactory {
         return makeToggleContentBookmarkUseCase(bookmarkRepository: makeBookmarkRepository())
     }
     func makeToggleContentBookmarkUseCase(bookmarkRepository: BookmarkRepository) -> ToggleContentBookmarkUseCase {
-        return DefaultToggleCollectionBookmarkUseCase(bookmarkRepository: bookmarkRepository)
+        return DefaultToggleContentBookmarkUseCase(bookmarkRepository: bookmarkRepository)
     }
 }

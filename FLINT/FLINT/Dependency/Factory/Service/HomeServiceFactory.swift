@@ -21,6 +21,6 @@ extension HomeServiceFactory {
         return makeHomeService(homeAPIProvider: makeHomeAPIProvider())
     }
     func makeHomeService(homeAPIProvider: MoyaProvider<HomeAPI>) -> HomeService {
-        return DefaultHomeService(provider: homeAPIProvider)
+        return DefaultHomeService(homeAPIProvider: homeAPIProvider)
     }
 }

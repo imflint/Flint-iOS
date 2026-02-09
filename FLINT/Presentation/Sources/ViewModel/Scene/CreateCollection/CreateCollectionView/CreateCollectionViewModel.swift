@@ -73,9 +73,9 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
         guard isDoneEnabled.value else { return }
         guard let entity = createEntity else { return }
 
-        createCollectionUseCase.createCollection(entity)
+        createCollectionUseCase.createCollection(collectionInfo: entity)
             .manageThread()
-            .map { Result<Void, Error>.success(()) }
+            .map { _ in Result<Void, Error>.success(()) }
             .catch { Just(Result<Void, Error>.failure($0)) }
             .sinkHandledCompletion { [weak self] result in
                 switch result {

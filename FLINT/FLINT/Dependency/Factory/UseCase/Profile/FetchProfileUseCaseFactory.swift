@@ -16,7 +16,7 @@ protocol FetchProfileUseCaseFactory: UserRepositoryFactory {
 
 extension FetchProfileUseCaseFactory {
     func makeFetchProfileUseCase() -> FetchProfileUseCase {
-        return makeFetchKeywordsUseCase(userRepository: makeUserRepository())
+        return makeFetchProfileUseCase(userRepository: makeUserRepository())
     }
     func makeFetchProfileUseCase(userRepository: UserRepository) -> FetchProfileUseCase {
         return DefaultFetchProfileUseCase(userRepository: userRepository)

@@ -35,11 +35,11 @@ extension KeywordsDTO.KeywordDTO {
     public var entity: KeywordEntity {
         get throws {
             return try KeywordEntity(
-                color: color ?? "",
+                color: unwrap(KeywordColor(rawValue: color ?? "")),
                 rank: unwrap(rank),
                 name: name ?? "",
                 percentage: percentage ?? 0,
-                imageUrl: imageUrl ?? ""
+                imageUrl: URL(string: imageUrl ?? "")
             )
         }
     }
