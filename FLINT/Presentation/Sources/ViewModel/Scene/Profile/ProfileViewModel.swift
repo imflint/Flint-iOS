@@ -5,27 +5,34 @@
 //  Created by 진소은 on 1/22/26.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 import Domain
-import Entity
 
+//public protocol ProfileViewModelInput {
+//    
+//}
+
+//public protocol ProfileViewModelOutput {
+//    var userProfileEntity: CurrentValueSubject<UserProfileEntity, Never> { get set }
+//}
+
+//public typealias ProfileViewModel = ProfileViewModelInput & ProfileViewModelOutput
+
+//public final class DefaultProfileViewModel: ProfileViewModel {
 public final class ProfileViewModel {
+//    public var userProfileEntity: CurrentValueSubject<Entity.UserProfileEntity, Never>
     
-    public enum Target: Equatable {
-        case me
-        case user(userId: String)
-    }
     
-    private let target: Target
+    private let target: UserTarget
     
     public enum Row {
-        case profileHeader(nickname: String, profileImageUrl: String, isFliner: Bool)
+        case profileHeader(nickname: String, profileImageUrl: URL?, isFliner: Bool)
         case titleHeader(style: TitleHeaderStyle, title: String, subtitle: String)
         case preferenceChips(keywords: [KeywordEntity])
-        case myCollections(items: [CollectionEntity])
-        case savedCollections(items: [CollectionEntity])
+        case myCollections(items: [CollectionInfoEntity])
+        case savedCollections(items: [CollectionInfoEntity])
         case savedContents(items: [ContentInfoEntity])
     }
     
@@ -38,182 +45,115 @@ public final class ProfileViewModel {
     @Published public private(set) var rows: [Row] = []
     
     // MARK: - Dependencies
-    private let userProfileUseCase: UserProfileUseCase
+    private let fetchProfileUseCase: FetchProfileUseCase
+    private let fetchKeywordsUseCase: FetchKeywordsUseCase
+    private let fetchCreatedCollectionsUseCase: FetchCreatedCollectionsUseCase
+    private let fetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase
+    private let fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - State
     private var nickname: String
     private var isFliner: Bool
-    private var profileImageUrl: String?
+    private var profileImageUrl: URL?
     
     private var keywords: [KeywordEntity] = []
-    private var myCollections: [CollectionEntity] = []
-    private var savedCollections: [CollectionEntity] = []
+    private var myCollections: [CollectionInfoEntity] = []
+    private var savedCollections: [CollectionInfoEntity] = []
     private var savedContents: [ContentInfoEntity] = []
     
     public init(
-        target: Target = .me,
-        userProfileUseCase: UserProfileUseCase,
+        target: UserTarget,
+        fetchProfileUseCase: FetchProfileUseCase,
+        fetchKeywordsUseCase: FetchKeywordsUseCase,
+        fetchCreatedCollectionsUseCase: FetchCreatedCollectionsUseCase,
+        fetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase,
+        fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase,
         initialNickname: String = "플링",
         initialIsFliner: Bool = true
     ) {
         self.target = target
-        self.userProfileUseCase = userProfileUseCase
+        self.fetchProfileUseCase = fetchProfileUseCase
+        self.fetchKeywordsUseCase = fetchKeywordsUseCase
+        self.fetchCreatedCollectionsUseCase = fetchCreatedCollectionsUseCase
+        self.fetchBookmarkedCollectionsUseCase = fetchBookmarkedCollectionsUseCase
+        self.fetchBookmarkedContentsUseCase = fetchBookmarkedContentsUseCase
         self.nickname = initialNickname
         self.isFliner = initialIsFliner
-        self.profileImageUrl = ""
         self.rows = makeRows()
     }
     
     // MARK: - Input
     public func load() {
         
-        switch target {
-        case .me:
-            userProfileUseCase.fetchMyProfile()
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchProfile failed:", error)
-                    }
-                } receiveValue: { [weak self] profile in
-                    guard let self else { return }
-                    self.nickname = profile.nickname
-                    self.isFliner = profile.isFliner
-                    self.profileImageUrl = profile.profileImageUrl
-                    self.rows = self.makeRows()
+        fetchProfileUseCase.fetchProfile(for: target)
+            .manageThread()
+            .sinkHandledCompletion(receiveValue: { [weak self] userProfileEntity in
+                guard let self else { return }
+                nickname = userProfileEntity.nickname
+                isFliner = userProfileEntity.role == .fliner
+                profileImageUrl = userProfileEntity.profileImageUrl
+                rows = makeRows()
+            })
+            .store(in: &cancellables)
+        
+        fetchKeywordsUseCase.fetchKeywords(for: target)
+            .manageThread()
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("❌ fetchKeywords failed:", error)
                 }
-                .store(in: &cancellables)
-            userProfileUseCase.fetchMyKeywords()
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchKeywords failed:", error)
-                    }
-                } receiveValue: { [weak self] keywords in
-                    guard let self else { return }
-                    self.keywords = keywords
-                    self.rows = self.makeRows()
-                }
-                .store(in: &cancellables)
-            
-            userProfileUseCase.fetchMyCollections()
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchMyCollections failed:", error)
-                    }
-                } receiveValue: { [weak self] items in
-                    guard let self else { return }
-                    self.myCollections = items
-                    self.rows = self.makeRows()
-                }
-                .store(in: &cancellables)
-            
-            userProfileUseCase.fetchMyBookmarkedCollections()
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchSavedCollections failed:", error)
-                    }
-                } receiveValue: { [weak self] items in
-                    print("asdf", items.count)
-                    guard let self else { return }
-                    self.savedCollections = items
-                    self.rows = self.makeRows()
-                }
-                .store(in: &cancellables)
-            
-            userProfileUseCase.fetchMyBookmarkedContents()
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchSavedContents failed:", error)
-                    }
-                } receiveValue: { [weak self] items in
-                    guard let self else { return }
-                    self.savedContents = items
-                    self.rows = self.makeRows()
-                }
-                .store(in: &cancellables)
-            
-            
-            
-        case .user(let userIdString):
-            guard let userId = Int64(userIdString) else {
-                print("❌ invalid userId:", userIdString)
-                return
+            } receiveValue: { [weak self] keywords in
+                guard let self else { return }
+                self.keywords = keywords
+                self.rows = self.makeRows()
             }
-            userProfileUseCase.fetchUserProfile(userId: userId)
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchProfile failed:", error)
-                    }
-                } receiveValue: { [weak self] profile in
-                    guard let self else { return }
-                    self.nickname = profile.nickname
-                    self.isFliner = profile.isFliner
-                    self.profileImageUrl = profile.profileImageUrl
-                    self.rows = self.makeRows()
+            .store(in: &cancellables)
+        
+        fetchCreatedCollectionsUseCase.fetchCreatedCollections(for: target)
+            .manageThread()
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("❌ fetchMyCollections failed:", error)
                 }
-                .store(in: &cancellables)
-            userProfileUseCase.fetchUserKeywords(userId: Int64(userId))
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchKeywords failed:", error)
-                    }
-                } receiveValue: { [weak self] keywords in
-                    guard let self else { return }
-                    self.keywords = keywords
-                    self.rows = self.makeRows()
+            } receiveValue: { [weak self] items in
+                guard let self else { return }
+                self.myCollections = items.map({ collectionEntity in
+                    return CollectionInfoEntity(id: collectionEntity.id, imageUrl: collectionEntity.thumbnailUrl, profileImageUrl: collectionEntity.profileImageUrl, title: collectionEntity.title, userName: collectionEntity.nickname)
+                })
+                self.rows = self.makeRows()
+            }
+            .store(in: &cancellables)
+        
+        fetchBookmarkedCollectionsUseCase.fetchBookmarkedCollections(for: target)
+            .manageThread()
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("❌ fetchSavedCollections failed:", error)
                 }
-                .store(in: &cancellables)
-            
-            userProfileUseCase.fetchUserCollections(userId: userId)
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchMyCollections failed:", error)
-                    }
-                } receiveValue: { [weak self] items in
-                    guard let self else { return }
-                    self.myCollections = items
-                    self.rows = self.makeRows()
+            } receiveValue: { [weak self] items in
+                print("asdf", items.count)
+                guard let self else { return }
+                self.savedCollections = items.map({ collectionEntity in
+                    return CollectionInfoEntity(id: collectionEntity.id, imageUrl: collectionEntity.thumbnailUrl, profileImageUrl: collectionEntity.profileImageUrl, title: collectionEntity.title, userName: collectionEntity.nickname)
+                })
+                self.rows = self.makeRows()
+            }
+            .store(in: &cancellables)
+        
+        fetchBookmarkedContentsUseCase.fetchBookmarkedContents(for: target)
+            .manageThread()
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("❌ fetchSavedContents failed:", error)
                 }
-                .store(in: &cancellables)
-            
-            userProfileUseCase.fetchBookmarkedCollections(userId: userId)
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchSavedCollections failed:", error)
-                    }
-                } receiveValue: { [weak self] items in
-                    print("asdf", items.count)
-                    guard let self else { return }
-                    self.savedCollections = items
-                    self.rows = self.makeRows()
-                }
-                .store(in: &cancellables)
-            
-            userProfileUseCase.fetchBookmarkedContents(userId: userId)
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(error) = completion {
-                        print("❌ fetchSavedContents failed:", error)
-                    }
-                } receiveValue: { [weak self] items in
-                    guard let self else { return }
-                    self.savedContents = items
-                    self.rows = self.makeRows()
-                }
-                .store(in: &cancellables)
-        }
+            } receiveValue: { [weak self] items in
+                guard let self else { return }
+                self.savedContents = items
+                self.rows = self.makeRows()
+            }
+            .store(in: &cancellables)
     }
-    
-    //
     
     // MARK: - Row builder
     private func makeRows() -> [Row] {
@@ -223,7 +163,7 @@ public final class ProfileViewModel {
         result.append(
             .profileHeader(
                 nickname: nickname,
-                profileImageUrl: profileImageUrl ?? "",
+                profileImageUrl: profileImageUrl,
                 isFliner: isFliner
             )
         )

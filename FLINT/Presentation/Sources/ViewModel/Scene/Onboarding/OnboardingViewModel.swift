@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  OnboardingViewModel.swift
 //  Presentation
 //
 //  Created by 김호성 on 2026.01.20.
@@ -15,10 +15,10 @@ public protocol OnboardingViewModelInput {
     func checkNickname(_ nickname: String)
     
     // film select
-    func fetchContents()
+    func fetchPopularContents()
     func searchContents(_ keyword: String)
     func clickContent(_ content: ContentEntity)
-    func deleteContent(_ content: ContentEntity) 
+    func deleteContent(_ content: ContentEntity)
     
     // ott select
     func clickOtt(_ ott: Ott)
@@ -46,8 +46,8 @@ public typealias OnboardingViewModel = OnboardingViewModelInput & OnboardingView
 
 public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
-    private let nicknameUseCase: NicknameUseCase
-    private let contentsUseCase: ContentsUseCase
+    private let checkNicknameUseCase: CheckNicknameUseCase
+    private let fetchPopularContentsUseCase: FetchPopularContentsUseCase
     private let searchContentsUseCase: SearchContentsUseCase
     private let signupUseCase: SignupUseCase
     
@@ -72,13 +72,13 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     public init(
-        nicknameUseCase: NicknameUseCase,
-        contentsUseCase: ContentsUseCase,
+        checkNicknameUseCase: CheckNicknameUseCase,
+        fetchPopularContentsUseCase: FetchPopularContentsUseCase,
         searchContentsUseCase: SearchContentsUseCase,
-        signupUseCase: SignupUseCase
+        signupUseCase: SignupUseCase,
     ) {
-        self.nicknameUseCase = nicknameUseCase
-        self.contentsUseCase = contentsUseCase
+        self.checkNicknameUseCase = checkNicknameUseCase
+        self.fetchPopularContentsUseCase = fetchPopularContentsUseCase
         self.searchContentsUseCase = searchContentsUseCase
         self.signupUseCase = signupUseCase
     }
@@ -88,7 +88,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
             nicknameValidState.send(.invalid)
             return
         }
-        nicknameUseCase.checkNickname(nickname)
+        checkNicknameUseCase.checkNickname(nickname)
             .manageThread()
             .sinkHandledCompletion(receiveValue: { [weak self] isValidNickname in
                 self?.nicknameValidState.send(isValidNickname ? .valid : .duplicate)
@@ -99,8 +99,8 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
             .store(in: &cancellables)
     }
     
-    public func fetchContents() {
-        contentsUseCase.fetchContents()
+    public func fetchPopularContents() {
+        fetchPopularContentsUseCase.fetchPopularContents()
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.contents.send(contents)
@@ -109,7 +109,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func searchContents(_ keyword: String) {
-        searchContentsUseCase.searchContents(keyword)
+        searchContentsUseCase.searchContents(keyword: keyword)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.contents.send(contents)
@@ -141,7 +141,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
     public func signup() {
         signupUseCase.signup(
-            SignupInfoEntity(
+            userInfo: SignupInfoEntity(
                 nickname: nickname.value,
                 favoriteContentIds: selectedContents.value.compactMap({ content in
                     Int(content.id)

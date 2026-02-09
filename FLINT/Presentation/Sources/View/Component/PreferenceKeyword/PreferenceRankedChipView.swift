@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 import Then
 
+import Domain
+
 public final class PreferenceRankedChipView: BaseView {
 
     private let vStack = UIStackView().then {
@@ -29,7 +31,7 @@ public final class PreferenceRankedChipView: BaseView {
         }
     }
 
-    public func configure(keywords: [KeywordDTO]) {
+    public func configure(keywords: [KeywordEntity]) {
         let byRank = Dictionary(uniqueKeysWithValues: keywords.map { ($0.rank, $0) })
 
         let sumA = [1, 2, 4].compactMap { byRank[$0]?.name.count }.reduce(0, +)
@@ -70,7 +72,7 @@ public final class PreferenceRankedChipView: BaseView {
             rankRow.forEach { r in
                 guard let dto = byRank[r] else { return }
                 let chip = PreferenceChip()
-                chip.configure(dto: dto)
+                chip.configure(keyword: dto)
                 rowStack.addArrangedSubview(chip)
             }
 

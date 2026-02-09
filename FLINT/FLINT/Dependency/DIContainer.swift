@@ -39,6 +39,12 @@ final class DIContainer: DependencyFactory {
     private lazy var authInterceptor: AuthInterceptor = AuthInterceptor(tokenStorage: tokenStorage)
     private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()
     
+    lazy var contentAPIProvider = MoyaProvider<ContentAPI>(
+        session: Session(interceptor: authInterceptor),
+        plugins: [
+            networkLoggerPlugin
+        ]
+    )
     lazy var userAPIProvider = MoyaProvider<UserAPI>(
         session: Session(interceptor: authInterceptor),
         plugins: [

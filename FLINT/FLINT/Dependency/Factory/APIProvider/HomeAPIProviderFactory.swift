@@ -1,5 +1,5 @@
 //
-//  HomeAPIFactory.swift
+//  HomeAPIProviderFactory.swift
 //  FLINT
 //
 //  Created by 김호성 on 2026.01.31.
@@ -11,13 +11,13 @@ import Moya
 
 import Data
 
-protocol HomeAPIFactory {
+protocol HomeAPIProviderFactory {
     var homeAPIProvider: MoyaProvider<HomeAPI> { get set }
     
     func makeHomeAPIProvider() -> MoyaProvider<HomeAPI>
 }
 
-extension HomeAPIFactory {
+extension HomeAPIProviderFactory {
     func makeHomeAPIProvider() -> MoyaProvider<HomeAPI> {
         return homeAPIProvider
     }

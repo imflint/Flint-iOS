@@ -22,8 +22,8 @@ extension UserProfileDTO {
             return try UserProfileEntity(
                 id: unwrap(id),
                 nickname: nickname ?? "",
-                profileImageUrl: profileImageUrl ?? "",
-                isFliner: isFliner ?? false
+                profileImageUrl: URL(string: profileImageUrl ?? ""),
+                role: (isFliner ?? false) ? .fliner : .unknown
             )
         }
     }

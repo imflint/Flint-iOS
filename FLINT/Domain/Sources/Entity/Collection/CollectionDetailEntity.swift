@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CollectionDetailEntity {
+public struct CollectionDetailEntity: Equatable {
     public let id: String
     public let title: String
     public let description: String

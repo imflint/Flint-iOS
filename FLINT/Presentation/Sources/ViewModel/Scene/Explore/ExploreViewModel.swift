@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ExploreViewModel.swift
 //  Presentation
 //
 //  Created by 김호성 on 2026.01.22.
@@ -17,23 +17,23 @@ public protocol ExploreViewModelInput {
 public protocol ExploreViewModelOutput {
     var index: CurrentValueSubject<Int, Never> { get }
     var collections: CurrentValueSubject<[ExploreInfoEntity], Never> { get }
-    var cursor: UInt? { get set }
+    var cursor: Int64? { get set }
 }
 
 public typealias ExploreViewModel = ExploreViewModelInput & ExploreViewModelOutput
 
 public final class DefaultExploreViewModel: ExploreViewModel {
     
-    private let exploreUseCase: ExploreUseCase
+    private let fetchExploreCollectionsUseCase: FetchExploreCollectionsUseCase
     
     public var index: CurrentValueSubject<Int, Never> = .init(0)
     public var collections: CurrentValueSubject<[ExploreInfoEntity], Never> = .init([])
-    public var cursor: UInt?
+    public var cursor: Int64?
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
-    public init(exploreUseCase: ExploreUseCase) {
-        self.exploreUseCase = exploreUseCase
+    public init(fetchExploreCollectionsUseCase: FetchExploreCollectionsUseCase) {
+        self.fetchExploreCollectionsUseCase = fetchExploreCollectionsUseCase
         bind()
         fetchCollections()
     }
@@ -53,7 +53,7 @@ public final class DefaultExploreViewModel: ExploreViewModel {
     }
     
     private func fetchCollections() {
-        exploreUseCase.fetchExplore(cursor: cursor)
+        fetchExploreCollectionsUseCase.fetchExploreCollections(cursor: cursor)
             .manageThread()
             .sinkHandledCompletion { [weak self] collectionPagingEntity in
                 guard let self else { return }

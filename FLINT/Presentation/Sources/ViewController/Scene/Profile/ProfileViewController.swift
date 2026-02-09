@@ -17,13 +17,13 @@ import ViewModel
 
 public protocol ProfileViewControllerFactory {
     func makeProfileViewController() -> ProfileViewController
-    func makeProfileViewController(target: ProfileViewModel.Target) -> ProfileViewController
+    func makeProfileViewController(target: UserTarget) -> ProfileViewController
 }
 
 public final class ProfileViewController: BaseViewController<ProfileView> {
     
-    
     private let profileViewModel: ProfileViewModel
+    
     public init(
         profileViewModel: ProfileViewModel,
         viewControllerFactory: ViewControllerFactory,
@@ -32,10 +32,12 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         super.init(nibName: nil, bundle: nil)
         self.viewControllerFactory = viewControllerFactory
     }
-
     
-    @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    required init?(coder: NSCoder) {
+        fatalError(
+            "init(coder:) has not been implemented"
+        )
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -160,7 +162,7 @@ extension ProfileViewController: UITableViewDataSource {
                 for: indexPath
             ) as! PreferenceRankedChipTableViewCell
             cell.selectionStyle = .none
-            cell.configure(entities: keywords)
+            cell.configure(keywords: keywords)
             return cell
 
         case let .titleHeader(style, title, subtitle):

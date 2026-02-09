@@ -5,21 +5,12 @@
 //  Created by 소은 on 2026.01.23.
 //
 
-//
-//  HomeViewModel.swift
-//  Presentation
-//
-//  Created by 소은 on 2026.01.23.
-//
-
-import Foundation
 import Combine
+import Foundation
 
 import Domain
-import Entity
 
 public final class HomeViewModel {
-
     
     // MARK: - Section / Row
 
@@ -35,7 +26,7 @@ public final class HomeViewModel {
     public enum Row {
         case greeting(userName: String)
         case header(style: TitleHeaderStyle, title: String, subtitle: String)
-        case fliner(items: [CollectionEntity])
+        case fliner(items: [CollectionInfoEntity])
         case recentSavedContents(items: [ContentInfoEntity])
         case ctaButton(title: String)
     }
@@ -46,29 +37,32 @@ public final class HomeViewModel {
 
     // MARK: - Dependencies
 
-    private let homeUseCase: HomeUseCase
-    private let userProfileUseCase: UserProfileUseCase
-    private let fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase
+    private let fetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase
+    private let fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase
+    private let fetchProfileUseCase: FetchProfileUseCase
+    private let fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - State
 
     private var userName: String
-    private var flinerCollections: [CollectionEntity] = []
+    private var flinerCollections: [CollectionInfoEntity] = []
     private var recentSavedContents: [ContentInfoEntity] = []
     private var watchingCollections: [CollectionEntity] = []
 
     // MARK: - Init
 
     public init(
-        homeUseCase: HomeUseCase,
-        userProfileUseCase: UserProfileUseCase,
-        fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase,
+        fetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase,
+        fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase,
+        fetchProfileUseCase: FetchProfileUseCase,
+        fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase,
         initialUserName: String = "얀비"
     ) {
-        self.homeUseCase = homeUseCase
-        self.userProfileUseCase = userProfileUseCase
-        self.fetchWatchingCollectionsUseCase = fetchWatchingCollectionsUseCase
+        self.fetchRecommendedCollectionsUseCase = fetchRecommendedCollectionsUseCase
+        self.fetchBookmarkedContentsUseCase = fetchBookmarkedContentsUseCase
+        self.fetchProfileUseCase = fetchProfileUseCase
+        self.fetchRecentViewedCollectionsUseCase = fetchRecentViewedCollectionsUseCase
         self.userName = initialUserName
         self.sections = makeSections()
     }
@@ -77,8 +71,8 @@ public final class HomeViewModel {
 
     public func load() {
         
-        userProfileUseCase.fetchUserProfile(userId: 1)
-            .receive(on: DispatchQueue.main)
+        fetchProfileUseCase.fetchProfile(for: .user(id: 1))
+            .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
                     print(" fetchUserProfile failed:", error)
@@ -91,8 +85,8 @@ public final class HomeViewModel {
             .store(in: &cancellables)
 
         // 1) Fliner 추천
-        homeUseCase.fetchRecommendedCollections()
-            .receive(on: DispatchQueue.main)
+        fetchRecommendedCollectionsUseCase.fetchRecommendedCollections()
+            .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
                     print("fetchRecommendedCollections failed:", error)
@@ -100,29 +94,15 @@ public final class HomeViewModel {
             } receiveValue: { [weak self] items in
                 guard let self else { return }
 
-                self.flinerCollections = items.map { info in
-                    CollectionEntity(
-                        id: info.id ?? "",
-                        thumbnailUrl: info.imageUrlString,
-                        title: info.title,
-                        description: "",
-                        imageList: [],
-                        bookmarkCount: 0,
-                        isBookmarked: false,
-                        userId: "",
-                        nickname: info.userName,
-                        profileImageUrl: info.profileImageUrlString
-                    )
-                    
-                }
+                self.flinerCollections = items
 
                 self.sections = self.makeSections()
             }
             .store(in: &cancellables)
 
         // 2) 최근 저장한 콘텐츠
-        userProfileUseCase.fetchMyBookmarkedContents()
-            .receive(on: DispatchQueue.main)
+        fetchBookmarkedContentsUseCase.fetchBookmarkedContents(for: .me)
+            .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
                     print("fetchMyBookmarkedContents failed:", error)
@@ -134,8 +114,8 @@ public final class HomeViewModel {
             }
             .store(in: &cancellables)
         
-        fetchWatchingCollectionsUseCase.fetchWatchingCollections()
-            .receive(on: DispatchQueue.main)
+        fetchRecentViewedCollectionsUseCase.fetchWatchingCollections()
+            .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
                     print("fetchWatchingCollections failed:", error)
@@ -146,8 +126,6 @@ public final class HomeViewModel {
                 self.sections = self.makeSections()
             }
             .store(in: &cancellables)
-        
-        
     }
 
     // MARK: - Builder
@@ -210,7 +188,9 @@ public final class HomeViewModel {
                             title: "눈여겨보고 있는 컬렉션",
                             subtitle: "\(userName)님이 최근 살펴본 컬렉션이에요"
                         ),
-                        .fliner(items: watchingCollections)
+                        .fliner(items: watchingCollections.map({ collectionEntity in
+                            return CollectionInfoEntity(id: collectionEntity.id, imageUrl: collectionEntity.thumbnailUrl, profileImageUrl: collectionEntity.profileImageUrl, title: collectionEntity.title, userName: collectionEntity.nickname)
+                        }))
                     ]
                 }
 

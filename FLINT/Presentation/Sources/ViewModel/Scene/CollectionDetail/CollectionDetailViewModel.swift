@@ -9,7 +9,6 @@ import Combine
 import Foundation
 
 import Domain
-import Entity
 
 public final class CollectionDetailViewModel {
     
@@ -51,8 +50,8 @@ public final class CollectionDetailViewModel {
     // MARK: - Dependency
     
     private let collectionId: Int64
-    private let collectionDetailUseCase: CollectionDetailUseCase
-    private let fetchBookmarkedUserUseCase: FetchBookmarkedUserUseCase
+    private let fetchCollectionDetailUseCase: FetchCollectionDetailUseCase
+    private let fetchCollectionBookmarkUsersUseCase: FetchCollectionBookmarkUsersUseCase
     
     // MARK: - Private
     
@@ -63,12 +62,12 @@ public final class CollectionDetailViewModel {
     
     public init(
         collectionId: Int64,
-        collectionDetailUseCase: CollectionDetailUseCase,
-        fetchBookmarkedUserUseCase: FetchBookmarkedUserUseCase
+        fetchCollectionDetailUseCase: FetchCollectionDetailUseCase,
+        fetchCollectionBookmarkUsersUseCase: FetchCollectionBookmarkUsersUseCase
     ) {
         self.collectionId = collectionId
-        self.collectionDetailUseCase = collectionDetailUseCase
-        self.fetchBookmarkedUserUseCase = fetchBookmarkedUserUseCase
+        self.fetchCollectionDetailUseCase = fetchCollectionDetailUseCase
+        self.fetchCollectionBookmarkUsersUseCase = fetchCollectionBookmarkUsersUseCase
     }
     
     // MARK: - Transform
@@ -96,7 +95,7 @@ public final class CollectionDetailViewModel {
     private func fetch() {
         stateSubject.send(.loading)
 
-        collectionDetailUseCase.fetchCollectionDetail(collectionId: collectionId)
+        fetchCollectionDetailUseCase.fetchCollectionDetail(collectionId: collectionId)
             .sink(
                 receiveCompletion: { [weak self] completion in
                     guard let self else { return }
@@ -109,7 +108,7 @@ public final class CollectionDetailViewModel {
 
                     self.stateSubject.send(.loaded(detail: detail, bookmarkedUsers: nil))
 
-                    self.fetchBookmarkedUserUseCase.execute(collectionId: self.collectionId)
+                    self.fetchCollectionBookmarkUsersUseCase.fetchCollectionBookmarkUsers(collectionId: self.collectionId)
                         .sink(
                             receiveCompletion: { _ in },
                             receiveValue: { [weak self] users in

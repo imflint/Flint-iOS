@@ -15,7 +15,7 @@ public protocol FetchPopularContentsUseCase {
     func fetchPopularContents() -> AnyPublisher<[ContentEntity], Error>
 }
 
-public class DefaultContentsUseCase: FetchPopularContentsUseCase {
+public class DefaultFetchPopularContentsUseCase: FetchPopularContentsUseCase {
     
     private let searchRepository: SearchRepository
     

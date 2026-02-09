@@ -1,5 +1,5 @@
 //
-//  SearchAPIFactory.swift
+//  SearchAPIProviderFactory.swift
 //  FLINT
 //
 //  Created by 김호성 on 2026.01.22.
@@ -11,13 +11,13 @@ import Moya
 
 import Data
 
-protocol SearchAPIFactory {
+protocol SearchAPIProviderFactory {
     var searchAPIProvider: MoyaProvider<SearchAPI> { get set }
     
     func makeSearchAPIProvider() -> MoyaProvider<SearchAPI>
 }
 
-extension SearchAPIFactory {
+extension SearchAPIProviderFactory {
     func makeSearchAPIProvider() -> MoyaProvider<SearchAPI> {
         return searchAPIProvider
     }

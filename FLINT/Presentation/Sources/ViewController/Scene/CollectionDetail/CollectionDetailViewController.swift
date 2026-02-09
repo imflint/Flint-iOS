@@ -119,7 +119,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
                 guard let self else { return }
                 
                 guard let factory = self.viewControllerFactory else { return }
-                let profileVC = factory.makeProfileViewController(target: .user(userId: user.userId))
+                let profileVC = factory.makeProfileViewController(target: .user(id: Int64(user.userId)!))
                 navigationController?.setNavigationBarHidden(false, animated: false)
                 navigationController?.pushViewController(profileVC, animated: true)
             }
@@ -133,10 +133,10 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         let users = bookmarkedUsers?.users ?? []
         return users.map { user in
             SavedUserRowItem(
-                userId: user.userId,
+                userId: user.id,
                 profileImageURL: user.profileImageUrl,
                 nickname: user.nickname,
-                isVerified: user.userRole == "FLINER"
+                isVerified: user.role == .fliner
             )
         }
     }
@@ -221,10 +221,10 @@ extension CollectionDetailViewController: UITableViewDataSource {
 
             cell.selectionStyle = .none
 
-            let author = entity?.author?.nickname ?? ""
+            let author = entity?.author.nickname ?? ""
             let dateText = entity?.createdAt ?? ""
             let description = entity?.description ?? ""
-            let isVerified = (entity?.author?.userRole == "FLINER")
+            let isVerified = (entity?.author.role == .fliner)
 
             cell.configure(
                 author: author,

@@ -10,11 +10,12 @@ import Foundation
 import Domain
 import Presentation
 
-protocol CollectionDetailViewModelFactory: CollectionDetailUseCaseFactory, FetchBookmarkedUserUseCaseFactory {
+protocol CollectionDetailViewModelFactory: FetchCollectionDetailUseCaseFactory, FetchCollectionBookmarkUsersUseCaseFactory {
     func makeCollectionDetailViewModel(collectionId: Int64) -> CollectionDetailViewModel
     func makeCollectionDetailViewModel(
         collectionId: Int64,
-        collectionDetailUseCase: CollectionDetailUseCase
+        fetchCollectionDetailUseCase: FetchCollectionDetailUseCase,
+        fetchCollectionBookmarkUsersUseCase: FetchCollectionBookmarkUsersUseCase
     ) -> CollectionDetailViewModel
 }
 
@@ -22,17 +23,19 @@ extension CollectionDetailViewModelFactory {
     func makeCollectionDetailViewModel(collectionId: Int64) -> CollectionDetailViewModel {
         return makeCollectionDetailViewModel(
             collectionId: collectionId,
-            collectionDetailUseCase: makeCollectionDetailUseCase()
+            fetchCollectionDetailUseCase: makeFetchCollectionDetailUseCase(),
+            fetchCollectionBookmarkUsersUseCase: makeFetchCollectionBookmarkUsersUseCase()
         )
     }
     func makeCollectionDetailViewModel(
         collectionId: Int64,
-        collectionDetailUseCase: CollectionDetailUseCase
+        fetchCollectionDetailUseCase: FetchCollectionDetailUseCase,
+        fetchCollectionBookmarkUsersUseCase: FetchCollectionBookmarkUsersUseCase
     ) -> CollectionDetailViewModel {
         return CollectionDetailViewModel(
             collectionId: collectionId,
-            collectionDetailUseCase: collectionDetailUseCase,
-            fetchBookmarkedUserUseCase: makeFetchBookmarkedUserUseCase()
+            fetchCollectionDetailUseCase: fetchCollectionDetailUseCase,
+            fetchCollectionBookmarkUsersUseCase: fetchCollectionBookmarkUsersUseCase
         )
     }
 }

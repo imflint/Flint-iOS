@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum UserRole: String {
+public enum UserRole: String, Equatable {
     /// 관리자 - 시스템 전체 관리 권한
     case admin = "ADMIN"
     
@@ -16,4 +16,6 @@ public enum UserRole: String {
     
     /// 게스트 사용자 - 조회만 가능
     case fling = "FLING"
+    
+    case unknown
 }

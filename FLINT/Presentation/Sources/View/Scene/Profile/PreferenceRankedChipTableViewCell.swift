@@ -44,16 +44,7 @@ public final class PreferenceRankedChipTableViewCell: BaseTableViewCell {
 //    public func configure(keywords: [KeywordDTO]) {
 //        chipView.configure(keywords: keywords)
 //    }
-    public func configure(entities: [KeywordEntity]) {
-            let keywords: [KeywordDTO] = entities.map { entity in
-                KeywordDTO(
-                    color: KeywordColor(rawValue: entity.color) ?? .pink, // ⚠️ entity.color가 String이라고 가정
-                    rank: entity.rank,
-                    name: entity.name,
-                    percentage: entity.percentage,
-                    imageUrl: entity.imageUrl
-                )
-            }
+    public func configure(keywords: [KeywordEntity]) {
             chipView.configure(keywords: keywords)
         }
 }

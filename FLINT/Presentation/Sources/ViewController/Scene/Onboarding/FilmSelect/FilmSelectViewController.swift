@@ -64,13 +64,13 @@ public final class FilmSelectViewController: BaseViewController<FilmSelectView> 
         setNavigationBar(.init(left: .back, backgroundStyle: .solid(DesignSystem.Color.background)))
         hideKeyboardWhenTappedAround(activeOnAction: false)
         
-        onboardingViewModel.fetchContents()
+        onboardingViewModel.fetchPopularContents()
         
         rootView.searchTextField.searchAction = { [weak self] keyword in
             self?.onboardingViewModel.searchContents(keyword ?? "")
         }
         rootView.searchTextField.clearAction = { [weak self] in
-            self?.onboardingViewModel.fetchContents()
+            self?.onboardingViewModel.fetchPopularContents()
         }
         
         rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(onboardingViewModel.selectedContents.value.count)/\(onboardingViewModel.filmSelectQuestions.count)")

@@ -10,33 +10,40 @@ import Foundation
 import Domain
 import Presentation
 
-protocol HomeViewModelFactory: HomeUseCaseFactory, UserProfileUseCaseFactory, FetchWatchingCollectionsUseCaseFactory {
+protocol HomeViewModelFactory: FetchRecommendedCollectionsUseCaseFactory, FetchBookmarkedContentsUseCaseFactory, FetchProfileUseCaseFactory, FetchRecentViewedCollectionsUseCaseFactory {
     func makeHomeViewModel() -> HomeViewModel
     func makeHomeViewModel(
-        homeUseCase: HomeUseCase,
-        userProfileUseCase: UserProfileUseCase,
-        fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase
+        fetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase,
+        fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase,
+        fetchProfileUseCase: FetchProfileUseCase,
+        fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase,
+        initialUserName: String
     ) -> HomeViewModel
 }
 
 extension HomeViewModelFactory {
     func makeHomeViewModel() -> HomeViewModel {
         return makeHomeViewModel(
-            homeUseCase: makeHomeUseCase(),
-            userProfileUseCase: makeUserProfileUseCase(),
-            fetchWatchingCollectionsUseCase: makeFetchWatchingCollectionsUseCase()
+            fetchRecommendedCollectionsUseCase: makeFetchRecommendedCollectionsUseCase(),
+            fetchBookmarkedContentsUseCase: makeFetchBookmarkedContentsUseCase(),
+            fetchProfileUseCase: makeFetchProfileUseCase(),
+            fetchRecentViewedCollectionsUseCase: makeFetchRecentViewedCollectionsUseCase(),
+            initialUserName: "얀비"
         )
     }
 
     func makeHomeViewModel(
-        homeUseCase: HomeUseCase,
-        userProfileUseCase: UserProfileUseCase,
-        fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase
+        fetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase,
+        fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase,
+        fetchProfileUseCase: FetchProfileUseCase,
+        fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase,
+        initialUserName: String
     ) -> HomeViewModel {
         return HomeViewModel(
-            homeUseCase: homeUseCase,
-            userProfileUseCase: userProfileUseCase,
-            fetchWatchingCollectionsUseCase: fetchWatchingCollectionsUseCase,
+            fetchRecommendedCollectionsUseCase: fetchRecommendedCollectionsUseCase,
+            fetchBookmarkedContentsUseCase: fetchBookmarkedContentsUseCase,
+            fetchProfileUseCase: fetchProfileUseCase,
+            fetchRecentViewedCollectionsUseCase: fetchRecentViewedCollectionsUseCase,
             initialUserName: "얀비"
         )
     }

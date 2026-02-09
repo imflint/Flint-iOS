@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  CollectionServiceFactory.swift
 //  FLINT
 //
 //  Created by 김호성 on 2026.01.22.
@@ -11,16 +11,16 @@ import Moya
 
 import Data
 
-protocol CollectionServiceFactory: CollectionAPIFactory {
+protocol CollectionServiceFactory: CollectionAPIProviderFactory {
     func makeCollectionService() -> CollectionService
-    func makeCollectionService(exploreAPIProvider: MoyaProvider<CollectionAPI>) -> CollectionService
+    func makeCollectionService(collectionAPIProvider: MoyaProvider<CollectionAPI>) -> CollectionService
 }
 
 extension CollectionServiceFactory {
     func makeCollectionService() -> CollectionService {
-        return makeCollectionService(exploreAPIProvider: makeCollectionAPIProvider())
+        return makeCollectionService(collectionAPIProvider: makeCollectionAPIProvider())
     }
-    func makeCollectionService(exploreAPIProvider: MoyaProvider<CollectionAPI>) -> CollectionService {
-        return DefaultCollectionService(provider: exploreAPIProvider)
+    func makeCollectionService(collectionAPIProvider: MoyaProvider<CollectionAPI>) -> CollectionService {
+        return DefaultCollectionService(collectionAPIProvider: collectionAPIProvider)
     }
 }

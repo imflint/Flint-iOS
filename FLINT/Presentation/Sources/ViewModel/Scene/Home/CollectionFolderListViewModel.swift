@@ -17,15 +17,15 @@ public final class CollectionFolderListViewModel {
     @Published public private(set) var items: [CollectionEntity] = []
 
     // MARK: - Dependency
-    private let fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase
+    private let fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase
     private var cancellables = Set<AnyCancellable>()
 
-    public init(fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase) {
-        self.fetchWatchingCollectionsUseCase = fetchWatchingCollectionsUseCase
+    public init(fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase) {
+        self.fetchRecentViewedCollectionsUseCase = fetchRecentViewedCollectionsUseCase
     }
 
     public func load() {
-        fetchWatchingCollectionsUseCase.fetchWatchingCollections()
+        fetchRecentViewedCollectionsUseCase.fetchWatchingCollections()
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CollectionBookmarkUsersEntity {
+public struct CollectionBookmarkUsersEntity: Equatable {
     public let bookmarkCount: Int
     public let users: [UserProfileEntity]
 

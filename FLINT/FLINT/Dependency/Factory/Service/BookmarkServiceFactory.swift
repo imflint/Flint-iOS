@@ -13,14 +13,14 @@ import Data
 
 protocol BookmarkServiceFactory: BookmarkAPIProviderFactory {
     func makeBookmarkService() -> BookmarkService
-    func makeBookmarkService(provider: MoyaProvider<BookmarkAPI>) -> BookmarkService
+    func makeBookmarkService(bookmarkAPIProvider: MoyaProvider<BookmarkAPI>) -> BookmarkService
 }
 
 extension BookmarkServiceFactory {
     func makeBookmarkService() -> BookmarkService {
-        return makeBookmarkService(provider: makeBookmarkAPIProvider())
+        return makeBookmarkService(bookmarkAPIProvider: makeBookmarkAPIProvider())
     }
-    func makeBookmarkService(provider: MoyaProvider<BookmarkAPI>) -> BookmarkService {
-        return DefaultBookmarkService(provider: provider)
+    func makeBookmarkService(bookmarkAPIProvider: MoyaProvider<BookmarkAPI>) -> BookmarkService {
+        return DefaultBookmarkService(bookmarkAPIProvider: bookmarkAPIProvider)
     }
 }

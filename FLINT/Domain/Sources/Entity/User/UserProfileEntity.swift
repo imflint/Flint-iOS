@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct UserProfileEntity {
+public struct UserProfileEntity: Equatable {
     public let id: String
     public let nickname: String
     public let profileImageUrl: URL?

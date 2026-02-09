@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  UserAPIProviderFactory.swift
 //  FLINT
 //
 //  Created by 김호성 on 2026.01.22.
@@ -11,13 +11,13 @@ import Moya
 
 import Data
 
-protocol UserAPIFactory {
+protocol UserAPIProviderFactory {
     var userAPIProvider: MoyaProvider<UserAPI> { get set }
     
     func makeUserAPIProvider() -> MoyaProvider<UserAPI>
 }
 
-extension UserAPIFactory {
+extension UserAPIProviderFactory {
     func makeUserAPIProvider() -> MoyaProvider<UserAPI> {
         return userAPIProvider
     }
