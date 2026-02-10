@@ -9,9 +9,9 @@ import Foundation
 
 public struct CollectionPagingEntity {
     public let collections: [ExploreInfoEntity]
-    public let cursor: Int64
+    public let cursor: Int64?
     
-    public init(collections: [ExploreInfoEntity], cursor: Int64) {
+    public init(collections: [ExploreInfoEntity], cursor: Int64?) {
         self.collections = collections
         self.cursor = cursor
     }

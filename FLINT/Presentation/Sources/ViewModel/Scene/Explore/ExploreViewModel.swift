@@ -17,7 +17,7 @@ public protocol ExploreViewModelInput {
 public protocol ExploreViewModelOutput {
     var index: CurrentValueSubject<Int, Never> { get }
     var collections: CurrentValueSubject<[ExploreInfoEntity], Never> { get }
-    var cursor: Int64? { get set }
+    var cursor: CurrentValueSubject<Int64?, Never> { get set }
 }
 
 public typealias ExploreViewModel = ExploreViewModelInput & ExploreViewModelOutput
@@ -28,7 +28,7 @@ public final class DefaultExploreViewModel: ExploreViewModel {
     
     public var index: CurrentValueSubject<Int, Never> = .init(0)
     public var collections: CurrentValueSubject<[ExploreInfoEntity], Never> = .init([])
-    public var cursor: Int64?
+    public var cursor: CurrentValueSubject<Int64?, Never> = .init(nil)
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
@@ -44,8 +44,8 @@ public final class DefaultExploreViewModel: ExploreViewModel {
     
     private func bind() {
         index.sink { [weak self] index in
-            guard let self else { return }
-            if index > collections.value.count - 3 {
+            guard let self, let _ = cursor.value else { return }
+            if index > collections.value.count - 5 {
                 fetchCollections()
             }
         }
@@ -53,12 +53,12 @@ public final class DefaultExploreViewModel: ExploreViewModel {
     }
     
     private func fetchCollections() {
-        fetchExploreCollectionsUseCase.fetchExploreCollections(cursor: cursor)
+        fetchExploreCollectionsUseCase.fetchExploreCollections(cursor: cursor.value)
             .manageThread()
             .sinkHandledCompletion { [weak self] collectionPagingEntity in
                 guard let self else { return }
                 collections.value.append(contentsOf: collectionPagingEntity.collections)
-                cursor = collectionPagingEntity.cursor
+                cursor.send(collectionPagingEntity.cursor)
             }
             .store(in: &cancellables)
     }

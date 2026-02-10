@@ -36,7 +36,7 @@ extension PagedCollectionsDTO {
         get throws {
             return try CollectionPagingEntity(
                 collections: data?.map({ try $0.entity }) ?? [],
-                cursor: unwrap(Int64(meta?.nextCursor ?? ""))
+                cursor: Int64(meta?.nextCursor ?? "")
             )
         }
     }
@@ -46,7 +46,7 @@ extension PagedCollectionsDTO.CollectionDTO {
     public var entity: ExploreInfoEntity {
         get throws {
             return try ExploreInfoEntity(
-                id: unwrap(collectionId),
+                collectionId: unwrap(Int64(collectionId ?? "")),
                 imageUrl: URL(string: imageUrl ?? ""),
                 title: contentTitle ?? "",
                 description: contentDescription ?? ""

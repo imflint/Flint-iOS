@@ -24,6 +24,6 @@ public final class DefaultFetchExploreCollectionsUseCase: FetchExploreCollection
     }
     
     public func fetchExploreCollections(cursor: Int64?) -> AnyPublisher<CollectionPagingEntity, Error> {
-        collectionRepository.fetchCollections(cursor: cursor, size: 3)
+        collectionRepository.fetchCollections(cursor: cursor, size: 5)
     }
 }
