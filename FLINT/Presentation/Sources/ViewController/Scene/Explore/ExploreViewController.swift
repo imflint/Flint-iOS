@@ -107,9 +107,7 @@ extension ExploreViewController {
             
             switch itemIdentifier {
             case let .collection(collection):
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExploreCollectionViewCell.reuseIdentifier, for: indexPath) as? ExploreCollectionViewCell else {
-                    return UICollectionViewCell()
-                }
+                let cell = collectionView.dequeueReusableCell(ExploreCollectionViewCell.self, for: indexPath)
                 cell.collectionImageView.kf.setImage(with: collection.imageUrl)
                 cell.collectionTitleLabel.attributedText = .pretendard(.display2_m_28, text: collection.title)
                 cell.collectionDescriptionLabel.attributedText = .pretendard(.body1_r_16, text: collection.description)
@@ -119,9 +117,7 @@ extension ExploreViewController {
                 return cell
                 
             case .empty:
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExploreEmptyCollectionViewCell.reuseIdentifier, for: indexPath) as? ExploreEmptyCollectionViewCell else {
-                    return UICollectionViewCell()
-                }
+                let cell = collectionView.dequeueReusableCell(ExploreEmptyCollectionViewCell.self, for: indexPath)
                 cell.createCollectionButton.addAction(UIAction(handler: pushCreateCollectionViewController(_:)), for: .touchUpInside)
                 return cell
             }
