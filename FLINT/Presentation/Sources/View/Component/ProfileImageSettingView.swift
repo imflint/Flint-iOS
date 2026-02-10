@@ -23,6 +23,7 @@ public final class ProfileImageSettingView: BaseView {
     
     public let settingButton = UIButton().then {
         $0.setImage(.icProfileChange, for: .normal)
+        // TODO: - Profile Image 설정 기능 구현 시 제거할 것!!!!
         $0.isHidden = true
     }
     

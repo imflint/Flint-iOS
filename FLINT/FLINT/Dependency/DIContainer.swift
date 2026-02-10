@@ -33,56 +33,23 @@ final class DIContainer: DependencyFactory {
     
     // MARK: - Root Dependency
     
-//    lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
-    lazy var tokenStorage: TokenStorage = TestTokenStorage()
-    
     private lazy var authInterceptor: AuthInterceptor = AuthInterceptor(tokenStorage: tokenStorage)
     private lazy var networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin()
     
-    lazy var contentAPIProvider = MoyaProvider<ContentAPI>(
-        session: Session(interceptor: authInterceptor),
-        plugins: [
-            networkLoggerPlugin
-        ]
-    )
-    lazy var userAPIProvider = MoyaProvider<UserAPI>(
-        session: Session(interceptor: authInterceptor),
-        plugins: [
-            networkLoggerPlugin
-        ]
-    )
-    lazy var collectionAPIProvider = MoyaProvider<CollectionAPI>(
-        session: Session(interceptor: authInterceptor),
-        plugins: [
-            networkLoggerPlugin
-        ]
-    )
-    lazy var searchAPIProvider = MoyaProvider<SearchAPI>(
-        session: Session(interceptor: authInterceptor),
-        plugins: [
-            networkLoggerPlugin
-        ]
-    )
-    lazy var bookmarkAPIProvider = MoyaProvider<BookmarkAPI>(
-        session: Session(interceptor: authInterceptor),
-        plugins: [
-            networkLoggerPlugin
-        ]
-    )
-
-    lazy var authAPIProvider = MoyaProvider<AuthAPI>(
-        session: Session(interceptor: authInterceptor),
-        plugins: [
-            networkLoggerPlugin
-        ]
-    )
+    private lazy var session: Session = Session(interceptor: authInterceptor)
+    private lazy var plugins: [PluginType] = []
+//    private lazy var plugins: [PluginType] = [networkLoggerPlugin]
     
-    lazy var homeAPIProvider = MoyaProvider<HomeAPI>(
-        session: Session(interceptor: authInterceptor),
-        plugins: [
-            networkLoggerPlugin
-        ]
-    )
+    lazy var authAPIProvider = MoyaProvider<AuthAPI>(session: session, plugins: plugins)
+    lazy var bookmarkAPIProvider = MoyaProvider<BookmarkAPI>(session: session, plugins: plugins)
+    lazy var collectionAPIProvider = MoyaProvider<CollectionAPI>(session: session, plugins: plugins)
+    lazy var contentAPIProvider = MoyaProvider<ContentAPI>(session: session, plugins: plugins)
+    lazy var homeAPIProvider = MoyaProvider<HomeAPI>(session: session, plugins: plugins)
+    lazy var searchAPIProvider = MoyaProvider<SearchAPI>(session: session, plugins: plugins)
+    lazy var userAPIProvider = MoyaProvider<UserAPI>(session: session, plugins: plugins)
+    
+    lazy var tokenStorage: TokenStorage = DefaultTokenStorage()
+//    lazy var tokenStorage: TokenStorage = TestTokenStorage()
     
     // MARK: - Init
     
