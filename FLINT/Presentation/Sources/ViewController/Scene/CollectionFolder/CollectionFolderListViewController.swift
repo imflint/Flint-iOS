@@ -109,17 +109,17 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
         
         let entity = viewModel.items[indexPath.item]
 
-        let firstURL = URL(string: entity.imageList.first ?? "") ?? entity.thumbnailUrl
+        let firstURL = entity.imageList.first ?? entity.thumbnailUrl
         let secondString = entity.imageList.count > 1 ? entity.imageList[1] : nil
-        let secondURL = secondString.flatMap(URL.init(string:))
-        let profileURL = entity.profileImageUrl
+        let secondURL = entity.imageList[safe: 1]
+        let profileURL = entity.user.profileImageUrl
 
         cell.configure(
             .init(
                 firstPosterURL: firstURL,
                 secondPosterURL: secondURL,
                 profileImageURL: profileURL,
-                name: entity.nickname,
+                name: entity.user.nickname,
                 title: entity.title,
                 description: entity.description,
                 isBookmarked: entity.isBookmarked,

@@ -280,7 +280,7 @@ extension UIButton {
 
 public extension CollectionDetailFilmTableViewCell {
 
-    func configure(item: CollectionContentEntity) {
+    func configure(item: CollectionDetailEntity.CollectionContentEntity) {
         // 이미지
         if let url = item.imageUrl {
             poster.kf.setImage(with: url)

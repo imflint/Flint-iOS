@@ -14,7 +14,7 @@ import Moya
 import DTO
 
 public protocol HomeService {
-    func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, Error>
+    func fetchRecommendedCollections() -> AnyPublisher<CollectionsDTO, Error>
 }
 
 public final class DefaultHomeService: HomeService {
@@ -25,9 +25,9 @@ public final class DefaultHomeService: HomeService {
         self.homeAPIProvider = homeAPIProvider
     }
     
-    public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, Error> {
+    public func fetchRecommendedCollections() -> AnyPublisher<CollectionsDTO, Error> {
         return homeAPIProvider.requestPublisher(.fetchRecommendedCollections)
-            .mapBaseResponseData(HomeRecommendedCollectionsDTO.self)
+            .mapBaseResponseData(CollectionsDTO.self)
     }
 }
 

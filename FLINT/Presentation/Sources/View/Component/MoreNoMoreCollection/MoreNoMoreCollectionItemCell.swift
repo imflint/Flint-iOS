@@ -110,10 +110,10 @@ public final class MoreNoMoreCollectionItemCell: BaseCollectionViewCell {
         userNameLabel.attributedText = nil
     }
 
-    public func configure(entity: CollectionInfoEntity) {
+    public func configure(entity: CollectionEntity) {
 
         // 썸네일
-        if let url = entity.imageUrl {
+        if let url = entity.thumbnailUrl {
             posterImageView.kf.setImage(
                 with: url,
                 placeholder: UIImage(resource: .imgBackgroundGradiantMiddle)
@@ -123,7 +123,7 @@ public final class MoreNoMoreCollectionItemCell: BaseCollectionViewCell {
         }
 
         // 프로필 이미지
-        if let url = entity.profileImageUrl {
+        if let url = entity.user.profileImageUrl {
             profileImageView.kf.setImage(
                 with: url,
                 placeholder: UIImage(resource: .imgProfileGray)
@@ -141,7 +141,7 @@ public final class MoreNoMoreCollectionItemCell: BaseCollectionViewCell {
 
         userNameLabel.attributedText = .pretendard(
             .caption1_r_12,
-            text: entity.userName,
+            text: entity.user.nickname,
             color: .flintGray200
         )
     }

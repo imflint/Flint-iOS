@@ -12,25 +12,12 @@ public struct CollectionEntity: Equatable {
     public let thumbnailUrl: URL?
     public let title: String
     public let description: String
-    public let imageList: [String]
+    public let imageList: [URL]
     public let bookmarkCount: Int
     public let isBookmarked: Bool
-    public let userId: String
-    public let nickname: String
-    public let profileImageUrl: URL?
+    public let user: UserProfileEntity
     
-    public init(
-        id: String,
-        thumbnailUrl: URL?,
-        title: String,
-        description: String,
-        imageList: [String],
-        bookmarkCount: Int,
-        isBookmarked: Bool,
-        userId: String,
-        nickname: String,
-        profileImageUrl: URL?
-    ) {
+    public init(id: String, thumbnailUrl: URL?, title: String, description: String, imageList: [URL], bookmarkCount: Int, isBookmarked: Bool, user: UserProfileEntity) {
         self.id = id
         self.thumbnailUrl = thumbnailUrl
         self.title = title
@@ -38,8 +25,6 @@ public struct CollectionEntity: Equatable {
         self.imageList = imageList
         self.bookmarkCount = bookmarkCount
         self.isBookmarked = isBookmarked
-        self.userId = userId
-        self.nickname = nickname
-        self.profileImageUrl = profileImageUrl
+        self.user = user
     }
 }

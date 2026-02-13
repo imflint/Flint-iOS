@@ -31,8 +31,8 @@ public final class ProfileViewModel {
         case profileHeader(nickname: String, profileImageUrl: URL?, isFliner: Bool)
         case titleHeader(style: TitleHeaderStyle, title: String, subtitle: String)
         case preferenceChips(keywords: [KeywordEntity])
-        case myCollections(items: [CollectionInfoEntity])
-        case savedCollections(items: [CollectionInfoEntity])
+        case myCollections(items: [CollectionEntity])
+        case savedCollections(items: [CollectionEntity])
         case savedContents(items: [ContentInfoEntity])
     }
     
@@ -58,8 +58,8 @@ public final class ProfileViewModel {
     private var profileImageUrl: URL?
     
     private var keywords: [KeywordEntity] = []
-    private var myCollections: [CollectionInfoEntity] = []
-    private var savedCollections: [CollectionInfoEntity] = []
+    private var myCollections: [CollectionEntity] = []
+    private var savedCollections: [CollectionEntity] = []
     private var savedContents: [ContentInfoEntity] = []
     
     public init(
@@ -118,9 +118,7 @@ public final class ProfileViewModel {
                 }
             } receiveValue: { [weak self] items in
                 guard let self else { return }
-                self.myCollections = items.map({ collectionEntity in
-                    return CollectionInfoEntity(id: collectionEntity.id, imageUrl: collectionEntity.thumbnailUrl, profileImageUrl: collectionEntity.profileImageUrl, title: collectionEntity.title, userName: collectionEntity.nickname)
-                })
+                self.myCollections = items
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
@@ -134,9 +132,7 @@ public final class ProfileViewModel {
             } receiveValue: { [weak self] items in
                 print("asdf", items.count)
                 guard let self else { return }
-                self.savedCollections = items.map({ collectionEntity in
-                    return CollectionInfoEntity(id: collectionEntity.id, imageUrl: collectionEntity.thumbnailUrl, profileImageUrl: collectionEntity.profileImageUrl, title: collectionEntity.title, userName: collectionEntity.nickname)
-                })
+                self.savedCollections = items
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)

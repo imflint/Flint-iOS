@@ -30,24 +30,15 @@ extension CollectionDTO {
                 thumbnailUrl: URL(string: thumbnailUrl ?? ""),
                 title: title ?? "",
                 description: description ?? "",
-                imageList: imageList ?? [],
+                imageList: imageList?.compactMap({ URL(string: $0) }) ?? [],
                 bookmarkCount: bookmarkCount ?? 0,
                 isBookmarked: isBookmarked ?? false,
-                userId: unwrap(userId),
-                nickname: nickname ?? "",
-                profileImageUrl: URL(string: profileImageUrl ?? "")
-            )
-        }
-    }
-    
-    public var collectionInfoEntity: CollectionInfoEntity {
-        get throws {
-            return try CollectionInfoEntity(
-                id: unwrap(id),
-                imageUrl: URL(string: thumbnailUrl ?? ""),
-                profileImageUrl: URL(string: profileImageUrl ?? ""),
-                title: title ?? "",
-                userName: nickname ?? ""
+                user: UserProfileEntity(
+                    id: unwrap(userId),
+                    nickname: nickname ?? "",
+                    profileImageUrl: URL(string: profileImageUrl ?? ""),
+                    role: .unknown
+                )
             )
         }
     }

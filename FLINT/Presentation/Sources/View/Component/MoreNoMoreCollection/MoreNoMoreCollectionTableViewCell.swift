@@ -14,8 +14,8 @@ import Entity
 
 public final class MoreNoMoreCollectionTableViewCell: BaseTableViewCell {
 
-    public var onSelectItem: ((CollectionInfoEntity) -> Void)?
-    private var items: [CollectionInfoEntity] = []
+    public var onSelectItem: ((CollectionEntity) -> Void)?
+    private var items: [CollectionEntity] = []
     
     // MARK: - UI
     
@@ -62,7 +62,7 @@ public final class MoreNoMoreCollectionTableViewCell: BaseTableViewCell {
     
     // MARK: - Public
     
-    public func configure(items: [CollectionInfoEntity]) {
+    public func configure(items: [CollectionEntity]) {
         self.items = items
         collectionView.reloadData()
     }

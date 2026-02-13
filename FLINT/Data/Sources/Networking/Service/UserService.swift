@@ -15,14 +15,14 @@ import DTO
 
 public protocol UserService {
     func fetchUserProfile(userId: Int64) -> AnyPublisher<UserProfileDTO, Error>
-    func fetchUserBookmarkedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error>
+    func fetchUserBookmarkedCollections(userId: Int64) -> AnyPublisher<CollectionsDTO, Error>
     func fetchUserBookmarkedContents(userId: Int64) -> AnyPublisher<ContentsDTO, Error>
-    func fetchUserCreatedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error>
+    func fetchUserCreatedCollections(userId: Int64) -> AnyPublisher<CollectionsDTO, Error>
     func fetchUserKeywords(userId: Int64) -> AnyPublisher<KeywordsDTO, Error>
     
     func fetchMyProfile() -> AnyPublisher<UserProfileDTO, Error>
-    func fetchMyBookmarkedCollections() -> AnyPublisher<UserCollectionsDTO, Error>
-    func fetchMyCreatedCollections() -> AnyPublisher<UserCollectionsDTO, Error>
+    func fetchMyBookmarkedCollections() -> AnyPublisher<CollectionsDTO, Error>
+    func fetchMyCreatedCollections() -> AnyPublisher<CollectionsDTO, Error>
     func fetchMyKeywords() -> AnyPublisher<KeywordsDTO, Error>
     func recalculateMyKeywords() -> AnyPublisher<Void, Error>
     
@@ -42,9 +42,9 @@ public final class DefaultUserService: UserService {
             .mapBaseResponseData(UserProfileDTO.self)
     }
     
-    public func fetchUserBookmarkedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error> {
+    public func fetchUserBookmarkedCollections(userId: Int64) -> AnyPublisher<CollectionsDTO, Error> {
         return userAPIProvider.requestPublisher(.fetchUserBookmarkedCollections(userId: userId))
-            .mapBaseResponseData(UserCollectionsDTO.self)
+            .mapBaseResponseData(CollectionsDTO.self)
     }
     
     public func fetchUserBookmarkedContents(userId: Int64) -> AnyPublisher<ContentsDTO, Error> {
@@ -57,9 +57,9 @@ public final class DefaultUserService: UserService {
             .mapBaseResponseData(KeywordsDTO.self)
     }
     
-    public func fetchUserCreatedCollections(userId: Int64) -> AnyPublisher<UserCollectionsDTO, Error> {
+    public func fetchUserCreatedCollections(userId: Int64) -> AnyPublisher<CollectionsDTO, Error> {
         return userAPIProvider.requestPublisher(.fetchUserCreatedCollections(userId: userId))
-            .mapBaseResponseData(UserCollectionsDTO.self)
+            .mapBaseResponseData(CollectionsDTO.self)
     }
     
     public func fetchMyProfile() -> AnyPublisher<UserProfileDTO, Error> {
@@ -67,14 +67,14 @@ public final class DefaultUserService: UserService {
             .mapBaseResponseData(UserProfileDTO.self)
     }
     
-    public func fetchMyBookmarkedCollections() -> AnyPublisher<UserCollectionsDTO, Error> {
+    public func fetchMyBookmarkedCollections() -> AnyPublisher<CollectionsDTO, Error> {
         return userAPIProvider.requestPublisher(.fetchMyBookmarkedCollections)
-            .mapBaseResponseData(UserCollectionsDTO.self)
+            .mapBaseResponseData(CollectionsDTO.self)
     }
     
-    public func fetchMyCreatedCollections() -> AnyPublisher<UserCollectionsDTO, Error> {
+    public func fetchMyCreatedCollections() -> AnyPublisher<CollectionsDTO, Error> {
         return userAPIProvider.requestPublisher(.fetchMyCreatedCollections)
-            .mapBaseResponseData(UserCollectionsDTO.self)
+            .mapBaseResponseData(CollectionsDTO.self)
     }
     
     public func fetchMyKeywords() -> AnyPublisher<KeywordsDTO, Error> {

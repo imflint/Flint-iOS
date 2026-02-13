@@ -50,10 +50,8 @@ public final class CollectionFolderListViewModel {
             description: old.description,
             imageList: old.imageList,
             bookmarkCount: old.bookmarkCount,
-            isBookmarked: isBookmarked,  
-            userId: old.userId,
-            nickname: old.nickname,
-            profileImageUrl: old.profileImageUrl
+            isBookmarked: isBookmarked,
+            user: old.user
         )
     }
 

@@ -26,7 +26,7 @@ public final class HomeViewModel {
     public enum Row {
         case greeting(userName: String)
         case header(style: TitleHeaderStyle, title: String, subtitle: String)
-        case fliner(items: [CollectionInfoEntity])
+        case fliner(items: [CollectionEntity])
         case recentSavedContents(items: [ContentInfoEntity])
         case ctaButton(title: String)
     }
@@ -46,7 +46,7 @@ public final class HomeViewModel {
     // MARK: - State
 
     private var userName: String
-    private var flinerCollections: [CollectionInfoEntity] = []
+    private var flinerCollections: [CollectionEntity] = []
     private var recentSavedContents: [ContentInfoEntity] = []
     private var watchingCollections: [CollectionEntity] = []
 
@@ -188,9 +188,7 @@ public final class HomeViewModel {
                             title: "눈여겨보고 있는 컬렉션",
                             subtitle: "\(userName)님이 최근 살펴본 컬렉션이에요"
                         ),
-                        .fliner(items: watchingCollections.map({ collectionEntity in
-                            return CollectionInfoEntity(id: collectionEntity.id, imageUrl: collectionEntity.thumbnailUrl, profileImageUrl: collectionEntity.profileImageUrl, title: collectionEntity.title, userName: collectionEntity.nickname)
-                        }))
+                        .fliner(items: watchingCollections)
                     ]
                 }
 

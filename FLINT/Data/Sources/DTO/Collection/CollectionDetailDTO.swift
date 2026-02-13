@@ -72,9 +72,9 @@ extension CollectionDetailDTO.AuthorDTO {
 }
 
 extension CollectionDetailDTO.ContentDTO {
-    public var entity: CollectionContentEntity {
+    public var entity: CollectionDetailEntity.CollectionContentEntity {
         get throws {
-            return try CollectionContentEntity(
+            return try CollectionDetailEntity.CollectionContentEntity(
                 id: unwrap(id),
                 title: title ?? "",
                 imageUrl: URL(string: imageUrl ?? ""),
