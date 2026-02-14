@@ -1,5 +1,5 @@
 //
-//  FilmSelectView.swift
+//  ContentSelectView.swift
 //  FLINT
 //
 //  Created by 김호성 on 2026.01.14.
@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-public final class FilmSelectView: BaseView {
+public final class ContentSelectView: BaseView {
     
     // MARK: - Component
     
@@ -55,7 +55,7 @@ public final class FilmSelectView: BaseView {
         $0.alignment = .fill
         $0.distribution = .fill
     }
-    public let filmPreviewCollectionView = UICollectionView(
+    public let selectedContentCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout().then {
             $0.itemSize = CGSize(width: 92, height: 92)
@@ -66,14 +66,14 @@ public final class FilmSelectView: BaseView {
     ).then {
         $0.isHidden = true
         $0.layer.applyShadow(alpha: 0.25, blur: 12, y: 12)
-        $0.register(FilmPreviewCollectionViewCell.self)
+        $0.register(SelectedContentCollectionViewCell.self)
         $0.backgroundColor = .flintBackground
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         $0.contentInset = .init(top: 0, left: 16, bottom: 16, right: 16)
     }
     
-    public let filmCollectionView: UICollectionView = {
+    public let contentCollectionView: UICollectionView = {
         let uselessHeight: CGFloat = 230
         let item = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
@@ -102,7 +102,7 @@ public final class FilmSelectView: BaseView {
         collectionView.backgroundColor = .flintBackground
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.register(OnboardingFilmCollectionViewCell.self)
+        collectionView.register(OnboardingContentCollectionViewCell.self)
         return collectionView
     }()
     
@@ -158,8 +158,8 @@ public final class FilmSelectView: BaseView {
             emptyView
         )
         collectionViewStackView.addArrangedSubviews(
-            filmPreviewCollectionView,
-            filmCollectionView,
+            selectedContentCollectionView,
+            contentCollectionView,
         )
         progressInfoView.addSubviews(progressView, progressLabel)
         foldableView.addSubview(titleLabel)
@@ -220,7 +220,7 @@ public final class FilmSelectView: BaseView {
             $0.top.equalTo(searchView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
         }
-        filmPreviewCollectionView.snp.makeConstraints {
+        selectedContentCollectionView.snp.makeConstraints {
             $0.height.equalTo(108)
         }
         nextButton.snp.makeConstraints {
@@ -230,7 +230,7 @@ public final class FilmSelectView: BaseView {
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }
         emptyView.snp.makeConstraints {
-            $0.edges.equalTo(filmCollectionView)
+            $0.edges.equalTo(contentCollectionView)
         }
         emptyStackView.snp.makeConstraints {
             $0.center.equalToSuperview()

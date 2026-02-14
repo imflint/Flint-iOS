@@ -1,5 +1,5 @@
 //
-//  OnboardingFilmCollectionViewCell.swift
+//  OnboardingContentCollectionViewCell.swift
 //  FLINT
 //
 //  Created by 김호성 on 2026.01.17.
@@ -10,13 +10,14 @@ import UIKit
 import SnapKit
 import Then
 
-public final class OnboardingFilmCollectionViewCell: BaseCollectionViewCell {
+public final class OnboardingContentCollectionViewCell: BaseCollectionViewCell {
     
     // MARK: - Component
     
     public let imageView = UIImageView().then {
         $0.backgroundColor = .flintGray100
         $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
     }
     
     public let titleLabel = UILabel().then {

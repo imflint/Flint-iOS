@@ -19,7 +19,7 @@ public typealias ViewControllerFactory =
     // MARK: - Onboarding
     
     NicknameViewControllerFactory &
-    FilmSelectViewControllerFactory &
+    ContentSelectViewControllerFactory &
     OttSelectViewControllerFactory &
     OnboardingDoneViewControllerFactory &
     

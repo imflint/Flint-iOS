@@ -14,7 +14,7 @@ public protocol OnboardingViewModelInput {
     // nickname
     func checkNickname(_ nickname: String)
     
-    // film select
+    // content select
     func fetchPopularContents()
     func searchContents(_ keyword: String)
     func clickContent(_ content: ContentEntity)
@@ -32,8 +32,8 @@ public protocol OnboardingViewModelOutput {
     var nickname: CurrentValueSubject<String, Never> { get }
     var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> { get }
     
-    // film select
-    var filmSelectQuestions: [String] { get set }
+    // content select
+    var contentSelectQuestions: [String] { get set }
     var contents: CurrentValueSubject<[ContentEntity], Never> { get set }
     var selectedContents: CurrentValueSubject<[ContentEntity], Never> { get set }
     
@@ -54,7 +54,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     public var nickname: CurrentValueSubject<String, Never> = .init("")
     public var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
     
-    public var filmSelectQuestions: [String] = [
+    public var contentSelectQuestions: [String] = [
         "이번 달, 가장 재미있었던 작품은 무엇인가요?",
         "여러번 정주행 했던 작품은 무엇인가요?",
         "좋아하는 인물이 등장하는 작품은 무엇인가요?",

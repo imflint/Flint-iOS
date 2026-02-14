@@ -366,9 +366,9 @@ extension AddContentSelectViewController: UICollectionViewDataSource {
     ) -> UICollectionViewCell {
 
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: FilmPreviewCollectionViewCell.reuseIdentifier,
+            withReuseIdentifier: SelectedContentCollectionViewCell.reuseIdentifier,
             for: indexPath
-        ) as! FilmPreviewCollectionViewCell
+        ) as! SelectedContentCollectionViewCell
 
         let vm = selectedViewModels[indexPath.item]
 

@@ -1,5 +1,5 @@
 //
-//  FilmPreviewCollectionViewCell.swift
+//  SelectedContentCollectionViewCell.swift
 //  FLINT
 //
 //  Created by 김호성 on 2026.01.10.
@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-public final class FilmPreviewCollectionViewCell: BaseCollectionViewCell {
+public final class SelectedContentCollectionViewCell: BaseCollectionViewCell {
     
     // MARK: - Component
     
