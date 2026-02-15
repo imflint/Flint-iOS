@@ -128,13 +128,13 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         
         // Update offsetCorrection value
         if unclampedOffset >= 0 {
-            // When topBarView is visible
-            // topBarViewOffsetY = translationY - offsetCorrection = 0
+            // When foldableView is visible
+            // foldableViewYOffset = translationY - offsetCorrection = 0
             offsetCorrection = translationY
         }
         if unclampedOffset <= -rootView.foldableView.bounds.height {
-            // When topBarView is hidden
-            // topBarViewOffsetY = translationY - offsetCorrection = -rootView.foldableView.bounds.height
+            // When foldableView is hidden
+            // foldableViewYOffset = translationY - offsetCorrection = -rootView.foldableView.bounds.height
             offsetCorrection = translationY + rootView.foldableView.bounds.height
         }
         let passedFoldableViewYOffset = foldableViewYOffset
