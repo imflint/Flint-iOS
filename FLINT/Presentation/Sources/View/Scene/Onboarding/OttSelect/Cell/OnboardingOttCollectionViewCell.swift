@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 import Then
 
+import Domain
+
 public final class OnboardingOttCollectionViewCell: BaseCollectionViewCell {
     
     // MARK: - Component
@@ -74,5 +76,15 @@ public final class OnboardingOttCollectionViewCell: BaseCollectionViewCell {
             $0.center.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(32)
         }
+    }
+    
+    // MARK: - Public Function
+    
+    public func configure(ott: Ott, isSelected: Bool) {
+        overlayView.isHidden = !isSelected
+        titleLabel.textColor = isSelected ? DesignSystem.Color.gray300 : DesignSystem.Color.white
+        
+        imageView.image = ott.logo
+        titleLabel.attributedText = .pretendard(.body1_m_16, text: ott.korTitle, alignment: .center)
     }
 }

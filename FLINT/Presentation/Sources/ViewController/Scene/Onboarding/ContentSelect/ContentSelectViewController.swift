@@ -149,15 +149,15 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
                 guard let self else { return }
                 switch ScrollDirection(velocity: velocityY) {
                 case .up:
-                    foldableViewYOffset = 0
+                    foldableViewYOffset = .zero
                     rootView.updateFoldableViewYOffset(foldableViewYOffset)
-                    offsetCorrection = 0
+                    offsetCorrection = .zero
                     rootView.foldableView.alpha = 1
                 case .down:
                     foldableViewYOffset = -rootView.foldableView.bounds.height
                     rootView.updateFoldableViewYOffset(foldableViewYOffset)
                     offsetCorrection = rootView.foldableView.bounds.height
-                    rootView.foldableView.alpha = 0
+                    rootView.foldableView.alpha = .zero
                 case nil:
                     break
                 }
@@ -231,14 +231,10 @@ extension ContentSelectViewController {
         let cell = collectionView.dequeueReusableCell(OnboardingContentCollectionViewCell.self, for: indexPath)
         
         let content = onboardingViewModel.contents.value[indexPath.item]
-        
-        cell.overlayView.isHidden = !onboardingViewModel.selectedContents.value.contains(where: {
+        let isSelected = onboardingViewModel.selectedContents.value.contains(where: {
             $0 == content
         })
-        cell.titleLabel.attributedText = .pretendard(.body1_r_16, text: content.title)
-        cell.directorLabel.attributedText = .pretendard(.caption1_r_12, text: content.author)
-        cell.yearLabel.attributedText = .pretendard(.caption1_r_12, text: "\(content.year)")
-        cell.imageView.kf.setImage(with: content.posterUrl)
+        cell.configure(content: content, isSelected: isSelected)
         return cell
     }
 }

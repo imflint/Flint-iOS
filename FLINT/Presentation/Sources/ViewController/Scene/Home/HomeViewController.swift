@@ -7,10 +7,10 @@
 
 import UIKit
 
+import Domain
+
 import View
 import ViewModel
-
-import Domain
 
 public protocol HomeViewControllerFactory {
     func makeHomeViewController() -> HomeViewController
@@ -141,18 +141,12 @@ extension HomeViewController: UITableViewDataSource {
         switch row {
             
         case .greeting(let userName):
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: HomeGreetingTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! HomeGreetingTableViewCell
+            let cell = tableView.dequeueReusableCell(HomeGreetingTableViewCell.self, for: indexPath)
             cell.configure(userName: userName)
             return cell
             
         case .header(let style, let title, let subtitle):
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: TitleHeaderTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! TitleHeaderTableViewCell
+            let cell = tableView.dequeueReusableCell(TitleHeaderTableViewCell.self, for: indexPath)
             
             cell.configure(style: map(style), title: title, subtitle: subtitle)
             
@@ -175,35 +169,25 @@ extension HomeViewController: UITableViewDataSource {
             return cell
             
         case .fliner(let items):
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! MoreNoMoreCollectionTableViewCell
+            let cell = tableView.dequeueReusableCell(MoreNoMoreCollectionTableViewCell.self, for: indexPath)
             cell.configure(items: items)
             
             cell.onSelectItem = { [weak self] entity in
-                    guard let self else { return }
+                guard let self else { return }
 
-                    guard let collectionId = Int64(entity.id) else {
-                        print("invalid collectionId:", entity.id)
-                        return
-                    }
-
-                    let factory = self.viewControllerFactory
-                        ?? (self.parent as? TabBarViewController)?.viewControllerFactory
-                    guard let factory else { return }
-
-                    let vc = factory.makeCollectionDetailViewController(collectionId: collectionId)
-                    self.navigationController?.pushViewController(vc, animated: true)
+                guard let collectionId = Int64(entity.id) else {
+                    print("invalid collectionId:", entity.id)
+                    return
                 }
+
+                guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
 
             return cell
             
         case .ctaButton(let title):
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: HomeCTAButtonTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! HomeCTAButtonTableViewCell
+            let cell = tableView.dequeueReusableCell(HomeCTAButtonTableViewCell.self, for: indexPath)
 
             cell.configure(title: title)
 
