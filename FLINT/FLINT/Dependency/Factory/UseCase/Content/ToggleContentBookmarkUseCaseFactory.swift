@@ -11,14 +11,10 @@ import Domain
 
 protocol ToggleContentBookmarkUseCaseFactory: BookmarkRepositoryFactory {
     func makeToggleContentBookmarkUseCase() -> ToggleContentBookmarkUseCase
-    func makeToggleContentBookmarkUseCase(bookmarkRepository: BookmarkRepository) -> ToggleContentBookmarkUseCase
 }
 
 extension ToggleContentBookmarkUseCaseFactory {
     func makeToggleContentBookmarkUseCase() -> ToggleContentBookmarkUseCase {
-        return makeToggleContentBookmarkUseCase(bookmarkRepository: makeBookmarkRepository())
-    }
-    func makeToggleContentBookmarkUseCase(bookmarkRepository: BookmarkRepository) -> ToggleContentBookmarkUseCase {
-        return DefaultToggleContentBookmarkUseCase(bookmarkRepository: bookmarkRepository)
+        return DefaultToggleContentBookmarkUseCase(bookmarkRepository: makeBookmarkRepository())
     }
 }

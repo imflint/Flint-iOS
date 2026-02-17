@@ -11,14 +11,10 @@ import Domain
 
 protocol FetchCreatedCollectionsUseCaseFactory: UserRepositoryFactory {
     func makeFetchCreatedCollectionsUseCase() -> FetchCreatedCollectionsUseCase
-    func makeFetchCreatedCollectionsUseCase(userRepository: UserRepository) -> FetchCreatedCollectionsUseCase
 }
 
 extension FetchKeywordsUseCaseFactory {
     func makeFetchCreatedCollectionsUseCase() -> FetchCreatedCollectionsUseCase {
-        return makeFetchCreatedCollectionsUseCase(userRepository: makeUserRepository())
-    }
-    func makeFetchCreatedCollectionsUseCase(userRepository: UserRepository) -> FetchCreatedCollectionsUseCase {
-        return DefaultFetchCreatedCollectionsUseCase(userRepository: userRepository)
+        return DefaultFetchCreatedCollectionsUseCase(userRepository: makeUserRepository())
     }
 }

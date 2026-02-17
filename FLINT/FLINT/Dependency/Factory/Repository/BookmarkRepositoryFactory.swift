@@ -12,14 +12,10 @@ import Domain
 
 protocol BookmarkRepositoryFactory: BookmarkServiceFactory {
     func makeBookmarkRepository() -> BookmarkRepository
-    func makeBookmarkRepository(bookmarkService: BookmarkService) -> BookmarkRepository
 }
 
 extension BookmarkRepositoryFactory {
     func makeBookmarkRepository() -> BookmarkRepository {
-        return makeBookmarkRepository(bookmarkService: makeBookmarkService())
-    }
-    func makeBookmarkRepository(bookmarkService: BookmarkService) -> BookmarkRepository {
-        return DefaultBookmarkRepository(bookmarkService: bookmarkService)
+        return DefaultBookmarkRepository(bookmarkService: makeBookmarkService())
     }
 }

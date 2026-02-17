@@ -11,14 +11,10 @@ import Domain
 
 protocol CreateCollectionUseCaseFactory: CollectionRepositoryFactory {
     func makeCreateCollectionUseCase() -> CreateCollectionUseCase
-    func makeCreateCollectionUseCase(collectionRepository: CollectionRepository) -> CreateCollectionUseCase
 }
 
 extension CreateCollectionUseCaseFactory {
     func makeCreateCollectionUseCase() -> CreateCollectionUseCase {
-        return makeCreateCollectionUseCase(collectionRepository: makeCollectionRepository())
-    }
-    func makeCreateCollectionUseCase(collectionRepository: CollectionRepository) -> CreateCollectionUseCase {
-        return DefaultCreateCollectionUseCase(collectionRepository: collectionRepository)
+        return DefaultCreateCollectionUseCase(collectionRepository: makeCollectionRepository())
     }
 }

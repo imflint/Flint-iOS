@@ -11,14 +11,10 @@ import Domain
 
 protocol FetchPopularContentsUseCaseFactory: SearchRepositoryFactory {
     func makeFetchPopularContentsUseCase() -> FetchPopularContentsUseCase
-    func makeFetchPopularContentsUseCase(searchRepository: SearchRepository) -> FetchPopularContentsUseCase
 }
 
 extension FetchPopularContentsUseCaseFactory {
     func makeFetchPopularContentsUseCase() -> FetchPopularContentsUseCase {
-        return makeFetchPopularContentsUseCase(searchRepository: makeSearchRepository())
-    }
-    func makeFetchPopularContentsUseCase(searchRepository: SearchRepository) -> FetchPopularContentsUseCase {
-        return DefaultFetchPopularContentsUseCase(searchRepository: searchRepository)
+        return DefaultFetchPopularContentsUseCase(searchRepository: makeSearchRepository())
     }
 }

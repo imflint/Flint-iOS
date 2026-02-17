@@ -11,14 +11,10 @@ import Domain
 
 protocol FetchCollectionBookmarkUsersUseCaseFactory: BookmarkRepositoryFactory {
     func makeFetchCollectionBookmarkUsersUseCase() -> FetchCollectionBookmarkUsersUseCase
-    func makeFetchCollectionBookmarkUsersUseCase(bookmarkRepository: BookmarkRepository) -> FetchCollectionBookmarkUsersUseCase
 }
 
 extension FetchCollectionBookmarkUsersUseCaseFactory {
     func makeFetchCollectionBookmarkUsersUseCase() -> FetchCollectionBookmarkUsersUseCase {
-        return makeFetchCollectionBookmarkUsersUseCase(bookmarkRepository: makeBookmarkRepository())
-    }
-    func makeFetchCollectionBookmarkUsersUseCase(bookmarkRepository: BookmarkRepository) -> FetchCollectionBookmarkUsersUseCase {
-        return DefaultFetchCollectionBookmarkUsersUseCase(bookmarkRepository: bookmarkRepository)
+        return DefaultFetchCollectionBookmarkUsersUseCase(bookmarkRepository: makeBookmarkRepository())
     }
 }

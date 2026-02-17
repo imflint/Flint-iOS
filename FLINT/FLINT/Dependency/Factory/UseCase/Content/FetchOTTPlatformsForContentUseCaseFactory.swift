@@ -11,14 +11,10 @@ import Domain
 
 protocol FetchOTTPlatformsForContentUseCaseFactory: ContentRepositoryFactory {
     func makeFetchOTTPlatformsForContentUseCase() -> FetchOTTPlatformsForContentUseCase
-    func makeFetchOTTPlatformsForContentUseCase(contentRepository: ContentRepository) -> FetchOTTPlatformsForContentUseCase
 }
 
 extension FetchOTTPlatformsForContentUseCaseFactory {
     func makeFetchOTTPlatformsForContentUseCase() -> FetchOTTPlatformsForContentUseCase {
-        return makeFetchOTTPlatformsForContentUseCase(contentRepository: makeContentRepository())
-    }
-    func makeFetchOTTPlatformsForContentUseCase(contentRepository: ContentRepository) -> FetchOTTPlatformsForContentUseCase {
-        return DefaultFetchOTTPlatformsForContentUseCase(contentRepository: contentRepository)
+        return DefaultFetchOTTPlatformsForContentUseCase(contentRepository: makeContentRepository())
     }
 }

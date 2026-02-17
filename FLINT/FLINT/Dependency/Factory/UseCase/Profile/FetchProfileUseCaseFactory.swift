@@ -11,14 +11,10 @@ import Domain
 
 protocol FetchProfileUseCaseFactory: UserRepositoryFactory {
     func makeFetchProfileUseCase() -> FetchProfileUseCase
-    func makeFetchProfileUseCase(userRepository: UserRepository) -> FetchProfileUseCase
 }
 
 extension FetchProfileUseCaseFactory {
     func makeFetchProfileUseCase() -> FetchProfileUseCase {
-        return makeFetchProfileUseCase(userRepository: makeUserRepository())
-    }
-    func makeFetchProfileUseCase(userRepository: UserRepository) -> FetchProfileUseCase {
-        return DefaultFetchProfileUseCase(userRepository: userRepository)
+        return DefaultFetchProfileUseCase(userRepository: makeUserRepository())
     }
 }

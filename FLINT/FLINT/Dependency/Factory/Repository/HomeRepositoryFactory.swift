@@ -12,14 +12,10 @@ import Domain
 
 protocol HomeRepositoryFactory: HomeServiceFactory {
     func makeHomeRepository() -> HomeRepository
-    func makeHomeRepository(homeService: HomeService) -> HomeRepository
 }
 
 extension HomeRepositoryFactory {
     func makeHomeRepository() -> HomeRepository {
-        return makeHomeRepository(homeService: makeHomeService())
-    }
-    func makeHomeRepository(homeService: HomeService) -> HomeRepository {
-        return DefaultHomeRepository(homeService: homeService)
+        return DefaultHomeRepository(homeService: makeHomeService())
     }
 }

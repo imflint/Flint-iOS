@@ -11,14 +11,10 @@ import Domain
 
 protocol SignupUseCaseFactory: AuthRepositoryFactory {
     func makeSignupUseCase() -> SignupUseCase
-    func makeSignupUseCase(authRepository: AuthRepository) -> SignupUseCase
 }
 
 extension SignupUseCaseFactory {
     func makeSignupUseCase() -> SignupUseCase {
-        return makeSignupUseCase(authRepository: makeAuthRepository())
-    }
-    func makeSignupUseCase(authRepository: AuthRepository) -> SignupUseCase {
-        return DefaultSignupUseCase(authRepository: authRepository)
+        return DefaultSignupUseCase(authRepository: makeAuthRepository())
     }
 }

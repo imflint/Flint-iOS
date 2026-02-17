@@ -11,14 +11,10 @@ import Domain
 
 protocol SocialVerifyUseCaseFactory: AuthRepositoryFactory {
     func makeSocialVerifyUseCase() -> SocialVerifyUseCase
-    func makeSocialVerifyUseCase(authRepository: AuthRepository) -> SocialVerifyUseCase
 }
 
-extension SignupUseCaseFactory {
+extension SocialVerifyUseCaseFactory {
     func makeSocialVerifyUseCase() -> SocialVerifyUseCase {
-        return makeSocialVerifyUseCase(authRepository: makeAuthRepository())
-    }
-    func makeSocialVerifyUseCase(authRepository: AuthRepository) -> SocialVerifyUseCase {
-        return DefaultSocialVerifyUseCase(authRepository: authRepository)
+        return DefaultSocialVerifyUseCase(authRepository: makeAuthRepository())
     }
 }

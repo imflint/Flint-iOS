@@ -12,14 +12,10 @@ import Domain
 
 protocol ContentRepositoryFactory: ContentServiceFactory {
     func makeContentRepository() -> ContentRepository
-    func makeContentRepository(contentService: ContentService) -> ContentRepository
 }
 
 extension ContentRepositoryFactory {
     func makeContentRepository() -> ContentRepository {
-        return makeContentRepository(contentService: makeContentService())
-    }
-    func makeContentRepository(contentService: ContentService) -> ContentRepository {
-        return DefaultContentRepository(contentService: contentService)
+        return DefaultContentRepository(contentService: makeContentService())
     }
 }

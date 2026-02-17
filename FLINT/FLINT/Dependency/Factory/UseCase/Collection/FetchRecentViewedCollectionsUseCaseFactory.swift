@@ -11,14 +11,10 @@ import Domain
 
 protocol FetchRecentViewedCollectionsUseCaseFactory: CollectionRepositoryFactory {
     func makeFetchRecentViewedCollectionsUseCase() -> FetchRecentViewedCollectionsUseCase
-    func makeFetchRecentViewedCollectionsUseCase(collectionRepository: CollectionRepository) -> FetchRecentViewedCollectionsUseCase
 }
 
 extension FetchRecentViewedCollectionsUseCaseFactory {
     func makeFetchRecentViewedCollectionsUseCase() -> FetchRecentViewedCollectionsUseCase {
-        return makeFetchRecentViewedCollectionsUseCase(collectionRepository: makeCollectionRepository())
-    }
-    func makeFetchRecentViewedCollectionsUseCase(collectionRepository: CollectionRepository) -> FetchRecentViewedCollectionsUseCase {
-        return DefaultFetchRecentViewedCollectionsUseCase(collectionRepository: collectionRepository)
+        return DefaultFetchRecentViewedCollectionsUseCase(collectionRepository: makeCollectionRepository())
     }
 }

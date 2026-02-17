@@ -7,20 +7,14 @@
 
 import Foundation
 
-import Moya
-
 import Data
 
 protocol UserServiceFactory: UserAPIProviderFactory {
     func makeUserService() -> UserService
-    func makeUserService(userAPIProvider: MoyaProvider<UserAPI>) -> UserService
 }
 
 extension UserServiceFactory {
     func makeUserService() -> UserService {
-        return makeUserService(userAPIProvider: makeUserAPIProvider())
-    }
-    func makeUserService(userAPIProvider: MoyaProvider<UserAPI>) -> UserService {
-        return DefaultUserService(userAPIProvider: userAPIProvider)
+        return DefaultUserService(userAPIProvider: makeUserAPIProvider())
     }
 }

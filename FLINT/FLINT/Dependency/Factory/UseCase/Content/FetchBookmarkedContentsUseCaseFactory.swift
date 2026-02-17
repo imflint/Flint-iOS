@@ -11,14 +11,10 @@ import Domain
 
 protocol FetchBookmarkedContentsUseCaseFactory: ContentRepositoryFactory, UserRepositoryFactory {
     func makeFetchBookmarkedContentsUseCase() -> FetchBookmarkedContentsUseCase
-    func makeFetchBookmarkedContentsUseCase(contentRepository: ContentRepository, userRepository: UserRepository) -> FetchBookmarkedContentsUseCase
 }
 
 extension FetchBookmarkedContentsUseCaseFactory {
     func makeFetchBookmarkedContentsUseCase() -> FetchBookmarkedContentsUseCase {
-        return makeFetchBookmarkedContentsUseCase(contentRepository: makeContentRepository(), userRepository: makeUserRepository())
-    }
-    func makeFetchBookmarkedContentsUseCase(contentRepository: ContentRepository, userRepository: UserRepository) -> FetchBookmarkedContentsUseCase {
-        return DefaultFetchBookmarkedContentsUseCase(contentRepository: contentRepository, userRepository: userRepository)
+        return DefaultFetchBookmarkedContentsUseCase(contentRepository: makeContentRepository(), userRepository: makeUserRepository())
     }
 }
