@@ -71,7 +71,7 @@ public final class HomeViewModel {
 
     public func load() {
         
-        fetchProfileUseCase.fetchProfile(for: .user(id: 1))
+        fetchProfileUseCase(for: .user(id: 1))
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
@@ -85,7 +85,7 @@ public final class HomeViewModel {
             .store(in: &cancellables)
 
         // 1) Fliner 추천
-        fetchRecommendedCollectionsUseCase.fetchRecommendedCollections()
+        fetchRecommendedCollectionsUseCase()
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
@@ -101,7 +101,7 @@ public final class HomeViewModel {
             .store(in: &cancellables)
 
         // 2) 최근 저장한 콘텐츠
-        fetchBookmarkedContentsUseCase.fetchBookmarkedContents(for: .me)
+        fetchBookmarkedContentsUseCase(for: .me)
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
@@ -114,7 +114,7 @@ public final class HomeViewModel {
             }
             .store(in: &cancellables)
         
-        fetchRecentViewedCollectionsUseCase.fetchWatchingCollections()
+        fetchRecentViewedCollectionsUseCase()
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {

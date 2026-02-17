@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchExploreCollectionsUseCase {
-    func fetchExploreCollections(cursor: Int64?) -> AnyPublisher<CollectionPagingEntity, Error>
+    func callAsFunction(cursor: Int64?) -> AnyPublisher<CollectionPagingEntity, Error>
 }
 
 public final class DefaultFetchExploreCollectionsUseCase: FetchExploreCollectionsUseCase {
@@ -23,7 +23,7 @@ public final class DefaultFetchExploreCollectionsUseCase: FetchExploreCollection
         self.collectionRepository = collectionRepository
     }
     
-    public func fetchExploreCollections(cursor: Int64?) -> AnyPublisher<CollectionPagingEntity, Error> {
-        collectionRepository.fetchCollections(cursor: cursor, size: 5)
+    public func callAsFunction(cursor: Int64?) -> AnyPublisher<CollectionPagingEntity, Error> {
+        return collectionRepository.fetchCollections(cursor: cursor, size: 5)
     }
 }

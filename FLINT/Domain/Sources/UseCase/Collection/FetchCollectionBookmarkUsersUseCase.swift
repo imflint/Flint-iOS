@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchCollectionBookmarkUsersUseCase {
-    func fetchCollectionBookmarkUsers(collectionId: Int64) -> AnyPublisher<CollectionBookmarkUsersEntity, Error>
+    func callAsFunction(collectionId: Int64) -> AnyPublisher<CollectionBookmarkUsersEntity, Error>
 }
 
 public final class DefaultFetchCollectionBookmarkUsersUseCase: FetchCollectionBookmarkUsersUseCase {
@@ -23,7 +23,7 @@ public final class DefaultFetchCollectionBookmarkUsersUseCase: FetchCollectionBo
         self.bookmarkRepository = bookmarkRepository
     }
     
-    public func fetchCollectionBookmarkUsers(collectionId: Int64) -> AnyPublisher<CollectionBookmarkUsersEntity, Error> {
+    public func callAsFunction(collectionId: Int64) -> AnyPublisher<CollectionBookmarkUsersEntity, Error> {
         return bookmarkRepository.fetchCollectionBookmarkUsers(collectionId: collectionId)
     }
 }

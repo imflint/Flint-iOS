@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchBookmarkedCollectionsUseCase {
-    func fetchBookmarkedCollections(for target: UserTarget) -> AnyPublisher<[CollectionEntity], Error>
+    func callAsFunction(for target: UserTarget) -> AnyPublisher<[CollectionEntity], Error>
 }
 
 public final class DefaultFetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase {
@@ -23,7 +23,7 @@ public final class DefaultFetchBookmarkedCollectionsUseCase: FetchBookmarkedColl
         self.userRepository = userRepository
     }
     
-    public func fetchBookmarkedCollections(for target: UserTarget) -> AnyPublisher<[CollectionEntity], Error> {
+    public func callAsFunction(for target: UserTarget) -> AnyPublisher<[CollectionEntity], Error> {
         switch target {
         case .me:
             return userRepository.fetchMyBookmarkedCollections()

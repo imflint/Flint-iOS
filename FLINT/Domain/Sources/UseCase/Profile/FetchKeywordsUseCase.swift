@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchKeywordsUseCase {
-    func fetchKeywords(for target: UserTarget) -> AnyPublisher<[KeywordEntity], Error>
+    func callAsFunction(for target: UserTarget) -> AnyPublisher<[KeywordEntity], Error>
 }
 
 public final class DefaultFetchKeywordsUseCase: FetchKeywordsUseCase {
@@ -23,7 +23,7 @@ public final class DefaultFetchKeywordsUseCase: FetchKeywordsUseCase {
         self.userRepository = userRepository
     }
     
-    public func fetchKeywords(for target: UserTarget) -> AnyPublisher<[KeywordEntity], Error> {
+    public func callAsFunction(for target: UserTarget) -> AnyPublisher<[KeywordEntity], Error> {
         switch target {
         case .me:
             return userRepository.fetchMyKeywords()

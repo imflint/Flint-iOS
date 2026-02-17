@@ -86,7 +86,7 @@ public final class ProfileViewModel {
     // MARK: - Input
     public func load() {
         
-        fetchProfileUseCase.fetchProfile(for: target)
+        fetchProfileUseCase(for: target)
             .manageThread()
             .sinkHandledCompletion(receiveValue: { [weak self] userProfileEntity in
                 guard let self else { return }
@@ -97,7 +97,7 @@ public final class ProfileViewModel {
             })
             .store(in: &cancellables)
         
-        fetchKeywordsUseCase.fetchKeywords(for: target)
+        fetchKeywordsUseCase(for: target)
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
@@ -110,7 +110,7 @@ public final class ProfileViewModel {
             }
             .store(in: &cancellables)
         
-        fetchCreatedCollectionsUseCase.fetchCreatedCollections(for: target)
+        fetchCreatedCollectionsUseCase(for: target)
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
@@ -123,7 +123,7 @@ public final class ProfileViewModel {
             }
             .store(in: &cancellables)
         
-        fetchBookmarkedCollectionsUseCase.fetchBookmarkedCollections(for: target)
+        fetchBookmarkedCollectionsUseCase(for: target)
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
@@ -137,7 +137,7 @@ public final class ProfileViewModel {
             }
             .store(in: &cancellables)
         
-        fetchBookmarkedContentsUseCase.fetchBookmarkedContents(for: target)
+        fetchBookmarkedContentsUseCase(for: target)
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {

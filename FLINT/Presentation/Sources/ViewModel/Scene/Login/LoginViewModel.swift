@@ -46,7 +46,7 @@ public final class DefaultLoginViewModel: LoginViewModel {
                 return
             }
             if let accessToken = oauthToken?.accessToken {
-                socialVerifyUseCase.socialVerify(
+                socialVerifyUseCase(
                     socialAuthCredential: SocialVerifyEntity(
                         provider: .kakao,
                         accessToken: accessToken

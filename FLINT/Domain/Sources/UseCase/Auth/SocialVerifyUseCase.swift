@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol SocialVerifyUseCase {
-    func socialVerify(socialAuthCredential: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error>
+    func callAsFunction(socialAuthCredential: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error>
 }
 
 public final class DefaultSocialVerifyUseCase: SocialVerifyUseCase {
@@ -23,7 +23,7 @@ public final class DefaultSocialVerifyUseCase: SocialVerifyUseCase {
         self.authRepository = authRepository
     }
     
-    public func socialVerify(socialAuthCredential: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error> {
+    public func callAsFunction(socialAuthCredential: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error> {
         return authRepository.socialVerify(socialAuthCredential: socialAuthCredential)
     }
 }

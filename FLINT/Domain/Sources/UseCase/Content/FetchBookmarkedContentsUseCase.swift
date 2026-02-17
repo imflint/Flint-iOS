@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchBookmarkedContentsUseCase {
-    func fetchBookmarkedContents(for target: UserTarget) -> AnyPublisher<[ContentInfoEntity], Error>
+    func callAsFunction(for target: UserTarget) -> AnyPublisher<[ContentInfoEntity], Error>
 }
 
 public final class DefaultFetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase {
@@ -25,7 +25,7 @@ public final class DefaultFetchBookmarkedContentsUseCase: FetchBookmarkedContent
         self.userRepository = userRepository
     }
     
-    public func fetchBookmarkedContents(for target: UserTarget) -> AnyPublisher<[ContentInfoEntity], Error> {
+    public func callAsFunction(for target: UserTarget) -> AnyPublisher<[ContentInfoEntity], Error> {
         switch target {
         case .me:
             return contentRepository.fetchMyBookmarkedContents()

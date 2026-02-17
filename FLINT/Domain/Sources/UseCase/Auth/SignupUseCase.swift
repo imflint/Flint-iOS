@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol SignupUseCase {
-    func signup(userInfo: SignupInfoEntity) -> AnyPublisher<String, Error>
+    func callAsFunction(userInfo: SignupInfoEntity) -> AnyPublisher<String, Error>
 }
 
 public final class DefaultSignupUseCase: SignupUseCase {
@@ -23,7 +23,7 @@ public final class DefaultSignupUseCase: SignupUseCase {
         self.authRepository = authRepository
     }
     
-    public func signup(userInfo: SignupInfoEntity) -> AnyPublisher<String, Error> {
+    public func callAsFunction(userInfo: SignupInfoEntity) -> AnyPublisher<String, Error> {
         return authRepository.signup(userInfo: userInfo)
     }
 }

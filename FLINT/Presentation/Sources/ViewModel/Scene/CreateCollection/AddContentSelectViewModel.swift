@@ -59,7 +59,7 @@ public final class DefaultAddContentSelectViewModel: AddContentSelectViewModel {
     public func fetchContents() {
         isSearching.send(false)
 
-        fetchPopularContentsUseCase.fetchPopularContents()
+        fetchPopularContentsUseCase()
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.results.send(contents)
@@ -89,7 +89,7 @@ public extension DefaultAddContentSelectViewModel {
 
         isSearching.send(true)
 
-        searchContentsUseCase.searchContents(keyword: keyword)
+        searchContentsUseCase(keyword: keyword)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.results.send(contents)

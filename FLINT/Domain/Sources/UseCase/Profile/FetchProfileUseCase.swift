@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchProfileUseCase {
-    func fetchProfile(for target: UserTarget) -> AnyPublisher<UserProfileEntity, Error>
+    func callAsFunction(for target: UserTarget) -> AnyPublisher<UserProfileEntity, Error>
 }
 
 public final class DefaultFetchProfileUseCase: FetchProfileUseCase {
@@ -23,7 +23,7 @@ public final class DefaultFetchProfileUseCase: FetchProfileUseCase {
         self.userRepository = userRepository
     }
     
-    public func fetchProfile(for target: UserTarget) -> AnyPublisher<UserProfileEntity, Error> {
+    public func callAsFunction(for target: UserTarget) -> AnyPublisher<UserProfileEntity, Error> {
         switch target {
         case .me:
             return userRepository.fetchMyProfile()

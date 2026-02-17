@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchCollectionDetailUseCase {
-    func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error>
+    func callAsFunction(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error>
 }
 
 public class DefaultFetchCollectionDetailUseCase: FetchCollectionDetailUseCase {
@@ -23,7 +23,7 @@ public class DefaultFetchCollectionDetailUseCase: FetchCollectionDetailUseCase {
         self.collectionRepository = collectionRepository
     }
     
-    public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error> {
+    public func callAsFunction(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error> {
         return collectionRepository.fetchCollectionDetail(collectionId: collectionId)
     }
 }

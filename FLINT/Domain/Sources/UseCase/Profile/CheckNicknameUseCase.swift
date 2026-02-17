@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol CheckNicknameUseCase {
-    func checkNickname(_ nickname: String) -> AnyPublisher<Bool, Error>
+    func callAsFunction(_ nickname: String) -> AnyPublisher<Bool, Error>
 }
 
 public final class DefaultCheckNicknameUseCase: CheckNicknameUseCase {
@@ -23,7 +23,7 @@ public final class DefaultCheckNicknameUseCase: CheckNicknameUseCase {
         self.userRepository = userRepository
     }
     
-    public func checkNickname(_ nickname: String) -> AnyPublisher<Bool, Error> {
+    public func callAsFunction(_ nickname: String) -> AnyPublisher<Bool, Error> {
         return userRepository.checkNickname(nickname)
     }
 }

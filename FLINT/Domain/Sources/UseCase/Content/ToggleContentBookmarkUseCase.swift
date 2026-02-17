@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol ToggleContentBookmarkUseCase {
-    func toggleContentBookmark(contentId: Int64) -> AnyPublisher<Bool, Error>
+    func callAsFunction(contentId: Int64) -> AnyPublisher<Bool, Error>
 }
 
 public class DefaultToggleContentBookmarkUseCase: ToggleContentBookmarkUseCase {
@@ -23,7 +23,7 @@ public class DefaultToggleContentBookmarkUseCase: ToggleContentBookmarkUseCase {
         self.bookmarkRepository = bookmarkRepository
     }
 
-    public func toggleContentBookmark(contentId: Int64) -> AnyPublisher<Bool, Error> {
+    public func callAsFunction(contentId: Int64) -> AnyPublisher<Bool, Error> {
         return bookmarkRepository.toggleContentBookmark(contentId: contentId)
     }
 }

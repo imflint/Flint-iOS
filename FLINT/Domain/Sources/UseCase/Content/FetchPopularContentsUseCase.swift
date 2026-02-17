@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchPopularContentsUseCase {
-    func fetchPopularContents() -> AnyPublisher<[ContentEntity], Error>
+    func callAsFunction() -> AnyPublisher<[ContentEntity], Error>
 }
 
 public class DefaultFetchPopularContentsUseCase: FetchPopularContentsUseCase {
@@ -23,7 +23,7 @@ public class DefaultFetchPopularContentsUseCase: FetchPopularContentsUseCase {
         self.searchRepository = searchRepository
     }
     
-    public func fetchPopularContents() -> AnyPublisher<[ContentEntity], Error> {
+    public func callAsFunction() -> AnyPublisher<[ContentEntity], Error> {
         return searchRepository.searchContents(keyword: nil)
     }
 }

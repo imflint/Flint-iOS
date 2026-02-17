@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchRecentViewedCollectionsUseCase {
-    func fetchWatchingCollections() -> AnyPublisher<[CollectionEntity], Error>
+    func callAsFunction() -> AnyPublisher<[CollectionEntity], Error>
 }
 
 public final class DefaultFetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase {
@@ -23,7 +23,7 @@ public final class DefaultFetchRecentViewedCollectionsUseCase: FetchRecentViewed
         self.collectionRepository = collectionRepository
     }
     
-    public func fetchWatchingCollections() -> AnyPublisher<[CollectionEntity], Error> {
+    public func callAsFunction() -> AnyPublisher<[CollectionEntity], Error> {
         return collectionRepository.fetchRecentViewedCollections()
     }
 }

@@ -88,7 +88,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
             nicknameValidState.send(.invalid)
             return
         }
-        checkNicknameUseCase.checkNickname(nickname)
+        checkNicknameUseCase(nickname)
             .manageThread()
             .sinkHandledCompletion(receiveValue: { [weak self] isValidNickname in
                 self?.nicknameValidState.send(isValidNickname ? .valid : .duplicate)
@@ -100,7 +100,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func fetchPopularContents() {
-        fetchPopularContentsUseCase.fetchPopularContents()
+        fetchPopularContentsUseCase()
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.contents.send(contents)
@@ -109,7 +109,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func searchContents(_ keyword: String) {
-        searchContentsUseCase.searchContents(keyword: keyword)
+        searchContentsUseCase(keyword: keyword)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.contents.send(contents)
@@ -140,7 +140,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func signup() {
-        signupUseCase.signup(
+        signupUseCase(
             userInfo: SignupInfoEntity(
                 nickname: nickname.value,
                 favoriteContentIds: selectedContents.value.compactMap({ content in

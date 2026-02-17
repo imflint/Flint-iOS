@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchRecommendedCollectionsUseCase {
-    func fetchRecommendedCollections() -> AnyPublisher<[CollectionEntity], Error>
+    func callAsFunction() -> AnyPublisher<[CollectionEntity], Error>
 }
 
 public final class DefaultFetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase {
@@ -23,7 +23,7 @@ public final class DefaultFetchRecommendedCollectionsUseCase: FetchRecommendedCo
         self.homeRepository = homeRepository
     }
     
-    public func fetchRecommendedCollections() -> AnyPublisher<[CollectionEntity], Error> {
+    public func callAsFunction() -> AnyPublisher<[CollectionEntity], Error> {
         return homeRepository.fetchRecommendedCollections()
     }
 }

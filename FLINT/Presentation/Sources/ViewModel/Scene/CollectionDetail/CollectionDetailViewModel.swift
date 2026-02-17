@@ -95,7 +95,7 @@ public final class CollectionDetailViewModel {
     private func fetch() {
         stateSubject.send(.loading)
 
-        fetchCollectionDetailUseCase.fetchCollectionDetail(collectionId: collectionId)
+        fetchCollectionDetailUseCase(collectionId: collectionId)
             .sink(
                 receiveCompletion: { [weak self] completion in
                     guard let self else { return }
@@ -108,7 +108,7 @@ public final class CollectionDetailViewModel {
 
                     self.stateSubject.send(.loaded(detail: detail, bookmarkedUsers: nil))
 
-                    self.fetchCollectionBookmarkUsersUseCase.fetchCollectionBookmarkUsers(collectionId: self.collectionId)
+                    self.fetchCollectionBookmarkUsersUseCase(collectionId: self.collectionId)
                         .sink(
                             receiveCompletion: { _ in },
                             receiveValue: { [weak self] users in

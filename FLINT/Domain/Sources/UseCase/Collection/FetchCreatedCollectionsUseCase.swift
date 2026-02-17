@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol FetchCreatedCollectionsUseCase {
-    func fetchCreatedCollections(for target: UserTarget) -> AnyPublisher<[CollectionEntity], Error>
+    func callAsFunction(for target: UserTarget) -> AnyPublisher<[CollectionEntity], Error>
 }
 
 public final class DefaultFetchCreatedCollectionsUseCase: FetchCreatedCollectionsUseCase {
@@ -23,7 +23,7 @@ public final class DefaultFetchCreatedCollectionsUseCase: FetchCreatedCollection
         self.userRepository = userRepository
     }
     
-    public func fetchCreatedCollections(for target: UserTarget) -> AnyPublisher<[CollectionEntity], Error> {
+    public func callAsFunction(for target: UserTarget) -> AnyPublisher<[CollectionEntity], Error> {
         switch target {
         case .me:
             return userRepository.fetchMyCreatedCollections()

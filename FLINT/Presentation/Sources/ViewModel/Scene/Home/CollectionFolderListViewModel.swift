@@ -25,7 +25,7 @@ public final class CollectionFolderListViewModel {
     }
 
     public func load() {
-        fetchRecentViewedCollectionsUseCase.fetchWatchingCollections()
+        fetchRecentViewedCollectionsUseCase()
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {
