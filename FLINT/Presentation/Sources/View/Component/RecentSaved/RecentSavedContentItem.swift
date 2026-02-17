@@ -7,6 +7,8 @@
 
 import Foundation
 
+import Domain
+
 public struct RecentSavedContentItem: Hashable {
     public let id: UUID = UUID()
     public let posterImageName: String

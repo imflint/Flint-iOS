@@ -1,6 +1,6 @@
 //
 //  OTTPlatform.swift
-//  FLINT
+//  Domain
 //
 //  Created by 소은 on 1/12/26.
 //
@@ -24,17 +24,6 @@ public enum OTTPlatform: String, CaseIterable, Hashable {
         case .coupangPlay: return "쿠팡플레이"
         case .watcha: return "왓차"
         case .disneyPlus: return "디즈니+"
-        }
-    }
-
-    public var icon: UIImage? {
-        switch self {
-        case .netflix: return UIImage.imgSmallNetflix1
-        case .tving: return UIImage.imgSmallTving1
-        case .wavve: return UIImage.imgSmallWavve1
-        case .coupangPlay: return UIImage.imgSmallCoupang1
-        case .watcha: return UIImage.imgSmallWatcha1
-        case .disneyPlus: return UIImage.imgSmallDisney1
         }
     }
 
