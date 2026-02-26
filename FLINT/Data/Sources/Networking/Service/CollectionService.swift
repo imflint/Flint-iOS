@@ -37,7 +37,6 @@ public final class DefaultCollectionService: CollectionService {
     public func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<CreateCollectionDTO, Error> {
         return collectionAPIProvider.requestPublisher(.createCollection(collectionInfo: collectionInfo))
             .mapBaseResponseData(CreateCollectionDTO.self)
-            .eraseToAnyPublisher()
     }
     
     public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailDTO, Error> {
