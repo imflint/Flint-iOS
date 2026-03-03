@@ -24,15 +24,15 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
     
     // MARK: - Enum
     
-    private enum ScrollDirection {
-        case up
-        case down
+    private enum FoldableViewAction {
+        case reveal
+        case hide
         
         init?(velocity: CGFloat) {
             if velocity > 0 {
-                self = .up
+                self = .reveal
             } else {
-                self = .down
+                self = .hide
             }
         }
     }
@@ -40,6 +40,11 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
     // MARK: - ViewModel
     
     private let onboardingViewModel: OnboardingViewModel
+    
+    // MARK: - DataSource
+    
+    private var contentCollectionViewDataSource: ContentCollectionViewDataSource?
+    private var selectedContentCollectionViewDataSource: SelectedContentCollectionViewDataSource?
     
     // MARK: - Property
     
@@ -66,26 +71,18 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         
         onboardingViewModel.fetchPopularContents()
         
-        rootView.searchTextField.searchAction = { [weak self] keyword in
-            self?.onboardingViewModel.searchContents(keyword ?? "")
-        }
-        rootView.searchTextField.clearAction = { [weak self] in
-            self?.onboardingViewModel.fetchPopularContents()
-        }
+        setupTextField()
+        setupContentCollectionView()
+        setupSelectedContentCollectionView()
         
         rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(onboardingViewModel.selectedContents.value.count)/\(onboardingViewModel.contentSelectQuestions.count)")
         rootView.progressView.progress = Float(onboardingViewModel.selectedContents.value.count) / Float(onboardingViewModel.contentSelectQuestions.count)
         rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
         rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.contentSelectQuestions[onboardingViewModel.selectedContents.value.count])
-        rootView.selectedContentCollectionView.dataSource = self
-        rootView.contentCollectionView.dataSource = self
-        rootView.contentCollectionView.delegate = self
-        rootView.searchTextField.delegate = self
         
         rootView.layoutIfNeeded()
         rootView.contentCollectionView.contentOffset.y = -rootView.contentCollectionView.contentInset.top
         
-        rootView.contentCollectionView.panGestureRecognizer.addTarget(self, action: #selector(contentCollectionViewPanGesture))
         rootView.nextButton.addAction(UIAction(handler: pushOttSelectViewController(_:)), for: .touchUpInside)
     }
     
@@ -97,8 +94,9 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         .store(in: &cancellables)
         
         onboardingViewModel.contents.sink { [weak self] contents in
-            self?.rootView.emptyView.isHidden = !contents.isEmpty
-            self?.rootView.contentCollectionView.reloadData()
+            guard let self else { return }
+            rootView.emptyView.isHidden = !contents.isEmpty
+            contentCollectionViewDataSource?.apply(makeContentCollectionViewSnapshot(contentEntities: contents), animatingDifferences: false)
         }
         .store(in: &cancellables)
         
@@ -107,8 +105,12 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
             UIView.animate(withDuration: 0.2, animations: {
                 self.rootView.selectedContentCollectionView.isHidden = selectedContents.isEmpty
             })
-            self.rootView.selectedContentCollectionView.reloadData()
-            self.rootView.contentCollectionView.reloadData()
+            selectedContentCollectionViewDataSource?.apply(makeSelectedContentCollectionViewSnapshot(contentEntities: selectedContents), animatingDifferences: false)
+            
+            guard var snapshot = contentCollectionViewDataSource?.snapshot() else { return }
+            snapshot.reconfigureItems(snapshot.itemIdentifiers)
+            contentCollectionViewDataSource?.apply(snapshot, animatingDifferences: false)
+            
             rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(selectedContents.count)/\(onboardingViewModel.contentSelectQuestions.count)")
             rootView.progressView.progress = Float(selectedContents.count) / Float(onboardingViewModel.contentSelectQuestions.count)
             rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.contentSelectQuestions[min(selectedContents.count, onboardingViewModel.contentSelectQuestions.count-1)])
@@ -116,6 +118,69 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
             rootView.nextButton.isEnabled = selectedContents.count == 7
         }
         .store(in: &cancellables)
+    }
+    
+    private func pushOttSelectViewController(_ action: UIAction) {
+        guard let ottSelectViewController = viewControllerFactory?.makeOttSelectViewController(onboardingViewModel: onboardingViewModel) else { return }
+        navigationController?.pushViewController(ottSelectViewController, animated: true)
+    }
+}
+
+// MARK: - UICollectionView Delegate
+
+extension ContentSelectViewController: UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        contentCollectionView(collectionView, didSelectItemAt: indexPath)
+    }
+}
+
+// MARK: - ContentCollectionView
+
+extension ContentSelectViewController {
+    
+    private typealias ContentCollectionViewDataSource = UICollectionViewDiffableDataSource<ContentCollectionViewSection, ContentCollectionViewItem>
+    private typealias ContentCollectionViewSnapshot = NSDiffableDataSourceSnapshot<ContentCollectionViewSection, ContentCollectionViewItem>
+    
+    private enum ContentCollectionViewSection: Int {
+        case main
+    }
+    
+    private enum ContentCollectionViewItem: Hashable, Sendable {
+        case content(ContentEntity)
+    }
+    
+    private func setupContentCollectionView() {
+        rootView.contentCollectionView.delegate = self
+        rootView.contentCollectionView.dataSource = contentCollectionViewDataSource
+        
+        contentCollectionViewDataSource = ContentCollectionViewDataSource(collectionView: rootView.contentCollectionView, cellProvider: { [weak self] collectionView, indexPath, itemIdentifier in
+            guard let self else { return UICollectionViewCell() }
+            
+            switch itemIdentifier {
+            case .content(let content):
+                let cell = collectionView.dequeueReusableCell(OnboardingContentCollectionViewCell.self, for: indexPath)
+                let isSelected = onboardingViewModel.selectedContents.value.contains(where: {
+                    $0 == content
+                })
+                cell.configure(content: content, isSelected: isSelected)
+                return cell
+            }
+        })
+        contentCollectionViewDataSource?.apply(makeContentCollectionViewSnapshot(contentEntities: onboardingViewModel.contents.value), animatingDifferences: false)
+        
+        rootView.contentCollectionView.panGestureRecognizer.addTarget(self, action: #selector(contentCollectionViewPanGesture))
+    }
+    
+    private func makeContentCollectionViewSnapshot(contentEntities: [ContentEntity]) -> ContentCollectionViewSnapshot {
+        var snapshot = ContentCollectionViewSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(contentEntities.map({ ContentCollectionViewItem.content($0) }), toSection: .main)
+        return snapshot
+    }
+    
+    public func contentCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard onboardingViewModel.selectedContents.value.count <= 6 else { return }
+        onboardingViewModel.clickContent(onboardingViewModel.contents.value[indexPath.item])
     }
     
     @objc public func contentCollectionViewPanGesture(_ sender: UIPanGestureRecognizer) {
@@ -147,13 +212,13 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         if sender.state == .ended {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
                 guard let self else { return }
-                switch ScrollDirection(velocity: velocityY) {
-                case .up:
+                switch FoldableViewAction(velocity: velocityY) {
+                case .reveal:
                     foldableViewYOffset = .zero
                     rootView.updateFoldableViewYOffset(foldableViewYOffset)
                     offsetCorrection = .zero
                     rootView.foldableView.alpha = 1
-                case .down:
+                case .hide:
                     foldableViewYOffset = -rootView.foldableView.bounds.height
                     rootView.updateFoldableViewYOffset(foldableViewYOffset)
                     offsetCorrection = rootView.foldableView.bounds.height
@@ -165,90 +230,49 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
             })
         }
     }
-    
-    private func pushOttSelectViewController(_ action: UIAction) {
-        guard let ottSelectViewController = viewControllerFactory?.makeOttSelectViewController(onboardingViewModel: onboardingViewModel) else { return }
-        navigationController?.pushViewController(ottSelectViewController, animated: true)
-    }
 }
 
-// MARK: - UICollectionView DataSource & Delegate
-
-extension ContentSelectViewController: UICollectionViewDataSource {
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView === rootView.selectedContentCollectionView {
-            return selectedContentCollectionView(collectionView, numberOfItemsInSection: section)
-        } else if collectionView === rootView.contentCollectionView {
-            return contentCollectionView(collectionView, numberOfItemsInSection: section)
-        }
-        return 0
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView === rootView.selectedContentCollectionView {
-            return selectedContentCollectionView(collectionView, cellForItemAt: indexPath)
-        } else if collectionView === rootView.contentCollectionView {
-            return contentCollectionView(collectionView, cellForItemAt: indexPath)
-        }
-        return UICollectionViewCell()
-    }
-}
-
-extension ContentSelectViewController: UICollectionViewDelegate {
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        contentCollectionView(collectionView, didSelectItemAt: indexPath)
-    }
-}
-
-// MARK: - SelectedContentCollectionView DataSource
+// MARK: - SelectedContentCollectionView
 
 extension ContentSelectViewController {
-    public func selectedContentCollectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return onboardingViewModel.selectedContents.value.count
+    
+    private typealias SelectedContentCollectionViewDataSource = UICollectionViewDiffableDataSource<SelectedContentCollectionViewSection, SelectedContentCollectionViewItem>
+    private typealias SelectedContentCollectionViewSnapshot = NSDiffableDataSourceSnapshot<SelectedContentCollectionViewSection, SelectedContentCollectionViewItem>
+    
+    private enum SelectedContentCollectionViewSection: Int {
+        case main
     }
     
-    public func selectedContentCollectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(SelectedContentCollectionViewCell.self, for: indexPath)
-        
-        let content = onboardingViewModel.selectedContents.value[indexPath.item]
-        
-        cell.imageView.kf.setImage(with: content.posterUrl)
-        cell.xButton.addAction(UIAction(handler: { [weak self] _ in
-            self?.onboardingViewModel.deleteContent(content)
-        }), for: .touchUpInside)
-        return cell
-    }
-}
-
-// MARK: - ContentCollectionView DataSource & Delegate
-
-extension ContentSelectViewController {
-    public func contentCollectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return onboardingViewModel.contents.value.count
+    private enum SelectedContentCollectionViewItem: Hashable, Sendable {
+        case content(ContentEntity)
     }
     
-    public func contentCollectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(OnboardingContentCollectionViewCell.self, for: indexPath)
+    private func setupSelectedContentCollectionView() {
+        rootView.selectedContentCollectionView.dataSource = selectedContentCollectionViewDataSource
         
-        let content = onboardingViewModel.contents.value[indexPath.item]
-        let isSelected = onboardingViewModel.selectedContents.value.contains(where: {
-            $0 == content
+        selectedContentCollectionViewDataSource = SelectedContentCollectionViewDataSource(collectionView: rootView.selectedContentCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+            switch itemIdentifier {
+            case .content(let content):
+                let cell = collectionView.dequeueReusableCell(SelectedContentCollectionViewCell.self, for: indexPath)
+                cell.imageView.kf.setImage(with: content.posterUrl)
+                cell.xButton.addAction(UIAction(handler: { [weak self] _ in
+                    self?.onboardingViewModel.deleteContent(content)
+                }), for: .touchUpInside)
+                return cell
+            }
         })
-        cell.configure(content: content, isSelected: isSelected)
-        return cell
+        selectedContentCollectionViewDataSource?.apply(makeSelectedContentCollectionViewSnapshot(contentEntities: onboardingViewModel.selectedContents.value))
+    }
+    
+    private func makeSelectedContentCollectionViewSnapshot(contentEntities: [ContentEntity]) -> SelectedContentCollectionViewSnapshot {
+        var snapshot = SelectedContentCollectionViewSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(contentEntities.map({ SelectedContentCollectionViewItem.content($0) }), toSection: .main)
+        return snapshot
     }
 }
 
-extension ContentSelectViewController {
-    public func contentCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard onboardingViewModel.selectedContents.value.count <= 6 else {
-            return
-        }
-        onboardingViewModel.clickContent(onboardingViewModel.contents.value[indexPath.item])
-    }
-}
-
-// MARK: - SearchTextField Delegate
+// MARK: - SearchTextField
 
 extension ContentSelectViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -256,5 +280,16 @@ extension ContentSelectViewController: UITextFieldDelegate {
         guard let text = textField.text else { return true }
         onboardingViewModel.searchContents(text)
         return true
+    }
+    
+    private func setupTextField() {
+        rootView.searchTextField.searchAction = { [weak self] keyword in
+            self?.onboardingViewModel.searchContents(keyword ?? "")
+        }
+        rootView.searchTextField.clearAction = { [weak self] in
+            self?.onboardingViewModel.fetchPopularContents()
+        }
+        
+        rootView.searchTextField.delegate = self
     }
 }

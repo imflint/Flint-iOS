@@ -22,7 +22,11 @@ public protocol ExploreViewControllerFactory {
 
 public final class ExploreViewController: BaseViewController<ExploreView> {
     
+    // MARK: - ViewModel
+    
     public let exploreViewModel: ExploreViewModel
+    
+    // MARK: - DataSource
     
     private var mainCollectionViewDataSource: UICollectionViewDiffableDataSource<MainCollectionViewSection, MainCollectionViewItem>?
     
@@ -97,8 +101,6 @@ extension ExploreViewController {
     }
     
     private func setupMainCollectionView() {
-        rootView.mainCollectionView.register(ExploreCollectionViewCell.self)
-        rootView.mainCollectionView.register(ExploreEmptyCollectionViewCell.self)
         rootView.mainCollectionView.delegate = self
         rootView.mainCollectionView.dataSource = mainCollectionViewDataSource
         
