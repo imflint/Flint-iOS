@@ -22,7 +22,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        let viewController = diContainer.makeSplashViewController()
+//        let viewController = diContainer.makeSplashViewController()
+        let viewController = diContainer.makeNicknameViewController()
 //        let viewController = diContainer.makeTabBarViewController()
         let navigationController = UINavigationController(rootViewController: viewController).configured({
             $0.navigationBar.isHidden = true
