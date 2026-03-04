@@ -29,7 +29,7 @@ public struct ContentInfoEntity: Equatable {
     }
 }
 
-// TODO: - OTT Entity 통일하기
+#warning("TODO: - OTT Entity 통일하기")
 public struct OttSimpleEntity: Equatable {
     public let ottName: String
     public let logoUrl: String

@@ -79,7 +79,7 @@ public final class CreateCollectionAddContentCell: BaseTableViewCell {
     
     public override func prepare() {
         onTapAdd = nil
-        //TODO: - countLabel은 외부에서 configure로 갱신할 예정
+        #warning("TODO: - countLabel은 외부에서 configure로 갱신할 예정")
     }
 }
 

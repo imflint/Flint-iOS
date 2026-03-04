@@ -18,7 +18,7 @@ public protocol ContentSelectViewControllerFactory {
     func makeContentSelectViewController(onboardingViewModel: OnboardingViewModel) -> ContentSelectViewController
 }
 
-// TODO: - shadow
+#warning("TODO: - shadow")
 
 public final class ContentSelectViewController: BaseViewController<ContentSelectView> {
     

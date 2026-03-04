@@ -141,7 +141,7 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
                     title: "컬렉션을 저장했어요",
                     actionTitle: "컬렉션 보기",
                     action: { _ in
-                      //TODO: - 저장된 컬렉션 뷰로 이동
+                        #warning("TODO: - 저장된 컬렉션 뷰로 이동")
                     }
                 ).show()
                 return

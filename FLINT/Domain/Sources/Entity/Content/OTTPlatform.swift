@@ -29,7 +29,7 @@ public enum OTTPlatform: String, CaseIterable, Hashable {
 
     // MARK: - URL
 
-    //TODO: 서버 연동 시 서버 값으로 대체
+    #warning("TODO: - 서버 연동 시 서버 값으로 대체")
     public var webURL: URL {
         let urlString: String = {
             switch self {

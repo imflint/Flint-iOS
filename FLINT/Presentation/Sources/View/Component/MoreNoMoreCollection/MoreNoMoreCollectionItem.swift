@@ -7,7 +7,7 @@
 
 import UIKit
 
-// TODO: - 나중에 옮길 것!!!!!!!!!!!!!!!
+#warning("TODO: - 나중에 옮길 것!!!!!!!!!!!!!!!")
 
 public struct MoreNoMoreCollectionItem {
     public let id: UUID

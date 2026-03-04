@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ContentEntity: Hashable, Sendable {
+public struct ContentEntity: Identifiable, Hashable, Sendable {
     public let id: String
     public let title: String
     public let author: String

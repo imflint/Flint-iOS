@@ -26,6 +26,7 @@ extension AuthAPI: TargetType {
         case .signup:
             return "/api/v1/auth/signup"
         case .logout, .logoutAll, .refresh:
+            #warning("TODO: - 나중에 구현할 것")
             return "TODO"
         case .socialVerify:
             return "/api/v1/auth/social/verify"
