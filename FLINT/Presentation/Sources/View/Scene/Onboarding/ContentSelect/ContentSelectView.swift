@@ -74,18 +74,18 @@ public final class ContentSelectView: BaseView {
     }
     
     public let contentCollectionView: UICollectionView = {
-        let uselessHeight: CGFloat = 230
+        let placeholderHeight: CGFloat = 230
         let item = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1/3),
-                heightDimension: .estimated(uselessHeight)
+                heightDimension: .estimated(placeholderHeight)
             )
         )
         
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .estimated(uselessHeight)
+                heightDimension: .estimated(placeholderHeight)
             ),
             repeatingSubitem: item,
             count: 3
