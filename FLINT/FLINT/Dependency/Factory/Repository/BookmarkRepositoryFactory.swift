@@ -6,39 +6,19 @@
 //
 
 import Foundation
-import Moya
 
 import Data
 import Domain
 
-protocol BookmarkRepositoryFactory {
-    func makeBookmarkAPIProvider() -> MoyaProvider<BookmarkAPI>
-
-    // Service
-    func makeBookmarkService() -> BookmarkService
-    func makeBookmarkService(provider: MoyaProvider<BookmarkAPI>) -> BookmarkService
-
-    // Repository
+protocol BookmarkRepositoryFactory: BookmarkServiceFactory {
     func makeBookmarkRepository() -> BookmarkRepository
     func makeBookmarkRepository(bookmarkService: BookmarkService) -> BookmarkRepository
 }
 
 extension BookmarkRepositoryFactory {
-
-    // Service
-    func makeBookmarkService() -> BookmarkService {
-        return makeBookmarkService(provider: makeBookmarkAPIProvider())
-    }
-
-    func makeBookmarkService(provider: MoyaProvider<BookmarkAPI>) -> BookmarkService {
-        return DefaultBookmarkService(provider: provider)
-    }
-
-    // Repository
     func makeBookmarkRepository() -> BookmarkRepository {
         return makeBookmarkRepository(bookmarkService: makeBookmarkService())
     }
-
     func makeBookmarkRepository(bookmarkService: BookmarkService) -> BookmarkRepository {
         return DefaultBookmarkRepository(bookmarkService: bookmarkService)
     }

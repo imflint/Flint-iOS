@@ -10,5 +10,13 @@ import Foundation
 import Data
 
 protocol TokenStorageFactory {
+    var tokenStorage: TokenStorage { get set }
+    
     func makeTokenStorage() -> TokenStorage
+}
+
+extension TokenStorageFactory {
+    func makeTokenStorage() -> TokenStorage {
+        return tokenStorage
+    }
 }

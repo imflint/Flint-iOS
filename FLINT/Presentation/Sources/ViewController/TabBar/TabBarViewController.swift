@@ -12,6 +12,10 @@ import Then
 
 import View
 
+public protocol TabBarViewControllerFactory {
+    func makeTabBarViewController() -> TabBarViewController
+}
+
 public class TabBarViewController: UIViewController {
     
     // MARK: - DI

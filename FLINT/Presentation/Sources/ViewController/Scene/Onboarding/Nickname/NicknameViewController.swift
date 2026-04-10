@@ -14,6 +14,10 @@ import Domain
 import View
 import ViewModel
 
+public protocol NicknameViewControllerFactory {
+    func makeNicknameViewController() -> NicknameViewController
+}
+
 public final class NicknameViewController: BaseViewController<NicknameView> {
     
     // MARK: - ViewModel

@@ -17,7 +17,12 @@ protocol OnboardingViewModelFactory: NicknameUseCaseFactory, SearchContentsUseCa
 
 extension OnboardingViewModelFactory {
     func makeOnboardingViewModel() -> OnboardingViewModel {
-        return makeOnboardingViewModel(nicknameUseCase: makeNicknameUseCase(), contentsUseCase: makeContentsUseCase(), searchContentsUseCase: makeSearchContentsUseCase(), signupUseCase: makeSignupUseCase())
+        return makeOnboardingViewModel(
+            nicknameUseCase: makeNicknameUseCase(),
+            contentsUseCase: makeContentsUseCase(),
+            searchContentsUseCase: makeSearchContentsUseCase(),
+            signupUseCase: makeSignupUseCase()
+        )
     }
     func makeOnboardingViewModel(nicknameUseCase: NicknameUseCase, contentsUseCase: ContentsUseCase, searchContentsUseCase: SearchContentsUseCase, signupUseCase: SignupUseCase) -> OnboardingViewModel {
         return DefaultOnboardingViewModel(nicknameUseCase: nicknameUseCase, contentsUseCase: contentsUseCase, searchContentsUseCase: searchContentsUseCase, signupUseCase: signupUseCase)

@@ -12,11 +12,15 @@ import ViewModel
 
 import Domain
 
+public protocol HomeViewControllerFactory {
+    func makeHomeViewController() -> HomeViewController
+}
+
 public final class HomeViewController: BaseViewController<HomeView> {
     
     private let viewModel: HomeViewModel
     
-    public init(viewModel: HomeViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
+    public init(viewModel: HomeViewModel, viewControllerFactory: ViewControllerFactory) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         self.viewControllerFactory = viewControllerFactory

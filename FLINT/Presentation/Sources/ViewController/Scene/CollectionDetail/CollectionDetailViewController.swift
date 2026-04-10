@@ -14,6 +14,10 @@ import Entity
 import View
 import ViewModel
 
+public protocol CollectionDetailViewControllerFactory {
+    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController
+}
+
 public final class CollectionDetailViewController: BaseViewController<CollectionDetailView> {
 
     // MARK: - Enum

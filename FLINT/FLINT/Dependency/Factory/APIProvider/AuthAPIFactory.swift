@@ -12,5 +12,13 @@ import Moya
 import Data
 
 protocol AuthAPIFactory {
+    var authAPIProvider: MoyaProvider<AuthAPI> { get set }
+    
     func makeAuthAPIProvider() -> MoyaProvider<AuthAPI>
+}
+
+extension AuthAPIFactory {
+    func makeAuthAPIProvider() -> MoyaProvider<AuthAPI> {
+        return authAPIProvider
+    }
 }

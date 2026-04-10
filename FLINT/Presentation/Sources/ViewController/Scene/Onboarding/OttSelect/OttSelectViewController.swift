@@ -12,6 +12,10 @@ import Domain
 import View
 import ViewModel
 
+public protocol OttSelectViewControllerFactory {
+    func makeOttSelectViewController(onboardingViewModel: OnboardingViewModel) -> OttSelectViewController
+}
+
 public class OttSelectViewController: BaseViewController<OttSelectView> {
     
     // MARK: - ViewModel

@@ -12,6 +12,10 @@ import Combine
 import View
 import ViewModel
 
+public protocol SplashViewControllerFactory {
+    func makeSplashViewController() -> SplashViewController
+}
+
 public final class SplashViewController: BaseViewController<SplashView> {
     
     public init(viewControllerFactory: ViewControllerFactory) {

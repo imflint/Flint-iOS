@@ -12,6 +12,10 @@ import Domain
 import View
 import ViewModel
 
+public protocol CreateCollectionViewControllerFactory {
+    func makeCreateCollectionViewController() -> CreateCollectionViewController
+}
+
 public final class CreateCollectionViewController: BaseViewController<CreateCollectionView> {
     
     // MARK: - Enum

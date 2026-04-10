@@ -9,29 +9,30 @@ import UIKit
 
 import ViewModel
 
-public protocol ViewControllerFactory {
-    func makeSplashViewController() -> SplashViewController
-    func makeLoginViewController() -> LoginViewController
-
-    func makeNicknameViewController() -> NicknameViewController
+public typealias ViewControllerFactory =
     
-    func makeFilmSelectViewController(onboardingViewModel: OnboardingViewModel) -> FilmSelectViewController
-    func makeOttSelectViewController(onboardingViewModel: OnboardingViewModel) -> OttSelectViewController
-    func makeOnboardingDoneViewController(onboardingViewModel: OnboardingViewModel) -> OnboardingDoneViewController
+    // MARK: - Splash / Login
     
-    func makeTabBarViewController() -> TabBarViewController
+    SplashViewControllerFactory &
+    LoginViewControllerFactory &
     
-    func makeHomeViewController() -> HomeViewController
-    func makeExploreViewController() -> ExploreViewController
+    // MARK: - Onboarding
     
-    func makeAddContentSelectViewController() -> AddContentSelectViewController
-    func makeCreateCollectionViewController() -> CreateCollectionViewController
+    NicknameViewControllerFactory &
+    FilmSelectViewControllerFactory &
+    OttSelectViewControllerFactory &
+    OnboardingDoneViewControllerFactory &
     
-    func makeProfileViewController() -> ProfileViewController
-        func makeProfileViewController(target: ProfileViewModel.Target) -> ProfileViewController
-
-    func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController
+    // MARK: - Main
     
-    func makeCollectionFolderListViewController() -> CollectionFolderListViewController
-
-}
+    TabBarViewControllerFactory &
+    HomeViewControllerFactory &
+    ExploreViewControllerFactory &
+    ProfileViewControllerFactory &
+    
+    // MARK: - Collection
+    
+    CollectionFolderListViewControllerFactory &
+    CollectionDetailViewControllerFactory &
+    AddContentSelectViewControllerFactory &
+    CreateCollectionViewControllerFactory
