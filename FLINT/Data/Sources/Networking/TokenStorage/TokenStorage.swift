@@ -54,10 +54,11 @@ public final class DefaultTokenStorage: TokenStorage {
         // 기존 항목 삭제 후 새로운 항목 저장
         SecItemDelete(query as CFDictionary)
         let status = SecItemAdd(query as CFDictionary, nil)
-        if status == errSecSuccess {
-            Log.d("Keychain \(type.rawValue) 저장 완료")
+        guard status == errSecSuccess else {
+            Log.e("Keychain \(type.rawValue) save failed: \(SecCopyErrorMessageString(status, nil) as String? ?? "unknown")")
+            return
         }
-        Log.e(status)
+        Log.d("Keychain \(type.rawValue) saved.")
     }
     
     public func load(type: TokenType) -> String? {
@@ -76,6 +77,7 @@ public final class DefaultTokenStorage: TokenStorage {
             Log.e("Keychain \(type.rawValue) load failed. \(status)")
             return nil
         }
+        Log.e("Keychain \(type.rawValue) load failed: \(SecCopyErrorMessageString(status, nil) as String? ?? "unknown")")
         guard let data = item as? Data else {
             Log.e("Keychain \(type.rawValue) data invalid")
             return nil
@@ -97,9 +99,10 @@ public final class DefaultTokenStorage: TokenStorage {
         let status = SecItemDelete(query as CFDictionary)
         
         guard status == errSecSuccess else {
-            Log.e("Keychain \(type.rawValue) delete failed. \(status)")
+            Log.e("Keychain \(type.rawValue) delete failed: \(SecCopyErrorMessageString(status, nil) as String? ?? "unknown")")
             return
         }
+        Log.d("Keychain \(type.rawValue) deleted.")
     }
     
     public func clearAll() {
