@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 import Then
 
+import Domain
+
 public enum BottomSheetContent {
     case ott(platforms: [OTTPlatform])
     case savedUsers(users: [SavedUserRowItem])

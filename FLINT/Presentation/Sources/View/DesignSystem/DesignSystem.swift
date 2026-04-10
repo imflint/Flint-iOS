@@ -73,7 +73,7 @@ public enum DesignSystem {
     public enum Icon {
         
         public enum Common {
-            // TODO: - Temp 추후 Component로 변경 예정
+            #warning("TODO: - Temp 추후 Component로 변경 예정")
             public static let collectionSave: UIImage = .icCollectionSave
             public static let collectionSaved: UIImage = .icCollectionSaved
             

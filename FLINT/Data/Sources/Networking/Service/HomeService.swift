@@ -11,26 +11,23 @@ import Foundation
 import CombineMoya
 import Moya
 
-import Domain
-
 import DTO
 
 public protocol HomeService {
-    func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, Error>
+    func fetchRecommendedCollections() -> AnyPublisher<CollectionsDTO, Error>
 }
 
 public final class DefaultHomeService: HomeService {
     
-    private let provider: MoyaProvider<HomeAPI>
+    private let homeAPIProvider: MoyaProvider<HomeAPI>
     
-    public init(provider: MoyaProvider<HomeAPI>) {
-        self.provider = provider
+    public init(homeAPIProvider: MoyaProvider<HomeAPI>) {
+        self.homeAPIProvider = homeAPIProvider
     }
     
-    public func fetchRecommendedCollections() -> AnyPublisher<HomeRecommendedCollectionsDTO, Error> {
-        provider.requestPublisher(.fetchRecommendedCollections)
-            .extractData(HomeRecommendedCollectionsDTO.self)
-            .eraseToAnyPublisher()
+    public func fetchRecommendedCollections() -> AnyPublisher<CollectionsDTO, Error> {
+        return homeAPIProvider.requestPublisher(.fetchRecommendedCollections)
+            .mapBaseResponseData(CollectionsDTO.self)
     }
 }
 

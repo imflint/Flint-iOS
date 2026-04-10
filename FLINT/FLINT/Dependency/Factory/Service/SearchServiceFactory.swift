@@ -7,20 +7,14 @@
 
 import Foundation
 
-import Moya
-
 import Data
 
-protocol SearchServiceFactory: SearchAPIFactory {
+protocol SearchServiceFactory: SearchAPIProviderFactory {
     func makeSearchService() -> SearchService
-    func makeSearchService(searchAPIProvider: MoyaProvider<SearchAPI>) -> SearchService
 }
 
 extension SearchServiceFactory {
     func makeSearchService() -> SearchService {
-        return makeSearchService(searchAPIProvider: makeSearchAPIProvider())
-    }
-    func makeSearchService(searchAPIProvider: MoyaProvider<SearchAPI>) -> SearchService {
-        return DefaultSearchService(provider: searchAPIProvider)
+        return DefaultSearchService(searchAPIProvider: makeSearchAPIProvider())
     }
 }

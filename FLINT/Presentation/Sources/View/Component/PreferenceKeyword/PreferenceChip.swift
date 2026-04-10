@@ -7,9 +7,11 @@
 
 import UIKit
 
+import Kingfisher
 import SnapKit
 import Then
-import Kingfisher
+
+import Domain
 
 public final class PreferenceChip: BaseView {
     
@@ -64,12 +66,12 @@ public final class PreferenceChip: BaseView {
 
     // MARK: - Public
 
-    public func configure(dto: KeywordDTO) {
-        style = PreferenceChipStyle.from(rank: dto.rank, color: dto.color)
+    public func configure(keyword: KeywordEntity) {
+        style = PreferenceChipStyle.from(rank: keyword.rank, color: keyword.color)
 
-        keywordLabel.attributedText = .pretendard(.head2_m_20, text: dto.name, color: .white)
+        keywordLabel.attributedText = .pretendard(.head2_m_20, text: keyword.name, color: .white)
 
-        applyResizableBackground(style.backgroundImage(for: dto.color))
+        applyResizableBackground(style.backgroundImage(for: keyword.color))
 
         contentStackView.spacing = style.spacing
         iconImageView.isHidden = (style.iconSize == 0)
@@ -78,15 +80,11 @@ public final class PreferenceChip: BaseView {
             iconImageView.kf.cancelDownloadTask()
             iconImageView.image = nil
         } else {
-            if let url = URL(string: dto.imageUrl) {
-                iconImageView.kf.setImage(
-                    with: url,
-                    placeholder: nil,
-                    options: [.transition(.fade(0.15)), .cacheOriginalImage]
-                )
-            } else {
-                iconImageView.image = nil
-            }
+            iconImageView.kf.setImage(
+                with: keyword.imageUrl,
+                placeholder: nil,
+                options: [.transition(.fade(0.15)), .cacheOriginalImage]
+            )
         }
 
         invalidateIntrinsicContentSize()

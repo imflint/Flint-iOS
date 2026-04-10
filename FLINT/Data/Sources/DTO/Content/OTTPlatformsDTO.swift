@@ -1,5 +1,5 @@
 //
-//  FetchOTTPlatformsDTO.swift
+//  OTTPlatformsDTO.swift
 //  Data
 //
 //  Created by 소은 on 1/21/26.
@@ -34,10 +34,10 @@ extension OTTPlatformsDTO.OTTPlatformDTO {
     public var entity: OTTPlatformEntity {
         get throws {
             return try OTTPlatformEntity(
-                ottId: unwrap(ottId, key: CodingKeys.ottId),
+                ottId: unwrap(ottId),
                 name: name ?? "",
-                logoUrl: logoUrl ?? "",
-                contentUrl: contentUrl ?? ""
+                logoUrl: URL(string: logoUrl ?? ""),
+                contentUrl: URL(string: contentUrl ?? "")
             )
         }
     }

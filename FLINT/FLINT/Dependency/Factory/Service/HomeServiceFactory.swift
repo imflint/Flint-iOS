@@ -7,20 +7,14 @@
 
 import Foundation
 
-import Moya
-
 import Data
 
-protocol HomeServiceFactory: HomeAPIFactory {
+protocol HomeServiceFactory: HomeAPIProviderFactory {
     func makeHomeService() -> HomeService
-    func makeHomeService(homeAPIProvider: MoyaProvider<HomeAPI>) -> HomeService
 }
 
 extension HomeServiceFactory {
     func makeHomeService() -> HomeService {
-        return makeHomeService(homeAPIProvider: makeHomeAPIProvider())
-    }
-    func makeHomeService(homeAPIProvider: MoyaProvider<HomeAPI>) -> HomeService {
-        return DefaultHomeService(provider: homeAPIProvider)
+        return DefaultHomeService(homeAPIProvider: makeHomeAPIProvider())
     }
 }

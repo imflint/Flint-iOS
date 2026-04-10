@@ -71,22 +71,16 @@ extension OttSelectViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OnboardingOttCollectionViewCell.reuseIdentifier, for: indexPath) as? OnboardingOttCollectionViewCell else {
-            return UICollectionViewCell()
-        }
+        let cell = collectionView.dequeueReusableCell(OnboardingOttCollectionViewCell.self, for: indexPath)
+        
         guard let ott = Ott(rawValue: indexPath.item) else {
             return cell
         }
-        
         let isSelectedOtt = onboardingViewModel.selectedOtt.value.contains(where: {
             $0 == ott
         })
+        cell.configure(ott: ott, isSelected: isSelectedOtt)
         
-        cell.overlayView.isHidden = !isSelectedOtt
-        cell.titleLabel.textColor = isSelectedOtt ? DesignSystem.Color.gray300 : DesignSystem.Color.white
-        
-        cell.imageView.image = ott.logo
-        cell.titleLabel.attributedText = .pretendard(.body1_m_16, text: ott.korTitle, alignment: .center)
         return cell
     }
 }

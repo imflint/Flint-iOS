@@ -8,29 +8,38 @@
 import Foundation
 
 import Entity
-// Data 모듈
 
 public struct KeywordsDTO: Codable {
     public let keywords: [KeywordDTO]?
 }
 
-public struct KeywordDTO: Codable {
-    public let color: String?
-    public let rank: Int?
-    public let name: String?
-    public let percentage: Int?
-    public let imageUrl: String?
+extension KeywordsDTO {
+    public struct KeywordDTO: Codable {
+        public let color: String?
+        public let rank: Int?
+        public let name: String?
+        public let percentage: Int?
+        public let imageUrl: String?
+    }
 }
 
-extension KeywordDTO {
+extension KeywordsDTO {
+    public var entities: [KeywordEntity] {
+        get throws {
+            return try keywords?.map { try $0.entity } ?? []
+        }
+    }
+}
+
+extension KeywordsDTO.KeywordDTO {
     public var entity: KeywordEntity {
         get throws {
             return try KeywordEntity(
-                color: color ?? "",
-                rank: unwrap(rank, key: CodingKeys.rank),
+                color: unwrap(KeywordColor(rawValue: color ?? "")),
+                rank: unwrap(rank),
                 name: name ?? "",
                 percentage: percentage ?? 0,
-                imageUrl: imageUrl ?? ""
+                imageUrl: URL(string: imageUrl ?? "")
             )
         }
     }

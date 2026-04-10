@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ContentEntity.swift
 //  Domain
 //
 //  Created by 김호성 on 2026.01.22.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ContentEntity: Equatable {
+public struct ContentEntity: Identifiable, Hashable, Sendable {
     public let id: String
     public let title: String
     public let author: String

@@ -1,5 +1,5 @@
 //
-//  SearchContentsService.swift
+//  SearchService.swift
 //  Data
 //
 //  Created by 소은 on 1/20/26.
@@ -11,26 +11,23 @@ import Foundation
 import CombineMoya
 import Moya
 
-import Domain
-
 import DTO
 
 public protocol SearchService {
-    func searchContents(_ keyword: String?) -> AnyPublisher<SearchContentsDTO, Error>
+    func searchContents(keyword: String?) -> AnyPublisher<SearchContentsDTO, Error>
 }
 
 public final class DefaultSearchService: SearchService {
     
-    private let provider: MoyaProvider<SearchAPI>
+    private let searchAPIProvider: MoyaProvider<SearchAPI>
     
-    public init(provider: MoyaProvider<SearchAPI>) {
-        self.provider = provider
+    public init(searchAPIProvider: MoyaProvider<SearchAPI>) {
+        self.searchAPIProvider = searchAPIProvider
     }
     
-    public func searchContents(_ keyword: String?) -> AnyPublisher<SearchContentsDTO, Error> {
-        provider.requestPublisher(.searchContents(keyword))
-            .extractData(SearchContentsDTO.self)
-            .eraseToAnyPublisher()
+    public func searchContents(keyword: String?) -> AnyPublisher<SearchContentsDTO, Error> {
+        return searchAPIProvider.requestPublisher(.searchContents(keyword: keyword))
+            .mapBaseResponseData(SearchContentsDTO.self)
     }
 }
 

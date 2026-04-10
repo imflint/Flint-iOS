@@ -10,24 +10,12 @@ import Foundation
 import Domain
 import Presentation
 
-protocol ProfileViewModelFactory: UserProfileUseCaseFactory {
-    func makeProfileViewModel() -> ProfileViewModel
-    func makeProfileViewModel(
-            target: ProfileViewModel.Target
-        ) -> ProfileViewModel
+protocol ProfileViewModelFactory: FetchProfileUseCaseFactory, FetchKeywordsUseCaseFactory, FetchCreatedCollectionsUseCaseFactory, FetchBookmarkedCollectionsUseCaseFactory, FetchBookmarkedContentsUseCaseFactory {
+    func makeProfileViewModel(target: UserTarget) -> ProfileViewModel
 }
 
 extension ProfileViewModelFactory {
-    func makeProfileViewModel() -> ProfileViewModel {
-        return makeProfileViewModel(target: .me)
-    }
-    
-    func makeProfileViewModel(
-        target: ProfileViewModel.Target
-    ) -> ProfileViewModel {
-        return ProfileViewModel(
-            target: target,
-            userProfileUseCase: makeUserProfileUseCase()
-        )
+    func makeProfileViewModel(target: UserTarget) -> ProfileViewModel {
+        return ProfileViewModel(target: target, fetchProfileUseCase: makeFetchProfileUseCase(), fetchKeywordsUseCase: makeFetchKeywordsUseCase(), fetchCreatedCollectionsUseCase: makeFetchCreatedCollectionsUseCase(), fetchBookmarkedCollectionsUseCase: makeFetchBookmarkedCollectionsUseCase(), fetchBookmarkedContentsUseCase: makeFetchBookmarkedContentsUseCase())
     }
 }

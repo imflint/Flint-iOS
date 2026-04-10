@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Unwrap.swift
 //  Data
 //
 //  Created by 김호성 on 2026.01.21.
@@ -21,12 +21,11 @@ public enum DTOMappingError: Error, LocalizedError {
     }
 }
 
-public func unwrap<T>(
-    _ value: T?,
-    key: CodingKey? = nil
-) throws -> T {
-    guard let value else {
-        throw DTOMappingError.missingField(key?.stringValue)
+extension Decodable {
+    public func unwrap<T>(_ value: T?) throws -> T {
+        guard let value else {
+            throw DTOMappingError.missingField("\(self)")
+        }
+        return value
     }
-    return value
 }

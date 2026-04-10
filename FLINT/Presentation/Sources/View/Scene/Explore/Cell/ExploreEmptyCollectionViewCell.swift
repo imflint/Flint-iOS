@@ -14,7 +14,7 @@ public final class ExploreEmptyCollectionViewCell: BaseCollectionViewCell {
     
     // MARK: - Component
     
-    public let collectionDetailButton = FlintButton(style: .able, title: "컬렉션 만들러 가기")
+    public let createCollectionButton = FlintButton(style: .able, title: "컬렉션 만들러 가기")
     
     public let wrapperView = UIView()
     
@@ -64,7 +64,7 @@ public final class ExploreEmptyCollectionViewCell: BaseCollectionViewCell {
     
     public override func setHierarchy() {
         contentView.addSubviews(
-            collectionDetailButton,
+            createCollectionButton,
             wrapperView,
         )
         wrapperView.addSubview(mainStackView)
@@ -79,18 +79,22 @@ public final class ExploreEmptyCollectionViewCell: BaseCollectionViewCell {
     }
     
     public override func setLayout() {
-        collectionDetailButton.snp.makeConstraints {
+        createCollectionButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(32)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(48)
         }
         wrapperView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview()
-            $0.bottom.equalTo(collectionDetailButton.snp.top)
+            $0.bottom.equalTo(createCollectionButton.snp.top)
         }
         mainStackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.centerY.equalToSuperview()
         }
+    }
+    
+    public override func prepare() {
+        createCollectionButton.removeTarget(nil, action: nil, for: .allEvents)
     }
 }

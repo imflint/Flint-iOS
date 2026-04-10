@@ -7,19 +7,14 @@
 
 import Foundation
 
-import Domain
 import Presentation
 
-protocol CollectionFolderListViewModelFactory: FetchWatchingCollectionsUseCaseFactory {
+protocol CollectionFolderListViewModelFactory: FetchRecentViewedCollectionsUseCaseFactory {
     func makeCollectionFolderListViewModel() -> CollectionFolderListViewModel
-    func makeCollectionFolderListViewModel(fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase) -> CollectionFolderListViewModel
 }
 
 extension CollectionFolderListViewModelFactory {
     func makeCollectionFolderListViewModel() -> CollectionFolderListViewModel {
-        return makeCollectionFolderListViewModel(fetchWatchingCollectionsUseCase: makeFetchWatchingCollectionsUseCase())
-    }
-    func makeCollectionFolderListViewModel(fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase) -> CollectionFolderListViewModel {
-        return CollectionFolderListViewModel(fetchWatchingCollectionsUseCase: fetchWatchingCollectionsUseCase)
+        return CollectionFolderListViewModel(fetchRecentViewedCollectionsUseCase: makeFetchRecentViewedCollectionsUseCase())
     }
 }

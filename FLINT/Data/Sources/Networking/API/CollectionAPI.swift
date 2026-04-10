@@ -7,48 +7,41 @@
 
 import Foundation
 
-import Domain
-
 import Moya
 
+import Domain
+
 public enum CollectionAPI {
-    case fetchCollections(cursor: UInt?, size: Int)
-    case createCollection(_ request: CreateCollectionEntity)
+    case fetchCollections(cursor: Int64?, size: Int32)
+    case createCollection(collectionInfo: CreateCollectionEntity)
     case fetchCollectionDetail(collectionId: Int64)
-    case fetchWatchingCollections
+    case fetchRecentViewedCollections
 }
 
 extension CollectionAPI: TargetType {
-    
     public var path: String {
         switch self {
-        case .fetchCollections:
-            return "/api/v1/collections"
-        case .createCollection:
+        case .fetchCollections, .createCollection:
             return "/api/v1/collections"
         case let .fetchCollectionDetail(collectionId):
             return "/api/v1/collections/\(collectionId)"
-        case let .fetchWatchingCollections:
+        case .fetchRecentViewedCollections:
             return "/api/v1/collections/recent"
         }
     }
     
     public var method: Moya.Method {
         switch self {
-        case .fetchCollections:
+        case .fetchCollections, .fetchCollectionDetail, .fetchRecentViewedCollections:
             return .get
         case .createCollection:
             return .post
-        case .fetchCollectionDetail:
-            return .get
-        case .fetchWatchingCollections:
-            return .get
         }
     }
     
     public var task: Moya.Task {
         switch self {
-        case .fetchCollections(let cursor, let size):
+        case let .fetchCollections(cursor, size):
             var parameters: [String: Any] = [
                 "size": size,
             ]
@@ -59,13 +52,10 @@ extension CollectionAPI: TargetType {
                 parameters: parameters,
                 encoding: URLEncoding.queryString
             )
-        case .createCollection(let request):
-            return .requestJSONEncodable(request)
-        case .fetchCollectionDetail:
-            return .requestPlain
-        case .fetchWatchingCollections:
+        case let .createCollection(collectionInfo):
+            return .requestJSONEncodable(collectionInfo)
+        case .fetchCollectionDetail, .fetchRecentViewedCollections:
             return .requestPlain
         }
     }
 }
-

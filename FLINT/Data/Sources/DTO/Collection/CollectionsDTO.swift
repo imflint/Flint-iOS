@@ -1,61 +1,22 @@
 //
-//  File.swift
+//  HomeRecommendedCollectionsDTO.swift
 //  Data
 //
-//  Created by 김호성 on 2026.01.22.
+//  Created by 소은 on 1/20/26.
 //
 
 import Foundation
 
-import Domain
+import Entity
 
 public struct CollectionsDTO: Codable {
-    public let data: [CollectionDTO]?
-    public let meta: CollectionsMetaDTO?
-    
-    public init(data: [CollectionDTO]?, meta: CollectionsMetaDTO?) {
-        self.data = data
-        self.meta = meta
-    }
+    public let collections: [CollectionDTO]?
 }
 
 extension CollectionsDTO {
-    public struct CollectionDTO: Codable {
-        public let collectionId: String?
-        public let imageUrl: String?
-        public let contentTitle: String?
-        public let contentDescription: String?
-    }
-}
-
-extension CollectionsDTO {
-    public struct CollectionsMetaDTO: Codable {
-        public let type: String?
-        public let returned: Int?
-        public let nextCursor: String?
-    }
-}
-
-extension CollectionsDTO {
-    public var entity: CollectionPagingEntity {
+    public var entities: [CollectionEntity] {
         get throws {
-            return try CollectionPagingEntity(
-                collections: data?.map({ try $0.entity }) ?? [],
-                cursor: unwrap(UInt(unwrap(meta?.nextCursor)))
-            )
-        }
-    }
-}
-
-extension CollectionsDTO.CollectionDTO {
-    public var entity: ExploreInfoEntity {
-        get throws {
-            return try ExploreInfoEntity(
-                id: unwrap(collectionId, key: CodingKeys.collectionId),
-                imageUrl: URL(string: imageUrl ?? ""),
-                title: contentTitle ?? "",
-                description: contentDescription ?? ""
-            )
+            return try collections?.map { try $0.collectionEntity } ?? []
         }
     }
 }

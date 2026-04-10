@@ -7,20 +7,14 @@
 
 import Foundation
 
-import Moya
-
 import Data
 
 protocol BookmarkServiceFactory: BookmarkAPIProviderFactory {
     func makeBookmarkService() -> BookmarkService
-    func makeBookmarkService(provider: MoyaProvider<BookmarkAPI>) -> BookmarkService
 }
 
 extension BookmarkServiceFactory {
     func makeBookmarkService() -> BookmarkService {
-        return makeBookmarkService(provider: makeBookmarkAPIProvider())
-    }
-    func makeBookmarkService(provider: MoyaProvider<BookmarkAPI>) -> BookmarkService {
-        return DefaultBookmarkService(provider: provider)
+        return DefaultBookmarkService(bookmarkAPIProvider: makeBookmarkAPIProvider())
     }
 }

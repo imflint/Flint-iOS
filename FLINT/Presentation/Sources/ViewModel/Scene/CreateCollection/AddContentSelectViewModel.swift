@@ -26,7 +26,7 @@ public final class DefaultAddContentSelectViewModel: AddContentSelectViewModel {
 
     // MARK: - Dependency
 
-    private let contentsUseCase: ContentsUseCase
+    private let fetchPopularContentsUseCase: FetchPopularContentsUseCase
     private let searchContentsUseCase: SearchContentsUseCase
 
     // MARK: - Output
@@ -42,10 +42,10 @@ public final class DefaultAddContentSelectViewModel: AddContentSelectViewModel {
     // MARK: - Init
 
     public init(
-        contentsUseCase: ContentsUseCase,
+        fetchPopularContentsUseCase: FetchPopularContentsUseCase,
         searchContentsUseCase: SearchContentsUseCase
     ) {
-        self.contentsUseCase = contentsUseCase
+        self.fetchPopularContentsUseCase = fetchPopularContentsUseCase
         self.searchContentsUseCase = searchContentsUseCase
         bind()
     }
@@ -59,7 +59,7 @@ public final class DefaultAddContentSelectViewModel: AddContentSelectViewModel {
     public func fetchContents() {
         isSearching.send(false)
 
-        contentsUseCase.fetchContents()
+        fetchPopularContentsUseCase()
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.results.send(contents)
@@ -89,7 +89,7 @@ public extension DefaultAddContentSelectViewModel {
 
         isSearching.send(true)
 
-        searchContentsUseCase.searchContents(keyword)
+        searchContentsUseCase(keyword: keyword)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.results.send(contents)

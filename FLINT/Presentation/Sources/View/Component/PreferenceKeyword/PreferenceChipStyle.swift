@@ -8,6 +8,8 @@
 import Foundation
 import UIKit
 
+import Domain
+
 public enum PreferenceChipStyle {
     case colored(KeywordColor)
     case gray

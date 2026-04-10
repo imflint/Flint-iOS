@@ -35,10 +35,7 @@ public extension CreateCollectionEntity {
         public let isSpoiler: Bool
         public let reason: String
         
-        public init(contentId: Int64,
-                    isSpoiler: Bool,
-                    reason: String
-        ) {
+        public init(contentId: Int64, isSpoiler: Bool, reason: String) {
             self.contentId = contentId
             self.isSpoiler = isSpoiler
             self.reason = reason

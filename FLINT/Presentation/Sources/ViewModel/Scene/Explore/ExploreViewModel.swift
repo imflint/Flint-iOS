@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ExploreViewModel.swift
 //  Presentation
 //
 //  Created by 김호성 on 2026.01.22.
@@ -17,23 +17,23 @@ public protocol ExploreViewModelInput {
 public protocol ExploreViewModelOutput {
     var index: CurrentValueSubject<Int, Never> { get }
     var collections: CurrentValueSubject<[ExploreInfoEntity], Never> { get }
-    var cursor: UInt? { get set }
+    var cursor: CurrentValueSubject<Int64?, Never> { get set }
 }
 
 public typealias ExploreViewModel = ExploreViewModelInput & ExploreViewModelOutput
 
 public final class DefaultExploreViewModel: ExploreViewModel {
     
-    private let exploreUseCase: ExploreUseCase
+    private let fetchExploreCollectionsUseCase: FetchExploreCollectionsUseCase
     
     public var index: CurrentValueSubject<Int, Never> = .init(0)
     public var collections: CurrentValueSubject<[ExploreInfoEntity], Never> = .init([])
-    public var cursor: UInt?
+    public var cursor: CurrentValueSubject<Int64?, Never> = .init(nil)
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
-    public init(exploreUseCase: ExploreUseCase) {
-        self.exploreUseCase = exploreUseCase
+    public init(fetchExploreCollectionsUseCase: FetchExploreCollectionsUseCase) {
+        self.fetchExploreCollectionsUseCase = fetchExploreCollectionsUseCase
         bind()
         fetchCollections()
     }
@@ -44,8 +44,8 @@ public final class DefaultExploreViewModel: ExploreViewModel {
     
     private func bind() {
         index.sink { [weak self] index in
-            guard let self else { return }
-            if index > collections.value.count - 3 {
+            guard let self, let _ = cursor.value else { return }
+            if index > collections.value.count - 5 {
                 fetchCollections()
             }
         }
@@ -53,12 +53,12 @@ public final class DefaultExploreViewModel: ExploreViewModel {
     }
     
     private func fetchCollections() {
-        exploreUseCase.fetchExplore(cursor: cursor)
+        fetchExploreCollectionsUseCase(cursor: cursor.value)
             .manageThread()
             .sinkHandledCompletion { [weak self] collectionPagingEntity in
                 guard let self else { return }
                 collections.value.append(contentsOf: collectionPagingEntity.collections)
-                cursor = collectionPagingEntity.cursor
+                cursor.send(collectionPagingEntity.cursor)
             }
             .store(in: &cancellables)
     }

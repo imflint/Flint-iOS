@@ -22,6 +22,8 @@ public final class ExploreView: BaseView {
             $0.minimumLineSpacing = 0
         }
     ).then {
+        $0.register(ExploreCollectionViewCell.self)
+        $0.register(ExploreEmptyCollectionViewCell.self)
         $0.backgroundColor = .clear
         $0.contentInsetAdjustmentBehavior = .never
         $0.isPagingEnabled = true

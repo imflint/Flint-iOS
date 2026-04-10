@@ -34,7 +34,7 @@
 		B0E5932E2F0A427C009D7980 /* Exceptions for "FLINT" folder in "FLINT" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Application/Info.plist,
 			);
 			target = B0E5931B2F0A427A009D7980 /* FLINT */;
 		};
@@ -309,7 +309,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7673J645BX;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FLINT/Info.plist;
+				INFOPLIST_FILE = FLINT/Application/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flint에서 이미지를 등록하려면 사진 접근 권한이 필요해요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -346,7 +346,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7673J645BX;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FLINT/Info.plist;
+				INFOPLIST_FILE = FLINT/Application/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flint에서 이미지를 등록하려면 사진 접근 권한이 필요해요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;

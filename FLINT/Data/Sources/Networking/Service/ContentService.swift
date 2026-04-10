@@ -4,31 +4,36 @@
 //
 //  Created by 소은 on 1/21/26.
 //
+
 import Combine
 import Foundation
 
 import CombineMoya
 import Moya
 
-import Domain
-
 import DTO
 
 public protocol ContentService {
-    func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<OTTPlatformsDTO, Error>
+    func fetchMyBookmarkedContents() -> AnyPublisher<ContentsDTO, Error>
+    func fetchOTTPlatformsForContent(contentId: Int64) -> AnyPublisher<OTTPlatformsDTO, Error>
 }
 
 public final class DefaultContentService: ContentService {
 
-    private let provider: MoyaProvider<ContentAPI>
+    private let contentAPIProvider: MoyaProvider<ContentAPI>
 
-    public init(provider: MoyaProvider<ContentAPI>) {
-        self.provider = provider
+    public init(contentAPIProvider: MoyaProvider<ContentAPI>) {
+        self.contentAPIProvider = contentAPIProvider
     }
-
-    public func fetchOTTPlatforms(_ contentId: Int64) -> AnyPublisher<OTTPlatformsDTO, Error> {
-        return provider.requestPublisher(.fetchOTTPlatforms(contentId))
-            .extractData(OTTPlatformsDTO.self)
+    
+    public func fetchMyBookmarkedContents() -> AnyPublisher<ContentsDTO, Error> {
+        return contentAPIProvider.requestPublisher(.fetchMyBookmarkedContents)
+            .mapBaseResponseData(ContentsDTO.self)
+    }
+    
+    public func fetchOTTPlatformsForContent(contentId: Int64) -> AnyPublisher<OTTPlatformsDTO, Error> {
+        return contentAPIProvider.requestPublisher(.fetchOTTPlatformsForContent(contentId: contentId))
+            .mapBaseResponseData(OTTPlatformsDTO.self)
     }
 }
 

@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 import Then
 
+import Domain
+
 public final class OTTListView: BaseView {
     
     public static let rowHeight: CGFloat = 48

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  SignupDTO.swift
 //  Data
 //
 //  Created by 김호성 on 2026.01.21.
@@ -19,16 +19,16 @@ extension SignupDTO {
     public var loginEntity: LoginEntity {
         get throws {
             return try LoginEntity(
-                accessToken: unwrap(accessToken, key: CodingKeys.accessToken),
-                refreshToken: unwrap(refreshToken, key: CodingKeys.refreshToken),
-                userId: unwrap(userId, key: CodingKeys.userId)
+                accessToken: unwrap(accessToken),
+                refreshToken: unwrap(refreshToken),
+                userId: unwrap(userId)
             )
         }
     }
     
     public var userIdValue: String {
         get throws {
-            return try unwrap(userId, key: CodingKeys.userId)
+            return try unwrap(userId)
         }
     }
 }

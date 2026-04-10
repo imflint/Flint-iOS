@@ -1,5 +1,5 @@
 //
-//  SearchContentsAPI.swift
+//  SearchAPI.swift
 //  Data
 //
 //  Created by 소은 on 1/20/26.
@@ -9,14 +9,12 @@ import Foundation
 
 import Moya
 
-import Domain
-
 public enum SearchAPI {
-    case searchContents(_ keyword: String?)
+    /// keyword가 nil인 경우 인기 순 작품 리스트를 받는다.
+    case searchContents(keyword: String?)
 }
 
 extension SearchAPI: TargetType {
-    
     public var path: String {
         switch self {
         case .searchContents:
@@ -33,7 +31,7 @@ extension SearchAPI: TargetType {
     
     public var task: Moya.Task {
         switch self {
-        case .searchContents(let keyword):
+        case let .searchContents(keyword):
             var parameters: [String: Any] = [:]
             if let keyword {
                 parameters["keyword"] = keyword

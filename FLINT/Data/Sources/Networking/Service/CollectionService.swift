@@ -16,46 +16,36 @@ import Domain
 import DTO
 
 public protocol CollectionService {
-    func fetchCollections(cursor: UInt?, size: Int) -> AnyPublisher<CollectionsDTO, Error>
-    func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error>
-    func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailDTO.DataDTO, Error>
-    func fetchWatchingCollections() -> AnyPublisher<WatchingCollectionsDTO, Error>
+    func fetchCollections(cursor: Int64?, size: Int32) -> AnyPublisher<PagedCollectionsDTO, Error>
+    func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<CreateCollectionDTO, Error>
+    func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailDTO, Error>
+    func fetchRecentViewedCollections() -> AnyPublisher<CollectionsDTO, Error>
 }
 
 public final class DefaultCollectionService: CollectionService {
-    private let provider: MoyaProvider<CollectionAPI>
+    private let collectionAPIProvider: MoyaProvider<CollectionAPI>
     
-    public init(provider: MoyaProvider<CollectionAPI>) {
-        self.provider = provider
+    public init(collectionAPIProvider: MoyaProvider<CollectionAPI>) {
+        self.collectionAPIProvider = collectionAPIProvider
     }
     
-    public func fetchCollections(cursor: UInt?, size: Int) -> AnyPublisher<CollectionsDTO, Error> {
-        return provider.requestPublisher(.fetchCollections(cursor: cursor, size: size))
-            .extractData(CollectionsDTO.self)
+    public func fetchCollections(cursor: Int64?, size: Int32) -> AnyPublisher<PagedCollectionsDTO, Error> {
+        return collectionAPIProvider.requestPublisher(.fetchCollections(cursor: cursor, size: size))
+            .mapBaseResponseData(PagedCollectionsDTO.self)
     }
     
-    public func createCollection(_ entity: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
-        return provider.requestPublisher(.createCollection(entity))
-            .handleEvents(receiveOutput: { response in
-                if response.statusCode == 404 {
-                    let body = String(data: response.data, encoding: .utf8) ?? ""
-                    print("404 body:", body)
-                }
-            })
-            .eraseToAnyPublisher() 
-            .extractData(CreateCollectionResponseDTO.self)
-            .map { _ in () }
-            .eraseToAnyPublisher()
+    public func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<CreateCollectionDTO, Error> {
+        return collectionAPIProvider.requestPublisher(.createCollection(collectionInfo: collectionInfo))
+            .mapBaseResponseData(CreateCollectionDTO.self)
     }
     
-    public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailDTO.DataDTO, Error> {
-        provider.requestPublisher(.fetchCollectionDetail(collectionId: collectionId))
-            .extractData(CollectionDetailDTO.DataDTO.self)
+    public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailDTO, Error> {
+        return collectionAPIProvider.requestPublisher(.fetchCollectionDetail(collectionId: collectionId))
+            .mapBaseResponseData(CollectionDetailDTO.self)
     }
     
-    public func fetchWatchingCollections() -> AnyPublisher<WatchingCollectionsDTO, Error> {
-        return provider.requestPublisher(.fetchWatchingCollections)
-            .extractData(WatchingCollectionsDTO.self)
-            .eraseToAnyPublisher()
+    public func fetchRecentViewedCollections() -> AnyPublisher<CollectionsDTO, Error> {
+        return collectionAPIProvider.requestPublisher(.fetchRecentViewedCollections)
+            .mapBaseResponseData(CollectionsDTO.self)
     }
 }

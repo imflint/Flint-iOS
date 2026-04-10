@@ -88,14 +88,14 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
 
     public func configure(
         nickname: String = "",
-        profileImageUrl: String? = nil,
+        profileImageUrl: URL? = nil,
         isFliner: Bool = false
     ) {
         nameLabel.attributedText = .pretendard(.display2_m_28, text: nickname)
         verificationBadge.isHidden = !isFliner
 
         let placeholder = UIImage(resource: .imgProfileGray)
-        guard let urlString = profileImageUrl, let url = URL(string: urlString) else {
+        guard let url = profileImageUrl else {
             profileImageView.image = placeholder
             return
         }

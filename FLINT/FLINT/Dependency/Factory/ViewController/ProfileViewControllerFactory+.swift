@@ -7,6 +7,7 @@
 
 import Foundation
 
+import Domain
 import Presentation
 
 extension ProfileViewControllerFactory where Self: ProfileViewModelFactory & ViewControllerFactory {
@@ -15,7 +16,7 @@ extension ProfileViewControllerFactory where Self: ProfileViewModelFactory & Vie
     }
 
     func makeProfileViewController(
-        target: ProfileViewModel.Target = .me
+        target: UserTarget = .me
     ) -> ProfileViewController {
         return ProfileViewController(
             profileViewModel: makeProfileViewModel(target: target),

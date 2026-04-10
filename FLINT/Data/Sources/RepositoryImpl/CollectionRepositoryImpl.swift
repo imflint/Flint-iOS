@@ -1,0 +1,47 @@
+//
+//  CollectionRepositoryImpl.swift
+//  Data
+//
+//  Created by 소은 on 1/20/26.
+//
+
+import Combine
+import Foundation
+
+import Domain
+
+import DTO
+import Networking
+
+public final class DefaultCollectionRepository: CollectionRepository {
+    
+    private let collectionService: CollectionService
+    
+    public init(collectionService: CollectionService) {
+        self.collectionService = collectionService
+    }
+    
+    public func fetchCollections(cursor: Int64?, size: Int32) -> AnyPublisher<CollectionPagingEntity, Error> {
+        return collectionService.fetchCollections(cursor: cursor, size: size)
+            .tryMap({ try $0.entity })
+            .eraseToAnyPublisher()
+    }
+    
+    public func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<Int64, Error> {
+        return collectionService.createCollection(collectionInfo: collectionInfo)
+            .tryMap { try $0.createdCollectionId }
+            .eraseToAnyPublisher()
+    }
+    
+    public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error> {
+        return collectionService.fetchCollectionDetail(collectionId: collectionId)
+            .tryMap { try $0.entity }
+            .eraseToAnyPublisher()
+    }
+    
+    public func fetchRecentViewedCollections() -> AnyPublisher<[CollectionEntity], Error> {
+        return collectionService.fetchRecentViewedCollections()
+            .tryMap { try $0.entities }
+            .eraseToAnyPublisher()
+    }
+}

@@ -5,25 +5,26 @@
 //  Created by 진소은 on 1/19/26.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 import SnapKit
 import Then
 
 import Domain
+
 import View
 import ViewModel
 
 public protocol ProfileViewControllerFactory {
     func makeProfileViewController() -> ProfileViewController
-    func makeProfileViewController(target: ProfileViewModel.Target) -> ProfileViewController
+    func makeProfileViewController(target: UserTarget) -> ProfileViewController
 }
 
 public final class ProfileViewController: BaseViewController<ProfileView> {
     
-    
     private let profileViewModel: ProfileViewModel
+    
     public init(
         profileViewModel: ProfileViewModel,
         viewControllerFactory: ViewControllerFactory,
@@ -32,10 +33,10 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         super.init(nibName: nil, bundle: nil)
         self.viewControllerFactory = viewControllerFactory
     }
-
     
-    @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,26 +57,11 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         tableView.dataSource = self
         tableView.delegate = self
         
-        tableView.register(
-            ProfileHeaderTableViewCell.self,
-            forCellReuseIdentifier: ProfileHeaderTableViewCell.reuseIdentifier
-        )
-        tableView.register(
-            PreferenceRankedChipTableViewCell.self,
-            forCellReuseIdentifier: PreferenceRankedChipTableViewCell.reuseIdentifier
-        )
-        tableView.register(
-            TitleHeaderTableViewCell.self,
-            forCellReuseIdentifier: TitleHeaderTableViewCell.reuseIdentifier
-        )
-        tableView.register(
-            MoreNoMoreCollectionTableViewCell.self,
-            forCellReuseIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier
-        )
-        tableView.register(
-            RecentSavedContentTableViewCell.self,
-            forCellReuseIdentifier: RecentSavedContentTableViewCell.reuseIdentifier
-        )
+        tableView.register(ProfileHeaderTableViewCell.self)
+        tableView.register(PreferenceRankedChipTableViewCell.self)
+        tableView.register(TitleHeaderTableViewCell.self)
+        tableView.register(MoreNoMoreCollectionTableViewCell.self)
+        tableView.register(RecentSavedContentTableViewCell.self)
     }
     
     public override func bind() {
@@ -146,63 +132,43 @@ extension ProfileViewController: UITableViewDataSource {
 
         switch row {
         case let .profileHeader(nickname, profileImageUrl, isFliner):
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: ProfileHeaderTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! ProfileHeaderTableViewCell
+            let cell = tableView.dequeueReusableCell(ProfileHeaderTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(nickname: nickname, profileImageUrl: profileImageUrl, isFliner: isFliner)
             return cell
 
         case let .preferenceChips(keywords):
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: PreferenceRankedChipTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! PreferenceRankedChipTableViewCell
+            let cell = tableView.dequeueReusableCell(PreferenceRankedChipTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
-            cell.configure(entities: keywords)
+            cell.configure(keywords: keywords)
             return cell
 
         case let .titleHeader(style, title, subtitle):
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: TitleHeaderTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! TitleHeaderTableViewCell
+            let cell = tableView.dequeueReusableCell(TitleHeaderTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(style: map(style), title: title, subtitle: subtitle)
             return cell
 
         case let .myCollections(items):
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! MoreNoMoreCollectionTableViewCell
+            let cell = tableView.dequeueReusableCell(MoreNoMoreCollectionTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
-
             cell.configure(items: items)
-
             cell.onSelectItem = { entity in
                 print("컬렉션 선택:", entity.id)
             }
             return cell
 
         case let .savedCollections(items):
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: MoreNoMoreCollectionTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! MoreNoMoreCollectionTableViewCell
+            let cell = tableView.dequeueReusableCell(MoreNoMoreCollectionTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
-
             cell.configure(items: items)
-
             cell.onSelectItem = { entity in
                 print("저장 컬렉션 선택:", entity.id)
             }
             return cell
             
         case let .savedContents(items):
-            let cell = tableView.dequeueReusableCell(withIdentifier: RecentSavedContentTableViewCell.reuseIdentifier,
-                                                     for: indexPath) as! RecentSavedContentTableViewCell
+            let cell = tableView.dequeueReusableCell(RecentSavedContentTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(items: items)
             cell.onTapItem = { [weak self] content in

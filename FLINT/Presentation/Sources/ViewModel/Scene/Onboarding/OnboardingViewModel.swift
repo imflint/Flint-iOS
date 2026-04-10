@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  OnboardingViewModel.swift
 //  Presentation
 //
 //  Created by 김호성 on 2026.01.20.
@@ -14,11 +14,11 @@ public protocol OnboardingViewModelInput {
     // nickname
     func checkNickname(_ nickname: String)
     
-    // film select
-    func fetchContents()
+    // content select
+    func fetchPopularContents()
     func searchContents(_ keyword: String)
     func clickContent(_ content: ContentEntity)
-    func deleteContent(_ content: ContentEntity) 
+    func deleteContent(_ content: ContentEntity)
     
     // ott select
     func clickOtt(_ ott: Ott)
@@ -32,8 +32,8 @@ public protocol OnboardingViewModelOutput {
     var nickname: CurrentValueSubject<String, Never> { get }
     var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> { get }
     
-    // film select
-    var filmSelectQuestions: [String] { get set }
+    // content select
+    var contentSelectQuestions: [String] { get set }
     var contents: CurrentValueSubject<[ContentEntity], Never> { get set }
     var selectedContents: CurrentValueSubject<[ContentEntity], Never> { get set }
     
@@ -46,15 +46,15 @@ public typealias OnboardingViewModel = OnboardingViewModelInput & OnboardingView
 
 public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
-    private let nicknameUseCase: NicknameUseCase
-    private let contentsUseCase: ContentsUseCase
+    private let checkNicknameUseCase: CheckNicknameUseCase
+    private let fetchPopularContentsUseCase: FetchPopularContentsUseCase
     private let searchContentsUseCase: SearchContentsUseCase
     private let signupUseCase: SignupUseCase
     
     public var nickname: CurrentValueSubject<String, Never> = .init("")
     public var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
     
-    public var filmSelectQuestions: [String] = [
+    public var contentSelectQuestions: [String] = [
         "이번 달, 가장 재미있었던 작품은 무엇인가요?",
         "여러번 정주행 했던 작품은 무엇인가요?",
         "좋아하는 인물이 등장하는 작품은 무엇인가요?",
@@ -72,13 +72,13 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     public init(
-        nicknameUseCase: NicknameUseCase,
-        contentsUseCase: ContentsUseCase,
+        checkNicknameUseCase: CheckNicknameUseCase,
+        fetchPopularContentsUseCase: FetchPopularContentsUseCase,
         searchContentsUseCase: SearchContentsUseCase,
-        signupUseCase: SignupUseCase
+        signupUseCase: SignupUseCase,
     ) {
-        self.nicknameUseCase = nicknameUseCase
-        self.contentsUseCase = contentsUseCase
+        self.checkNicknameUseCase = checkNicknameUseCase
+        self.fetchPopularContentsUseCase = fetchPopularContentsUseCase
         self.searchContentsUseCase = searchContentsUseCase
         self.signupUseCase = signupUseCase
     }
@@ -88,7 +88,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
             nicknameValidState.send(.invalid)
             return
         }
-        nicknameUseCase.checkNickname(nickname)
+        checkNicknameUseCase(nickname)
             .manageThread()
             .sinkHandledCompletion(receiveValue: { [weak self] isValidNickname in
                 self?.nicknameValidState.send(isValidNickname ? .valid : .duplicate)
@@ -99,8 +99,8 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
             .store(in: &cancellables)
     }
     
-    public func fetchContents() {
-        contentsUseCase.fetchContents()
+    public func fetchPopularContents() {
+        fetchPopularContentsUseCase()
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.contents.send(contents)
@@ -109,7 +109,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func searchContents(_ keyword: String) {
-        searchContentsUseCase.searchContents(keyword)
+        searchContentsUseCase(keyword: keyword)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.contents.send(contents)
@@ -140,8 +140,8 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func signup() {
-        signupUseCase.signup(
-            SignupInfoEntity(
+        signupUseCase(
+            userInfo: SignupInfoEntity(
                 nickname: nickname.value,
                 favoriteContentIds: selectedContents.value.compactMap({ content in
                     Int(content.id)

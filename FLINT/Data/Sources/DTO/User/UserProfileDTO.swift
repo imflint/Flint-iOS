@@ -20,10 +20,10 @@ extension UserProfileDTO {
     public var entity: UserProfileEntity {
         get throws {
             return try UserProfileEntity(
-                id: unwrap(id, key: CodingKeys.id),
+                id: unwrap(id),
                 nickname: nickname ?? "",
-                profileImageUrl: profileImageUrl ?? "",
-                isFliner: isFliner ?? false
+                profileImageUrl: URL(string: profileImageUrl ?? ""),
+                role: (isFliner ?? false) ? .fliner : .unknown
             )
         }
     }

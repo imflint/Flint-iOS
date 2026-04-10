@@ -9,14 +9,11 @@ import Foundation
 
 import Moya
 
-import Domain
-
 public enum HomeAPI {
     case fetchRecommendedCollections
 }
 
 extension HomeAPI: TargetType {
-    
     public var path: String {
         switch self {
         case .fetchRecommendedCollections:

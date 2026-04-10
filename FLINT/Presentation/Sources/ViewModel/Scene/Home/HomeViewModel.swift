@@ -5,21 +5,12 @@
 //  Created by 소은 on 2026.01.23.
 //
 
-//
-//  HomeViewModel.swift
-//  Presentation
-//
-//  Created by 소은 on 2026.01.23.
-//
-
-import Foundation
 import Combine
+import Foundation
 
 import Domain
-import Entity
 
 public final class HomeViewModel {
-
     
     // MARK: - Section / Row
 
@@ -46,9 +37,10 @@ public final class HomeViewModel {
 
     // MARK: - Dependencies
 
-    private let homeUseCase: HomeUseCase
-    private let userProfileUseCase: UserProfileUseCase
-    private let fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase
+    private let fetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase
+    private let fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase
+    private let fetchProfileUseCase: FetchProfileUseCase
+    private let fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - State
@@ -61,14 +53,16 @@ public final class HomeViewModel {
     // MARK: - Init
 
     public init(
-        homeUseCase: HomeUseCase,
-        userProfileUseCase: UserProfileUseCase,
-        fetchWatchingCollectionsUseCase: FetchWatchingCollectionsUseCase,
+        fetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase,
+        fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase,
+        fetchProfileUseCase: FetchProfileUseCase,
+        fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase,
         initialUserName: String = "얀비"
     ) {
-        self.homeUseCase = homeUseCase
-        self.userProfileUseCase = userProfileUseCase
-        self.fetchWatchingCollectionsUseCase = fetchWatchingCollectionsUseCase
+        self.fetchRecommendedCollectionsUseCase = fetchRecommendedCollectionsUseCase
+        self.fetchBookmarkedContentsUseCase = fetchBookmarkedContentsUseCase
+        self.fetchProfileUseCase = fetchProfileUseCase
+        self.fetchRecentViewedCollectionsUseCase = fetchRecentViewedCollectionsUseCase
         self.userName = initialUserName
         self.sections = makeSections()
     }
@@ -77,8 +71,8 @@ public final class HomeViewModel {
 
     public func load() {
         
-        userProfileUseCase.fetchUserProfile(userId: 1)
-            .receive(on: DispatchQueue.main)
+        fetchProfileUseCase(for: .user(id: 1))
+            .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
                     print(" fetchUserProfile failed:", error)
@@ -91,8 +85,8 @@ public final class HomeViewModel {
             .store(in: &cancellables)
 
         // 1) Fliner 추천
-        homeUseCase.fetchRecommendedCollections()
-            .receive(on: DispatchQueue.main)
+        fetchRecommendedCollectionsUseCase()
+            .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
                     print("fetchRecommendedCollections failed:", error)
@@ -100,29 +94,15 @@ public final class HomeViewModel {
             } receiveValue: { [weak self] items in
                 guard let self else { return }
 
-                self.flinerCollections = items.map { info in
-                    CollectionEntity(
-                        id: info.id ?? "",
-                        thumbnailUrl: info.imageUrlString,
-                        title: info.title,
-                        description: "",
-                        imageList: [],
-                        bookmarkCount: 0,
-                        isBookmarked: false,
-                        userId: "",
-                        nickname: info.userName,
-                        profileImageUrl: info.profileImageUrlString
-                    )
-                    
-                }
+                self.flinerCollections = items
 
                 self.sections = self.makeSections()
             }
             .store(in: &cancellables)
 
         // 2) 최근 저장한 콘텐츠
-        userProfileUseCase.fetchMyBookmarkedContents()
-            .receive(on: DispatchQueue.main)
+        fetchBookmarkedContentsUseCase(for: .me)
+            .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
                     print("fetchMyBookmarkedContents failed:", error)
@@ -134,8 +114,8 @@ public final class HomeViewModel {
             }
             .store(in: &cancellables)
         
-        fetchWatchingCollectionsUseCase.fetchWatchingCollections()
-            .receive(on: DispatchQueue.main)
+        fetchRecentViewedCollectionsUseCase()
+            .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
                     print("fetchWatchingCollections failed:", error)
@@ -146,8 +126,6 @@ public final class HomeViewModel {
                 self.sections = self.makeSections()
             }
             .store(in: &cancellables)
-        
-        
     }
 
     // MARK: - Builder

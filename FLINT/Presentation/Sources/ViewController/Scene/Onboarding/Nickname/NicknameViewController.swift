@@ -165,8 +165,8 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     private func nextButtonTapped(_ action: UIAction) {
         rootView.successToast.close(animated: false)
         rootView.failureToast.close(animated: false)
-        guard let filmSelectViewController = viewControllerFactory?.makeFilmSelectViewController(onboardingViewModel: onboardingViewModel) else { return }
-        navigationController?.pushViewController(filmSelectViewController, animated: true)
+        guard let contentSelectViewController = viewControllerFactory?.makeContentSelectViewController(onboardingViewModel: onboardingViewModel) else { return }
+        navigationController?.pushViewController(contentSelectViewController, animated: true)
     }
 }
 
