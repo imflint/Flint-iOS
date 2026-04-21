@@ -38,7 +38,7 @@ public final class OnboardingDoneViewController: BaseViewController<OnboardingDo
         super.viewDidLoad()
 
         setNavigationBar(.init(left: .back))
-        rootView.startButton.addAction(UIAction(handler: completeOnboarding(_:)), for: .touchUpInside)
+        rootView.startButton.addAction(UIAction(weak: self, handler: OnboardingDoneViewController.completeOnboarding(_:)), for: .touchUpInside)
     }
     
     public override func bind() {

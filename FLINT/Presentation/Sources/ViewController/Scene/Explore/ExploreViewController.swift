@@ -120,7 +120,7 @@ extension ExploreViewController {
                 
             case .empty:
                 let cell = collectionView.dequeueReusableCell(ExploreEmptyCollectionViewCell.self, for: indexPath)
-                cell.createCollectionButton.addAction(UIAction(handler: pushCreateCollectionViewController(_:)), for: .touchUpInside)
+                cell.createCollectionButton.addAction(UIAction(weak: self, handler: ExploreViewController.pushCreateCollectionViewController(_:)), for: .touchUpInside)
                 return cell
             }
         })

@@ -44,7 +44,7 @@ public class OttSelectViewController: BaseViewController<OttSelectView> {
         rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "얀비 님이 구독 중인 OTT 서비스를 알려주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
         rootView.ottCollectionView.dataSource = self
         rootView.ottCollectionView.delegate = self
-        rootView.nextButton.addAction(UIAction(handler: pushOnboardingDoneViewController(_:)), for: .touchUpInside)
+        rootView.nextButton.addAction(UIAction(weak: self, handler: OttSelectViewController.pushOnboardingDoneViewController(_:)), for: .touchUpInside)
     }
     
     public override func bind() {

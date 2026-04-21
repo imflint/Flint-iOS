@@ -65,7 +65,7 @@ public final class NicknameView: BaseView {
     public override init(frame: CGRect) {
         super.init(frame: frame)
         
-        nicknameTextField.addAction(UIAction(handler: nicknameTextFieldEditingChanged(_:)), for: .editingChanged)
+        nicknameTextField.addAction(UIAction(weak: self, handler: NicknameView.nicknameTextFieldEditingChanged(_:)), for: .editingChanged)
     }
     
     required init?(coder: NSCoder) {

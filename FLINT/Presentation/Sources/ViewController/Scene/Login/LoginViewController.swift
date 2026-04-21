@@ -35,7 +35,7 @@ public final class LoginViewController: BaseViewController<LoginView> {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        rootView.kakaoButton.addAction(UIAction(handler: kakaoLogin(_:)), for: .touchUpInside)
+        rootView.kakaoButton.addAction(UIAction(weak: self, handler: LoginViewController.kakaoLogin(_:)), for: .touchUpInside)
     }
     
     public override func bind() {

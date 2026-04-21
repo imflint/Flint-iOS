@@ -83,7 +83,7 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         rootView.layoutIfNeeded()
         rootView.contentCollectionView.contentOffset.y = -rootView.contentCollectionView.contentInset.top
         
-        rootView.nextButton.addAction(UIAction(handler: pushOttSelectViewController(_:)), for: .touchUpInside)
+        rootView.nextButton.addAction(UIAction(weak: self, handler: ContentSelectViewController.pushOttSelectViewController(_:)), for: .touchUpInside)
     }
     
     public override func bind() {

@@ -81,9 +81,9 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     // MARK: - Private Function
     
     private func addActions() {
-        rootView.profileImageSettingView.settingButton.addAction(UIAction(handler: showProfileImageSettingAlert(_:)), for: .touchUpInside)
-        rootView.verifyButton.addAction(UIAction(handler: verifyNickname(_:)), for: .touchUpInside)
-        rootView.nextButton.addAction(UIAction(handler: nextButtonTapped(_:)), for: .touchUpInside)
+        rootView.profileImageSettingView.settingButton.addAction(UIAction(weak: self, handler: NicknameViewController.showProfileImageSettingAlert(_:)), for: .touchUpInside)
+        rootView.verifyButton.addAction(UIAction(weak: self, handler: NicknameViewController.verifyNickname(_:)), for: .touchUpInside)
+        rootView.nextButton.addAction(UIAction(weak: self, handler: NicknameViewController.nextButtonTapped(_:)), for: .touchUpInside)
     }
     
     private func showProfileImageSettingAlert(_ action: UIAction) {

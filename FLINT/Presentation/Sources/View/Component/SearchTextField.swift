@@ -80,7 +80,7 @@ public final class SearchTextField: UITextField {
     }
     
     private func setAction() {
-        actionButton.addAction(UIAction(handler: touchUpInsideActionButton(_:)), for: .touchUpInside)
+        actionButton.addAction(UIAction(weak: self, handler: SearchTextField.touchUpInsideActionButton(_:)), for: .touchUpInside)
         
         addAction(UIAction(handler: { [weak self] _ in
             self?.actionButton.setImage(.icCancel, for: .normal)
