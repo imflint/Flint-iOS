@@ -110,7 +110,7 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
         let entity = viewModel.items[indexPath.item]
 
         let firstURL = entity.imageList.first ?? entity.thumbnailUrl
-        let secondString = entity.imageList.count > 1 ? entity.imageList[1] : nil
+        //let secondString = entity.imageList.count > 1 ? entity.imageList[1] : nil
         let secondURL = entity.imageList[safe: 1]
         let profileURL = entity.user.profileImageUrl
 
