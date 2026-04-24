@@ -35,7 +35,7 @@ public final class FlintTextField: UITextField {
         attributedText = .pretendard(.body1_r_16, text: text ?? "")
         attributedPlaceholder = .pretendard(.body1_r_16, text: placeholder, color: .flintGray300)
         
-        addAction(UIAction(handler: updateLengthLabel(_:)), for: .editingChanged)
+        addAction(UIAction(weak: self, handler: FlintTextField.updateLengthLabel(_:)), for: .editingChanged)
         lengthLabel.isHidden = !showLength || maxLength == nil
         
         onLengthChanged?(text?.count ?? 0, maxLength ?? 0)
