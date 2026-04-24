@@ -35,7 +35,7 @@ public final class ExploreCollectionViewCell: BaseCollectionViewCell {
     }
     public let collectionDescriptionLabel = UILabel().then {
         $0.textColor = .flintWhite
-        $0.numberOfLines = 8
+        $0.numberOfLines = 4
     }
     
     // MARK: - Basic
