@@ -110,7 +110,6 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
         let entity = viewModel.items[indexPath.item]
 
         let firstURL = entity.imageList.first ?? entity.thumbnailUrl
-        //let secondString = entity.imageList.count > 1 ? entity.imageList[1] : nil
         let secondURL = entity.imageList[safe: 1]
         let profileURL = entity.user.profileImageUrl
 
@@ -218,100 +217,5 @@ extension CollectionFolderListViewController: UICollectionViewDelegateFlowLayout
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int
     ) -> CGFloat { 24 }
-}
-
-// MARK: - FolderItem (화면 전용 더미 모델)
-
-private extension CollectionFolderListViewController {
-    
-    struct FolderItem {
-        let firstPosterImage: UIImage?
-        let secondPosterImage: UIImage?
-        
-        let profileImage: UIImage?
-        let name: String
-        
-        let title: String
-        let description: String
-        
-        var isBookmarked: Bool
-        let bookmarkedCountText: String?
-        
-        static func mock() -> [FolderItem] {
-            return [
-                .init(
-                    firstPosterImage: nil,
-                    secondPosterImage: nil,
-                    profileImage: DesignSystem.Image.Common.profileBlue,
-                    name: "닉네임",
-                    title: "한번 보면 못 빠져나오는 사랑이야기",
-                    description: "이 컬렉션은 세계최고 너무나도 멋진 컬렉션입니다",
-                    isBookmarked: true,
-                    bookmarkedCountText: "123"
-                ),
-                .init(
-                    firstPosterImage: nil,
-                    secondPosterImage: nil,
-                    profileImage: DesignSystem.Image.Common.profileBlue,
-                    name: "닉네임",
-                    title: "한번 보면 못 빠져나오는 사랑이야기",
-                    description: "이 컬렉션은 세계최고 너무나도 멋진 컬렉션입니다",
-                    isBookmarked: true,
-                    bookmarkedCountText: "123"
-                ),
-                .init(
-                    firstPosterImage: nil,
-                    secondPosterImage: nil,
-                    profileImage: DesignSystem.Image.Common.profileBlue,
-                    name: "닉네임",
-                    title: "한번 보면 못 빠져나오는 사랑이야기",
-                    description: "이 컬렉션은 세계최고 너무나도 멋진 컬렉션입니다",
-                    isBookmarked: false,
-                    bookmarkedCountText: "123"
-                ),
-                .init(
-                    firstPosterImage: nil,
-                    secondPosterImage: nil,
-                    profileImage: nil,
-                    name: "닉네임",
-                    title: "한번 보면 못 빠져나오는 사랑이야기",
-                    description: "이 컬렉션은 세계최고 너무나도 멋진 컬렉션입니다",
-                    isBookmarked: true,
-                    bookmarkedCountText: "123"
-                ),
-                .init(
-                    firstPosterImage: nil,
-                    secondPosterImage: nil,
-                    profileImage: nil,
-                    name: "닉네임",
-                    title: "한번 보면 못 빠져나오는 사랑이야기",
-                    description: "이 컬렉션은 세계최고 너무나도 멋진 컬렉션입니다",
-                    isBookmarked: false,
-                    bookmarkedCountText: "123"
-                ),
-                .init(
-                    firstPosterImage: nil,
-                    secondPosterImage: nil,
-                    profileImage: nil,
-                    name: "닉네임",
-                    title: "한번 보면 못 빠져나오는 사랑이야기",
-                    description: "이 컬렉션은 세계최고 너무나도 멋진 컬렉션입니다",
-                    isBookmarked: true,
-                    bookmarkedCountText: "123"
-                ),
-                .init(
-                    firstPosterImage: nil,
-                    secondPosterImage: nil,
-                    profileImage: nil,
-                    name: "닉네임",
-                    title: "한번 보면 못 빠져나오는 사랑이야기",
-                    description: "이 컬렉션은 세계최고 너무나도 멋진 컬렉션입니다",
-                    isBookmarked: true,
-                    bookmarkedCountText: "123"
-                )
-                
-            ]
-        }
-    }
 }
 
