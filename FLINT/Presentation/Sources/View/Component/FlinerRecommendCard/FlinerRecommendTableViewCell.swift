@@ -12,7 +12,7 @@ import Domain
 
 // MARK: - Model
 
-struct FlinerCardItem {
+public struct FlinerCardItem {
     let id: String
     let thumbnailUrl: URL?
     let curatorNickname: String
@@ -21,7 +21,7 @@ struct FlinerCardItem {
     let description: String
 }
 
-extension FlinerCardItem {
+public extension FlinerCardItem {
     init(entity: CollectionEntity) {
         self.id = entity.id
         self.thumbnailUrl = entity.thumbnailUrl
@@ -74,8 +74,8 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
     public override func setLayout() {
         collectionView.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(400)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(320)
         }
         
         pageControl.snp.makeConstraints {
@@ -88,6 +88,8 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
     public override func setStyle() {
         backgroundColor = .clear
         contentView.backgroundColor = .clear
+        contentView.clipsToBounds = false
+        clipsToBounds = false
         
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -98,6 +100,12 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
         
         pageControl.currentPageIndicatorTintColor = .flintSecondary400
         pageControl.pageIndicatorTintColor = .flintGray500
+    }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        let inset = (collectionView.bounds.width - collectionView.bounds.width * 0.82) / 2
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
     }
     
     // MARK: - Configure
@@ -112,9 +120,9 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
         
         collectionView.reloadData()
         
-        // 중간 세트로 시작
         DispatchQueue.main.async {
             self.scrollToMiddle(animated: false)
+            self.updateActiveStates(currentPage: 0)
         }
     }
     
@@ -130,15 +138,36 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
     private func scrollToMiddle(animated: Bool) {
         guard !items.isEmpty else { return }
         let middleIndex = items.count * (repeatCount / 2)
-        let inset = (collectionView.bounds.width - collectionView.bounds.width * 0.82) / 2
+        let inset = (collectionView.bounds.width - itemWidth) / 2
         let offsetX = CGFloat(middleIndex) * (itemWidth + 12) - inset
         collectionView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: animated)
     }
     
-    private func currentRealIndex() -> Int {
-        guard itemWidth > 0, !items.isEmpty else { return 0 }
-        let index = Int(round(collectionView.contentOffset.x / (itemWidth + 12)))
-        return index % items.count
+    private func updateActiveStates(currentPage: Int) {
+        for i in 0..<infiniteItems.count {
+            if let cell = collectionView.cellForItem(at: IndexPath(item: i, section: 0)) as? FlinerRecommendCardCell {
+                UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) {
+                    cell.setActive(i % self.items.count == currentPage)
+                }
+            }
+        }
+    }
+    
+    private func rebalanceIfNeeded() {
+        guard !items.isEmpty, itemWidth > 0 else { return }
+        let inset = (collectionView.bounds.width - itemWidth) / 2
+        let itemStep = itemWidth + 12
+        let currentIndex = Int(round((collectionView.contentOffset.x + inset) / itemStep))
+        let middleStart = items.count * (repeatCount / 2)
+        
+        if currentIndex < items.count || currentIndex >= items.count * (repeatCount - 1) {
+            let realIndex = currentIndex % items.count
+            let newIndex = middleStart + realIndex
+            collectionView.setContentOffset(
+                CGPoint(x: CGFloat(newIndex) * itemStep - inset, y: 0),
+                animated: false
+            )
+        }
     }
 }
 
@@ -156,6 +185,7 @@ extension FlinerRecommendTableViewCell: UICollectionViewDataSource {
             for: indexPath
         ) as! FlinerRecommendCardCell
         cell.configure(item: infiniteItems[indexPath.item])
+        cell.setActive(indexPath.item % items.count == pageControl.currentPage)
         return cell
     }
 }
@@ -173,7 +203,9 @@ extension FlinerRecommendTableViewCell: UICollectionViewDelegate {
         guard itemWidth > 0, !items.isEmpty else { return }
         let inset = (collectionView.bounds.width - itemWidth) / 2
         let index = Int(round((scrollView.contentOffset.x + inset) / (itemWidth + 12)))
-        pageControl.currentPage = index % items.count
+        let currentPage = index % items.count
+        pageControl.currentPage = currentPage
+        updateActiveStates(currentPage: currentPage)
     }
     
     public func scrollViewWillEndDragging(
@@ -195,30 +227,6 @@ extension FlinerRecommendTableViewCell: UICollectionViewDelegate {
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         rebalanceIfNeeded()
     }
-    
-    private func rebalanceIfNeeded() {
-        guard !items.isEmpty, itemWidth > 0 else { return }
-        let itemStep = itemWidth + 12
-        let inset = (collectionView.bounds.width - itemWidth) / 2
-        let currentIndex = Int(round(collectionView.contentOffset.x / itemStep))
-        let middleStart = items.count * (repeatCount / 2)
-        
-        if currentIndex < items.count || currentIndex >= items.count * (repeatCount - 1) {
-            let realIndex = currentIndex % items.count
-            let newIndex = middleStart + realIndex
-            collectionView.setContentOffset(
-                CGPoint(x: CGFloat(newIndex) * itemStep, y: 0),
-                animated: false
-            )
-        }
-    }
-    
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        let inset = (collectionView.bounds.width - itemWidth) / 2
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
-    }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
@@ -227,7 +235,6 @@ extension FlinerRecommendTableViewCell: UICollectionViewDelegateFlowLayout {
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         itemWidth = collectionView.bounds.width * 0.82
-        return CGSize(width: itemWidth, height: 400)
+        return CGSize(width: itemWidth, height: 320)
     }
 }
-

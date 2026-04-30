@@ -4,13 +4,14 @@
 //
 //  Created by 소은 on 4/28/26.
 //
+//TODO: - pillview 따로 분리하기, 애니메이션 확인 
 
 import UIKit
 import SnapKit
 import Then
 import Kingfisher
 
-final class FlinerRecommendCardCell: UICollectionViewCell {
+final class FlinerRecommendCardCell: BaseCollectionViewCell {
     
     // MARK: - UI
     
@@ -18,19 +19,23 @@ final class FlinerRecommendCardCell: UICollectionViewCell {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 16
-        $0.backgroundColor = .flintGray800
+        $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     }
     
-    private let gradientView = GradientView().then {
+    private let imageBottomGradientView = GradientView().then {
+        $0.startPoint = CGPoint(x: 0.5, y: 0)
+        $0.endPoint = CGPoint(x: 0.5, y: 1)
+    }
+    
+    private let bottomGradientView = GradientView().then {
         $0.layer.cornerRadius = 16
+        $0.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         $0.clipsToBounds = true
+        $0.startPoint = CGPoint(x: 0.5, y: 0)
+        $0.endPoint = CGPoint(x: 0.5, y: 1)
     }
     
-    private let pillView = UIView().then {
-        $0.backgroundColor = UIColor.white.withAlphaComponent(0.2)
-        $0.layer.cornerRadius = 20
-        $0.clipsToBounds = true
-    }
+    private let pillView = PillView()
     
     private let avatarImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -46,7 +51,8 @@ final class FlinerRecommendCardCell: UICollectionViewCell {
     private let titleLabel = UILabel().then {
         $0.textColor = .white
         $0.font = UIFont.pretendard(.head3_sb_18)
-        $0.numberOfLines = 2
+        $0.numberOfLines = 1
+        $0.lineBreakMode = .byTruncatingTail
         $0.textAlignment = .center
     }
     
@@ -55,6 +61,7 @@ final class FlinerRecommendCardCell: UICollectionViewCell {
         $0.font = UIFont.pretendard(.caption1_r_12)
         $0.numberOfLines = 2
         $0.textAlignment = .center
+        $0.lineBreakMode = .byWordWrapping
     }
     
     private let avatarStack = UIStackView().then {
@@ -69,70 +76,44 @@ final class FlinerRecommendCardCell: UICollectionViewCell {
         $0.alignment = .center
     }
     
-    // MARK: - Init
+    // MARK: - Override Points
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        contentView.backgroundColor = .clear
-        setHierarchy()
-        setLayout()
+    public override func setStyle() {
+        layer.cornerRadius = 16
+        clipsToBounds = true
+        contentView.layer.cornerRadius = 16
+        // contentView.clipsToBounds = true
         setActive(false)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - Configure
-    
-    func configure(item: FlinerCardItem) {
-        thumbnailImageView.kf.setImage(with: item.thumbnailUrl)
-        avatarImageView.kf.setImage(with: item.curatorProfileUrl)
-        nicknameLabel.text = item.curatorNickname
-        titleLabel.text = item.title
-        descriptionLabel.text = item.description
-    }
-    
-    func setActive(_ isActive: Bool) {
-        if isActive {
-            gradientView.colors = [
-                UIColor(hex: "1ABFF2").withAlphaComponent(0),
-                UIColor(hex: "1ABFF2").withAlphaComponent(0.35)
-            ]
-            gradientView.startPoint = CGPoint(x: 0.5, y: 0)
-            gradientView.endPoint = CGPoint(x: 0.5, y: 1)
-        } else {
-            gradientView.colors = [
-                UIColor(hex: "2D4254").withAlphaComponent(0),
-                UIColor(hex: "2D4254").withAlphaComponent(1.0)
-            ]
-            gradientView.startPoint = CGPoint(x: 0.5, y: 0)
-            gradientView.endPoint = CGPoint(x: 0.5, y: 1)
-        }
-    }
-}
-
-// MARK: - Layout
-
-private extension FlinerRecommendCardCell {
-    
-    func setHierarchy() {
-        contentView.addSubviews(thumbnailImageView, gradientView)
+    public override func setHierarchy() {
+        contentView.addSubviews(
+            thumbnailImageView,
+            imageBottomGradientView,
+            bottomGradientView,
+            pillView
+        )
         avatarStack.addArrangedSubviews(avatarImageView, nicknameLabel)
         pillView.addSubview(avatarStack)
-        textStack.addArrangedSubviews(pillView, titleLabel, descriptionLabel)
-        gradientView.addSubview(textStack)
+        textStack.addArrangedSubviews(titleLabel, descriptionLabel)
+        contentView.addSubview(textStack)
     }
     
-    func setLayout() {
+    public override func setLayout() {
         thumbnailImageView.snp.makeConstraints {
-            $0.edges.equalTo(contentView)
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalToSuperview().multipliedBy(0.6)
         }
         
-        gradientView.snp.makeConstraints {
+        imageBottomGradientView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(thumbnailImageView.snp.bottom)
+            $0.height.equalTo(132)
+        }
+        
+        bottomGradientView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalToSuperview().multipliedBy(0.6)
+            $0.height.equalTo(24)
         }
         
         avatarImageView.snp.makeConstraints {
@@ -140,12 +121,86 @@ private extension FlinerRecommendCardCell {
         }
         
         avatarStack.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 12))
+            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12))
+        }
+        
+        pillView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalTo(thumbnailImageView.snp.bottom).offset(12)
+            $0.leading.greaterThanOrEqualToSuperview().inset(34)
+            $0.trailing.lessThanOrEqualToSuperview().inset(34)
+            // $0.height.equalTo(32)
         }
         
         textStack.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(20)
+            $0.top.equalTo(pillView.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview().inset(34)
+            $0.bottom.lessThanOrEqualToSuperview().inset(20)
         }
+    }
+    
+    public override func prepare() {
+        thumbnailImageView.image = nil
+        avatarImageView.image = nil
+        nicknameLabel.text = nil
+        titleLabel.text = nil
+        descriptionLabel.text = nil
+    }
+    
+    // MARK: - Configure
+    
+    public func configure(item: FlinerCardItem) {
+        thumbnailImageView.kf.setImage(with: item.thumbnailUrl)
+        avatarImageView.kf.setImage(with: item.curatorProfileUrl)
+        nicknameLabel.text = String(item.curatorNickname.prefix(8))
+        titleLabel.text = String(item.title.prefix(15))
+        descriptionLabel.text = item.description
+        
+        setNeedsLayout()
+        layoutIfNeeded()
+    }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        print("cell bounds: \(bounds)")
+        print("pillView frame: \(pillView.frame)")
+    }
+    
+    
+    //TODO: - 애미메이션 확인
+    
+    public func setActive(_ isActive: Bool) {
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(0.3)
+        CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .easeInEaseOut))
+        
+        if isActive {
+            contentView.backgroundColor = .flintPrimary900
+            imageBottomGradientView.colors = [
+                UIColor.flintPrimary900.withAlphaComponent(0),
+                UIColor.flintPrimary900
+            ]
+            imageBottomGradientView.locations = [0, 1.0]
+            bottomGradientView.colors = [
+                UIColor.flintBlue.withAlphaComponent(0),
+                UIColor.flintBlue.withAlphaComponent(0.2)
+            ]
+        } else {
+            contentView.backgroundColor = .flintGray800
+            imageBottomGradientView.colors = [
+                UIColor.flintGray800.withAlphaComponent(0),
+                UIColor.flintGray800
+            ]
+            bottomGradientView.colors = [
+                UIColor.gradientGray.withAlphaComponent(0),
+                UIColor.gradientGray.withAlphaComponent(0.2)
+            ]
+        }
+        imageBottomGradientView.startPoint = CGPoint(x: 0.5, y: 0)
+        imageBottomGradientView.endPoint = CGPoint(x: 0.5, y: 1)
+        bottomGradientView.startPoint = CGPoint(x: 0.5, y: 0)
+        bottomGradientView.endPoint = CGPoint(x: 0.5, y: 1)
+        
+        CATransaction.commit()
     }
 }

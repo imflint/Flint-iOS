@@ -117,8 +117,8 @@ public final class HomeViewController: BaseViewController<HomeView> {
         }
     }
     private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
-        let vc = BaseBottomSheetViewController(content: .ott(platforms: platforms))
-        present(vc, animated: false)
+           let vc = BaseBottomSheetViewController(content: .ott(platforms: platforms))
+           present(vc, animated: false)
     }
 }
 
@@ -155,11 +155,11 @@ extension HomeViewController: UITableViewDataSource {
             if style == .more {
                 cell.onTapMore = { [weak self] in
                     guard let self else { return }
-                    
+
                     let factory = self.viewControllerFactory
-                    ?? (self.parent as? TabBarViewController)?.viewControllerFactory
+                        ?? (self.parent as? TabBarViewController)?.viewControllerFactory
                     guard let factory else { return }
-                    
+
                     let vc = factory.makeCollectionFolderListViewController()
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
@@ -169,7 +169,7 @@ extension HomeViewController: UITableViewDataSource {
             
             return cell
             
-            
+        
         case .flinerPager(let items):
             let cell = tableView.dequeueReusableCell(FlinerRecommendTableViewCell.self, for: indexPath)
             cell.configure(items: items)
@@ -186,28 +186,28 @@ extension HomeViewController: UITableViewDataSource {
             
             cell.onSelectItem = { [weak self] entity in
                 guard let self else { return }
-                
+
                 guard let collectionId = Int64(entity.id) else {
                     print("invalid collectionId:", entity.id)
                     return
                 }
-                
+
                 guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
                 self.navigationController?.pushViewController(vc, animated: true)
             }
-            
+
             return cell
             
         case .ctaButton(let title):
             let cell = tableView.dequeueReusableCell(HomeCTAButtonTableViewCell.self, for: indexPath)
-            
+
             cell.configure(title: title)
-            
+
             cell.onTap = { [weak self] in
                 guard let self else { return }
                 (self.parent as? TabBarViewController)?.selectTab(.explore)
             }
-            
+
             return cell
             
         case .recentSavedContents(let items):
