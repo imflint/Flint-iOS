@@ -17,21 +17,7 @@ public final class HomeGreetingTableViewCell: BaseTableViewCell {
     private let backgroundImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
-        $0.isUserInteractionEnabled = false
-    }
-    
-    private let blackOverlayView = UIView().then {
-        $0.backgroundColor = .black.withAlphaComponent(0.3)
-        $0.isUserInteractionEnabled = false
-        $0.clipsToBounds = true
-    }
-    
-    private let innerShadowLayer = CAShapeLayer()
-    
-    private let innerShadowOverlayView = UIView().then {
-        $0.backgroundColor = .clear
-        $0.isUserInteractionEnabled = false
-        $0.clipsToBounds = true
+        $0.image = UIImage.imgBackgroundHeader
     }
     
     private let greetingLabel = UILabel().then {
@@ -41,7 +27,7 @@ public final class HomeGreetingTableViewCell: BaseTableViewCell {
     // MARK: - Setup
     
     public override func setHierarchy() {
-        contentView.addSubviews(backgroundImageView,blackOverlayView, innerShadowOverlayView, greetingLabel)
+        contentView.addSubviews(backgroundImageView, greetingLabel)
     }
     
     public override func setLayout() {
@@ -49,56 +35,15 @@ public final class HomeGreetingTableViewCell: BaseTableViewCell {
             $0.edges.equalToSuperview()
         }
         
-        blackOverlayView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
-        innerShadowOverlayView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
         greetingLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(174)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(30)
+            $0.bottom.equalToSuperview().inset(20)
         }
     }
     
     public override func setStyle() {
         backgroundColor = .clear
         contentView.backgroundColor = .clear
-        backgroundImageView.image = UIImage.imgBackgroundGradiantMiddle
-        
-        innerShadowLayer.shadowColor = UIColor.flintBackground.cgColor
-        innerShadowLayer.shadowOffset = CGSize(width: 0, height: 30)
-        innerShadowLayer.shadowOpacity = 0.35
-        innerShadowLayer.shadowRadius = 40
-        innerShadowLayer.fillRule = .evenOdd
-        innerShadowLayer.fillColor = UIColor.black.cgColor
-        
-        if innerShadowLayer.superlayer == nil {
-            innerShadowOverlayView.layer.addSublayer(innerShadowLayer)
-        }
-    }
-    
-    public override func layoutSubviews() {
-            super.layoutSubviews()
-            updateInnerShadowPath()
-        }
-    
-    
-    private func updateInnerShadowPath() {
-        let bounds = innerShadowOverlayView.bounds
-        guard bounds.width > 0, bounds.height > 0 else { return }
-
-        let inset = -innerShadowLayer.shadowRadius * 2.0
-
-        let outerPath = UIBezierPath(rect: bounds.insetBy(dx: inset, dy: inset))
-        let innerPath = UIBezierPath(rect: bounds)
-
-        outerPath.append(innerPath)
-        innerShadowLayer.path = outerPath.cgPath
-        innerShadowLayer.frame = bounds
     }
     
     // MARK: - Configure
