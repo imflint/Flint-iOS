@@ -11,6 +11,8 @@ import Kingfisher
 import SnapKit
 import Then
 
+import Domain
+
 public final class FlinerRecommendCardCell: BaseCollectionViewCell {
     
     // MARK: - UI Component
@@ -153,12 +155,12 @@ public final class FlinerRecommendCardCell: BaseCollectionViewCell {
     
     // MARK: - Configure
     
-    public func configure(item: FlinerCardItem) {
-        thumbnailImageView.kf.setImage(with: item.thumbnailUrl)
-        avatarImageView.kf.setImage(with: item.curatorProfileUrl)
-        nicknameLabel.text = String(item.curatorNickname.prefix(8))
-        titleLabel.text = String(item.title.prefix(15))
-        descriptionLabel.text = item.description
+    public func configure(entity: CollectionEntity) {
+        thumbnailImageView.kf.setImage(with: entity.thumbnailUrl)
+        avatarImageView.kf.setImage(with: entity.user.profileImageUrl)
+        nicknameLabel.text = String(entity.user.nickname.prefix(8))
+        titleLabel.text = String(entity.title.prefix(15))
+        descriptionLabel.text = entity.description
         
         setNeedsLayout()
         layoutIfNeeded()

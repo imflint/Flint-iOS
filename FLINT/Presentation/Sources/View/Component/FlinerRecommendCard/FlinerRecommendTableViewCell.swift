@@ -20,8 +20,8 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
     
     public var onSelectItem: ((String) -> Void)?
     
-    private var items: [FlinerCardItem] = []
-    private var infiniteItems: [FlinerCardItem] = []
+    private var items: [CollectionEntity] = []
+    private var infiniteItems: [CollectionEntity] = []
     private let repeatCount = 3
     private var itemWidth: CGFloat = 0
     
@@ -95,7 +95,7 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
     
     public func configure(items: [CollectionEntity]) {
         let limited = Array(items.prefix(5))
-        self.items = limited.map { FlinerCardItem(entity: $0) }
+        self.items = limited
         self.infiniteItems = Array(repeating: self.items, count: repeatCount).flatMap { $0 }
         
         pageControl.numberOfPages = self.items.count
@@ -160,7 +160,7 @@ extension FlinerRecommendTableViewCell: UICollectionViewDataSource {
             withReuseIdentifier: String(describing: FlinerRecommendCardCell.self),
             for: indexPath
         ) as! FlinerRecommendCardCell
-        cell.configure(item: infiniteItems[indexPath.item])
+        cell.configure(entity: infiniteItems[indexPath.item])
         cell.setActive(indexPath.item % items.count == pageControl.currentPage)
         return cell
     }
