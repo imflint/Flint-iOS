@@ -79,11 +79,7 @@ public final class FlinerRecommendCardCell: BaseCollectionViewCell {
     }
     
     // MARK: - Override
-    
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-    }
-    
+   
     public override func prepare() {
         thumbnailImageView.image = nil
         avatarImageView.image = nil
@@ -173,30 +169,18 @@ public final class FlinerRecommendCardCell: BaseCollectionViewCell {
         CATransaction.setAnimationDuration(0.3)
         CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .easeInEaseOut))
         
-        if isActive {
-            contentView.backgroundColor = .flintPrimary900
-            imageBottomGradientView.colors = [
-                UIColor.flintPrimary900.withAlphaComponent(0),
-                UIColor.flintPrimary900
-            ]
-            imageBottomGradientView.locations = [0, 1.0]
-            bottomGradientView.colors = [
-                UIColor.flintBlue.withAlphaComponent(0),
-                UIColor.flintBlue.withAlphaComponent(0.2)
-            ]
-        } else {
-            contentView.backgroundColor = .flintGray800
-            imageBottomGradientView.colors = [
-                UIColor.flintGray800.withAlphaComponent(0),
-                UIColor.flintGray800
-            ]
-            bottomGradientView.colors = [
-                UIColor.gradientGray.withAlphaComponent(0),
-                UIColor.gradientGray.withAlphaComponent(0.2)
-            ]
-        }
+        let (backgroundColor, topColor, bottomColor) = isActive
+            ? (UIColor.flintPrimary900, UIColor.flintPrimary900, UIColor.flintBlue)  // ← UIColor. 추가
+            : (UIColor.flintGray800, UIColor.flintGray800, UIColor.gradientGray)
+        
+        contentView.backgroundColor = backgroundColor
+        
+        imageBottomGradientView.colors = [topColor.withAlphaComponent(0), topColor]
+        imageBottomGradientView.locations = [0, 1.0]
         imageBottomGradientView.startPoint = CGPoint(x: 0.5, y: 0)
         imageBottomGradientView.endPoint = CGPoint(x: 0.5, y: 1)
+        
+        bottomGradientView.colors = [bottomColor.withAlphaComponent(0), bottomColor.withAlphaComponent(0.2)]
         bottomGradientView.startPoint = CGPoint(x: 0.5, y: 0)
         bottomGradientView.endPoint = CGPoint(x: 0.5, y: 1)
         
