@@ -117,13 +117,13 @@ public final class FlinerRecommendCardCell: BaseCollectionViewCell {
         }
         
         imageBottomGradientView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalTo(thumbnailImageView.snp.bottom)
             $0.height.equalTo(132)
         }
         
         bottomGradientView.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.horizontalEdges.bottom.equalToSuperview()
             $0.height.equalTo(24)
         }
         
@@ -144,7 +144,7 @@ public final class FlinerRecommendCardCell: BaseCollectionViewCell {
         
         textStack.snp.makeConstraints {
             $0.top.equalTo(pillView.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview().inset(34)
+            $0.horizontalEdges.equalToSuperview().inset(34)
             $0.bottom.lessThanOrEqualToSuperview().inset(35)
         }
     }
