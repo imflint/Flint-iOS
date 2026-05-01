@@ -4,16 +4,15 @@
 //
 //  Created by 소은 on 4/28/26.
 //
-//TODO: - pillview 따로 분리하기, 애니메이션 확인 
 
 import UIKit
 import SnapKit
 import Then
 import Kingfisher
 
-final class FlinerRecommendCardCell: BaseCollectionViewCell {
+public final class FlinerRecommendCardCell: BaseCollectionViewCell {
     
-    // MARK: - UI
+    // MARK: - UI Component
     
     private let thumbnailImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -76,13 +75,26 @@ final class FlinerRecommendCardCell: BaseCollectionViewCell {
         $0.alignment = .center
     }
     
-    // MARK: - Override Points
+    // MARK: - Override
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+    }
+    
+    public override func prepare() {
+        thumbnailImageView.image = nil
+        avatarImageView.image = nil
+        nicknameLabel.text = nil
+        titleLabel.text = nil
+        descriptionLabel.text = nil
+    }
+    
+    // MARK: - Setup
     
     public override func setStyle() {
         layer.cornerRadius = 16
         clipsToBounds = true
         contentView.layer.cornerRadius = 16
-        // contentView.clipsToBounds = true
         setActive(false)
     }
     
@@ -129,7 +141,6 @@ final class FlinerRecommendCardCell: BaseCollectionViewCell {
             $0.centerY.equalTo(thumbnailImageView.snp.bottom).offset(12)
             $0.leading.greaterThanOrEqualToSuperview().inset(34)
             $0.trailing.lessThanOrEqualToSuperview().inset(34)
-            // $0.height.equalTo(32)
         }
         
         textStack.snp.makeConstraints {
@@ -137,14 +148,6 @@ final class FlinerRecommendCardCell: BaseCollectionViewCell {
             $0.leading.trailing.equalToSuperview().inset(34)
             $0.bottom.lessThanOrEqualToSuperview().inset(20)
         }
-    }
-    
-    public override func prepare() {
-        thumbnailImageView.image = nil
-        avatarImageView.image = nil
-        nicknameLabel.text = nil
-        titleLabel.text = nil
-        descriptionLabel.text = nil
     }
     
     // MARK: - Configure
@@ -160,14 +163,7 @@ final class FlinerRecommendCardCell: BaseCollectionViewCell {
         layoutIfNeeded()
     }
     
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-        print("cell bounds: \(bounds)")
-        print("pillView frame: \(pillView.frame)")
-    }
-    
-    
-    //TODO: - 애미메이션 확인
+    // MARK: - Custom Method
     
     public func setActive(_ isActive: Bool) {
         CATransaction.begin()

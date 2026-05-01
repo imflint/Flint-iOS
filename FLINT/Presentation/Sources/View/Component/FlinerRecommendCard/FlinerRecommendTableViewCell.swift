@@ -36,7 +36,7 @@ public extension FlinerCardItem {
 
 public final class FlinerRecommendTableViewCell: BaseTableViewCell {
     
-    // MARK: - Properties
+    // MARK: - Property
     
     public var onSelectItem: ((String) -> Void)?
     
@@ -45,7 +45,7 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
     private let repeatCount = 3
     private var itemWidth: CGFloat = 0
     
-    // MARK: - UI
+    // MARK: - UI Component
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -60,9 +60,21 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
         return cv
     }()
     
-    private let pageControl = UIPageControl().then {
-        $0.hidesForSinglePage = true
-        $0.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+    private let pageControl = CustomPageControl()
+    
+    // MARK: - Override
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        let inset = (collectionView.bounds.width - 270) / 2
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
+    }
+    
+    public override func prepare() {
+        items = []
+        infiniteItems = []
+        pageControl.numberOfPages = 0
+        collectionView.reloadData()
     }
     
     // MARK: - Setup
@@ -74,13 +86,13 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
     public override func setLayout() {
         collectionView.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(320)
         }
         
         pageControl.snp.makeConstraints {
             $0.top.equalTo(collectionView.snp.bottom).offset(12)
-            $0.centerX.equalToSuperview()
+            $0.centerX.equalTo(collectionView)
             $0.bottom.equalToSuperview()
         }
     }
@@ -97,15 +109,6 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
             FlinerRecommendCardCell.self,
             forCellWithReuseIdentifier: String(describing: FlinerRecommendCardCell.self)
         )
-        
-        pageControl.currentPageIndicatorTintColor = .flintSecondary400
-        pageControl.pageIndicatorTintColor = .flintGray500
-    }
-    
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-        let inset = (collectionView.bounds.width - collectionView.bounds.width * 0.82) / 2
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
     }
     
     // MARK: - Configure
@@ -126,14 +129,7 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
         }
     }
     
-    public override func prepare() {
-        items = []
-        infiniteItems = []
-        pageControl.numberOfPages = 0
-        collectionView.reloadData()
-    }
-    
-    // MARK: - Private
+    // MARK: - Custom Method
     
     private func scrollToMiddle(animated: Bool) {
         guard !items.isEmpty else { return }
@@ -171,7 +167,7 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
     }
 }
 
-// MARK: - UICollectionViewDataSource
+// MARK: - Extension
 
 extension FlinerRecommendTableViewCell: UICollectionViewDataSource {
     
@@ -189,8 +185,6 @@ extension FlinerRecommendTableViewCell: UICollectionViewDataSource {
         return cell
     }
 }
-
-// MARK: - UICollectionViewDelegate
 
 extension FlinerRecommendTableViewCell: UICollectionViewDelegate {
     
@@ -229,12 +223,10 @@ extension FlinerRecommendTableViewCell: UICollectionViewDelegate {
     }
 }
 
-// MARK: - UICollectionViewDelegateFlowLayout
-
 extension FlinerRecommendTableViewCell: UICollectionViewDelegateFlowLayout {
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        itemWidth = collectionView.bounds.width * 0.82
+        itemWidth = 270
         return CGSize(width: itemWidth, height: 320)
     }
 }
