@@ -248,6 +248,8 @@ extension HomeViewController: UITableViewDelegate {
         switch row {
         case .fliner:
             return 180
+        case .flinerPager:
+                return 360  
         default:
             return UITableView.automaticDimension
         }

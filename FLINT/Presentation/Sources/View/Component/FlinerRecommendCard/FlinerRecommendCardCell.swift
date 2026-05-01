@@ -6,9 +6,10 @@
 //
 
 import UIKit
+
+import Kingfisher
 import SnapKit
 import Then
-import Kingfisher
 
 public final class FlinerRecommendCardCell: BaseCollectionViewCell {
     
@@ -144,9 +145,9 @@ public final class FlinerRecommendCardCell: BaseCollectionViewCell {
         }
         
         textStack.snp.makeConstraints {
-            $0.top.equalTo(pillView.snp.bottom).offset(16)
+            $0.top.equalTo(pillView.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview().inset(34)
-            $0.bottom.lessThanOrEqualToSuperview().inset(20)
+            $0.bottom.lessThanOrEqualToSuperview().inset(35)
         }
     }
     

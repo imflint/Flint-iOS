@@ -6,31 +6,11 @@
 //
 
 import UIKit
+
 import SnapKit
 import Then
+
 import Domain
-
-// MARK: - Model
-
-public struct FlinerCardItem {
-    let id: String
-    let thumbnailUrl: URL?
-    let curatorNickname: String
-    let curatorProfileUrl: URL?
-    let title: String
-    let description: String
-}
-
-public extension FlinerCardItem {
-    init(entity: CollectionEntity) {
-        self.id = entity.id
-        self.thumbnailUrl = entity.thumbnailUrl
-        self.curatorNickname = entity.user.nickname
-        self.curatorProfileUrl = entity.user.profileImageUrl
-        self.title = entity.title
-        self.description = entity.description
-    }
-}
 
 // MARK: - Cell
 
@@ -87,7 +67,7 @@ public final class FlinerRecommendTableViewCell: BaseTableViewCell {
         collectionView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(320)
+            $0.height.equalTo(340)
         }
         
         pageControl.snp.makeConstraints {
@@ -227,6 +207,6 @@ extension FlinerRecommendTableViewCell: UICollectionViewDelegateFlowLayout {
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         itemWidth = 270
-        return CGSize(width: itemWidth, height: 320)
+        return CGSize(width: itemWidth, height: 340)
     }
 }
