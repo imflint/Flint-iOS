@@ -6,13 +6,16 @@
 //
 
 import UIKit
-import Combine
+
+import Kingfisher
 import SnapKit
 import Then
 
 import Domain
+
 import View
 import ViewModel
+
 
 // MARK: - SettingViewControllerFactory
 
@@ -143,7 +146,7 @@ extension SettingViewController {
         
         tableViewDataSource = UITableViewDiffableDataSource<SettingSection, SettingItem>(
             tableView: rootView.tableView,
-            cellProvider: { tableView, indexPath, item in
+            cellProvider: { tableView, indexPath, item in 
                 
                 switch item {
                 case let .account(id):
@@ -266,36 +269,46 @@ private extension SettingViewController {
     }
     
     func showLogoutAlert() {
-        let alert = UIAlertController(
-            title: "로그아웃",
-            message: "정말 로그아웃 하시겠습니까?",
-            preferredStyle: .alert
+        var modal: Modal?
+        
+        modal = Modal(
+            image: DesignSystem.Icon.Gradient.people,
+            caption: "로그아웃 하시겠습니까?",
+            leftButtonTitle: "취소",
+            rightButtonTitle: "로그아웃",
+            rightButtonColor: DesignSystem.Color.primary400,
+            onLeft: { _ in
+                modal?.dismiss {
+                    modal = nil
+                }
+            },
+            onRight: { [weak self] _ in
+                modal?.dismiss {
+                    (self?.settingViewModel as? DefaultSettingViewModel)?.performLogout()
+                    modal = nil
+                }
+            }
         )
         
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        alert.addAction(UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] _ in
-            (self?.settingViewModel as? DefaultSettingViewModel)?.performLogout()
-        })
-        
-        present(alert, animated: true)
+        guard let modal else { return }
+        modal.show(in: view)
     }
     
     func showWithdrawalAlert() {
-        let alert = UIAlertController(
-            title: "회원 탈퇴",
-            message: "정말 탈퇴하시겠습니까?\n탈퇴 시 모든 데이터가 삭제됩니다.",
-            preferredStyle: .alert
-        )
-        
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        alert.addAction(UIAlertAction(title: "탈퇴", style: .destructive) { [weak self] _ in
-            (self?.settingViewModel as? DefaultSettingViewModel)?.performWithdrawal()
-        })
-        
-        present(alert, animated: true)
+        print("Navigate to Withdrawal Page")
     }
     
     func handleLogoutSuccess() {
-        print("Logout success - navigate to login")
+        // 우선 .. 로그인 화면으로 이동 로직읽어봐야함
+        guard let loginVC = viewControllerFactory?.makeLoginViewController() else { return }
+        
+        let navigationController = UINavigationController(rootViewController: loginVC)
+        navigationController.modalPresentationStyle = .fullScreen
+        
+        if let window = view.window {
+            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve) {
+                window.rootViewController = navigationController
+            }
+        }
     }
 }

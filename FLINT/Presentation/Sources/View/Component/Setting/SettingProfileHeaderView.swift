@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Then
+import Kingfisher
 
 import Domain
 
@@ -76,14 +77,21 @@ public final class SettingProfileHeaderView: BaseView {
     
     // MARK: - Configuration
     
+    
     public func configure(with profile: UserProfileEntity) {
         nicknameLabel.text = profile.nickname
         
-        // TODO: Kingfisher로 이미지 로드
-        // if let imageUrl = profile.profileImageUrl {
-        //     profileImageView.kf.setImage(with: imageUrl)
-        // }
+        if let imageUrl = profile.profileImageUrl {
+            profileImageView.kf.setImage(
+                with: imageUrl,
+                placeholder: UIImage(systemName: "person.circle.fill")?.withTintColor(.white.withAlphaComponent(0.3), renderingMode: .alwaysOriginal)
+            )
+        } else {
+            
+            profileImageView.image = UIImage(systemName: "person.circle.fill")?.withTintColor(.white.withAlphaComponent(0.3), renderingMode: .alwaysOriginal)
+        }
     }
+    
     
     // MARK: - Actions
     

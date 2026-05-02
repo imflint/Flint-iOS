@@ -97,17 +97,16 @@ public final class DefaultSettingViewModel: SettingViewModel {
 
     public func performWithdrawal() {
         // TODO: 탈퇴 UseCase 연결
-        print("Withdrawal performed")
+        print("회원탈퇴")
     }
     
     // MARK: - Private Methods
     
     private func fetchUserProfile() {
-        // TODO: UseCase 연결
         // 임시 Mock 데이터
         let mockProfile = UserProfileEntity(
             id: "user123",
-            nickname: "한비두비네비",
+            nickname: "플리니",
             profileImageUrl: nil,
             role: .fliner  
         )
