@@ -20,6 +20,11 @@ public final class HomeGreetingTableViewCell: BaseTableViewCell {
         $0.image = UIImage.imgBackgroundHeader
     }
     
+    private let logoImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.image = DesignSystem.Icon.flintLogo
+    }
+    
     private let greetingLabel = UILabel().then {
         $0.numberOfLines = 0
     }
@@ -27,13 +32,19 @@ public final class HomeGreetingTableViewCell: BaseTableViewCell {
     // MARK: - Setup
     
     public override func setHierarchy() {
-        contentView.addSubviews(backgroundImageView, greetingLabel)
+        contentView.addSubviews(backgroundImageView, logoImageView, greetingLabel)
     }
     
     public override func setLayout() {
         backgroundImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        
+        logoImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(18)
+            $0.size.equalTo(CGSize(width: 90, height: 20))
+        }
+               
         
         greetingLabel.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
