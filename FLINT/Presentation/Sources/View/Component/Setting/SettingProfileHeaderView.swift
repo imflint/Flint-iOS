@@ -23,16 +23,15 @@ public final class SettingProfileHeaderView: BaseView {
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
-        $0.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         $0.layer.cornerRadius = 28
     }
     
     private let nicknameLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .semibold)
-        $0.textColor = .white
+        $0.font = .pretendard(.body1_m_16)
+        $0.textColor = DesignSystem.Color.white
     }
     
-    private let editProfileButton = FlintButton(style: .colorOutline, title: "프로필 수정")
+    private let editProfileButton = FlintButton(style: .smallColorOutline, title: "프로필 수정")
     
     private let separatorView = UIView().then {
         $0.backgroundColor = .flintGray800
@@ -42,7 +41,7 @@ public final class SettingProfileHeaderView: BaseView {
     
     public override func setUI() {
         backgroundColor = .clear
-        editProfileButton.titleLabel?.font = .pretendard(.medium, size: 14)
+        
         editProfileButton.addTarget(self, action: #selector(didTapEditProfileButton), for: .touchUpInside)
     }
     
@@ -65,8 +64,8 @@ public final class SettingProfileHeaderView: BaseView {
         editProfileButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-16)
             $0.centerY.equalTo(profileImageView)
-            $0.width.equalTo(100)
-            $0.height.equalTo(36)
+            $0.width.greaterThanOrEqualTo(98)
+            $0.height.equalTo(32)
         }
         
         separatorView.snp.makeConstraints {
@@ -84,7 +83,7 @@ public final class SettingProfileHeaderView: BaseView {
         if let imageUrl = profile.profileImageUrl {
             profileImageView.kf.setImage(
                 with: imageUrl,
-                placeholder: UIImage(systemName: "person.circle.fill")?.withTintColor(.white.withAlphaComponent(0.3), renderingMode: .alwaysOriginal)
+                placeholder: DesignSystem.Image.Common.profileGray.withTintColor(.white.withAlphaComponent(0.3), renderingMode: .alwaysOriginal)
             )
         } else {
             

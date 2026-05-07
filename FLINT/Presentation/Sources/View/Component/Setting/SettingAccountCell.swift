@@ -18,12 +18,12 @@ public final class SettingAccountCell: BaseTableViewCell {
     
     private let titleLabel = UILabel().then {
         $0.text = "계정"
-        $0.font = .systemFont(ofSize: 15, weight: .regular)
+        $0.font = .pretendard(.body1_m_16)
         $0.textColor = .white
     }
     
     private let emailLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 15, weight: .regular)
+        $0.font = .pretendard(.body1_m_16)
         $0.textColor = .white
     }
     
@@ -76,3 +76,4 @@ public final class SettingAccountCell: BaseTableViewCell {
         emailLabel.text = email
     }
 }
+
