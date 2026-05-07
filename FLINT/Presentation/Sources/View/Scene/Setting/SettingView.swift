@@ -18,15 +18,14 @@ public final class SettingView: BaseView {
     public let tableView = UITableView(frame: .zero, style: .grouped).then {
         $0.backgroundColor = .clear
         $0.separatorStyle = .none
-        $0.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.register(SettingMenuCell.self, forCellReuseIdentifier: SettingMenuCell.identifier)
         $0.register(SettingAccountCell.self, forCellReuseIdentifier: SettingAccountCell.identifier)
     }
     
     public let withdrawalButton = UIButton(type: .system).then {
         $0.setTitle("탈퇴하기", for: .normal)
-        $0.setTitleColor(.white.withAlphaComponent(0.6), for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 15, weight: .regular)
+        $0.setTitleColor(.flintGray300, for: .normal)
+        $0.titleLabel?.font = .pretendard(.body2_m_14)
         $0.backgroundColor = .clear
     }
     
@@ -50,7 +49,6 @@ public final class SettingView: BaseView {
         withdrawalButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalTo(safeAreaLayoutGuide).offset(-20)
-            $0.height.equalTo(44)
         }
     }
 }
