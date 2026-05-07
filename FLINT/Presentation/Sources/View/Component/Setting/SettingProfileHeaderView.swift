@@ -24,7 +24,7 @@ public final class SettingProfileHeaderView: BaseView {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.backgroundColor = UIColor.white.withAlphaComponent(0.2)
-        $0.layer.cornerRadius = 30
+        $0.layer.cornerRadius = 28
     }
     
     private let nicknameLabel = UILabel().then {
@@ -34,7 +34,7 @@ public final class SettingProfileHeaderView: BaseView {
     
     private let editProfileButton = FlintButton(style: .colorOutline, title: "프로필 수정")
     
-    private let bottomSpacingView = UIView().then {
+    private let separatorView = UIView().then {
         $0.backgroundColor = .flintGray800
     }
     
@@ -42,19 +42,19 @@ public final class SettingProfileHeaderView: BaseView {
     
     public override func setUI() {
         backgroundColor = .clear
-        
+        editProfileButton.titleLabel?.font = .pretendard(.medium, size: 14)
         editProfileButton.addTarget(self, action: #selector(didTapEditProfileButton), for: .touchUpInside)
     }
     
     public override func setHierarchy() {
-        addSubviews(profileImageView, nicknameLabel, editProfileButton, bottomSpacingView)
+        addSubviews(profileImageView, nicknameLabel, editProfileButton, separatorView)
     }
     
     public override func setLayout() {
         profileImageView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
-            $0.top.equalToSuperview().offset(20)
-            $0.width.height.equalTo(60)
+            $0.top.equalToSuperview().offset(12)
+            $0.width.height.equalTo(56)
         }
         
         nicknameLabel.snp.makeConstraints {
@@ -69,7 +69,7 @@ public final class SettingProfileHeaderView: BaseView {
             $0.height.equalTo(36)
         }
         
-        bottomSpacingView.snp.makeConstraints {
+        separatorView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
             $0.height.equalTo(12)
         }

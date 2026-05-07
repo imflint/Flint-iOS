@@ -10,8 +10,6 @@ import UIKit
 import SnapKit
 import Then
 
-// MARK: - SettingAccountCell
-
 public final class SettingAccountCell: BaseTableViewCell {
     
     public static let identifier = "SettingAccountCell"
@@ -34,28 +32,36 @@ public final class SettingAccountCell: BaseTableViewCell {
         $0.contentMode = .scaleAspectFit
     }
     
+    private let separatorView = UIView().then {
+        $0.backgroundColor = .flintGray800
+    }
+    
     // MARK: - Setup
     
     public override func setHierarchy() {
-        contentView.addSubviews(titleLabel, emailLabel, kakaoIconImageView)
+        contentView.addSubviews(titleLabel, emailLabel, kakaoIconImageView, separatorView)
     }
     
     public override func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(20)
-            $0.centerY.equalToSuperview().offset(6)
+            $0.centerY.equalToSuperview()
         }
-        
         
         kakaoIconImageView.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-16)
-            $0.centerY.equalTo(emailLabel)
+            $0.centerY.equalToSuperview()
             $0.width.height.equalTo(16)
         }
         
         emailLabel.snp.makeConstraints {
             $0.trailing.equalTo(kakaoIconImageView.snp.leading).offset(-4)
-            $0.centerY.equalToSuperview().offset(6)
+            $0.centerY.equalToSuperview()
+        }
+        
+        separatorView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(2)
         }
     }
     

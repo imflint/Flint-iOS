@@ -42,12 +42,20 @@ public final class SettingViewController: BaseViewController<SettingView> {
         case menu
     }
     
-    private enum SettingItem: Hashable {
-        case account(String)
-        case menu(String)
+    private enum MenuItem: String, CaseIterable {
+        case privacyPolicy = "개인정보 정책"
+        case termsOfService = "이용약관"
+        case logout = "로그아웃"
+        
+        var title: String {
+            return self.rawValue
+        }
     }
     
-    private let menuItems = ["개인정보 정책", "이용약관", "로그아웃"]
+    private enum SettingItem: Hashable {
+        case account(String)
+        case menu(MenuItem)
+    }
     
     // MARK: - Initialization
     
@@ -69,7 +77,7 @@ public final class SettingViewController: BaseViewController<SettingView> {
         setNavigationBar(.init(
             left: .back,
             title: "설정",
-            backgroundStyle: .solid(DesignSystem.Color.background)  
+            backgroundStyle: .solid(DesignSystem.Color.background)
         ))
         setupTableView()
         setupActions()
@@ -146,7 +154,7 @@ extension SettingViewController {
         
         tableViewDataSource = UITableViewDiffableDataSource<SettingSection, SettingItem>(
             tableView: rootView.tableView,
-            cellProvider: { tableView, indexPath, item in 
+            cellProvider: { tableView, indexPath, item in
                 
                 switch item {
                 case let .account(id):
@@ -154,9 +162,10 @@ extension SettingViewController {
                     cell.configure(with: id)
                     return cell
                     
-                case let .menu(title):
+                    
+                case let .menu(menuItem):
                     let cell = tableView.dequeueReusableCell(withIdentifier: SettingMenuCell.identifier, for: indexPath) as! SettingMenuCell
-                    cell.configure(with: title)
+                    cell.configure(with: menuItem.title)  
                     return cell
                 }
             }
@@ -174,7 +183,7 @@ extension SettingViewController {
         }
         
         snapshot.appendSections([.menu])
-        snapshot.appendItems(menuItems.map { .menu($0) }, toSection: .menu)
+        snapshot.appendItems(MenuItem.allCases.map { .menu($0) }, toSection: .menu)
         
         tableViewDataSource?.apply(snapshot, animatingDifferences: false)
     }
@@ -204,23 +213,21 @@ extension SettingViewController: UITableViewDelegate {
             settingViewModel.accountTapped()
             
         case .menu:
-            switch indexPath.row {
-            case 0:
+            guard let item = tableViewDataSource?.itemIdentifier(for: indexPath),
+                  case let .menu(menuItem) = item else { return }
+            
+            switch menuItem {
+            case .privacyPolicy:
                 settingViewModel.privacyPolicyTapped()
-            case 1:
+            case .termsOfService:
                 settingViewModel.termsOfServiceTapped()
-            case 2:
+            case .logout:
                 settingViewModel.logoutTapped()
-            default:
-                break
             }
         }
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return 68
-        }
         return 56
     }
     
@@ -232,12 +239,21 @@ extension SettingViewController: UITableViewDelegate {
                 self?.settingViewModel.editProfileTapped()
             }
             return headerView
+        } else if section == 1 {
+            
+            let spacerView = UIView()
+            spacerView.backgroundColor = .clear
+            return spacerView
         }
         return nil
     }
     
+    
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 112 : 0 
+        if section == 0 {
+            return 96
+        }
+        return 0
     }
     
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {

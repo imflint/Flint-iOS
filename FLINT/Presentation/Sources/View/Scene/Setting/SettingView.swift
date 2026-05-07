@@ -17,8 +17,7 @@ public final class SettingView: BaseView {
     
     public let tableView = UITableView(frame: .zero, style: .grouped).then {
         $0.backgroundColor = .clear
-        $0.separatorStyle = .singleLine
-        $0.separatorColor = UIColor.flintGray800
+        $0.separatorStyle = .none
         $0.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.register(SettingMenuCell.self, forCellReuseIdentifier: SettingMenuCell.identifier)
         $0.register(SettingAccountCell.self, forCellReuseIdentifier: SettingAccountCell.identifier)

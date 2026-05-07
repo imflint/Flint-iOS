@@ -10,8 +10,6 @@ import UIKit
 import SnapKit
 import Then
 
-// MARK: - SettingMenuCell
-
 public final class SettingMenuCell: BaseTableViewCell {
     
     public static let identifier = "SettingMenuCell"
@@ -19,20 +17,29 @@ public final class SettingMenuCell: BaseTableViewCell {
     // MARK: - UI Components
     
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 15, weight: .regular)
-        $0.textColor = .white
+        $0.font = .pretendard(.body1_m_16)
+        $0.textColor = .flintWhite
+    }
+    
+    private let separatorView = UIView().then {
+        $0.backgroundColor = .flintGray800
     }
     
     // MARK: - Setup
     
     public override func setHierarchy() {
-        contentView.addSubview(titleLabel)
+        contentView.addSubviews(titleLabel, separatorView)
     }
     
     public override func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(20)
             $0.centerY.equalToSuperview()
+        }
+        
+        separatorView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(2)
         }
     }
     
