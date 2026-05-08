@@ -9,12 +9,18 @@ import Foundation
 
 import Presentation
 
-protocol OnboardingViewModelFactory: CheckNicknameUseCaseFactory, SearchContentsUseCaseFactory, FetchPopularContentsUseCaseFactory, SignupUseCaseFactory {
+protocol OnboardingViewModelFactory: UploadUserProfileUseCaseFactory, CheckNicknameUseCaseFactory, SearchContentsUseCaseFactory, FetchPopularContentsUseCaseFactory, SignupUseCaseFactory {
     func makeOnboardingViewModel() -> OnboardingViewModel
 }
 
 extension OnboardingViewModelFactory {
     func makeOnboardingViewModel() -> OnboardingViewModel {
-        return DefaultOnboardingViewModel(checkNicknameUseCase: makeCheckNicknameUseCase(), fetchPopularContentsUseCase: makeFetchPopularContentsUseCase(), searchContentsUseCase: makeSearchContentsUseCase(), signupUseCase: makeSignupUseCase())
+        return DefaultOnboardingViewModel(
+            uploadUserProfileUseCase: makeUploadUserProfileUseCase(),
+            checkNicknameUseCase: makeCheckNicknameUseCase(),
+            fetchPopularContentsUseCase: makeFetchPopularContentsUseCase(),
+            searchContentsUseCase: makeSearchContentsUseCase(),
+            signupUseCase: makeSignupUseCase()
+        )
     }
 }

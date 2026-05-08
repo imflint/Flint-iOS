@@ -7,11 +7,13 @@
 
 import Combine
 import Foundation
+import UIKit
 
 import Domain
 
 public protocol OnboardingViewModelInput {
     // nickname
+    func uploadProfileImage(_ image: UIImage)
     func checkNickname(_ nickname: String)
     
     // content select
@@ -46,6 +48,7 @@ public typealias OnboardingViewModel = OnboardingViewModelInput & OnboardingView
 
 public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
+    private let uploadUserProfileUseCase: UploadUserProfileUseCase
     private let checkNicknameUseCase: CheckNicknameUseCase
     private let fetchPopularContentsUseCase: FetchPopularContentsUseCase
     private let searchContentsUseCase: SearchContentsUseCase
@@ -72,15 +75,25 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     public init(
+        uploadUserProfileUseCase: UploadUserProfileUseCase,
         checkNicknameUseCase: CheckNicknameUseCase,
         fetchPopularContentsUseCase: FetchPopularContentsUseCase,
         searchContentsUseCase: SearchContentsUseCase,
         signupUseCase: SignupUseCase,
     ) {
+        self.uploadUserProfileUseCase = uploadUserProfileUseCase
         self.checkNicknameUseCase = checkNicknameUseCase
         self.fetchPopularContentsUseCase = fetchPopularContentsUseCase
         self.searchContentsUseCase = searchContentsUseCase
         self.signupUseCase = signupUseCase
+    }
+    
+    public func uploadProfileImage(_ image: UIImage) {
+        uploadUserProfileUseCase(image)
+            .sinkHandledCompletion(receiveValue: {
+                Log.d("Profile image uploaded")
+            })
+            .store(in: &cancellables)
     }
     
     public func checkNickname(_ nickname: String) {

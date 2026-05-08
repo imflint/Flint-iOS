@@ -25,6 +25,13 @@ public final class DefaultUploadUserProfileUseCase: UploadUserProfileUseCase {
     }
     
     public func callAsFunction(_ image: UIImage) -> AnyPublisher<Void, any Error> {
-        storageRepository.fetchPresignedURL(uploadType: .userProfile, fileExtension: <#T##FileExtension#>)
+        storageRepository.fetchPresignedURL(uploadType: .userProfile, fileExtension: .png)
+            .flatMap { [storageRepository] presignedUrlInfoEntity in
+                guard let imageData = image.pngData() else {
+                    return Fail<Void, Error>(error: FlintError.imageEncodingFailed).eraseToAnyPublisher()
+                }
+                return storageRepository.uploadImageToS3(imageData: imageData, uploadUrl: presignedUrlInfoEntity.uploadUrl, fileExtension: .png)
+            }
+            .eraseToAnyPublisher()
     }
 }
