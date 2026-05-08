@@ -16,14 +16,20 @@ import Networking
 public final class DefaultStorageRepository: StorageRepository {
     
     private let storageService: StorageService
+    private let presignedUrlService: PresignedUrlService
     
-    public init(storageService: StorageService) {
+    public init(storageService: StorageService, presignedUrlService: PresignedUrlService) {
         self.storageService = storageService
+        self.presignedUrlService = presignedUrlService
     }
     
     public func fetchPresignedURL(uploadType: UploadType, fileExtension: FileExtension) -> AnyPublisher<PresignedUrlInfoEntity, any Error> {
         return storageService.fetchpresignedUrl(uploadType: uploadType, fileExtension: fileExtension)
             .tryMap({ try $0.presignedUrlInfoEntity })
             .eraseToAnyPublisher()
+    }
+    
+    public func uploadImageToS3(imageData: Data, uploadUrl: URL, fileExtension: FileExtension) -> AnyPublisher<Void, Error> {
+        return presignedUrlService.uploadImageToS3(imageData: imageData, uploadUrl: uploadUrl, fileExtension: fileExtension)
     }
 }

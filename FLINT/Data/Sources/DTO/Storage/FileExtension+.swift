@@ -28,4 +28,15 @@ extension FileExtension {
             return "PDF"
         }
     }
+    
+    package var contentType: String {
+        switch self {
+        case .jpg, .jpeg: return "image/jpeg"
+        case .png: return "image/png"
+        case .gif: return "image/gif"
+        case .webp: return "image/webp"
+        case .svg: return "image/svg+xml"
+        case .pdf: return "application/pdf"
+        }
+    }
 }

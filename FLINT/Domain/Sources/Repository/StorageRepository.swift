@@ -12,4 +12,5 @@ import Entity
 
 public protocol StorageRepository {
     func fetchPresignedURL(uploadType: UploadType, fileExtension: FileExtension) -> AnyPublisher<PresignedUrlInfoEntity, Error>
+    func uploadImageToS3(imageData: Data, uploadUrl: URL, fileExtension: FileExtension) -> AnyPublisher<Void, Error>
 }
