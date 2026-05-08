@@ -17,36 +17,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     let diContainer: DIContainer = DIContainer()
     
-//    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-//        guard let windowScene = (scene as? UIWindowScene) else { return }
-//        
-//        window = UIWindow(windowScene: windowScene)
-//        
-////        let viewController = diContainer.makeSplashViewController()
-//        let viewController = diContainer.makeNicknameViewController()
-////        let viewController = diContainer.makeTabBarViewController()
-//        let navigationController = UINavigationController(rootViewController: viewController).configured({
-//            $0.navigationBar.isHidden = true
-//        })
-//        window?.rootViewController = navigationController
-//        window?.makeKeyAndVisible()
-//    }
-
-    #warning("신델리 위 주석으로 수정")
-    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
         
-        let settingViewModel = DefaultSettingViewModel()
-        let settingVC = SettingViewController(
-            settingViewModel: settingViewModel,
-            viewControllerFactory: diContainer
-        )
-        
-        let navigationController = UINavigationController(rootViewController: settingVC).configured({
-            $0.navigationBar.isHidden = false
+//        let viewController = diContainer.makeSplashViewController()
+        let viewController = diContainer.makeNicknameViewController()
+//        let viewController = diContainer.makeTabBarViewController()
+        let navigationController = UINavigationController(rootViewController: viewController).configured({
+            $0.navigationBar.isHidden = true
         })
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
