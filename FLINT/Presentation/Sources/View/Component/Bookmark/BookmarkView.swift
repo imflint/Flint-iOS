@@ -40,7 +40,7 @@ public final class BookmarkView: BaseView {
     
     public override func setLayout() {
         bookmarkButton.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
+            $0.top.horizontalEdges.equalToSuperview()
             $0.size.equalTo(24)
         }
         

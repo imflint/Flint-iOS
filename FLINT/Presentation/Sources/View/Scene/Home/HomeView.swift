@@ -1,4 +1,6 @@
 //
+//
+//
 //  HomeView.swift
 //  FLINT
 //
@@ -20,6 +22,25 @@ public final class HomeView: BaseView {
         $0.showsVerticalScrollIndicator = false
     }
     
+    // 이부분이추가
+    public let flinerCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 12
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .clear
+        cv.showsHorizontalScrollIndicator = false
+        cv.isPagingEnabled = false
+        cv.decelerationRate = .fast
+        cv.clipsToBounds = false
+        return cv
+    }()
+    
+    public let flinerPageControl = UIPageControl().then {
+        $0.hidesForSinglePage = true
+        $0.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+    }
+    
     public let floatingButton = UIButton(type: .custom).then {
         $0.setImage(DesignSystem.Image.Common.fab, for: .normal)
     }
@@ -30,6 +51,11 @@ public final class HomeView: BaseView {
         backgroundColor = .flintBackground
         addSubviews(tableView, floatingButton)
         bringSubviewToFront(floatingButton)
+        bringSubviewToFront(flinerCollectionView)
+        bringSubviewToFront(flinerPageControl)
+        
+        flinerCollectionView.isHidden = true
+        flinerPageControl.isHidden = true
     }
     
     public override func setLayout() {
@@ -57,3 +83,4 @@ public final class HomeView: BaseView {
         )
     }
 }
+
