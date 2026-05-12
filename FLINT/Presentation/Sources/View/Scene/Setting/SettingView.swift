@@ -30,6 +30,10 @@ public final class SettingView: BaseView {
         $0.backgroundColor = .clear
     }
     
+    private let underlineView = UIView().then {
+        $0.backgroundColor = .flintGray300
+    }
+    
     // MARK: - Setup
     
     public override func setUI() {
@@ -37,7 +41,7 @@ public final class SettingView: BaseView {
     }
     
     public override func setHierarchy() {
-        addSubviews(tableView, withdrawalButton)
+        addSubviews(tableView, withdrawalButton, underlineView)
     }
     
     public override func setLayout() {
@@ -50,6 +54,13 @@ public final class SettingView: BaseView {
         withdrawalButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalTo(safeAreaLayoutGuide).offset(-20)
+        }
+        
+        underlineView.snp.makeConstraints {
+            $0.top.equalTo(withdrawalButton.snp.bottom).offset(0)
+            $0.leading.equalTo(withdrawalButton.snp.leading)
+            $0.trailing.equalTo(withdrawalButton.snp.trailing)
+            $0.height.equalTo(1)
         }
     }
 }
