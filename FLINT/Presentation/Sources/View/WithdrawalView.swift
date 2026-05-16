@@ -11,6 +11,8 @@ import Then
 
 public final class WithdrawalView: BaseView {
     
+    public var onBeginEditing: (() -> Void)?
+    
     // MARK: - UI Component
     
     public let titleLabel = UILabel().then {

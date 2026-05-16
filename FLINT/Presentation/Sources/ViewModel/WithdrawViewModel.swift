@@ -86,7 +86,6 @@ public final class WithdrawalViewModel {
     
     private func withdraw() -> AnyPublisher<Result<Void, Error>, Never> {
         // TODO: UseCase 호출
-        // return withdrawUseCase.execute()
         
         // 임시 구현
         return Just(Result.success(()))
