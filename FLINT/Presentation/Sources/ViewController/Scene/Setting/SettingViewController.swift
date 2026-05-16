@@ -277,11 +277,15 @@ private extension SettingViewController {
     }
     
     func navigateToPrivacyPolicy() {
-        print("Navigate to Privacy Policy")
+        if let url = URL(string: "https://artistic-bacon-a40.notion.site/35650cdb714e804cb642eb2cc576a62c") {
+            UIApplication.shared.open(url)
+        }
     }
     
     func navigateToTermsOfService() {
-        print("Navigate to Terms of Service")
+        if let url = URL(string: "https://artistic-bacon-a40.notion.site/35650cdb714e8054a69bcbd110ed19dd?source=copy_link") {
+            UIApplication.shared.open(url)
+        }
     }
     
     func showLogoutAlert() {
