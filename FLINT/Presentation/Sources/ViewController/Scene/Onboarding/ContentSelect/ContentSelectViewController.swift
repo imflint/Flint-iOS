@@ -45,6 +45,7 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
     
     private var contentCollectionViewDataSource: ContentCollectionViewDataSource?
     private var selectedContentCollectionViewDataSource: SelectedContentCollectionViewDataSource?
+    private var genreCollectionViewDataSource: GenreCollectionViewDataSource?
     
     // MARK: - Property
     
@@ -74,11 +75,12 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         setupTextField()
         setupContentCollectionView()
         setupSelectedContentCollectionView()
+        setupGenreCollectionView()
         
         rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(onboardingViewModel.selectedContents.value.count)/\(onboardingViewModel.contentSelectQuestions.count)")
         rootView.progressView.progress = Float(onboardingViewModel.selectedContents.value.count) / Float(onboardingViewModel.contentSelectQuestions.count)
         rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
-        rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.contentSelectQuestions[onboardingViewModel.selectedContents.value.count])
+//        rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.contentSelectQuestions[onboardingViewModel.selectedContents.value.count])
         
         rootView.layoutIfNeeded()
         rootView.contentCollectionView.contentOffset.y = -rootView.contentCollectionView.contentInset.top
@@ -113,7 +115,7 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
             
             rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(selectedContents.count)/\(onboardingViewModel.contentSelectQuestions.count)")
             rootView.progressView.progress = Float(selectedContents.count) / Float(onboardingViewModel.contentSelectQuestions.count)
-            rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.contentSelectQuestions[min(selectedContents.count, onboardingViewModel.contentSelectQuestions.count-1)])
+//            rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.contentSelectQuestions[min(selectedContents.count, onboardingViewModel.contentSelectQuestions.count-1)])
             
             rootView.nextButton.isEnabled = selectedContents.count == 7
         }
@@ -130,7 +132,9 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
 
 extension ContentSelectViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        contentCollectionView(collectionView, didSelectItemAt: indexPath)
+        if collectionView === rootView.contentCollectionView {
+            contentCollectionView(collectionView, didSelectItemAt: indexPath)
+        }
     }
 }
 
@@ -268,6 +272,42 @@ extension ContentSelectViewController {
         var snapshot = SelectedContentCollectionViewSnapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(contentEntities.map({ SelectedContentCollectionViewItem.content($0) }), toSection: .main)
+        return snapshot
+    }
+}
+
+// MARK: - GenreCollectionView
+
+extension ContentSelectViewController {
+    private typealias GenreCollectionViewDataSource = UICollectionViewDiffableDataSource<GenreCollectionViewSection, GenreCollectionViewItem>
+    private typealias GenreCollectionViewSnapshot = NSDiffableDataSourceSnapshot<GenreCollectionViewSection, GenreCollectionViewItem>
+    
+    private enum GenreCollectionViewSection: Int {
+        case main
+    }
+    
+    private enum GenreCollectionViewItem: Hashable, Sendable {
+        case genre(Genre)
+    }
+    
+    private func setupGenreCollectionView() {
+        rootView.genreCollectionView.dataSource = genreCollectionViewDataSource
+        
+        genreCollectionViewDataSource = GenreCollectionViewDataSource(collectionView: rootView.genreCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+            switch itemIdentifier {
+            case let .genre(genre):
+                let cell = collectionView.dequeueReusableCell(GenreCollectionViewCell.self, for: indexPath)
+                cell.configure(genre: genre)
+                return cell
+            }
+        })
+        genreCollectionViewDataSource?.apply(makeGenreCollectionViewSnapshot())
+    }
+    
+    private func makeGenreCollectionViewSnapshot() -> GenreCollectionViewSnapshot {
+        var snapshot = GenreCollectionViewSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(Genre.allCases.map { GenreCollectionViewItem.genre($0) }, toSection: .main)
         return snapshot
     }
 }
