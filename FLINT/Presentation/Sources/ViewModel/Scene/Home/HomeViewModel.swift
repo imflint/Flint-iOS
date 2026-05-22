@@ -26,6 +26,7 @@ public final class HomeViewModel {
     public enum Row {
         case greeting(userName: String)
         case header(style: TitleHeaderStyle, title: String, subtitle: String)
+        case flinerPager(items: [CollectionEntity])
         case fliner(items: [CollectionEntity])
         case recentSavedContents(items: [ContentInfoEntity])
         case ctaButton(title: String)
@@ -144,13 +145,13 @@ public final class HomeViewModel {
         var flinerRows: [Row] = [
             .header(
                 style: .normal,
-                title: "Fliner의 추천 컬렉션을 만나보세요",
+                title: "Fliner의 추천 컬렉션",
                 subtitle: "Fliner는 콘텐츠에 진심인, 플린트의 큐레이터들이에요"
             )
         ]
 
         if !flinerCollections.isEmpty {
-            flinerRows.append(.fliner(items: flinerCollections))
+            flinerRows.append(.flinerPager(items: flinerCollections))
         }
 
         result.append(.init(rows: flinerRows))

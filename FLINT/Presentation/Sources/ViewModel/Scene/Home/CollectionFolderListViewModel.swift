@@ -18,10 +18,15 @@ public final class CollectionFolderListViewModel {
 
     // MARK: - Dependency
     private let fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase
+    private let toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase
     private var cancellables = Set<AnyCancellable>()
 
-    public init(fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase) {
+    public init(
+        fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase,
+        toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase
+    ) {
         self.fetchRecentViewedCollectionsUseCase = fetchRecentViewedCollectionsUseCase
+        self.toggleCollectionBookmarkUseCase = toggleCollectionBookmarkUseCase
     }
 
     public func load() {
@@ -39,9 +44,13 @@ public final class CollectionFolderListViewModel {
     }
     
     public func updateBookmark(at index: Int, isBookmarked: Bool) {
+        
         guard items.indices.contains(index) else { return }
 
         let old = items[index]
+        
+        let collectionId = old.id
+        guard let collectionIdInt = Int64(collectionId) else { return }
 
         items[index] = CollectionEntity(
             id: old.id,
@@ -49,10 +58,21 @@ public final class CollectionFolderListViewModel {
             title: old.title,
             description: old.description,
             imageList: old.imageList,
-            bookmarkCount: old.bookmarkCount,
+            bookmarkCount: isBookmarked ? old.bookmarkCount + 1 : max(old.bookmarkCount - 1, 0),
             isBookmarked: isBookmarked,
             user: old.user
         )
+        
+        toggleCollectionBookmarkUseCase(collectionId: collectionIdInt)
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("❌ toggleBookmark failed:", error)
+                }
+            } receiveValue: { isBookmarked in
+                print("✅ toggleBookmark success:", isBookmarked)  
+            }
+            .store(in: &cancellables)
     }
 
 }

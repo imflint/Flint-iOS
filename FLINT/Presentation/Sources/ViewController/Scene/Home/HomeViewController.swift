@@ -78,6 +78,7 @@ public final class HomeViewController: BaseViewController<HomeView> {
     private func registerCells() {
         rootView.tableView.register(HomeGreetingTableViewCell.self)
         rootView.tableView.register(TitleHeaderTableViewCell.self)
+        rootView.tableView.register(FlinerRecommendTableViewCell.self)
         rootView.tableView.register(MoreNoMoreCollectionTableViewCell.self)
         rootView.tableView.register(RecentSavedContentTableViewCell.self)
         rootView.tableView.register(HomeCTAButtonTableViewCell.self)
@@ -168,6 +169,17 @@ extension HomeViewController: UITableViewDataSource {
             
             return cell
             
+        
+        case .flinerPager(let items):
+            let cell = tableView.dequeueReusableCell(FlinerRecommendTableViewCell.self, for: indexPath)
+            cell.configure(items: items)
+            cell.onSelectItem = { [weak self] id in
+                guard let self, let collectionId = Int64(id) else { return }
+                guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+            return cell
+            
         case .fliner(let items):
             let cell = tableView.dequeueReusableCell(MoreNoMoreCollectionTableViewCell.self, for: indexPath)
             cell.configure(items: items)
@@ -236,6 +248,8 @@ extension HomeViewController: UITableViewDelegate {
         switch row {
         case .fliner:
             return 180
+        case .flinerPager:
+                return 360  
         default:
             return UITableView.automaticDimension
         }

@@ -36,29 +36,32 @@ public final class DefaultLoginViewModel: LoginViewModel {
     }
     
     public func kakaoLogin() {
-        guard UserApi.isKakaoTalkLoginAvailable() else {
+        if UserApi.isKakaoTalkLoginAvailable() {
+            UserApi.shared.loginWithKakaoTalk(completion: kakaoSocialVerify)
+        } else {
+            UserApi.shared.loginWithKakaoAccount(completion: kakaoSocialVerify)
+        }
+        
+    }
+    
+    private func kakaoSocialVerify(oauthToken: OAuthToken?, error: Error?) {
+        if let error = error {
+            Log.e(error)
             return
         }
-        UserApi.shared.loginWithKakaoTalk { [weak self] oauthToken, error in
-            guard let self else { return }
-            if let error = error {
-                Log.e(error)
-                return
-            }
-            if let accessToken = oauthToken?.accessToken {
-                socialVerifyUseCase(
-                    socialAuthCredential: SocialVerifyEntity(
-                        provider: .kakao,
-                        accessToken: accessToken
-                    )
+        if let accessToken = oauthToken?.accessToken {
+            socialVerifyUseCase(
+                socialAuthCredential: SocialVerifyEntity(
+                    provider: .kakao,
+                    accessToken: accessToken
                 )
-                .manageThread()
-                .sinkHandledCompletion { socialVerifyResultEntity in
-                    Log.d(socialVerifyResultEntity)
-                    self.socialVerifyResultEntity.send(socialVerifyResultEntity)
-                }
-                .store(in: &cancellables)
+            )
+            .manageThread()
+            .sinkHandledCompletion { socialVerifyResultEntity in
+                Log.d(socialVerifyResultEntity)
+                self.socialVerifyResultEntity.send(socialVerifyResultEntity)
             }
+            .store(in: &cancellables)
         }
     }
 }
