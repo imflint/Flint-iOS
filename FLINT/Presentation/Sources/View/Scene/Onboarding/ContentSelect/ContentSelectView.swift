@@ -35,12 +35,27 @@ public final class ContentSelectView: BaseView {
         $0.textColor = .flintWhite
         $0.numberOfLines = 0
     }
-    public let subtitleLabelView = UIView().then {
+    public let genreCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewFlowLayout().then {
+            $0.estimatedItemSize = CGSize(width: 48, height: 32)
+            $0.scrollDirection = .horizontal
+            $0.minimumInteritemSpacing = 8
+            $0.minimumLineSpacing = 8
+        }
+    ).then {
+        $0.register(GenreCollectionViewCell.self)
         $0.backgroundColor = .flintBackground
+        $0.showsHorizontalScrollIndicator = false
+        $0.showsVerticalScrollIndicator = false
+        $0.contentInset = .init(top: 8, left: 16, bottom: 8, right: 16)
     }
-    public let subtitleLabel = UILabel().then {
-        $0.textColor = .flintGray300
-    }
+//    public let subtitleLabelView = UIView().then {
+//        $0.backgroundColor = .flintBackground
+//    }
+//    public let subtitleLabel = UILabel().then {
+//        $0.textColor = .flintGray300
+//    }
     
     public let searchView = UIView().then {
         $0.backgroundColor = .flintBackground
@@ -151,7 +166,7 @@ public final class ContentSelectView: BaseView {
             collectionViewStackView,
             foldableViewBackgroundView,
             foldableView,
-            subtitleLabelView,
+            genreCollectionView,
             progressInfoView,
             searchView,
             nextButton,
@@ -163,7 +178,6 @@ public final class ContentSelectView: BaseView {
         )
         progressInfoView.addSubviews(progressView, progressLabel)
         foldableView.addSubview(titleLabel)
-        subtitleLabelView.addSubview(subtitleLabel)
         searchView.addSubview(searchTextField)
         emptyView.addSubviews(emptyStackView)
         emptyStackView.addArrangedSubviews(
@@ -193,22 +207,18 @@ public final class ContentSelectView: BaseView {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(24)
         }
-        subtitleLabelView.snp.makeConstraints {
+        genreCollectionView.snp.makeConstraints {
             $0.top.equalTo(foldableView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
-        }
-        subtitleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(8)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(24)
+            $0.height.equalTo(48)
         }
         foldableViewBackgroundView.snp.makeConstraints {
             $0.edges.equalTo(foldableView)
         }
         searchView.snp.makeConstraints {
-            $0.top.equalTo(subtitleLabelView.snp.bottom)
+            $0.top.equalTo(genreCollectionView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
         }
         searchTextField.snp.makeConstraints {
