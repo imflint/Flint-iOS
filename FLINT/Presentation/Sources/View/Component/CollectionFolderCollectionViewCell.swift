@@ -55,7 +55,7 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
     }
     
     private let profileImageVIew = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
+        $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 14
     }

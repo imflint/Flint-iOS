@@ -17,7 +17,6 @@ public final class OTTBottomSheetView: BaseView {
     // MARK: - Public Event
 
     public var onTapDim: (() -> Void)?
-    public var onTapOpen: ((OTTPlatform) -> Void)?
 
     // MARK: - UI
 
@@ -30,7 +29,13 @@ public final class OTTBottomSheetView: BaseView {
     public let containerView = UIView().then {
         $0.backgroundColor = .flintGray800
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        $0.layer.cornerRadius = 16 
         $0.clipsToBounds = true
+    }
+
+    private let titleLabel = UILabel().then {
+        $0.attributedText = .pretendard(.head3_sb_18, text: "이 작품을 볼 수 있는 OTT", color: .flintWhite)
+        $0.numberOfLines = 1
     }
 
     private let stackView = UIStackView().then {
@@ -42,7 +47,9 @@ public final class OTTBottomSheetView: BaseView {
 
     private let rowHeight: CGFloat = 48
     private let rowSpacing: CGFloat = 8
-    private let sheetTopInset: CGFloat = 36
+    private let sheetTopInset: CGFloat = 24
+    private let titleHeight: CGFloat = 24
+    private let titleBottomSpacing: CGFloat = 16
     private let sheetBottomInset: CGFloat = 32
 
     private var platforms: [OTTPlatform] = []
@@ -51,7 +58,7 @@ public final class OTTBottomSheetView: BaseView {
         let count = platforms.count
         let rowsHeight = CGFloat(count) * rowHeight
         let spacingsHeight = CGFloat(max(count - 1, 0)) * rowSpacing
-        return sheetTopInset + rowsHeight + spacingsHeight + sheetBottomInset
+        return sheetTopInset + titleHeight + titleBottomSpacing + rowsHeight + spacingsHeight + sheetBottomInset
     }
 
     // MARK: - Public API
@@ -71,6 +78,7 @@ public final class OTTBottomSheetView: BaseView {
         addSubview(dimView)
         addSubview(containerView)
         
+        containerView.addSubview(titleLabel)
         containerView.addSubview(stackView)
 
         setAction()
@@ -86,10 +94,15 @@ public final class OTTBottomSheetView: BaseView {
             $0.height.equalTo(sheetHeight)
         }
 
-        stackView.snp.makeConstraints {
+        titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(sheetTopInset)
-            $0.leading.equalToSuperview()
-            $0.trailing.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.height.equalTo(titleHeight)
+        }
+
+        stackView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(titleBottomSpacing)
+            $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(sheetBottomInset)
         }
     }
@@ -113,9 +126,6 @@ public final class OTTBottomSheetView: BaseView {
         platforms.forEach { platform in
             let row = OTTPlatformRowView()
             row.configure(platform: platform)
-            row.onTapOpen = { [weak self] in
-                self?.onTapOpen?(platform)
-            }
             stackView.addArrangedSubview(row)
         }
 

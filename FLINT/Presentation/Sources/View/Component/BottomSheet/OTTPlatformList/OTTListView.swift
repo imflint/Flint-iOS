@@ -59,7 +59,7 @@ public final class OTTListView: BaseView {
         platforms.forEach { platform in
             let row = OTTPlatformRowView()
             row.configure(platform: platform)
-            row.onTapOpen = { [weak self] in
+            row.onTap = { [weak self] in
                 self?.onSelectPlatform?(platform)
             }
             stackView.addArrangedSubview(row)
