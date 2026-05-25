@@ -16,14 +16,14 @@ public final class WithdrawalViewController: BaseViewController<WithdrawalView> 
     
     // MARK: - Property
     
-    private let viewModel: WithdrawalViewModel
+    private let viewModel: WithdrawViewModel
     
     private let agreementCheckSubject = PassthroughSubject<Bool, Never>()
     private let withdrawButtonSubject = PassthroughSubject<Void, Never>()
     
     // MARK: - Init
     
-    public init(viewModel: WithdrawalViewModel) {
+    public init(viewModel: WithdrawViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -47,7 +47,7 @@ public final class WithdrawalViewController: BaseViewController<WithdrawalView> 
     }
     
     public override func bind() {
-        let input = WithdrawalViewModel.Input(
+        let input = WithdrawViewModel.Input(
             agreementCheckTapped: agreementCheckSubject.eraseToAnyPublisher(),
             withdrawButtonTapped: withdrawButtonSubject.eraseToAnyPublisher()
         )

@@ -9,7 +9,7 @@
 import Foundation
 import Combine
 
-public final class WithdrawalViewModel {
+public final class WithdrawViewModel {
     
     // MARK: - Property
     
