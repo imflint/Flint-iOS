@@ -10,24 +10,24 @@ import UIKit
 import SnapKit
 import Then
 
-enum CheckBoxPosition {
+public enum CheckBoxPosition {
     case left
     case right
 }
 
-final class LabelCheckBox: BaseView {
+public final class LabelCheckBox: BaseView {
     
     // MARK: - Property
     
     private let position: CheckBoxPosition
     
-    var isSelected: Bool = false {
+    public var isSelected: Bool = false {
         didSet {
             updateCheckBoxImage()
         }
     }
     
-    var didTapCheckBox: ((Bool) -> Void)?
+    public var didTapCheckBox: ((Bool) -> Void)?
     
     // MARK: - UI Component
     
@@ -36,7 +36,6 @@ final class LabelCheckBox: BaseView {
     }
     
     private let titleLabel = UILabel().then {
-        $0.numberOfLines = 1
         $0.font = .pretendard(.body1_r_16)
         $0.textColor = .white
     }
@@ -47,7 +46,7 @@ final class LabelCheckBox: BaseView {
     
     // MARK: - Init
     
-    init(title: String, position: CheckBoxPosition = .left) {
+    public init(title: String, position: CheckBoxPosition = .left) {
         self.position = position
         super.init(frame: .zero)
         
@@ -61,16 +60,16 @@ final class LabelCheckBox: BaseView {
     
     // MARK: - Override
     
-    override func setUI() {
+    public override func setUI() {
         backgroundColor = .clear
         containerButton.addTarget(self, action: #selector(didTapCheckBoxButton), for: .touchUpInside)
     }
     
-    override func setHierarchy() {
+    public override func setHierarchy() {
         addSubviews(checkBoxImageView, titleLabel, containerButton)
     }
     
-    override func setLayout() {
+    public override func setLayout() {
         switch position {
         case .left:
             checkBoxImageView.snp.makeConstraints {
@@ -119,7 +118,7 @@ final class LabelCheckBox: BaseView {
     
     // MARK: - Configure
     
-    func configure(isSelected: Bool) {
+    public func configure(isSelected: Bool) {  
         self.isSelected = isSelected
     }
 }
