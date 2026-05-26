@@ -18,7 +18,11 @@ public protocol HomeViewControllerFactory {
 
 public final class HomeViewController: BaseViewController<HomeView> {
     
+    // MARK: - Properties
+    
     private let viewModel: HomeViewModel
+    
+    // MARK: - Init
     
     public init(viewModel: HomeViewModel, viewControllerFactory: ViewControllerFactory) {
         self.viewModel = viewModel
@@ -29,7 +33,6 @@ public final class HomeViewController: BaseViewController<HomeView> {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     // MARK: - Lifecycle
     
@@ -47,16 +50,16 @@ public final class HomeViewController: BaseViewController<HomeView> {
     
     public override func setUI() {
         view.backgroundColor = DesignSystem.Color.background
-        
-        setNavigationBar(
-            .init(
-                left: .logo,
-                right: .none,
-                backgroundStyle: .solid(DesignSystem.Color.background)
-            )
-        )
+        navigationController?.setNavigationBarHidden(true, animated: false)
         
         statusBarBackgroundView.isHidden = true
+        navigationBarView.isHidden = true
+    }
+    
+    public override func setLayout() {
+        rootView.snp.remakeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
     public override func bind() {
@@ -68,7 +71,7 @@ public final class HomeViewController: BaseViewController<HomeView> {
             .store(in: &cancellables)
     }
     
-    // MARK: - Private
+    // MARK: - Private Methods
     
     private func setTableView() {
         rootView.tableView.dataSource = self
@@ -87,6 +90,23 @@ public final class HomeViewController: BaseViewController<HomeView> {
     private func bindActions() {
         rootView.floatingButton.addTarget(self, action: #selector(didTapFab), for: .touchUpInside)
     }
+    
+    private func map(_ style: HomeViewModel.TitleHeaderStyle) -> TitleHeaderTableViewCell.TitleHeaderStyle {
+        switch style {
+        case .normal: return .normal
+        case .more: return .more
+        }
+    }
+    
+    private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
+        let vc = BaseBottomSheetViewController(
+            title: "이 작품을 볼 수 있는 OTT",
+            content: .ott(platforms: platforms)
+        )
+        present(vc, animated: false)
+    }
+    
+    // MARK: - Actions
     
     @objc private func didTapFab() {
         Log.d("didTapFab")
@@ -107,18 +127,6 @@ public final class HomeViewController: BaseViewController<HomeView> {
         }
         
         nav.pushViewController(vc, animated: true)
-    }
-    
-    
-    private func map(_ style: HomeViewModel.TitleHeaderStyle) -> TitleHeaderTableViewCell.TitleHeaderStyle {
-        switch style {
-        case .normal: return .normal
-        case .more: return .more
-        }
-    }
-    private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
-           let vc = BaseBottomSheetViewController(content: .ott(platforms: platforms))
-           present(vc, animated: false)
     }
 }
 
@@ -151,15 +159,14 @@ extension HomeViewController: UITableViewDataSource {
             
             cell.configure(style: map(style), title: title, subtitle: subtitle)
             
-            
             if style == .more {
                 cell.onTapMore = { [weak self] in
                     guard let self else { return }
-
+                    
                     let factory = self.viewControllerFactory
-                        ?? (self.parent as? TabBarViewController)?.viewControllerFactory
+                    ?? (self.parent as? TabBarViewController)?.viewControllerFactory
                     guard let factory else { return }
-
+                    
                     let vc = factory.makeCollectionFolderListViewController()
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
@@ -186,28 +193,28 @@ extension HomeViewController: UITableViewDataSource {
             
             cell.onSelectItem = { [weak self] entity in
                 guard let self else { return }
-
+                
                 guard let collectionId = Int64(entity.id) else {
                     print("invalid collectionId:", entity.id)
                     return
                 }
-
+                
                 guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
                 self.navigationController?.pushViewController(vc, animated: true)
             }
-
+            
             return cell
             
         case .ctaButton(let title):
             let cell = tableView.dequeueReusableCell(HomeCTAButtonTableViewCell.self, for: indexPath)
-
+            
             cell.configure(title: title)
-
+            
             cell.onTap = { [weak self] in
                 guard let self else { return }
                 (self.parent as? TabBarViewController)?.selectTab(.explore)
             }
-
+            
             return cell
             
         case .recentSavedContents(let items):

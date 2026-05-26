@@ -16,6 +16,7 @@ public final class FlintButton: UIButton {
         case disable
         case outline
         case colorOutline
+        case smallColorOutline
     }
     
     public var style: Style
@@ -71,6 +72,8 @@ public final class FlintButton: UIButton {
             setOutlineUI()
         case .colorOutline:
             setColorOutlineUI()
+        case .smallColorOutline:
+            setSmallColorOutlineUI()
         }
     }
     
@@ -156,6 +159,20 @@ public final class FlintButton: UIButton {
         
         config.imagePadding = 4 + inset
         config.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: inset / 2)
+        
+        configuration = config
+    }
+    
+    private func setSmallColorOutlineUI() {
+        var config: UIButton.Configuration = configuration ?? .plain()
+        
+        config.background.customView = nil
+        config.background.backgroundColor = .flintGray800
+        config.background.strokeColor = .flintPrimary400
+        config.background.strokeWidth = 2
+        config.image = nil
+        config.imagePlacement = .all
+        config.attributedTitle = .pretendard(.body2_m_14, text: title ?? "", color: .flintWhite)
         
         configuration = config
     }

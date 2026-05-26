@@ -45,6 +45,7 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
     
     private var contentCollectionViewDataSource: ContentCollectionViewDataSource?
     private var selectedContentCollectionViewDataSource: SelectedContentCollectionViewDataSource?
+    private var genreCollectionViewDataSource: GenreCollectionViewDataSource?
     
     // MARK: - Property
     
@@ -74,6 +75,7 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         setupTextField()
         setupContentCollectionView()
         setupSelectedContentCollectionView()
+        setupGenreCollectionView()
         
         rootView.layoutIfNeeded()
         rootView.contentCollectionView.contentOffset.y = -rootView.contentCollectionView.contentInset.top
@@ -124,7 +126,9 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
 
 extension ContentSelectViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        contentCollectionView(collectionView, didSelectItemAt: indexPath)
+        if collectionView === rootView.contentCollectionView {
+            contentCollectionView(collectionView, didSelectItemAt: indexPath)
+        }
     }
 }
 
@@ -262,6 +266,42 @@ extension ContentSelectViewController {
         var snapshot = SelectedContentCollectionViewSnapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(contentEntities.map({ SelectedContentCollectionViewItem.content($0) }), toSection: .main)
+        return snapshot
+    }
+}
+
+// MARK: - GenreCollectionView
+
+extension ContentSelectViewController {
+    private typealias GenreCollectionViewDataSource = UICollectionViewDiffableDataSource<GenreCollectionViewSection, GenreCollectionViewItem>
+    private typealias GenreCollectionViewSnapshot = NSDiffableDataSourceSnapshot<GenreCollectionViewSection, GenreCollectionViewItem>
+    
+    private enum GenreCollectionViewSection: Int {
+        case main
+    }
+    
+    private enum GenreCollectionViewItem: Hashable, Sendable {
+        case genre(Genre)
+    }
+    
+    private func setupGenreCollectionView() {
+        rootView.genreCollectionView.dataSource = genreCollectionViewDataSource
+        
+        genreCollectionViewDataSource = GenreCollectionViewDataSource(collectionView: rootView.genreCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+            switch itemIdentifier {
+            case let .genre(genre):
+                let cell = collectionView.dequeueReusableCell(GenreCollectionViewCell.self, for: indexPath)
+                cell.configure(genre: genre)
+                return cell
+            }
+        })
+        genreCollectionViewDataSource?.apply(makeGenreCollectionViewSnapshot())
+    }
+    
+    private func makeGenreCollectionViewSnapshot() -> GenreCollectionViewSnapshot {
+        var snapshot = GenreCollectionViewSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(Genre.allCases.map { GenreCollectionViewItem.genre($0) }, toSection: .main)
         return snapshot
     }
 }
