@@ -10,4 +10,6 @@ import Foundation
 public enum UploadType {
     case userProfile
     case logoImage
+    case collectionThumbnail
+    case collectionContent
 }
