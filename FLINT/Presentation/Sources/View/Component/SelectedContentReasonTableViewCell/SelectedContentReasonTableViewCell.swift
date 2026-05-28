@@ -17,6 +17,11 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     public var onChangeReasonText: ((String) -> Void)?
     public var onTapCloseWithDraft: (() -> Void)?
     public var onTapAddPhoto: (() -> Void)?
+    public var onPhotosChanged: (() -> Void)?
+    
+    public var currentReasonText: String {
+        return textView.text ?? ""
+    }
     
     private var isSpoilerOn: Bool = false
     private var photos: [UIImage] = []
@@ -121,7 +126,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
             addPhotoButton,
             spoilerLabel,
             checkboxToggleView,
-            closeButton  // 항상 최상단
+            closeButton
         )
         
         infoContainerView.addSubviews(
@@ -141,23 +146,6 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         closeButton.snp.makeConstraints {
             $0.top.trailing.equalToSuperview().inset(12)
             $0.size.equalTo(24)
-        }
-        
-        photoScrollView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview()
-            photoScrollHeightConstraint = $0.height.equalTo(0).constraint
-        }
-        
-        photoStackView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.height.equalToSuperview()
-        }
-        
-        pageControl.snp.makeConstraints {
-            pageControlTopConstraint = $0.top.equalTo(photoScrollView.snp.bottom).offset(0).constraint
-            $0.centerX.equalToSuperview()
-            pageControlHeightConstraint = $0.height.equalTo(0).constraint
         }
         
         posterImageView.snp.makeConstraints {
@@ -189,8 +177,25 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
             $0.bottom.equalToSuperview().inset(24)
         }
         
-        sectionTitleLabel.snp.makeConstraints {
+        photoScrollView.snp.makeConstraints {
             $0.top.equalTo(posterImageView.snp.bottom).offset(16)
+            $0.horizontalEdges.equalToSuperview()
+            photoScrollHeightConstraint = $0.height.equalTo(0).constraint
+        }
+        
+        photoStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.equalToSuperview()
+        }
+        
+        pageControl.snp.makeConstraints {
+            pageControlTopConstraint = $0.top.equalTo(photoScrollView.snp.bottom).offset(0).constraint
+            $0.centerX.equalToSuperview()
+            pageControlHeightConstraint = $0.height.equalTo(0).constraint
+        }
+        
+        sectionTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(pageControl.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(16)
         }
         
@@ -288,50 +293,19 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     }
     
     private func applyLayout(hasPhotos: Bool) {
-        if hasPhotos {
-            posterImageView.isHidden = true
-            infoContainerView.isHidden = false  // 유지
-            
-            photoScrollView.isHidden = false
-            photoScrollHeightConstraint?.update(offset: 270)
-            
-            pageControl.isHidden = false
-            pageControlTopConstraint?.update(offset: 8)
-            pageControlHeightConstraint?.update(offset: 8)
-            
-            // infoContainerView → photoScrollView 기준
-            infoContainerView.snp.remakeConstraints {
-                $0.top.equalTo(photoScrollView.snp.bottom).offset(8)
-                $0.leading.trailing.equalToSuperview().inset(16)
-            }
-            
-            sectionTitleLabel.snp.remakeConstraints {
-                $0.top.equalTo(infoContainerView.snp.bottom).offset(16)
-                $0.leading.equalToSuperview().inset(16)
-            }
-            
-        } else {
-            posterImageView.isHidden = false
-            infoContainerView.isHidden = false
-            
-            photoScrollView.isHidden = true
-            photoScrollHeightConstraint?.update(offset: 0)
-            
-            pageControl.isHidden = true
-            pageControlTopConstraint?.update(offset: 0)
-            pageControlHeightConstraint?.update(offset: 0)
-            
-            // infoContainerView → posterImageView 기준 (원래대로)
-            infoContainerView.snp.remakeConstraints {
-                $0.top.equalTo(posterImageView.snp.top)
-                $0.leading.equalTo(posterImageView.snp.trailing).offset(16)
-                $0.trailing.equalToSuperview().inset(24)
-            }
-            
-            sectionTitleLabel.snp.remakeConstraints {
-                $0.top.equalTo(posterImageView.snp.bottom).offset(16)
-                $0.leading.equalToSuperview().inset(16)
-            }
+        posterImageView.isHidden = false
+        infoContainerView.isHidden = false
+        
+        photoScrollView.isHidden = !hasPhotos
+        photoScrollHeightConstraint?.update(offset: hasPhotos ? 270 : 0)
+        
+        pageControl.isHidden = !hasPhotos
+        pageControlTopConstraint?.update(offset: hasPhotos ? 8 : 0)
+        pageControlHeightConstraint?.update(offset: hasPhotos ? 8 : 0)
+        
+        sectionTitleLabel.snp.remakeConstraints {
+            $0.top.equalTo(pageControl.snp.bottom).offset(16)
+            $0.leading.equalToSuperview().inset(16)
         }
     }
     
@@ -392,6 +366,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         guard index < photos.count else { return }
         photos.remove(at: index)
         configurePhotos(photos)
+        onPhotosChanged?()
     }
 }
 
@@ -451,6 +426,10 @@ extension SelectedContentReasonPreviewViewController: UITableViewDataSource {
             picker.delegate = self
             self?.present(picker, animated: true)
         }
+        cell.onPhotosChanged = { [weak self] in
+            self?.tableView.beginUpdates()
+            self?.tableView.endUpdates()
+        }
         return cell
     }
 }
@@ -478,13 +457,15 @@ extension SelectedContentReasonPreviewViewController: PHPickerViewControllerDele
         }
         
         group.notify(queue: .main) { [weak self] in
+            guard let self else { return }
+            
             var item = SelectedContentReasonTableViewCellItem.mock
             item.photos = images
+            item.reasonText = cell.currentReasonText
             cell.configure(with: item)
             
-            // 셀 높이 재계산
-            self?.tableView.beginUpdates()
-            self?.tableView.endUpdates()
+            self.tableView.beginUpdates()
+            self.tableView.endUpdates()
         }
     }
 }

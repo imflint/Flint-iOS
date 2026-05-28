@@ -386,6 +386,7 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 }
                 
                 cell.onTapAddPhoto = { [weak self, weak cell] in
+                    
                     guard let self, let cell,
                           let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
                     self.currentPhotoPickerIndex = indexPath.row - 1
