@@ -286,9 +286,19 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         pageControl.numberOfPages = photos.count
         pageControl.currentPage = 0
         
-        photos.enumerated().forEach { index, image in
-            let wrapper = makePhotoWrapper(image: image, index: index)
+        let infinitePhotos = [photos.last!] + photos + [photos.first!]
+        
+        infinitePhotos.enumerated().forEach { index, image in
+            let isReal = index >= 1 && index <= photos.count
+            let realIndex = isReal ? index - 1 : (index == 0 ? photos.count - 1 : 0)
+            let wrapper = makePhotoWrapper(image: image, realIndex: realIndex)
             photoStackView.addArrangedSubview(wrapper)
+        }
+        
+        DispatchQueue.main.async {
+            let width = self.photoScrollView.bounds.width
+            guard width > 0 else { return }
+            self.photoScrollView.setContentOffset(CGPoint(x: width, y: 0), animated: false)
         }
     }
     
@@ -309,7 +319,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         }
     }
     
-    private func makePhotoWrapper(image: UIImage, index: Int) -> UIView {
+    private func makePhotoWrapper(image: UIImage, realIndex: Int) -> UIView {
         let wrapper = UIView().then {
             $0.clipsToBounds = true
         }
@@ -322,7 +332,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         
         let deleteButton = UIButton().then {
             $0.setImage(.icDeselect, for: .normal)
-            $0.tag = index
+            $0.tag = realIndex
             $0.addTarget(self, action: #selector(didTapDeletePhoto(_:)), for: .touchUpInside)
         }
         
@@ -374,9 +384,27 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
 
 extension SelectedContentReasonTableViewCell: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard scrollView.bounds.width > 0 else { return }
-        let page = Int(round(scrollView.contentOffset.x / scrollView.bounds.width))
-        pageControl.currentPage = page
+        let width = scrollView.bounds.width
+        guard width > 0, photos.count > 0 else { return }
+        
+        let page = Int(round(scrollView.contentOffset.x / width))
+        let realPage = (page - 1 + photos.count) % photos.count
+        pageControl.currentPage = realPage
+    }
+    
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let width = scrollView.bounds.width
+        guard width > 0, photos.count > 0 else { return }
+        
+        let page = Int(round(scrollView.contentOffset.x / width))
+        
+        if page == 0 {
+            scrollView.setContentOffset(CGPoint(x: width * CGFloat(photos.count), y: 0), animated: false)
+        }
+        
+        else if page == photos.count + 1 {
+            scrollView.setContentOffset(CGPoint(x: width, y: 0), animated: false)
+        }
     }
 }
 

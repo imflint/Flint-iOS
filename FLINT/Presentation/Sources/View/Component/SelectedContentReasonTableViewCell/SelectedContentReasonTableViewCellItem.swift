@@ -48,8 +48,8 @@ extension SelectedContentReasonTableViewCellItem {
         contentId: 0,
         posterURL: nil,
         posterImage: .imgTving,
-        title: "컨택트",
-        director: "드니 빌뇌브",
+        title: "영화이름 어어어어어엄 청길게 ",
+        director: "감독이름도 어어어엄청 긴이름",
         year: "2016",
         isSpoiler: false,
         reasonText: ""
