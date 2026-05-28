@@ -17,6 +17,7 @@ public struct SelectedContentReasonTableViewCellItem {
 
     public var isSpoiler: Bool
     public var reasonText: String?
+    public var photos: [UIImage]
 
     public init(
         contentId: Int64,
@@ -26,7 +27,8 @@ public struct SelectedContentReasonTableViewCellItem {
         director: String,
         year: String,
         isSpoiler: Bool = false,
-        reasonText: String? = nil
+        reasonText: String? = nil,
+        photos: [UIImage] = []
     ) {
         self.contentId = contentId
         self.posterURL = posterURL
@@ -36,5 +38,21 @@ public struct SelectedContentReasonTableViewCellItem {
         self.year = year
         self.isSpoiler = isSpoiler
         self.reasonText = reasonText
+        self.photos = photos
     }
 }
+
+#if DEBUG
+extension SelectedContentReasonTableViewCellItem {
+    @MainActor static let mock = SelectedContentReasonTableViewCellItem(
+        contentId: 0,
+        posterURL: nil,
+        posterImage: .imgTving,
+        title: "컨택트",
+        director: "드니 빌뇌브",
+        year: "2016",
+        isSpoiler: false,
+        reasonText: ""
+    )
+}
+#endif

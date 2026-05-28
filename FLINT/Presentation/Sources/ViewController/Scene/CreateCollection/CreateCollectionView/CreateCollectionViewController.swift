@@ -12,6 +12,8 @@ import Domain
 import View
 import ViewModel
 
+import PhotosUI
+
 public protocol CreateCollectionViewControllerFactory {
     func makeCreateCollectionViewController() -> CreateCollectionViewController
 }
@@ -36,6 +38,7 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
     
     private var selectedContents: [SavedContentItemViewModel] = []
     private var selectedReasonItems: [SelectedContentReasonTableViewCellItem] = []
+    private var currentPhotoPickerIndex: Int?
     
     private let viewModel: CreateCollectionViewModel
     
@@ -129,6 +132,7 @@ private extension CreateCollectionViewController {
             self.viewModel.createCollection()
         }
     }
+    
     func updateCreatePayload() {
         viewModel.updateTitle(collectionTitleText)
         viewModel.updateDescription(collectionDescriptionText)
@@ -138,7 +142,6 @@ private extension CreateCollectionViewController {
     
     func makeContentList() -> [CreateCollectionEntity.CreateCollectionContents] {
         return selectedReasonItems.map { item in
-            
             return CreateCollectionEntity.CreateCollectionContents(
                 contentId: item.contentId,
                 isSpoiler: item.isSpoiler,
@@ -168,7 +171,8 @@ private extension CreateCollectionViewController {
             return SelectedContentReasonTableViewCellItem(
                 contentId: model.contentId,
                 posterURL: model.posterURL,
-                posterImage: model.posterImage, title: model.title,
+                posterImage: model.posterImage,
+                title: model.title,
                 director: model.director,
                 year: model.year,
                 isSpoiler: false,
@@ -178,7 +182,6 @@ private extension CreateCollectionViewController {
         
         updateCreatePayload()
     }
-    
     
     func presentAddContentSelect() {
         guard let factory = viewControllerFactory else { return }
@@ -238,6 +241,16 @@ private extension CreateCollectionViewController {
         
         modalRef = modal
         modal.show(in: hostView)
+    }
+    
+    func presentPhotoPicker() {
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 5
+        config.filter = .images
+        
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
     }
 }
 
@@ -341,7 +354,6 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 cell.onTapClose = { [weak self, weak cell] in
                     guard let self, let cell,
                           let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
-                    
                     let reasonIndex = indexPath.row - 1
                     let item = self.selectedReasonItems[reasonIndex]
                     self.deleteReasonItem(item, at: reasonIndex)
@@ -350,7 +362,6 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 cell.onTapCloseWithDraft = { [weak self, weak cell] in
                     guard let self, let cell,
                           let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
-                    
                     let reasonIndex = indexPath.row - 1
                     let item = self.selectedReasonItems[reasonIndex]
                     self.presentDeleteConfirmModal {
@@ -361,7 +372,6 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 cell.onToggleSpoiler = { [weak self, weak cell] isOn in
                     guard let self, let cell,
                           let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
-                    
                     let reasonIndex = indexPath.row - 1
                     self.selectedReasonItems[reasonIndex].isSpoiler = isOn
                     self.updateCreatePayload()
@@ -370,10 +380,16 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 cell.onChangeReasonText = { [weak self, weak cell] text in
                     guard let self, let cell,
                           let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
-                    
                     let reasonIndex = indexPath.row - 1
                     self.selectedReasonItems[reasonIndex].reasonText = text
                     self.updateCreatePayload()
+                }
+                
+                cell.onTapAddPhoto = { [weak self, weak cell] in
+                    guard let self, let cell,
+                          let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+                    self.currentPhotoPickerIndex = indexPath.row - 1
+                    self.presentPhotoPicker()
                 }
                 
                 return cell
@@ -402,5 +418,36 @@ extension CreateCollectionViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0, indexPath.row == 0 { return 220 }
         return UITableView.automaticDimension
+    }
+}
+
+// MARK: - PHPickerViewControllerDelegate
+
+extension CreateCollectionViewController: PHPickerViewControllerDelegate {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        guard let index = currentPhotoPickerIndex else { return }
+        
+        let group = DispatchGroup()
+        var images: [UIImage] = []
+        
+        for result in results {
+            group.enter()
+            result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
+                if let image = object as? UIImage {
+                    images.append(image)
+                }
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) { [weak self] in
+            guard let self else { return }
+            self.selectedReasonItems[index].photos = images
+            self.rootView.tableView.reloadRows(
+                at: [IndexPath(row: index + 1, section: 1)],
+                with: .none
+            )
+        }
     }
 }
