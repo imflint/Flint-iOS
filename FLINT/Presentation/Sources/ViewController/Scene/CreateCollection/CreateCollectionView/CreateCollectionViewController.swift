@@ -41,11 +41,16 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
     private var currentPhotoPickerIndex: Int?
     
     private let viewModel: CreateCollectionViewModel
+    private let uploadImageUseCase: UploadCollectionImageUseCase
     
     // MARK: - Init
-    
-    public init(viewModel: CreateCollectionViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
+    public init(
+        viewModel: CreateCollectionViewModel,
+        uploadImageUseCase: UploadCollectionImageUseCase,
+        viewControllerFactory: ViewControllerFactory? = nil
+    ) {
         self.viewModel = viewModel
+        self.uploadImageUseCase = uploadImageUseCase
         super.init(nibName: nil, bundle: nil)
         self.viewControllerFactory = viewControllerFactory
     }
@@ -145,7 +150,8 @@ private extension CreateCollectionViewController {
             return CreateCollectionEntity.CreateCollectionContents(
                 contentId: item.contentId,
                 isSpoiler: item.isSpoiler,
-                reason: item.reasonText ?? ""
+                reason: item.reasonText ?? "",
+                customImage: item.customImageKey
             )
         }
     }
@@ -437,39 +443,56 @@ extension CreateCollectionViewController: PHPickerViewControllerDelegate {
         picker.dismiss(animated: true)
         guard let index = currentPhotoPickerIndex else { return }
         
-        let group = DispatchGroup()
-        var images: [UIImage] = []
-        let lock = NSLock()
-        
-        for result in results {
-            group.enter()
-            result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
-                if let image = object as? UIImage {
-                    let queue = DispatchQueue(label: "imageQueue")
-
-                    for result in results {
-                        group.enter()
+        Task { @MainActor in
+            let images = await self.loadImages(from: results)
+            
+            let publishers = images.map { self.uploadImageUseCase($0) }
+            
+            Publishers.MergeMany(publishers)
+                .collect()
+                .receive(on: RunLoop.main)
+                .sink(
+                    receiveCompletion: { completion in
+                        if case .failure(let error) = completion {
+                            print(" 이미지 업로드 실패:", error)
+                        }
+                    },
+                    receiveValue: { [weak self] keys in
+                        guard let self else { return }
+                        self.selectedReasonItems[index].photos = images
+                        self.selectedReasonItems[index].customImageKey = keys.first
+                        self.rootView.tableView.reloadRows(
+                            at: [IndexPath(row: index + 1, section: 1)],
+                            with: .none
+                        )
+                    }
+                )
+                .store(in: &self.cancellables)
+        }
+    }
+    
+    private func loadImages(from results: [PHPickerResult]) async -> [UIImage] {
+        await withTaskGroup(of: (Int, UIImage?).self) { group in
+            for (index, result) in results.enumerated() {
+                group.addTask {
+                    await withCheckedContinuation { continuation in
                         result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
-                            if let image = object as? UIImage {
-                                queue.sync {
-                                    images.append(image)
-                                }
-                            }
-                            group.leave()
+                            continuation.resume(returning: (index, object as? UIImage))
                         }
                     }
                 }
-                group.leave()
             }
-        }
-        
-        group.notify(queue: .main) { [weak self] in
-            guard let self else { return }
-            self.selectedReasonItems[index].photos = images
-            self.rootView.tableView.reloadRows(
-                at: [IndexPath(row: index + 1, section: 1)],
-                with: .none
-            )
+            
+            var indexedImages: [(Int, UIImage)] = []
+            for await (index, image) in group {
+                if let image = image {
+                    indexedImages.append((index, image))
+                }
+            }
+            
+            return indexedImages
+                .sorted { $0.0 < $1.0 }
+                .map { $0.1 }
         }
     }
 }

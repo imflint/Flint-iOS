@@ -9,9 +9,13 @@ import Foundation
 
 import Presentation
 
-extension CreateCollectionViewControllerFactory where Self: CreateCollectionViewModelFactory & ViewControllerFactory {
+extension CreateCollectionViewControllerFactory where Self: CreateCollectionViewModelFactory & ViewControllerFactory & UploadCollectionImageUseCaseFactory {
     func makeCreateCollectionViewController() -> CreateCollectionViewController {
         let vm = makeCreateCollectionViewModel()
-        return CreateCollectionViewController(viewModel: vm, viewControllerFactory: self)
+        return CreateCollectionViewController(
+            viewModel: vm,
+            uploadImageUseCase: makeUploadCollectionImageUseCase(),
+            viewControllerFactory: self
+        )
     }
 }

@@ -27,7 +27,9 @@ typealias DependencyFactory = ViewControllerFactory &
                               CreateCollectionViewModelFactory &
                               AddContentSelectViewModelFactory &
                               CollectionFolderListViewModelFactory &
-                              CollectionDetailViewModelFactory
+                              CollectionDetailViewModelFactory &
+                              StorageRepositoryFactory &
+                              UploadCollectionImageUseCaseFactory
 
 final class DIContainer: DependencyFactory {
     
@@ -53,6 +55,12 @@ final class DIContainer: DependencyFactory {
 //    lazy var tokenStorage: TokenStorage = TestTokenStorage()
     
     lazy var presignedUrlService: any PresignedUrlService = DefaultPresignedUrlService()
+    
+    // MARK: - UseCase
+    
+    lazy var uploadCollectionImageUseCase: UploadCollectionImageUseCase = DefaultUploadCollectionImageUseCase(
+        storageRepository: makeStorageRepository()
+    )
     
     // MARK: - Init
     

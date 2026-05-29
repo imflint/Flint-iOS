@@ -309,10 +309,13 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
             photoStackView.addArrangedSubview(makePhotoWrapper(image: image, realIndex: realIndex))
         }
         
-        layoutIfNeeded()
-        let width = photoScrollView.bounds.width
-        guard width > 0 else { return }
-        photoScrollView.setContentOffset(CGPoint(x: width, y: 0), animated: false)
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.layoutIfNeeded()
+            let width = self.photoScrollView.bounds.width
+            guard width > 0 else { return }
+            self.photoScrollView.setContentOffset(CGPoint(x: width, y: 0), animated: false)
+        }
     }
     
     private func applyPhotoLayout(hasPhotos: Bool) {
@@ -403,89 +406,3 @@ extension SelectedContentReasonTableViewCell: UIScrollViewDelegate {
     }
 }
 
-
-#if DEBUG
-import UIKit
-import PhotosUI
-
-public final class SelectedContentReasonPreviewViewController: UIViewController {
-    
-    private let tableView = UITableView()
-    
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .black
-        
-        tableView.backgroundColor = .black
-        tableView.dataSource = self
-        tableView.separatorStyle = .none
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 600
-        tableView.register(
-            SelectedContentReasonTableViewCell.self,
-            forCellReuseIdentifier: "cell"
-        )
-        
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
-    }
-}
-
-extension SelectedContentReasonPreviewViewController: UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { 1 }
-    
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: "cell",
-            for: indexPath
-        ) as! SelectedContentReasonTableViewCell
-        cell.configure(with: .mock)
-        cell.onTapAddPhoto = { [weak self] in
-            var config = PHPickerConfiguration()
-            config.selectionLimit = 5
-            config.filter = .images
-            let picker = PHPickerViewController(configuration: config)
-            picker.delegate = self
-            self?.present(picker, animated: true)
-        }
-        cell.onPhotosChanged = { [weak self] in
-            self?.tableView.beginUpdates()
-            self?.tableView.endUpdates()
-        }
-        return cell
-    }
-}
-
-extension SelectedContentReasonPreviewViewController: PHPickerViewControllerDelegate {
-    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
-        guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SelectedContentReasonTableViewCell else { return }
-        
-        let group = DispatchGroup()
-        var images: [UIImage] = []
-        let lock = NSLock()
-        
-        for result in results {
-            group.enter()
-            result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
-                if let image = object as? UIImage {
-                    lock.lock()
-                    images.append(image)
-                    lock.unlock()
-                }
-                group.leave()
-            }
-        }
-        
-        group.notify(queue: .main) { [weak self] in
-            guard let self else { return }
-            var item = SelectedContentReasonTableViewCellItem.mock
-            item.photos = images
-            item.reasonText = cell.currentReasonText
-            cell.configure(with: item)
-            self.tableView.beginUpdates()
-            self.tableView.endUpdates()
-        }
-    }
-}
-#endif

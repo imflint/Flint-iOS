@@ -92,9 +92,9 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
     private func evaluateDoneEnabled() {
         let titleValid = !titleText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let countValid = contentList.count >= 2
-        let visibilityValid = isPublic == true  // (정책 나중에)
-        let descriptionValid = true             // (정책 나중에)
-        let imageValid = true                   // (정책 나중에)
+        let visibilityValid = isPublic == true
+        let descriptionValid = true
+        let imageValid = true                  
 
         let canCreate = titleValid && countValid && visibilityValid && descriptionValid && imageValid
 

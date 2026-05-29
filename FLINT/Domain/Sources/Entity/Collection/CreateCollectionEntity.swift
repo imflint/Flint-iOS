@@ -14,11 +14,12 @@ public struct CreateCollectionEntity: Encodable {
     public let isPublic: Bool
     public let contentList: [CreateCollectionContents]
     
-    public init(imgaeUrl: String,
-                title: String,
-                description: String,
-                isPublic: Bool,
-                contentList: [CreateCollectionContents]
+    public init(
+        imgaeUrl: String,
+        title: String,
+        description: String,
+        isPublic: Bool,
+        contentList: [CreateCollectionContents]
     ) {
         self.imageUrl = imgaeUrl
         self.title = title
@@ -34,11 +35,18 @@ public extension CreateCollectionEntity {
         public let contentId: Int64
         public let isSpoiler: Bool
         public let reason: String
+        public let customImage: String?
         
-        public init(contentId: Int64, isSpoiler: Bool, reason: String) {
+        public init(
+            contentId: Int64,
+            isSpoiler: Bool,
+            reason: String,
+            customImage customImageKey: String? = nil
+        ) {
             self.contentId = contentId
             self.isSpoiler = isSpoiler
             self.reason = reason
+            self.customImage = customImageKey
         }
     }
 }
