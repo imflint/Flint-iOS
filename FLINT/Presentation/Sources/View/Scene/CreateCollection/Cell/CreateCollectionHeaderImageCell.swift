@@ -13,6 +13,8 @@ import Then
 public final class CreateCollectionHeaderImageCell: BaseTableViewCell {
     
     public var onTapAddPhoto: (() -> Void)?
+    public var onTapSelectPhoto: (() -> Void)?
+    public var onTapDeletePhoto: (() -> Void)?
     
     private let headerImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -58,9 +60,7 @@ public final class CreateCollectionHeaderImageCell: BaseTableViewCell {
     }
     
     public func configure(with image: UIImage?) {
-        if let image {
-            headerImageView.image = image
-        }
+        headerImageView.image = image ?? .imgBackgroundGradiantMiddle
     }
     
     @objc private func didTapAddPhoto() {

@@ -120,10 +120,10 @@ private extension CreateCollectionViewController {
         
         viewModel.createSuccess
             .receive(on: RunLoop.main)
-            .sink { [weak self] in
-#warning("TODO: - 성공 처리")
-                self?.navigationController?.popViewController(animated: true)
-                print("CreateCollection 성공")
+            .sink { [weak self] collectionId in
+                guard let self, let factory = self.viewControllerFactory else { return }
+                let detailVC = factory.makeCollectionDetailViewController(collectionId: collectionId)
+                self.navigationController?.pushViewController(detailVC, animated: true)
             }
             .store(in: &cancellables)
         
@@ -304,7 +304,28 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 ) as! CreateCollectionHeaderImageCell
                 cell.configure(with: headerImage)
                 cell.onTapAddPhoto = { [weak self] in
-                    self?.presentHeaderPhotoPicker()
+                    guard let self else { return }
+                    let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                    sheet.overrideUserInterfaceStyle = .dark  // 추가
+                    
+                    sheet.addAction(UIAlertAction(title: "앨범에서 선택", style: .default) { [weak self] _ in
+                        self?.presentHeaderPhotoPicker()
+                    })
+                    
+                    sheet.addAction(UIAlertAction(title: "커버 사진 삭제", style: .destructive) { [weak self] _ in
+                        guard let self else { return }
+                        self.headerImage = nil
+                        self.headerImageKey = nil
+                        self.updateCreatePayload()
+                        self.rootView.tableView.reloadRows(
+                            at: [IndexPath(row: 0, section: 0)],
+                            with: .none
+                        )
+                    })
+                    
+                    sheet.addAction(UIAlertAction(title: "닫기", style: .cancel))
+                    
+                    self.present(sheet, animated: true)
                 }
                 return cell
                 

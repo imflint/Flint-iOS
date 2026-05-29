@@ -21,7 +21,7 @@ public protocol CreateCollectionViewModelInput {
 
 public protocol CreateCollectionViewModelOutput {
     var isDoneEnabled: CurrentValueSubject<Bool, Never> { get }
-    var createSuccess: PassthroughSubject<Void, Never> { get }
+    var createSuccess: PassthroughSubject<Int64, Never> { get }
     var createFailure: PassthroughSubject<Error, Never> { get }
 }
 
@@ -32,7 +32,7 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
     private let createCollectionUseCase: CreateCollectionUseCase
 
     public var isDoneEnabled: CurrentValueSubject<Bool, Never> = .init(false)
-    public var createSuccess: PassthroughSubject<Void, Never> = .init()
+    public var createSuccess: PassthroughSubject<Int64, Never> = .init()
     public var createFailure: PassthroughSubject<Error, Never> = .init()
 
     // MARK: - State
@@ -81,12 +81,12 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
 
         createCollectionUseCase(collectionInfo: entity)
             .manageThread()
-            .map { _ in Result<Void, Error>.success(()) }
-            .catch { Just(Result<Void, Error>.failure($0)) }
+            .map { collectionId in Result<Int64, Error>.success(collectionId) }  
+            .catch { Just(Result<Int64, Error>.failure($0)) }
             .sinkHandledCompletion { [weak self] result in
                 switch result {
-                case .success:
-                    self?.createSuccess.send(())
+                case .success(let collectionId):
+                    self?.createSuccess.send(collectionId)
                 case .failure(let error):
                     self?.createFailure.send(error)
                 }
