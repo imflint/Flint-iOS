@@ -12,6 +12,19 @@ import Then
 
 public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     
+    // MARK: - Metric
+    
+    private enum Metric {
+        static let posterTop: CGFloat = 64
+        static let posterLeading: CGFloat = 16
+        static let posterWidth: CGFloat = 100
+        static let posterHeight: CGFloat = 150
+        static let photoHeight: CGFloat = 270
+        static let horizontalInset: CGFloat = 16
+    }
+    
+    // MARK: - Closure
+    
     public var onTapClose: (() -> Void)?
     public var onToggleSpoiler: ((Bool) -> Void)?
     public var onChangeReasonText: ((String) -> Void)?
@@ -19,21 +32,24 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     public var onTapAddPhoto: (() -> Void)?
     public var onPhotosChanged: (() -> Void)?
     
-    public var currentReasonText: String {
-        return textView.text ?? ""
-    }
+    public var currentReasonText: String { textView.text ?? "" }
+    public var currentPhotos: [UIImage] { photos }
     
-    private var isSpoilerOn: Bool = false
+    // MARK: - State
+    
     private var photos: [UIImage] = []
-    
     private var photoScrollHeightConstraint: Constraint?
     private var pageControlTopConstraint: Constraint?
     private var pageControlHeightConstraint: Constraint?
     
-    //MARK: - UI
+    // MARK: - UI
     
     private let containerView = UIView().then {
         $0.backgroundColor = .clear
+    }
+    
+    private let closeButton = UIButton().then {
+        $0.setImage(.icPrimaryXmark, for: .normal)
     }
     
     private let posterImageView = UIImageView().then {
@@ -43,10 +59,6 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     
     private let infoContainerView = UIView().then {
         $0.backgroundColor = .clear
-    }
-    
-    private let closeButton = UIButton().then {
-        $0.setImage(.icPrimaryXmark, for: .normal)
     }
     
     private let titleLabel = UILabel().then {
@@ -63,11 +75,6 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         $0.numberOfLines = 1
     }
     
-    private let sectionTitleLabel = UILabel()
-    private let spoilerLabel = UILabel()
-    
-    private let textView = FlintTextView(placeholder: "이 작품의 매력 포인트를 적어주세요.")
-    
     private let photoScrollView = UIScrollView().then {
         $0.showsHorizontalScrollIndicator = false
         $0.isPagingEnabled = true
@@ -83,9 +90,15 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         $0.isHidden = true
     }
     
+    private let sectionTitleLabel = UILabel()
+    
+    private let textView = FlintTextView(placeholder: "이 작품의 매력 포인트를 적어주세요.")
+    
     private let addPhotoButton = UIButton().then {
         $0.setImage(.icAddPhoto, for: .normal)
     }
+    
+    private let spoilerLabel = UILabel()
     
     private let checkboxToggleView = ToggleBarView(
         type: .primary,
@@ -94,7 +107,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         contentInset: 2
     )
     
-    //MARK: - Setup
+    // MARK: - Setup
     
     public override func setStyle() {
         backgroundColor = .clear
@@ -103,9 +116,9 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         sectionTitleLabel.attributedText = .pretendard(.head3_m_18, text: "이 작품을 선택한 이유", color: .flintWhite)
         spoilerLabel.attributedText = .pretendard(.caption1_m_12, text: "스포일러", color: .flintWhite)
         addPhotoButton.imageView?.contentMode = .scaleAspectFill
+        
         closeButton.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
         addPhotoButton.addTarget(self, action: #selector(didTapAddPhoto), for: .touchUpInside)
-        
         photoScrollView.delegate = self
         
         checkboxToggleView.onValueChanged = { [weak self] isOn in
@@ -129,12 +142,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
             closeButton
         )
         
-        infoContainerView.addSubviews(
-            titleLabel,
-            directorLabel,
-            yearLabel
-        )
-        
+        infoContainerView.addSubviews(titleLabel, directorLabel, yearLabel)
         photoScrollView.addSubview(photoStackView)
     }
     
@@ -149,14 +157,14 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         }
         
         posterImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(64)
-            $0.leading.equalToSuperview().inset(16)
-            $0.width.equalTo(100)
-            $0.height.equalTo(150)
+            $0.top.equalToSuperview().inset(Metric.posterTop)
+            $0.leading.equalToSuperview().inset(Metric.posterLeading)
+            $0.width.equalTo(Metric.posterWidth)
+            $0.height.equalTo(Metric.posterHeight)
         }
         
         infoContainerView.snp.makeConstraints {
-            $0.top.equalTo(posterImageView.snp.top)
+            $0.top.equalTo(posterImageView)
             $0.leading.equalTo(posterImageView.snp.trailing).offset(16)
             $0.trailing.equalToSuperview().inset(24)
         }
@@ -168,7 +176,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         
         directorLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
         }
         
         yearLabel.snp.makeConstraints {
@@ -196,63 +204,56 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         
         sectionTitleLabel.snp.makeConstraints {
             $0.top.equalTo(pageControl.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(16)
+            $0.leading.equalToSuperview().inset(Metric.horizontalInset)
         }
         
         textView.snp.makeConstraints {
             $0.top.equalTo(sectionTitleLabel.snp.bottom).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview().inset(Metric.horizontalInset)
             $0.height.greaterThanOrEqualTo(104)
         }
         
         addPhotoButton.snp.makeConstraints {
-            $0.centerY.equalTo(checkboxToggleView.snp.centerY)
-            $0.leading.equalToSuperview().inset(16)
+            $0.centerY.equalTo(checkboxToggleView)
+            $0.leading.equalToSuperview().inset(Metric.horizontalInset)
             $0.width.equalTo(48)
             $0.height.equalTo(28)
         }
         
         checkboxToggleView.snp.makeConstraints {
             $0.top.equalTo(textView.snp.bottom).offset(12)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalToSuperview().inset(Metric.horizontalInset)
             $0.width.equalTo(44)
             $0.height.equalTo(28)
             $0.bottom.equalToSuperview().inset(16)
         }
         
         spoilerLabel.snp.makeConstraints {
-            $0.centerY.equalTo(checkboxToggleView.snp.centerY)
+            $0.centerY.equalTo(checkboxToggleView)
             $0.trailing.equalTo(checkboxToggleView.snp.leading).offset(-8)
         }
     }
     
     public override func prepare() {
         super.prepare()
-        
         posterImageView.image = nil
         titleLabel.attributedText = nil
         directorLabel.attributedText = nil
         yearLabel.attributedText = nil
-        
         isSpoilerOn = false
         checkboxToggleView.setOn(false, animated: true)
         textView.text = ""
-        
-        photos = []
-        photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        applyLayout(hasPhotos: false)
+        resetPhotos()
     }
     
     public override func prepareForReuse() {
         super.prepareForReuse()
         posterImageView.kf.cancelDownloadTask()
         posterImageView.image = nil
-        photos = []
-        photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        applyLayout(hasPhotos: false)
+        resetPhotos()
     }
     
-    //MARK: - Configure
+    // MARK: - Configure
     
     public func configure(with item: SelectedContentReasonTableViewCellItem) {
         if let url = item.posterURL {
@@ -264,7 +265,6 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         titleLabel.attributedText = .pretendard(.head3_m_18, text: item.title, color: .flintWhite)
         directorLabel.attributedText = .pretendard(.body1_r_16, text: item.director, color: .flintGray300)
         yearLabel.attributedText = .pretendard(.body1_r_16, text: item.year, color: .flintGray300)
-        
         sectionTitleLabel.attributedText = .pretendard(.head3_m_18, text: "이 작품을 선택한 이유", color: .flintWhite)
         spoilerLabel.attributedText = .pretendard(.caption1_m_12, text: "스포일러", color: .flintWhite)
         
@@ -274,55 +274,62 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         configurePhotos(item.photos)
     }
     
+    // MARK: - Private
+    
+    private var isSpoilerOn: Bool = false
+    
+    private func resetPhotos() {
+        photos = []
+        photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        applyPhotoLayout(hasPhotos: false)
+    }
+    
     private func configurePhotos(_ newPhotos: [UIImage]) {
         photos = newPhotos
         photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        let hasPhotos = !photos.isEmpty
-        applyLayout(hasPhotos: hasPhotos)
-        
-        guard hasPhotos else { return }
+        applyPhotoLayout(hasPhotos: !photos.isEmpty)
+        guard !photos.isEmpty else { return }
         
         pageControl.numberOfPages = photos.count
         pageControl.currentPage = 0
         
+        setupInfiniteScroll()
+    }
+    
+    private func setupInfiniteScroll() {
         let infinitePhotos = [photos.last!] + photos + [photos.first!]
         
         infinitePhotos.enumerated().forEach { index, image in
-            let isReal = index >= 1 && index <= photos.count
-            let realIndex = isReal ? index - 1 : (index == 0 ? photos.count - 1 : 0)
-            let wrapper = makePhotoWrapper(image: image, realIndex: realIndex)
-            photoStackView.addArrangedSubview(wrapper)
+            let realIndex: Int
+            if index == 0 { realIndex = photos.count - 1 }
+            else if index == photos.count + 1 { realIndex = 0 }
+            else { realIndex = index - 1 }
+            
+            photoStackView.addArrangedSubview(makePhotoWrapper(image: image, realIndex: realIndex))
         }
         
-        DispatchQueue.main.async {
-            let width = self.photoScrollView.bounds.width
-            guard width > 0 else { return }
-            self.photoScrollView.setContentOffset(CGPoint(x: width, y: 0), animated: false)
-        }
+        layoutIfNeeded()
+        let width = photoScrollView.bounds.width
+        guard width > 0 else { return }
+        photoScrollView.setContentOffset(CGPoint(x: width, y: 0), animated: false)
     }
     
-    private func applyLayout(hasPhotos: Bool) {
-        posterImageView.isHidden = false
-        infoContainerView.isHidden = false
-        
+    private func applyPhotoLayout(hasPhotos: Bool) {
         photoScrollView.isHidden = !hasPhotos
-        photoScrollHeightConstraint?.update(offset: hasPhotos ? 270 : 0)
-        
+        photoScrollHeightConstraint?.update(offset: hasPhotos ? Metric.photoHeight : 0)
         pageControl.isHidden = !hasPhotos
         pageControlTopConstraint?.update(offset: hasPhotos ? 8 : 0)
         pageControlHeightConstraint?.update(offset: hasPhotos ? 8 : 0)
         
         sectionTitleLabel.snp.remakeConstraints {
             $0.top.equalTo(pageControl.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(16)
+            $0.leading.equalToSuperview().inset(Metric.horizontalInset)
         }
     }
     
     private func makePhotoWrapper(image: UIImage, realIndex: Int) -> UIView {
-        let wrapper = UIView().then {
-            $0.clipsToBounds = true
-        }
+        let wrapper = UIView().then { $0.clipsToBounds = true }
         
         let imageView = UIImageView().then {
             $0.contentMode = .scaleAspectFill
@@ -331,17 +338,14 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         }
         
         let deleteButton = UIButton().then {
-            $0.setImage(.icDeselect, for: .normal)
+            $0.setImage(.icBlackXmark, for: .normal)
             $0.tag = realIndex
             $0.addTarget(self, action: #selector(didTapDeletePhoto(_:)), for: .touchUpInside)
         }
         
-        wrapper.addSubview(imageView)
-        wrapper.addSubview(deleteButton)
+        wrapper.addSubviews(imageView, deleteButton)
         
-        imageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
+        imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         
         deleteButton.snp.makeConstraints {
             $0.top.trailing.equalToSuperview().inset(12)
@@ -350,21 +354,17 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         
         wrapper.snp.makeConstraints {
             $0.width.equalTo(UIScreen.main.bounds.width)
-            $0.height.equalTo(270)
+            $0.height.equalTo(Metric.photoHeight)
         }
         
         return wrapper
     }
     
-    //MARK: - Action
+    // MARK: - Action
     
     @objc private func didTapClose() {
         let text = (textView.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        if text.isEmpty {
-            onTapClose?()
-        } else {
-            onTapCloseWithDraft?()
-        }
+        text.isEmpty ? onTapClose?() : onTapCloseWithDraft?()
     }
     
     @objc private func didTapAddPhoto() {
@@ -385,24 +385,19 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
 extension SelectedContentReasonTableViewCell: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let width = scrollView.bounds.width
-        guard width > 0, photos.count > 0 else { return }
-        
+        guard width > 0, !photos.isEmpty else { return }
         let page = Int(round(scrollView.contentOffset.x / width))
-        let realPage = (page - 1 + photos.count) % photos.count
-        pageControl.currentPage = realPage
+        pageControl.currentPage = (page - 1 + photos.count) % photos.count
     }
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let width = scrollView.bounds.width
-        guard width > 0, photos.count > 0 else { return }
-        
+        guard width > 0, !photos.isEmpty else { return }
         let page = Int(round(scrollView.contentOffset.x / width))
         
         if page == 0 {
             scrollView.setContentOffset(CGPoint(x: width * CGFloat(photos.count), y: 0), animated: false)
-        }
-        
-        else if page == photos.count + 1 {
+        } else if page == photos.count + 1 {
             scrollView.setContentOffset(CGPoint(x: width, y: 0), animated: false)
         }
     }
@@ -449,7 +444,6 @@ extension SelectedContentReasonPreviewViewController: UITableViewDataSource {
             var config = PHPickerConfiguration()
             config.selectionLimit = 5
             config.filter = .images
-            
             let picker = PHPickerViewController(configuration: config)
             picker.delegate = self
             self?.present(picker, animated: true)
@@ -465,7 +459,6 @@ extension SelectedContentReasonPreviewViewController: UITableViewDataSource {
 extension SelectedContentReasonPreviewViewController: PHPickerViewControllerDelegate {
     public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
-        
         guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SelectedContentReasonTableViewCell else { return }
         
         let group = DispatchGroup()
@@ -486,12 +479,10 @@ extension SelectedContentReasonPreviewViewController: PHPickerViewControllerDele
         
         group.notify(queue: .main) { [weak self] in
             guard let self else { return }
-            
             var item = SelectedContentReasonTableViewCellItem.mock
             item.photos = images
             item.reasonText = cell.currentReasonText
             cell.configure(with: item)
-            
             self.tableView.beginUpdates()
             self.tableView.endUpdates()
         }

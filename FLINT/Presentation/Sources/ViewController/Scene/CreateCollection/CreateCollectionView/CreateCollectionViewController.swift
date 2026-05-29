@@ -386,11 +386,19 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 }
                 
                 cell.onTapAddPhoto = { [weak self, weak cell] in
-                    
                     guard let self, let cell,
                           let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
                     self.currentPhotoPickerIndex = indexPath.row - 1
                     self.presentPhotoPicker()
+                }
+                
+                cell.onPhotosChanged = { [weak self, weak cell] in
+                    guard let self, let cell,
+                          let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+                    let reasonIndex = indexPath.row - 1
+                    self.selectedReasonItems[reasonIndex].photos = cell.currentPhotos
+                    self.rootView.tableView.beginUpdates()
+                    self.rootView.tableView.endUpdates()
                 }
                 
                 return cell
@@ -431,12 +439,25 @@ extension CreateCollectionViewController: PHPickerViewControllerDelegate {
         
         let group = DispatchGroup()
         var images: [UIImage] = []
+        let lock = NSLock()
         
         for result in results {
             group.enter()
             result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
                 if let image = object as? UIImage {
-                    images.append(image)
+                    let queue = DispatchQueue(label: "imageQueue")
+
+                    for result in results {
+                        group.enter()
+                        result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
+                            if let image = object as? UIImage {
+                                queue.sync {
+                                    images.append(image)
+                                }
+                            }
+                            group.leave()
+                        }
+                    }
                 }
                 group.leave()
             }
