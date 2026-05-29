@@ -306,7 +306,7 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 cell.onTapAddPhoto = { [weak self] in
                     guard let self else { return }
                     let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                    sheet.overrideUserInterfaceStyle = .dark  // 추가
+                    sheet.overrideUserInterfaceStyle = .dark  
                     
                     sheet.addAction(UIAlertAction(title: "앨범에서 선택", style: .default) { [weak self] _ in
                         self?.presentHeaderPhotoPicker()
