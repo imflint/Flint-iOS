@@ -37,6 +37,7 @@ public final class DefaultAuthService: AuthService {
         }
         let signupRequestDTO = SignupRequestDTO(tempToken: tempToken, signupEntity: userInfo)
         return authAPIProvider.requestPublisher(.signup(userInfo: signupRequestDTO))
+            .logged()
             .mapBaseResponseData(SignupDTO.self)
             .tryMap({ [weak self] in
                 let loginEntity = try $0.loginEntity
@@ -49,6 +50,7 @@ public final class DefaultAuthService: AuthService {
     
     public func socialVerify(socialAuthCredential: SocialVerifyRequestDTO) -> AnyPublisher<SocialVerifyResponseDTO, Error> {
         return authAPIProvider.requestPublisher(.socialVerify(socialAuthCredential: socialAuthCredential))
+            .logged()
             .mapBaseResponseData(SocialVerifyResponseDTO.self)
             .map({ [weak self] socialVerifyResponseDTO in
                 guard let self, let isRegister = socialVerifyResponseDTO.isRegistered else {

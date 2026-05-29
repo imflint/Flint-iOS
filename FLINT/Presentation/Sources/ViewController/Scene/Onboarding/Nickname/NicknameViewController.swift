@@ -185,8 +185,9 @@ extension NicknameViewController: PHPickerViewControllerDelegate {
         
         itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
             guard let self, let image = image as? UIImage else { return }
-            DispatchQueue.main.async {
-                self.rootView.profileImageSettingView.profileImageView.image = image
+            DispatchQueue.main.async { [weak self] in
+                self?.rootView.profileImageSettingView.profileImageView.image = image
+                self?.onboardingViewModel.uploadProfileImage(image)
             }
         }
     }

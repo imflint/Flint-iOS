@@ -12,14 +12,16 @@ import Entity
 public struct SignupRequestDTO: Codable {
     public let tempToken: String
     public let nickname: String
+    public let profileImage: String?
     public let favoriteContentIds: [Int] // Java Long
-    public let subscribedOttIds: [Int] // Java Long
+    public let agreedTermsIds: [String]
     
-    public init(tempToken: String, nickname: String, favoriteContentIds: [Int], subscribedOttIds: [Int]) {
+    public init(tempToken: String, nickname: String, profileImage: String?, favoriteContentIds: [Int], agreedTermsIds: [String]) {
         self.tempToken = tempToken
         self.nickname = nickname
+        self.profileImage = profileImage
         self.favoriteContentIds = favoriteContentIds
-        self.subscribedOttIds = subscribedOttIds
+        self.agreedTermsIds = agreedTermsIds
     }
 }
 
@@ -27,7 +29,8 @@ extension SignupRequestDTO {
     public init(tempToken: String, signupEntity: SignupInfoEntity) {
         self.tempToken = tempToken
         self.nickname = signupEntity.nickname
+        self.profileImage = signupEntity.profileImage
         self.favoriteContentIds = signupEntity.favoriteContentIds
-        self.subscribedOttIds = signupEntity.subscribedOttIds
+        self.agreedTermsIds = signupEntity.agreedTermsIds
     }
 }
