@@ -459,6 +459,11 @@ extension CreateCollectionViewController: PHPickerViewControllerDelegate {
                     },
                     receiveValue: { [weak self] keys in
                         guard let self else { return }
+                        
+                        if let cell = self.rootView.tableView.cellForRow(at: IndexPath(row: index + 1, section: 1)) as? SelectedContentReasonTableViewCell {
+                            self.selectedReasonItems[index].reasonText = cell.currentReasonText
+                        }
+                        
                         self.selectedReasonItems[index].photos = images
                         self.selectedReasonItems[index].customImageKey = keys.first
                         self.rootView.tableView.reloadRows(

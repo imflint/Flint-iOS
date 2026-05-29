@@ -124,6 +124,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         checkboxToggleView.onValueChanged = { [weak self] isOn in
             self?.onToggleSpoiler?(isOn)
         }
+        textView.delegate = self
     }
     
     public override func setHierarchy() {
@@ -269,8 +270,12 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         spoilerLabel.attributedText = .pretendard(.caption1_m_12, text: "스포일러", color: .flintWhite)
         
         checkboxToggleView.setOn(item.isSpoiler, animated: false)
-        textView.text = item.reasonText ?? ""
         
+        if textView.text.isEmpty || textView.text != item.reasonText {
+            textView.text = item.reasonText ?? ""
+            textView.subviews.compactMap { $0 as? UILabel }.first?.isHidden = !(item.reasonText ?? "").isEmpty
+        }
+    
         configurePhotos(item.photos)
     }
     
@@ -403,6 +408,17 @@ extension SelectedContentReasonTableViewCell: UIScrollViewDelegate {
         } else if page == photos.count + 1 {
             scrollView.setContentOffset(CGPoint(x: width, y: 0), animated: false)
         }
+        
     }
+    
 }
 
+extension SelectedContentReasonTableViewCell: UITextViewDelegate {
+    public func textViewDidChange(_ textView: UITextView) {
+        if let flintTextView = textView as? FlintTextView {
+            let placeholderLabel = flintTextView.subviews.compactMap { $0 as? UILabel }.first
+            placeholderLabel?.isHidden = !textView.text.isEmpty
+        }
+        onChangeReasonText?(textView.text ?? "")
+    }
+}
