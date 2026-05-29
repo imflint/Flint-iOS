@@ -43,6 +43,9 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
     private let viewModel: CreateCollectionViewModel
     private let uploadImageUseCase: UploadCollectionImageUseCase
     
+    private var headerImage: UIImage?
+    private var headerImageKey: String?
+    
     // MARK: - Init
     public init(
         viewModel: CreateCollectionViewModel,
@@ -118,7 +121,7 @@ private extension CreateCollectionViewController {
         viewModel.createSuccess
             .receive(on: RunLoop.main)
             .sink { [weak self] in
-                #warning("TODO: - 성공 처리")
+#warning("TODO: - 성공 처리")
                 self?.navigationController?.popViewController(animated: true)
                 print("CreateCollection 성공")
             }
@@ -142,6 +145,7 @@ private extension CreateCollectionViewController {
         viewModel.updateTitle(collectionTitleText)
         viewModel.updateDescription(collectionDescriptionText)
         viewModel.updateVisibility(isPublic)
+        viewModel.updateImageUrl(headerImageKey ?? "")
         viewModel.updateContentList(makeContentList())
     }
     
@@ -258,6 +262,17 @@ private extension CreateCollectionViewController {
         picker.delegate = self
         present(picker, animated: true)
     }
+    
+    func presentHeaderPhotoPicker() {
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 1
+        config.filter = .images
+        
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        currentPhotoPickerIndex = -1
+        present(picker, animated: true)
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -283,10 +298,15 @@ extension CreateCollectionViewController: UITableViewDataSource {
             
             switch row {
             case .header:
-                return tableView.dequeueReusableCell(
+                let cell = tableView.dequeueReusableCell(
                     withIdentifier: CreateCollectionHeaderImageCell.reuseIdentifier,
                     for: indexPath
-                )
+                ) as! CreateCollectionHeaderImageCell
+                cell.configure(with: headerImage)
+                cell.onTapAddPhoto = { [weak self] in
+                    self?.presentHeaderPhotoPicker()
+                }
+                return cell
                 
             case .title:
                 let cell = tableView.dequeueReusableCell(
@@ -333,7 +353,7 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 return UITableViewCell()
             }
         }
-
+        
         if indexPath.section == 1 {
             
             if indexPath.row == 0 {
@@ -445,25 +465,49 @@ extension CreateCollectionViewController: PHPickerViewControllerDelegate {
         
         Task { @MainActor in
             let images = await self.loadImages(from: results)
+            guard let image = images.first else { return }
+            
+            // 헤더 이미지 처리
+            if index == -1 {
+                let publishers = [self.uploadImageUseCase(image)]
+                Publishers.MergeMany(publishers)
+                    .collect()
+                    .receive(on: RunLoop.main)
+                    .sink(
+                        receiveCompletion: { completion in
+                            if case .failure(let error) = completion {
+                                print("헤더 이미지 업로드 실패:", error)
+                            }
+                        },
+                        receiveValue: { [weak self] keys in
+                            guard let self else { return }
+                            self.headerImage = image
+                            self.headerImageKey = keys.first
+                            self.rootView.tableView.reloadRows(
+                                at: [IndexPath(row: 0, section: 0)],
+                                with: .none
+                            )
+                        }
+                    )
+                    .store(in: &self.cancellables)
+                return
+            }
             
             let publishers = images.map { self.uploadImageUseCase($0) }
-            
             Publishers.MergeMany(publishers)
                 .collect()
                 .receive(on: RunLoop.main)
                 .sink(
                     receiveCompletion: { completion in
                         if case .failure(let error) = completion {
-                            print(" 이미지 업로드 실패:", error)
+                            print("이미지 업로드 실패:", error)
                         }
                     },
                     receiveValue: { [weak self] keys in
                         guard let self else { return }
-                        
                         if let cell = self.rootView.tableView.cellForRow(at: IndexPath(row: index + 1, section: 1)) as? SelectedContentReasonTableViewCell {
                             self.selectedReasonItems[index].reasonText = cell.currentReasonText
                         }
-                        
                         self.selectedReasonItems[index].photos = images
                         self.selectedReasonItems[index].customImageKey = keys.first
                         self.rootView.tableView.reloadRows(

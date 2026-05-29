@@ -15,6 +15,7 @@ public protocol CreateCollectionViewModelInput {
     func updateDescription(_ description: String)
     func updateVisibility(_ isPublic: Bool)
     func updateContentList(_ list: [CreateCollectionEntity.CreateCollectionContents])
+    func updateImageUrl(_ imageUrl: String)
     func createCollection()
 }
 
@@ -66,6 +67,11 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
 
     public func updateContentList(_ list: [CreateCollectionEntity.CreateCollectionContents]) {
         self.contentList = list
+        evaluateDoneEnabled()
+    }
+    
+    public func updateImageUrl(_ imageUrl: String) {
+        self.imageUrl = imageUrl
         evaluateDoneEnabled()
     }
 
