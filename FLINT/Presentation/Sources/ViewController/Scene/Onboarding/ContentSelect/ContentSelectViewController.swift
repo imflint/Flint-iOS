@@ -77,15 +77,10 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         setupSelectedContentCollectionView()
         setupGenreCollectionView()
         
-        rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(onboardingViewModel.selectedContents.value.count)/\(onboardingViewModel.contentSelectQuestions.count)")
-        rootView.progressView.progress = Float(onboardingViewModel.selectedContents.value.count) / Float(onboardingViewModel.contentSelectQuestions.count)
-        rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
-//        rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.contentSelectQuestions[onboardingViewModel.selectedContents.value.count])
-        
         rootView.layoutIfNeeded()
         rootView.contentCollectionView.contentOffset.y = -rootView.contentCollectionView.contentInset.top
         
-        rootView.nextButton.addAction(UIAction(weak: self, handler: ContentSelectViewController.pushOttSelectViewController(_:)), for: .touchUpInside)
+        rootView.nextButton.addAction(UIAction(weak: self, handler: ContentSelectViewController.pushOnboardingDoneViewController(_:)), for: .touchUpInside)
     }
     
     public override func bind() {
@@ -113,18 +108,17 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
             snapshot.reconfigureItems(snapshot.itemIdentifiers)
             contentCollectionViewDataSource?.apply(snapshot, animatingDifferences: false)
             
-            rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(selectedContents.count)/\(onboardingViewModel.contentSelectQuestions.count)")
-            rootView.progressView.progress = Float(selectedContents.count) / Float(onboardingViewModel.contentSelectQuestions.count)
-//            rootView.subtitleLabel.attributedText = .pretendard(.body2_r_14, text: onboardingViewModel.contentSelectQuestions[min(selectedContents.count, onboardingViewModel.contentSelectQuestions.count-1)])
+            rootView.progressLabel.attributedText = .pretendard(.caption1_m_12, text: "\(selectedContents.count)/\(onboardingViewModel.requiredContentCount)")
+            rootView.progressView.progress = Float(selectedContents.count) / Float(onboardingViewModel.requiredContentCount)
             
             rootView.nextButton.isEnabled = selectedContents.count == 7
         }
         .store(in: &cancellables)
     }
     
-    private func pushOttSelectViewController(_ action: UIAction) {
-        guard let ottSelectViewController = viewControllerFactory?.makeOttSelectViewController(onboardingViewModel: onboardingViewModel) else { return }
-        navigationController?.pushViewController(ottSelectViewController, animated: true)
+    private func pushOnboardingDoneViewController(_ action: UIAction) {
+        guard let onboardingDoneViewController = viewControllerFactory?.makeOnboardingDoneViewController(onboardingViewModel: onboardingViewModel) else { return }
+        navigationController?.pushViewController(onboardingDoneViewController, animated: true)
     }
 }
 

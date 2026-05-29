@@ -77,7 +77,6 @@ public final class DefaultTokenStorage: TokenStorage {
             Log.e("Keychain \(type.rawValue) load failed. \(status)")
             return nil
         }
-        Log.e("Keychain \(type.rawValue) load failed: \(SecCopyErrorMessageString(status, nil) as String? ?? "unknown")")
         guard let data = item as? Data else {
             Log.e("Keychain \(type.rawValue) data invalid")
             return nil
@@ -86,6 +85,7 @@ public final class DefaultTokenStorage: TokenStorage {
             Log.e("Keychain \(type.rawValue) string encoding failed.")
             return nil
         }
+        Log.d("Keychain \(type.rawValue) loaded.")
         return token
     }
     
