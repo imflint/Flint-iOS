@@ -35,18 +35,18 @@ public extension CreateCollectionEntity {
         public let contentId: Int64
         public let isSpoiler: Bool
         public let reason: String
-        public let customImage: String?
+        public let customImages: [String]
         
         public init(
             contentId: Int64,
             isSpoiler: Bool,
             reason: String,
-            customImage customImageKey: String? = nil
+            customImages: [String] = []
         ) {
             self.contentId = contentId
             self.isSpoiler = isSpoiler
             self.reason = reason
-            self.customImage = customImageKey
+            self.customImages = customImages
         }
     }
 }

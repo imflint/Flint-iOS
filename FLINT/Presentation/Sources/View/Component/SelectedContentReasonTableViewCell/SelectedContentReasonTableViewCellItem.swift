@@ -18,7 +18,7 @@ public struct SelectedContentReasonTableViewCellItem {
     public var isSpoiler: Bool
     public var reasonText: String?
     public var photos: [UIImage]
-    public var customImageKey: String? = nil
+    public var customImageKeys: [String] = []
 
     public init(
         contentId: Int64,

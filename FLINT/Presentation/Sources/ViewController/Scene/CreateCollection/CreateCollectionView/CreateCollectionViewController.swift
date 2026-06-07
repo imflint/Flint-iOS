@@ -151,16 +151,20 @@ private extension CreateCollectionViewController {
     
     func makeContentList() -> [CreateCollectionEntity.CreateCollectionContents] {
         return selectedReasonItems.map { item in
+            print("📦 contentId: \(item.contentId)")
+            print("📦 reason: \(item.reasonText ?? "없음")")
+            print("📦 customImageKeys: \(item.customImageKeys)")
+            print("📦 headerImageKey: \(headerImageKey ?? "없음")")
             return CreateCollectionEntity.CreateCollectionContents(
                 contentId: item.contentId,
                 isSpoiler: item.isSpoiler,
                 reason: item.reasonText ?? "",
-                customImage: item.customImageKey
+                customImages: item.customImageKeys
             )
         }
     }
     
-    func syncReasonItems(with models: [SavedContentItemViewModel]) {
+    func syncReasonItems(with models: [SavedContentItemViewModel]) { 
         func key(of model: SavedContentItemViewModel) -> String {
             "\(model.title)|\(model.director)|\(model.year)"
         }
@@ -306,7 +310,7 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 cell.onTapAddPhoto = { [weak self] in
                     guard let self else { return }
                     let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                    sheet.overrideUserInterfaceStyle = .dark  
+                    sheet.overrideUserInterfaceStyle = .dark
                     
                     sheet.addAction(UIAlertAction(title: "앨범에서 선택", style: .default) { [weak self] _ in
                         self?.presentHeaderPhotoPicker()
@@ -530,7 +534,7 @@ extension CreateCollectionViewController: PHPickerViewControllerDelegate {
                             self.selectedReasonItems[index].reasonText = cell.currentReasonText
                         }
                         self.selectedReasonItems[index].photos = images
-                        self.selectedReasonItems[index].customImageKey = keys.first
+                        self.selectedReasonItems[index].customImageKeys = keys
                         self.rootView.tableView.reloadRows(
                             at: [IndexPath(row: index + 1, section: 1)],
                             with: .none
