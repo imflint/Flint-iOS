@@ -17,24 +17,24 @@ public final class CollectionFolderListViewModel {
     @Published public private(set) var items: [CollectionEntity] = []
 
     // MARK: - Dependency
-    private let fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase
+    private let fetchPopularCollectionsUseCase: FetchPopularCollectionsUseCase
     private let toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase
     private var cancellables = Set<AnyCancellable>()
 
     public init(
-        fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase,
+        fetchPopularCollectionsUseCase: FetchPopularCollectionsUseCase,
         toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase
     ) {
-        self.fetchRecentViewedCollectionsUseCase = fetchRecentViewedCollectionsUseCase
+        self.fetchPopularCollectionsUseCase = fetchPopularCollectionsUseCase
         self.toggleCollectionBookmarkUseCase = toggleCollectionBookmarkUseCase
     }
 
     public func load() {
-        fetchRecentViewedCollectionsUseCase()
+        fetchPopularCollectionsUseCase()  // ← 변경
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ watching collections failed:", error)
+                    print("❌ fetchPopularCollections failed:", error)  
                 }
             } receiveValue: { [weak self] items in
                 guard let self else { return }
@@ -70,10 +70,9 @@ public final class CollectionFolderListViewModel {
                     print("❌ toggleBookmark failed:", error)
                 }
             } receiveValue: { isBookmarked in
-                print("✅ toggleBookmark success:", isBookmarked)  
+                print("✅ toggleBookmark success:", isBookmarked)
             }
             .store(in: &cancellables)
     }
 
 }
-

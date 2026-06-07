@@ -9,12 +9,23 @@ import Foundation
 
 import Presentation
 
-protocol HomeViewModelFactory: FetchRecommendedCollectionsUseCaseFactory, FetchBookmarkedContentsUseCaseFactory, FetchProfileUseCaseFactory, FetchRecentViewedCollectionsUseCaseFactory {
+protocol HomeViewModelFactory:
+    FetchRecommendedCollectionsUseCaseFactory,
+    FetchPopularCollectionsUseCaseFactory,
+    FetchBookmarkedContentsUseCaseFactory,
+    FetchProfileUseCaseFactory,
+    FetchRecentViewedCollectionsUseCaseFactory {
     func makeHomeViewModel() -> HomeViewModel
 }
 
 extension HomeViewModelFactory {
     func makeHomeViewModel() -> HomeViewModel {
-        return HomeViewModel(fetchRecommendedCollectionsUseCase: makeFetchRecommendedCollectionsUseCase(), fetchBookmarkedContentsUseCase: makeFetchBookmarkedContentsUseCase(), fetchProfileUseCase: makeFetchProfileUseCase(), fetchRecentViewedCollectionsUseCase: makeFetchRecentViewedCollectionsUseCase())
+        return HomeViewModel(
+            fetchRecommendedCollectionsUseCase: makeFetchRecommendedCollectionsUseCase(),
+            fetchPopularCollectionsUseCase: makeFetchPopularCollectionsUseCase(),
+            fetchBookmarkedContentsUseCase: makeFetchBookmarkedContentsUseCase(),
+            fetchProfileUseCase: makeFetchProfileUseCase(),
+            fetchRecentViewedCollectionsUseCase: makeFetchRecentViewedCollectionsUseCase()
+        )
     }
 }
