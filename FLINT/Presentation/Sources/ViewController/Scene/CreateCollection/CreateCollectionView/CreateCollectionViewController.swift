@@ -151,10 +151,6 @@ private extension CreateCollectionViewController {
     
     func makeContentList() -> [CreateCollectionEntity.CreateCollectionContents] {
         return selectedReasonItems.map { item in
-            print("📦 contentId: \(item.contentId)")
-            print("📦 reason: \(item.reasonText ?? "없음")")
-            print("📦 customImageKeys: \(item.customImageKeys)")
-            print("📦 headerImageKey: \(headerImageKey ?? "없음")")
             return CreateCollectionEntity.CreateCollectionContents(
                 contentId: item.contentId,
                 isSpoiler: item.isSpoiler,
