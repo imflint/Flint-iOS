@@ -181,8 +181,8 @@ public final class HomeViewModel {
                     watchingRows = [
                         .header(
                             style: .more,
-                            title: "눈여겨보고 있는 컬렉션",
-                            subtitle: "\(userName)님이 최근 살펴본 컬렉션이에요"
+                            title: "인기 컬렉션",
+                            subtitle: "사람들이 눈여겨보는 컬렉션들이에요"
                         ),
                         .fliner(items: watchingCollections)
                     ]
