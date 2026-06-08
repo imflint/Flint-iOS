@@ -30,7 +30,7 @@ public final class CollectionFolderListViewModel {
     }
 
     public func load() {
-        fetchPopularCollectionsUseCase()  // ← 변경
+        fetchPopularCollectionsUseCase() 
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {
