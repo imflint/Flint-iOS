@@ -8,7 +8,7 @@
 import Foundation
 
 extension Encodable {
-    public func encode(filename: String = #file, line: Int = #line, funcName: String = #function) -> Data? {
+    public func encode(filename: String = #file, line: Int = #line, funcName: StaticString = #function) -> Data? {
         do {
             return try JSONEncoder().encode(self)
         } catch {

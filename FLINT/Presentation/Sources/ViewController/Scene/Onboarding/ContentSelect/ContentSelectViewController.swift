@@ -56,8 +56,7 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
     
     public init(onboardingViewModel: OnboardingViewModel, viewControllerFactory: ViewControllerFactory) {
         self.onboardingViewModel = onboardingViewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
     
     required init?(coder: NSCoder) {

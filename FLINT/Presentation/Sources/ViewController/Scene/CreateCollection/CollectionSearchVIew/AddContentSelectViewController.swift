@@ -48,8 +48,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 
     public init(viewModel: AddContentSelectViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
         self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
 
     required init?(coder: NSCoder) {

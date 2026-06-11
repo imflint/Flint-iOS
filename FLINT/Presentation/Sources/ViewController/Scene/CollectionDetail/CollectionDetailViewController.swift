@@ -45,11 +45,8 @@ public final class CollectionDetailViewController: BaseViewController<Collection
 
     public init(viewModel: CollectionDetailViewModel, viewControllerFactory: ViewControllerFactory) {
         self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
-
-
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

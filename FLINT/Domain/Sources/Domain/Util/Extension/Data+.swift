@@ -8,7 +8,7 @@
 import Foundation
 
 extension Data {
-    public func decode<T: Decodable>(type: T.Type, filename: String = #file, line: Int = #line, funcName: String = #function) -> T? {
+    public func decode<T: Decodable>(type: T.Type, filename: String = #file, line: Int = #line, funcName: StaticString = #function) -> T? {
         do {
             return try JSONDecoder().decode(T.self, from: self)
         } catch {

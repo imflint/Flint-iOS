@@ -16,7 +16,7 @@ import Domain
 import DTO
 
 extension AnyPublisher where Output == Response, Failure == MoyaError {
-    public func mapBaseResponseData<D: Codable>(_ type: D.Type, atKeyPath keyPath: String? = nil, using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true, filename: String = #file, line: Int = #line, funcName: String = #function) -> AnyPublisher<D, Error> {
+    public func mapBaseResponseData<D: Codable>(_ type: D.Type, atKeyPath keyPath: String? = nil, using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true, filename: String = #file, line: Int = #line, funcName: StaticString = #function) -> AnyPublisher<D, Error> {
         return map(BaseResponse<D>.self)
             .tryMap({ baseResponse in
                 Log.d(baseResponse, filename: filename, line: line, funcName: funcName)
@@ -31,7 +31,7 @@ extension AnyPublisher where Output == Response, Failure == MoyaError {
             .eraseToAnyPublisher()
     }
     
-    public func logged(filename: String = #fileID, line: Int = #line, funcName: String = #function) -> AnyPublisher<Output, Failure> {
+    public func logged(filename: String = #fileID, line: Int = #line, funcName: StaticString = #function) -> AnyPublisher<Output, Failure> {
         return self.handleEvents(receiveOutput: { output in
             Log.d(output.statusCode, output.response, String(data: output.data, encoding: .utf8), filename: filename, line: line, funcName: funcName)
         }, receiveCompletion: { completion in

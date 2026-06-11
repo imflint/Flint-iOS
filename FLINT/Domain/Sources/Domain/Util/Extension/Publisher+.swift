@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 extension Publisher {
-    public func sinkHandledCompletion(receiveValue: @escaping ((Self.Output) -> Void), filename: String = #file, line: Int = #line, funcName: String = #function) -> AnyCancellable {
+    public func sinkHandledCompletion(receiveValue: @escaping ((Self.Output) -> Void), filename: String = #file, line: Int = #line, funcName: StaticString = #function) -> AnyCancellable {
         return self.sink(receiveCompletion: { completion in
             switch completion {
             case .finished:
