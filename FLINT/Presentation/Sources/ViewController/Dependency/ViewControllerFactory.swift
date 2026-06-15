@@ -21,7 +21,7 @@ public typealias ViewControllerFactory =
     TermsAgreementViewControllerFactory &
     NicknameViewControllerFactory &
     ContentSelectViewControllerFactory &
-    OttSelectViewControllerFactory &
+//    OttSelectViewControllerFactory &
     OnboardingDoneViewControllerFactory &
     
     // MARK: - Main

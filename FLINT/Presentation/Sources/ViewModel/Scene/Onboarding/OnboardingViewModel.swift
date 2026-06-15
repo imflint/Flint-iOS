@@ -7,11 +7,13 @@
 
 import Combine
 import Foundation
+import UIKit
 
 import Domain
 
 public protocol OnboardingViewModelInput {
     // nickname
+    func uploadProfileImage(_ image: UIImage)
     func checkNickname(_ nickname: String)
     
     // content select
@@ -19,9 +21,6 @@ public protocol OnboardingViewModelInput {
     func searchContents(_ keyword: String)
     func clickContent(_ content: ContentEntity)
     func deleteContent(_ content: ContentEntity)
-    
-    // ott select
-    func clickOtt(_ ott: Ott)
     
     // onboardingDone
     func signup()
@@ -36,12 +35,10 @@ public protocol OnboardingViewModelOutput {
     var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> { get }
     
     // content select
-    var contentSelectQuestions: [String] { get set }
+    var requiredContentCount: Int { get }
     var contents: CurrentValueSubject<[ContentEntity], Never> { get }
     var selectedContents: CurrentValueSubject<[ContentEntity], Never> { get }
     
-    // ott select
-    var selectedOtt: CurrentValueSubject<[Ott], Never> { get }
     var userId: CurrentValueSubject<String?, Never> { get }
 }
 
@@ -49,6 +46,7 @@ public typealias OnboardingViewModel = OnboardingViewModelInput & OnboardingView
 
 public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
+    private let uploadUserProfileUseCase: UploadUserProfileUseCase
     private let checkNicknameUseCase: CheckNicknameUseCase
     private let fetchPopularContentsUseCase: FetchPopularContentsUseCase
     private let searchContentsUseCase: SearchContentsUseCase
@@ -61,16 +59,9 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
     public let nickname: CurrentValueSubject<String, Never> = .init("")
     public let nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
+    private var profileImageKey: String?
     
-    public var contentSelectQuestions: [String] = [
-        "이번 달, 가장 재미있었던 작품은 무엇인가요?",
-        "여러번 정주행 했던 작품은 무엇인가요?",
-        "좋아하는 인물이 등장하는 작품은 무엇인가요?",
-        "요즘 밥 먹으면서 자주 보는 작품은 무엇인가요?",
-        "\"이건 꼭 봐\"라고 말했던 작품은 무엇인가요?",
-        "계절에 생각나는 작품은 무엇인가요?",
-        "어렸을 적 즐겨봤던 추억의 작품은 무엇인가요?",
-    ]
+    public let requiredContentCount: Int = 7
     public let contents: CurrentValueSubject<[ContentEntity], Never> = .init([])
     public let selectedContents: CurrentValueSubject<[ContentEntity], Never> = .init([])
     
@@ -80,15 +71,26 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     public init(
+        uploadUserProfileUseCase: UploadUserProfileUseCase,
         checkNicknameUseCase: CheckNicknameUseCase,
         fetchPopularContentsUseCase: FetchPopularContentsUseCase,
         searchContentsUseCase: SearchContentsUseCase,
         signupUseCase: SignupUseCase,
     ) {
+        self.uploadUserProfileUseCase = uploadUserProfileUseCase
         self.checkNicknameUseCase = checkNicknameUseCase
         self.fetchPopularContentsUseCase = fetchPopularContentsUseCase
         self.searchContentsUseCase = searchContentsUseCase
         self.signupUseCase = signupUseCase
+    }
+    
+    public func uploadProfileImage(_ image: UIImage) {
+        uploadUserProfileUseCase(image)
+            .sinkHandledCompletion(receiveValue: { [weak self] imageKey in
+                self?.profileImageKey = imageKey
+                Log.d("Profile image uploaded")
+            })
+            .store(in: &cancellables)
     }
     
     public func checkNickname(_ nickname: String) {
@@ -151,10 +153,14 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         signupUseCase(
             userInfo: SignupInfoEntity(
                 nickname: nickname.value,
+                profileImage: profileImageKey,
                 favoriteContentIds: selectedContents.value.compactMap({ content in
                     Int(content.id)
                 }),
-                subscribedOttIds: selectedOtt.value.map(\.id)
+                agreedTermsIds: agreedTerms.value
+                    .filter { $0.value }
+                    .map(\.key.id)
+                    .map { String($0) }
             )
         )
         .manageThread()
