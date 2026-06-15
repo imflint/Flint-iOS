@@ -28,18 +28,21 @@ public protocol OnboardingViewModelInput {
 }
 
 public protocol OnboardingViewModelOutput {
+    // term
+    var agreedTerms: CurrentValueSubject<[SignUpTerm: Bool], Never> { get }
+    
     // nickname
     var nickname: CurrentValueSubject<String, Never> { get }
     var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> { get }
     
     // content select
     var contentSelectQuestions: [String] { get set }
-    var contents: CurrentValueSubject<[ContentEntity], Never> { get set }
-    var selectedContents: CurrentValueSubject<[ContentEntity], Never> { get set }
+    var contents: CurrentValueSubject<[ContentEntity], Never> { get }
+    var selectedContents: CurrentValueSubject<[ContentEntity], Never> { get }
     
     // ott select
-    var selectedOtt: CurrentValueSubject<[Ott], Never> { get set }
-    var userId: CurrentValueSubject<String?, Never> { get set }
+    var selectedOtt: CurrentValueSubject<[Ott], Never> { get }
+    var userId: CurrentValueSubject<String?, Never> { get }
 }
 
 public typealias OnboardingViewModel = OnboardingViewModelInput & OnboardingViewModelOutput
@@ -51,8 +54,13 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     private let searchContentsUseCase: SearchContentsUseCase
     private let signupUseCase: SignupUseCase
     
-    public var nickname: CurrentValueSubject<String, Never> = .init("")
-    public var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
+    public let agreedTerms: CurrentValueSubject<[SignUpTerm: Bool], Never> = .init([
+        .service: false,
+        .privacy: false,
+    ])
+    
+    public let nickname: CurrentValueSubject<String, Never> = .init("")
+    public let nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
     
     public var contentSelectQuestions: [String] = [
         "이번 달, 가장 재미있었던 작품은 무엇인가요?",
@@ -63,11 +71,11 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         "계절에 생각나는 작품은 무엇인가요?",
         "어렸을 적 즐겨봤던 추억의 작품은 무엇인가요?",
     ]
-    public var contents: CurrentValueSubject<[ContentEntity], Never> = .init([])
-    public var selectedContents: CurrentValueSubject<[ContentEntity], Never> = .init([])
+    public let contents: CurrentValueSubject<[ContentEntity], Never> = .init([])
+    public let selectedContents: CurrentValueSubject<[ContentEntity], Never> = .init([])
     
-    public var selectedOtt: CurrentValueSubject<[Ott], Never> = .init([])
-    public var userId: CurrentValueSubject<String?, Never> = .init(nil)
+    public let selectedOtt: CurrentValueSubject<[Ott], Never> = .init([])
+    public let userId: CurrentValueSubject<String?, Never> = .init(nil)
     
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
