@@ -9,6 +9,7 @@ import Combine
 import Foundation
 
 import Domain
+import UIKit
 
 public protocol CreateCollectionViewModelInput {
     func updateTitle(_ title: String)
@@ -17,6 +18,7 @@ public protocol CreateCollectionViewModelInput {
     func updateContentList(_ list: [CreateCollectionEntity.CreateCollectionContents])
     func updateImageUrl(_ imageUrl: String)
     func createCollection()
+    func uploadImages(_ images: [UIImage]) -> AnyPublisher<[String], Error>
 }
 
 public protocol CreateCollectionViewModelOutput {
@@ -30,6 +32,7 @@ public typealias CreateCollectionViewModel = CreateCollectionViewModelInput & Cr
 public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
 
     private let createCollectionUseCase: CreateCollectionUseCase
+    private let uploadImageUseCase: UploadCollectionImageUseCase
 
     public var isDoneEnabled: CurrentValueSubject<Bool, Never> = .init(false)
     public var createSuccess: PassthroughSubject<Int64, Never> = .init()
@@ -45,8 +48,12 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
     private var createEntity: CreateCollectionEntity?
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
 
-    public init(createCollectionUseCase: CreateCollectionUseCase) {
+    public init(
+        createCollectionUseCase: CreateCollectionUseCase,
+        uploadImageUseCase: UploadCollectionImageUseCase
+    ) {
         self.createCollectionUseCase = createCollectionUseCase
+        self.uploadImageUseCase = uploadImageUseCase
     }
 
     // MARK: - Input
@@ -69,10 +76,17 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
         self.contentList = list
         evaluateDoneEnabled()
     }
-    
+
     public func updateImageUrl(_ imageUrl: String) {
         self.imageUrl = imageUrl
         evaluateDoneEnabled()
+    }
+
+    public func uploadImages(_ images: [UIImage]) -> AnyPublisher<[String], Error> {
+        let publishers = images.map { uploadImageUseCase($0) }
+        return Publishers.MergeMany(publishers)
+            .collect()
+            .eraseToAnyPublisher()
     }
 
     public func createCollection() {
@@ -81,7 +95,7 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
 
         createCollectionUseCase(collectionInfo: entity)
             .manageThread()
-            .map { collectionId in Result<Int64, Error>.success(collectionId) }  
+            .map { collectionId in Result<Int64, Error>.success(collectionId) }
             .catch { Just(Result<Int64, Error>.failure($0)) }
             .sinkHandledCompletion { [weak self] result in
                 switch result {
@@ -100,7 +114,7 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
         let countValid = contentList.count >= 2
         let visibilityValid = isPublic == true
         let descriptionValid = true
-        let imageValid = true                  
+        let imageValid = true
 
         let canCreate = titleValid && countValid && visibilityValid && descriptionValid && imageValid
 
