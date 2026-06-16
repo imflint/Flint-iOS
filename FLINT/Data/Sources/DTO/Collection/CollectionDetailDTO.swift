@@ -32,6 +32,7 @@ extension CollectionDetailDTO {
         public let id: String?
         public let title: String?
         public let imageUrl: String?
+        public let customImageUrls: [String]?
         public let director: String?
         public let isBookmarked: Bool?
         public let bookmarkCount: Int?
