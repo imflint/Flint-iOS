@@ -21,11 +21,17 @@ public final class HomeViewController: BaseViewController<HomeView> {
     // MARK: - Properties
     
     private let viewModel: HomeViewModel
+    private let fetchOTTPlatformsForContentUseCase: FetchOTTPlatformsForContentUseCase
     
     // MARK: - Init
     
-    public init(viewModel: HomeViewModel, viewControllerFactory: ViewControllerFactory) {
+    public init(
+        viewModel: HomeViewModel,
+        fetchOTTPlatformsForContentUseCase: FetchOTTPlatformsForContentUseCase,
+        viewControllerFactory: ViewControllerFactory
+    ) {
         self.viewModel = viewModel
+        self.fetchOTTPlatformsForContentUseCase = fetchOTTPlatformsForContentUseCase
         super.init(nibName: nil, bundle: nil)
         self.viewControllerFactory = viewControllerFactory
     }
@@ -106,6 +112,21 @@ public final class HomeViewController: BaseViewController<HomeView> {
         present(vc, animated: false)
     }
     
+    private func fetchAndPresentOTT(contentId: Int64) {
+        fetchOTTPlatformsForContentUseCase(contentId: contentId)
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("❌ fetchOTTPlatforms failed:", error)
+                }
+            } receiveValue: { [weak self] entities in
+                guard let self else { return }
+                let platforms = entities.compactMap { OTTPlatform.fromServerName($0.name) }  
+                self.presentOTTBottomSheet(platforms: platforms)
+            }
+            .store(in: &cancellables)
+    }
+    
     // MARK: - Actions
     
     @objc private func didTapFab() {
@@ -129,7 +150,6 @@ public final class HomeViewController: BaseViewController<HomeView> {
         nav.pushViewController(vc, animated: true)
     }
 }
-
 
 // MARK: - UITableViewDataSource
 
@@ -176,7 +196,6 @@ extension HomeViewController: UITableViewDataSource {
             
             return cell
             
-        
         case .flinerPager(let items):
             let cell = tableView.dequeueReusableCell(FlinerRecommendTableViewCell.self, for: indexPath)
             cell.configure(items: items)
@@ -227,23 +246,15 @@ extension HomeViewController: UITableViewDataSource {
             
             cell.onTapItem = { [weak self] content in
                 guard let self else { return }
+                guard let contentId = Int64(content.id) else { return }
                 
-                let platforms: [OTTPlatform] = content.ottList.compactMap { ott in
-                    OTTPlatform.fromServerName(ott.ottName)
-                }
-                
-                if platforms.isEmpty {
-                    print("ottList 비어있음 or 매핑 실패. contentId:", content.id)
-                }
-                
-                self.presentOTTBottomSheet(platforms: platforms)
+                self.fetchAndPresentOTT(contentId: contentId)
             }
             
             return cell
         }
     }
 }
-
 
 // MARK: - UITableViewDelegate
 
@@ -256,7 +267,7 @@ extension HomeViewController: UITableViewDelegate {
         case .fliner:
             return 180
         case .flinerPager:
-                return 360  
+            return 360
         default:
             return UITableView.automaticDimension
         }

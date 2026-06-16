@@ -21,6 +21,7 @@ typealias DependencyFactory = ViewControllerFactory &
                               OnboardingViewModelFactory &
                               
                               HomeViewModelFactory &
+                              FetchOTTPlatformsForContentUseCaseFactory &  
                               ExploreViewModelFactory &
                               ProfileViewModelFactory &
                               
