@@ -56,12 +56,6 @@ final class DIContainer: DependencyFactory {
     
     lazy var presignedUrlService: any PresignedUrlService = DefaultPresignedUrlService()
     
-    // MARK: - UseCase
-    
-    lazy var uploadCollectionImageUseCase: UploadCollectionImageUseCase = DefaultUploadCollectionImageUseCase(
-        storageRepository: makeStorageRepository()
-    )
-    
     // MARK: - Init
     
     init() {
