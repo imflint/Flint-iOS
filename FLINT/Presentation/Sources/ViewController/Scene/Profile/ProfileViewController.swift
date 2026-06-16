@@ -83,6 +83,15 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         let vc = BaseBottomSheetViewController(content: .ott(platforms: platforms))
         present(vc, animated: false)
     }
+
+    private func pushCollectionDetail(collectionIdString: String) {
+        guard let collectionId = Int64(collectionIdString) else {
+            print("invalid collectionId:", collectionIdString)
+            return
+        }
+        guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
 }
 
@@ -152,8 +161,8 @@ extension ProfileViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(MoreNoMoreCollectionTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(items: items)
-            cell.onSelectItem = { entity in
-                print("컬렉션 선택:", entity.id)
+            cell.onSelectItem = { [weak self] entity in
+                self?.pushCollectionDetail(collectionIdString: entity.id)
             }
             return cell
 
@@ -161,8 +170,8 @@ extension ProfileViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(MoreNoMoreCollectionTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(items: items)
-            cell.onSelectItem = { entity in
-                print("저장 컬렉션 선택:", entity.id)
+            cell.onSelectItem = { [weak self] entity in
+                self?.pushCollectionDetail(collectionIdString: entity.id)
             }
             return cell
             
