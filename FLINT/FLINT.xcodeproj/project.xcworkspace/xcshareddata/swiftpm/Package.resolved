@@ -1,5 +1,5 @@
 {
-  "originHash" : "3d9e701c1e623e53f6cd00d3625eac0fefa496248b35c2087a7921a2459cdeb9",
+  "originHash" : "24fe9239693bf40153feee1892e9653ff4c3a745a0d8ca898b214c8633bcc2b8",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "d30a5fad881137e2267f96a8e3fc35c58999bb94",
         "version" : "8.6.2"
+      }
+    },
+    {
+      "identity" : "logsystem",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/H0sungKim/LogSystem.git",
+      "state" : {
+        "revision" : "a365850226e617e60da1d7fcf52905b40b0147f6",
+        "version" : "1.2.1"
       }
     },
     {
@@ -71,6 +80,15 @@
       "state" : {
         "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
         "version" : "5.7.1"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "b90056de69eed23b3fb39ab69cf1780071dfb664",
+        "version" : "604.0.0-prerelease-2026-06-05"
       }
     },
     {
