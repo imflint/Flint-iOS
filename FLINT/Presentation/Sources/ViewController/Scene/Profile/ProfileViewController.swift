@@ -22,9 +22,9 @@ public protocol ProfileViewControllerFactory {
 }
 
 public final class ProfileViewController: BaseViewController<ProfileView> {
-    
+
     private let profileViewModel: ProfileViewModel
-    
+
     public init(
         profileViewModel: ProfileViewModel,
         viewControllerFactory: ViewControllerFactory,
@@ -71,14 +71,14 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
             }
             .store(in: &cancellables)
     }
-    
+
     private func map(_ style: ProfileViewModel.TitleHeaderStyle) -> TitleHeaderTableViewCell.TitleHeaderStyle {
         switch style {
         case .normal: return .normal
         case .more: return .more
         }
     }
-    
+
     private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
         let vc = BaseBottomSheetViewController(content: .ott(platforms: platforms))
         present(vc, animated: false)
@@ -92,7 +92,7 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
         navigationController?.pushViewController(vc, animated: true)
     }
-    
+
 }
 
 // MARK: - UITableViewDelegate
@@ -110,6 +110,8 @@ extension ProfileViewController: UITableViewDelegate {
         case .titleHeader:
             return 0
         case .preferenceChips:
+            return 32
+        case .keywordGraph:
             return 48
         case .myCollections, .savedCollections:
             return 24
@@ -151,10 +153,16 @@ extension ProfileViewController: UITableViewDataSource {
             cell.configure(keywords: keywords)
             return cell
 
-        case let .titleHeader(style, title, subtitle):
+        case let .keywordGraph(keywords):
+            let cell = tableView.dequeueReusableCell(KeywordGraphTableViewCell.self, for: indexPath)
+            cell.selectionStyle = .none
+            cell.configure(keywords: keywords)
+            return cell
+
+        case let .titleHeader(style, title, subtitle, showInfo):
             let cell = tableView.dequeueReusableCell(TitleHeaderTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
-            cell.configure(style: map(style), title: title, subtitle: subtitle)
+            cell.configure(style: map(style), title: title, subtitle: subtitle, showInfo: showInfo)
             return cell
 
         case let .myCollections(items):
@@ -174,22 +182,22 @@ extension ProfileViewController: UITableViewDataSource {
                 self?.pushCollectionDetail(collectionIdString: entity.id)
             }
             return cell
-            
+
         case let .savedContents(items):
             let cell = tableView.dequeueReusableCell(RecentSavedContentTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(items: items)
             cell.onTapItem = { [weak self] content in
                 guard let self else { return }
-                
+
                 let platforms: [OTTPlatform] = content.ottList.compactMap { ott in
                     OTTPlatform.fromServerName(ott.ottName)
                 }
-                
+
                 if platforms.isEmpty {
                     print("ottList 비어있음 or 매핑 실패. contentId:", content.id)
                 }
-                
+
                 self.presentOTTBottomSheet(platforms: platforms)
             }
             return cell

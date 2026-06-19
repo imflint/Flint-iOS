@@ -11,7 +11,7 @@ import Foundation
 import Domain
 
 //public protocol ProfileViewModelInput {
-//    
+//
 //}
 
 //public protocol ProfileViewModelOutput {
@@ -23,27 +23,33 @@ import Domain
 //public final class DefaultProfileViewModel: ProfileViewModel {
 public final class ProfileViewModel {
 //    public var userProfileEntity: CurrentValueSubject<Entity.UserProfileEntity, Never>
-    
-    
+
+
     private let target: UserTarget
-    
+
     public enum Row {
         case profileHeader(nickname: String, profileImageUrl: URL?, isFliner: Bool)
-        case titleHeader(style: TitleHeaderStyle, title: String, subtitle: String)
+        case titleHeader(style: TitleHeaderStyle, title: String, subtitle: String, showInfo: Bool)
         case preferenceChips(keywords: [KeywordEntity])
+        case keywordGraph(keywords: [KeywordEntity])
         case myCollections(items: [CollectionEntity])
         case savedCollections(items: [CollectionEntity])
         case savedContents(items: [ContentInfoEntity])
     }
-    
+
     public enum TitleHeaderStyle {
         case normal
         case more
     }
-    
+
     // MARK: - Output
     @Published public private(set) var rows: [Row] = []
-    
+
+    public var isMe: Bool {
+        if case .me = target { return true }
+        return false
+    }
+
     // MARK: - Dependencies
     private let fetchProfileUseCase: FetchProfileUseCase
     private let fetchKeywordsUseCase: FetchKeywordsUseCase
@@ -51,17 +57,17 @@ public final class ProfileViewModel {
     private let fetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase
     private let fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase
     private var cancellables = Set<AnyCancellable>()
-    
+
     // MARK: - State
     private var nickname: String
     private var isFliner: Bool
     private var profileImageUrl: URL?
-    
+
     private var keywords: [KeywordEntity] = []
     private var myCollections: [CollectionEntity] = []
     private var savedCollections: [CollectionEntity] = []
     private var savedContents: [ContentInfoEntity] = []
-    
+
     public init(
         target: UserTarget,
         fetchProfileUseCase: FetchProfileUseCase,
@@ -82,10 +88,10 @@ public final class ProfileViewModel {
         self.isFliner = initialIsFliner
         self.rows = makeRows()
     }
-    
+
     // MARK: - Input
     public func load() {
-        
+
         fetchProfileUseCase(for: target)
             .manageThread()
             .sinkHandledCompletion(receiveValue: { [weak self] userProfileEntity in
@@ -96,7 +102,7 @@ public final class ProfileViewModel {
                 rows = makeRows()
             })
             .store(in: &cancellables)
-        
+
         fetchKeywordsUseCase(for: target)
             .manageThread()
             .sink { completion in
@@ -109,7 +115,7 @@ public final class ProfileViewModel {
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
-        
+
         fetchCreatedCollectionsUseCase(for: target)
             .manageThread()
             .sink { completion in
@@ -122,7 +128,7 @@ public final class ProfileViewModel {
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
-        
+
         fetchBookmarkedCollectionsUseCase(for: target)
             .manageThread()
             .sink { completion in
@@ -136,7 +142,7 @@ public final class ProfileViewModel {
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
-        
+
         fetchBookmarkedContentsUseCase(for: target)
             .manageThread()
             .sink { completion in
@@ -150,11 +156,11 @@ public final class ProfileViewModel {
             }
             .store(in: &cancellables)
     }
-    
+
     // MARK: - Row builder
     private func makeRows() -> [Row] {
         var result: [Row] = []
-        
+
         // 프로필 헤더는 항상 노출
         result.append(
             .profileHeader(
@@ -163,7 +169,7 @@ public final class ProfileViewModel {
                 isFliner: isFliner
             )
         )
-        
+
         // items가 비어있으면 header와 content 둘 다 추가하지 않음
         func appendSectionIfNotEmpty(
             _ isEmpty: Bool,
@@ -174,51 +180,57 @@ public final class ProfileViewModel {
             result.append(header)
             result.append(content)
         }
-        
-        // 취향 키워드
-        appendSectionIfNotEmpty(
-            keywords.isEmpty,
-            header: .titleHeader(
-                style: .normal,
-                title: "\(nickname)님의 취향 키워드",
-                subtitle: "\(nickname)님이 관심 있어 하는 키워드에요"
-            ),
-            content: .preferenceChips(keywords: keywords)
-        )
-        
+
+        // 취향 키워드 (header + chips + graph)
+        if !keywords.isEmpty {
+            result.append(
+                .titleHeader(
+                    style: .normal,
+                    title: "\(nickname)님의 취향 키워드",
+                    subtitle: "\(nickname)님이 관심 있어 하는 키워드에요",
+                    showInfo: isMe
+                )
+            )
+            result.append(.preferenceChips(keywords: keywords))
+            result.append(.keywordGraph(keywords: keywords))
+        }
+
         // 내가 만든 컬렉션
         appendSectionIfNotEmpty(
             myCollections.isEmpty,
             header: .titleHeader(
-                style: .normal,
+                style: .more,
                 title: "\(nickname)님의 컬렉션",
-                subtitle: "\(nickname)님이 생성한 컬렉션이에요"
+                subtitle: "\(nickname)님이 생성한 컬렉션이에요",
+                showInfo: false
             ),
             content: .myCollections(items: myCollections)
         )
-        
+
         // 저장한 컬렉션
         appendSectionIfNotEmpty(
             savedCollections.isEmpty,
             header: .titleHeader(
-                style: .normal,
+                style: .more,
                 title: "저장한 컬렉션",
-                subtitle: "\(nickname)님이 저장한 컬렉션이에요"
+                subtitle: "\(nickname)님이 저장한 컬렉션이에요",
+                showInfo: false
             ),
             content: .savedCollections(items: savedCollections)
         )
-        
-        // 저장한 콘텐츠
+
+        // 저장한 작품
         appendSectionIfNotEmpty(
             savedContents.isEmpty,
             header: .titleHeader(
-                style: .normal,
-                title: "저장한 콘텐츠",
-                subtitle: "\(nickname)님이 저장한 콘텐츠에요"
+                style: .more,
+                title: "저장한 작품",
+                subtitle: "\(nickname)님이 저장한 작품이에요",
+                showInfo: false
             ),
             content: .savedContents(items: savedContents)
         )
-        
+
         return result
     }
 }
