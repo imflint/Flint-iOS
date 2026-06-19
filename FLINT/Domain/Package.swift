@@ -16,7 +16,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/H0sungKim/LogSystem.git", exact: "1.2.1"),
+        .package(url: "https://github.com/H0sungKim/ConsoleLog.git", exact: "1.2.2"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -27,7 +27,7 @@ let package = Package(
             "UseCase",
         ]),
         .target(name: "Entity", dependencies: [
-            .product(name: "LogSystem", package: "LogSystem"),
+            .product(name: "ConsoleLog", package: "ConsoleLog"),
         ]),
         .target(name: "Repository", dependencies: [
             "Entity",

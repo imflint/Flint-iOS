@@ -7,15 +7,13 @@
 
 import Foundation
 
-import LogSystem
+@_exported import ConsoleLog
 
-@LogSystem
 public enum Log {
     
-    public enum LoggerType: String {
+    @ConsoleLoggerCategory
+    private enum Category: String {
         case network = "Network"
         case lifeCycle = "LifeCycle"
     }
-    
-    public static let subsystem = Bundle.main.bundleIdentifier ?? "com.imflint.flint"
 }

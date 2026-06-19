@@ -1,5 +1,5 @@
 {
-  "originHash" : "24fe9239693bf40153feee1892e9653ff4c3a745a0d8ca898b214c8633bcc2b8",
+  "originHash" : "9f45db81c825c0fe04c77dac25a651711771bd4a9b60bbf3ab93d80ca71276ca",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "7be73f6c2b5cd90e40798b06ebd5da8f9f79cf88",
         "version" : "5.11.0"
+      }
+    },
+    {
+      "identity" : "consolelog",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/H0sungKim/ConsoleLog.git",
+      "state" : {
+        "revision" : "585c6dc5ecaa5a080655a9439b5471a8299110df",
+        "version" : "1.2.2"
       }
     },
     {
@@ -26,15 +35,6 @@
       "state" : {
         "revision" : "d30a5fad881137e2267f96a8e3fc35c58999bb94",
         "version" : "8.6.2"
-      }
-    },
-    {
-      "identity" : "logsystem",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/H0sungKim/LogSystem.git",
-      "state" : {
-        "revision" : "a365850226e617e60da1d7fcf52905b40b0147f6",
-        "version" : "1.2.1"
       }
     },
     {
