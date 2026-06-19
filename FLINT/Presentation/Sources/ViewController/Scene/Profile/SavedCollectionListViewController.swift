@@ -1,8 +1,8 @@
 //
-//  CollectionFolderListViewController.swift
+//  SavedCollectionListViewController.swift
 //  FLINT
 //
-//  Created by 소은 on 1/20/26.
+//  Created by 진소은 on 2026/06/19.
 //
 
 import UIKit
@@ -12,17 +12,17 @@ import ViewModel
 
 import Domain
 
-public protocol CollectionFolderListViewControllerFactory {
-    func makeCollectionFolderListViewController() -> CollectionFolderListViewController
+public protocol SavedCollectionListViewControllerFactory {
+    func makeSavedCollectionListViewController() -> SavedCollectionListViewController
 }
 
-public final class CollectionFolderListViewController: BaseViewController<CollectionFolderListView> {
-    
+public final class SavedCollectionListViewController: BaseViewController<CollectionFolderListView> {
+
     // MARK: - Data
-    
-    private let viewModel: CollectionFolderListViewModel
-    
-    public init(viewModel: CollectionFolderListViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
+
+    private let viewModel: SavedCollectionListViewModel
+
+    public init(viewModel: SavedCollectionListViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         self.viewControllerFactory = viewControllerFactory
@@ -31,18 +31,17 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    
     // MARK: - Lifecycle
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         bind()
         applyCount()
         viewModel.load()
     }
-    
+
     // MARK: - Override
-    
+
     public override func bind() {
         rootView.collectionView.dataSource = self
         rootView.collectionView.delegate = self
@@ -56,29 +55,29 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
             }
             .store(in: &cancellables)
     }
-    
+
     public override func setUI() {
         super.setUI()
-        
+
         view.backgroundColor = DesignSystem.Color.background
-        
+
         setNavigationBar(
             .init(
                 left: .back,
-                title: "눈여겨보고 있는 컬렉션",
+                title: "저장한 컬렉션",
                 right: .none,
                 backgroundStyle: .solid(DesignSystem.Color.background)
             )
         )
         statusBarBackgroundView.isHidden = true
-        
+
         navigationBarView.onTapLeft = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
         }
     }
-    
+
     // MARK: - Private
-    
+
     private func applyCount() {
         rootView.countLabel.attributedText = .pretendard(
             .body2_r_14,
@@ -90,12 +89,12 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
 
 // MARK: - UICollectionViewDataSource
 
-extension CollectionFolderListViewController: UICollectionViewDataSource {
-    
+extension SavedCollectionListViewController: UICollectionViewDataSource {
+
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         viewModel.items.count
     }
-    
+
     public func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
@@ -106,7 +105,7 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
         ) as? CollectionFolderCollectionViewCell else {
             return UICollectionViewCell()
         }
-        
+
         let entity = viewModel.items[indexPath.item]
 
         let firstURL = entity.imageList.first ?? entity.thumbnailUrl
@@ -125,8 +124,8 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
                 bookmarkedCountText: "\(entity.bookmarkCount)"
             )
         )
-        
-        cell.onTapBookmark = { [weak self, weak cell] isBookmarked, count in
+
+        cell.onTapBookmark = { [weak self, weak cell] isBookmarked, _ in
             guard let self, let cell,
                   let indexPath = collectionView.indexPath(for: cell) else { return }
 
@@ -139,13 +138,8 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
                     image: DesignSystem.Icon.Gradient.bookmark,
                     title: "취향이 하나 더 쌓였어요",
                     actionTitle: "저장한 컬렉션 보러가기",
-                    action: { [weak self] _ in
-                        guard let self else { return }
-                        let factory = self.viewControllerFactory
-                            ?? (self.parent as? TabBarViewController)?.viewControllerFactory
-                        guard let factory else { return }
-                        let vc = factory.makeSavedCollectionListViewController()
-                        self.navigationController?.pushViewController(vc, animated: true)
+                    action: { _ in
+                        print("컬렉션 저장")
                     }
                 ).show()
                 return
@@ -161,12 +155,12 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 
-extension CollectionFolderListViewController: UICollectionViewDelegate {
-    
+extension SavedCollectionListViewController: UICollectionViewDelegate {
+
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         didSelectItem(at: indexPath)
     }
-    
+
     private func didSelectItem(at indexPath: IndexPath) {
         let entity = viewModel.items[indexPath.item]
 
@@ -175,16 +169,13 @@ extension CollectionFolderListViewController: UICollectionViewDelegate {
             return
         }
 
-        let factory = viewControllerFactory
-            ?? (parent as? TabBarViewController)?.viewControllerFactory
-        guard let factory else { return }
-
+        guard let factory = viewControllerFactory else { return }
         let vc = factory.makeCollectionDetailViewController(collectionId: collectionId)
         navigationController?.pushViewController(vc, animated: true)
     }
 }
 
-extension CollectionFolderListViewController: UICollectionViewDelegateFlowLayout {
+extension SavedCollectionListViewController: UICollectionViewDelegateFlowLayout {
 
     public func collectionView(
         _ collectionView: UICollectionView,
@@ -223,4 +214,3 @@ extension CollectionFolderListViewController: UICollectionViewDelegateFlowLayout
         minimumLineSpacingForSectionAt section: Int
     ) -> CGFloat { 24 }
 }
-

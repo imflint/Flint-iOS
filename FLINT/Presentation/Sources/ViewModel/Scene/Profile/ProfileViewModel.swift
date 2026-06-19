@@ -101,7 +101,7 @@ public final class ProfileViewModel {
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchKeywords failed:", error)
+                    print("fetchKeywords failed:", error)
                 }
             } receiveValue: { [weak self] keywords in
                 guard let self else { return }
@@ -114,7 +114,7 @@ public final class ProfileViewModel {
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchMyCollections failed:", error)
+                    print("fetchMyCollections failed:", error)
                 }
             } receiveValue: { [weak self] items in
                 guard let self else { return }
@@ -127,7 +127,7 @@ public final class ProfileViewModel {
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchSavedCollections failed:", error)
+                    print("fetchSavedCollections failed:", error)
                 }
             } receiveValue: { [weak self] items in
                 print("asdf", items.count)
@@ -141,7 +141,7 @@ public final class ProfileViewModel {
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchSavedContents failed:", error)
+                    print("fetchSavedContents failed:", error)
                 }
             } receiveValue: { [weak self] items in
                 guard let self else { return }

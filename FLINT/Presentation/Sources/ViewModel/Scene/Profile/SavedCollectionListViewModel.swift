@@ -1,56 +1,51 @@
 //
-//  CollectionFolderListViewModel.swift
-//  FLINT
+//  SavedCollectionListViewModel.swift
+//  Presentation
 //
-//  Created by 소은 on 1/24/26.
+//  Created by 진소은 on 2026/06/19.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 import Domain
-import Entity
 
-public final class CollectionFolderListViewModel {
+public final class SavedCollectionListViewModel {
 
     // MARK: - Output
     @Published public private(set) var items: [CollectionEntity] = []
 
     // MARK: - Dependency
-    private let fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase
+    private let fetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase
     private let toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase
     private var cancellables = Set<AnyCancellable>()
 
     public init(
-        fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase,
+        fetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase,
         toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase
     ) {
-        self.fetchRecentViewedCollectionsUseCase = fetchRecentViewedCollectionsUseCase
+        self.fetchBookmarkedCollectionsUseCase = fetchBookmarkedCollectionsUseCase
         self.toggleCollectionBookmarkUseCase = toggleCollectionBookmarkUseCase
     }
 
     public func load() {
-        fetchRecentViewedCollectionsUseCase()
+        fetchBookmarkedCollectionsUseCase(for: .me)
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("watching collections failed:", error)
+                    print("fetchSavedCollections failed:", error)
                 }
             } receiveValue: { [weak self] items in
-                guard let self else { return }
-                self.items = items
+                self?.items = items
             }
             .store(in: &cancellables)
     }
-    
+
     public func updateBookmark(at index: Int, isBookmarked: Bool) {
-        
         guard items.indices.contains(index) else { return }
 
         let old = items[index]
-        
-        let collectionId = old.id
-        guard let collectionIdInt = Int64(collectionId) else { return }
+        guard let collectionIdInt = Int64(old.id) else { return }
 
         items[index] = CollectionEntity(
             id: old.id,
@@ -62,7 +57,7 @@ public final class CollectionFolderListViewModel {
             isBookmarked: isBookmarked,
             user: old.user
         )
-        
+
         toggleCollectionBookmarkUseCase(collectionId: collectionIdInt)
             .receive(on: DispatchQueue.main)
             .sink { completion in
@@ -74,6 +69,4 @@ public final class CollectionFolderListViewModel {
             }
             .store(in: &cancellables)
     }
-
 }
-
