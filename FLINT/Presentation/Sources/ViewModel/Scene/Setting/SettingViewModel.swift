@@ -108,7 +108,6 @@ public final class DefaultSettingViewModel: SettingViewModel {
     }
 
     public func performWithdrawal() {
-        // TODO: 탈퇴 UseCase 연결
         print("회원탈퇴")
     }
     
