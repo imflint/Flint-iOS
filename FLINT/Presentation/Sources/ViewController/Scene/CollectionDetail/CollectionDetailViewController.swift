@@ -274,10 +274,16 @@ extension CollectionDetailViewController: UITableViewDataSource {
                 cell?.configureSpoiler(isSpoiler: false)
             }
 
-            cell.onTapBookmark = { [weak self] _, _ in
+            cell.onTapBookmark = { [weak self] isBookmarked, _ in
                 guard let self else { return }
                 guard let contentId = Int64(item.id) else { return }
                 self.tapContentBookmarkSubject.send(contentId)
+
+                if isBookmarked {
+                    Toast.text("작품을 저장했어요").show()
+                } else {
+                    Toast.text("작품 저장을 취소했어요").show()
+                }
             }
 
             return cell
