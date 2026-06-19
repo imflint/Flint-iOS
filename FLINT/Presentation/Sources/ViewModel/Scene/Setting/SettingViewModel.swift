@@ -55,12 +55,13 @@ public final class DefaultSettingViewModel: SettingViewModel {
     
     // MARK: - Properties
     
+    private let logoutUseCase: LogoutUseCase
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Initialization
     
-    public init() {
-        // TODO: UseCase 주입
+    public init(logoutUseCase: LogoutUseCase) {
+        self.logoutUseCase = logoutUseCase
         fetchUserProfile()
     }
     
@@ -91,8 +92,19 @@ public final class DefaultSettingViewModel: SettingViewModel {
     }
     
     public func performLogout() {
-        // TODO: UseCase 연결
-        logoutSuccess.send()
+        logoutUseCase()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { completion in
+                    if case .failure(let error) = completion {
+                        print("로그아웃 실패: \(error)")
+                    }
+                },
+                receiveValue: { [weak self] in
+                    self?.logoutSuccess.send()
+                }
+            )
+            .store(in: &cancellables)
     }
 
     public func performWithdrawal() {
@@ -103,12 +115,11 @@ public final class DefaultSettingViewModel: SettingViewModel {
     // MARK: - Private Methods
     
     private func fetchUserProfile() {
-        // 임시 Mock 데이터
         let mockProfile = UserProfileEntity(
             id: "user123",
             nickname: "플리니",
             profileImageUrl: nil,
-            role: .fliner  
+            role: .fliner
         )
         userProfile.send(mockProfile)
     }

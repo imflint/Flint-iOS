@@ -13,5 +13,6 @@ import Entity
 public protocol AuthRepository {
     func signup(userInfo: SignupInfoEntity) -> AnyPublisher<String, Error>
     func socialVerify(socialAuthCredential: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error>
-    func withDraw() -> AnyPublisher<Void, Error>
+    func logout() -> AnyPublisher<Void, Error>
+    func withDraw(agreedTermsIds: [String]) -> AnyPublisher<Void, Error>
 }

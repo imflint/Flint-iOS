@@ -12,12 +12,12 @@ import Moya
 import DTO
 
 public enum AuthAPI {
-    case logout
+    case logout(refreshToken: String)
     case logoutAll
     case refresh
     case signup(userInfo: SignupRequestDTO)
     case socialVerify(socialAuthCredential: SocialVerifyRequestDTO)
-    case withdraw
+    case withdraw(agreedTermsIds: [String])
 }
 
 extension AuthAPI: TargetType {
@@ -25,7 +25,9 @@ extension AuthAPI: TargetType {
         switch self {
         case .signup:
             return "/api/v1/auth/signup"
-        case .logout, .logoutAll, .refresh:
+        case .logout:
+            return "/api/v1/auth/logout"
+        case .logoutAll, .refresh:
             #warning("TODO: - 나중에 구현할 것")
             return "TODO"
         case .socialVerify:
@@ -50,8 +52,12 @@ extension AuthAPI: TargetType {
             return .requestJSONEncodable(userInfo)
         case let .socialVerify(socialAuthCredential):
             return .requestJSONEncodable(socialAuthCredential)
-        case .logout, .logoutAll, .refresh, .withdraw:
+        case let .logout(refreshToken):
+            return .requestJSONEncodable(LogoutRequestDTO(refreshToken: refreshToken))
+        case .logoutAll, .refresh:
             return .requestPlain
+        case let .withdraw(agreedTermsIds):
+            return .requestJSONEncodable(WithdrawRequestDTO(agreedTermsIds: agreedTermsIds))
         }
     }
 }
