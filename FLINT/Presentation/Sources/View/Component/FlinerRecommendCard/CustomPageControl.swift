@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CustomPageControl: BaseView {
+public final class CustomPageControl: BaseView {
     
     // MARK: - Property
     

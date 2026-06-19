@@ -61,8 +61,7 @@ public final class SettingViewController: BaseViewController<SettingView> {
     
     public init(settingViewModel: any SettingViewModel, viewControllerFactory: any ViewControllerFactory) {
         self.settingViewModel = settingViewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
     
     required init?(coder: NSCoder) {

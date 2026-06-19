@@ -28,8 +28,7 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     
     public init(onboardingViewModel: OnboardingViewModel, viewControllerFactory: ViewControllerFactory) {
         self.onboardingViewModel = onboardingViewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
     
     required init?(coder: NSCoder) {

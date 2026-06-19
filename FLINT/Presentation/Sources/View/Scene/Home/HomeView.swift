@@ -22,7 +22,6 @@ public final class HomeView: BaseView {
         $0.showsVerticalScrollIndicator = false
     }
     
-    // 이부분이추가
     public let flinerCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal

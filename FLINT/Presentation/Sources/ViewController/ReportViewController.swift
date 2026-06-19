@@ -31,7 +31,8 @@ public final class ReportViewController: BaseViewController<ReportView> {
     
     public init(viewModel: ReportViewModel) {
         self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
+        // FIXME: viewControllerFactor 주입
+        super.init(viewControllerFactory: nil)
     }
     
     required init?(coder: NSCoder) {

@@ -8,11 +8,11 @@
 import Foundation
 
 extension Data {
-    public func decode<T: Decodable>(type: T.Type, filename: String = #file, line: Int = #line, funcName: String = #function) -> T? {
+    public func decode<T: Decodable>(type: T.Type, fileName: String = #file, line: Int = #line, funcName: String = #function) -> T? {
         do {
             return try JSONDecoder().decode(T.self, from: self)
         } catch {
-            Log.e("Decoding Error - \(String(decoding: self, as: UTF8.self)) \(error.localizedDescription)", filename: filename, line: line, funcName: funcName)
+            Log.e("Decoding Error - \(String(decoding: self, as: UTF8.self)) \(error.localizedDescription)", fileName: fileName, line: line, funcName: funcName)
             return nil
         }
     }

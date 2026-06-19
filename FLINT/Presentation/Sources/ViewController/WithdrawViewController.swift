@@ -25,7 +25,8 @@ public final class WithdrawalViewController: BaseViewController<WithdrawalView> 
     
     public init(viewModel: WithdrawViewModel) {
         self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
+        // FIXME: viewControllerFactory 주입해주기
+        super.init(viewControllerFactory: nil)
     }
     
     required init?(coder: NSCoder) {

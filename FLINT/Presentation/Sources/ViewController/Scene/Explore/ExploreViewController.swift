@@ -43,8 +43,7 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
     
     public init(exploreViewModel: ExploreViewModel, viewControllerFactory: ViewControllerFactory) {
         self.exploreViewModel = exploreViewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
     
     required init?(coder: NSCoder) {

@@ -30,8 +30,7 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         viewControllerFactory: ViewControllerFactory,
     ) {
         self.profileViewModel = profileViewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
     
     required init?(coder: NSCoder) {

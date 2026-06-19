@@ -30,10 +30,10 @@ public final class HomeViewController: BaseViewController<HomeView> {
         fetchOTTPlatformsForContentUseCase: FetchOTTPlatformsForContentUseCase,
         viewControllerFactory: ViewControllerFactory
     ) {
-        self.viewModel = viewModel
-        self.fetchOTTPlatformsForContentUseCase = fetchOTTPlatformsForContentUseCase
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+         self.viewModel = viewModel
+         self.fetchOTTPlatformsForContentUseCase = fetchOTTPlatformsForContentUseCase
+         super.init(nibName: nil, bundle: nil)
+         self.viewControllerFactory = viewControllerFactory
     }
     
     required init?(coder: NSCoder) {
