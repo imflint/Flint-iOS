@@ -15,6 +15,7 @@ public enum NavLeftItem {
 
 public enum NavRightItem {
     case close
+    case setting
     case text(title: String, color: UIColor)
     case icon(name: String, tint: UIColor)
     case none

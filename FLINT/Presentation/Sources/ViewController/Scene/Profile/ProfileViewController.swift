@@ -22,9 +22,9 @@ public protocol ProfileViewControllerFactory {
 }
 
 public final class ProfileViewController: BaseViewController<ProfileView> {
-
+    
     private let profileViewModel: ProfileViewModel
-
+    
     public init(
         profileViewModel: ProfileViewModel,
         viewControllerFactory: ViewControllerFactory,
@@ -39,6 +39,9 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        rootView.snp.remakeConstraints {
+            $0.edges.equalToSuperview()
+        }
         setupTableView()
         bind()
         profileViewModel.load()
@@ -48,9 +51,21 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         super.viewWillAppear(animated)
         setNavigationBar(.init(left: .back, backgroundStyle: .clear))
 
+        let rightItem: NavRightItem = profileViewModel.isMe ? .setting : .none
+
+        setNavigationBar(
+            .init(left: .back, right: rightItem, backgroundStyle: .clear),
+            onTapRight: { [weak self] in
+                self?.didTapSetting()
+            }
+        )
     }
 
-    
+    private func didTapSetting() {
+        // TODO: SettingViewController push (DI에 SettingViewControllerFactory 등록 후 연결)
+        print("setting tapped")
+    }
+
     private func setupTableView() {
         let tableView = rootView.tableView
         tableView.dataSource = self
@@ -71,14 +86,14 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
             }
             .store(in: &cancellables)
     }
-
+    
     private func map(_ style: ProfileViewModel.TitleHeaderStyle) -> TitleHeaderTableViewCell.TitleHeaderStyle {
         switch style {
         case .normal: return .normal
         case .more: return .more
         }
     }
-
+    
     private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
         let vc = BaseBottomSheetViewController(content: .ott(platforms: platforms))
         present(vc, animated: false)
@@ -92,7 +107,7 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
         navigationController?.pushViewController(vc, animated: true)
     }
-
+    
 }
 
 // MARK: - UITableViewDelegate
@@ -159,10 +174,24 @@ extension ProfileViewController: UITableViewDataSource {
             cell.configure(keywords: keywords)
             return cell
 
-        case let .titleHeader(style, title, subtitle, showInfo):
+        case let .titleHeader(style, title, subtitle, showInfo, showRefresh, isRefreshing, tooltipText):
             let cell = tableView.dequeueReusableCell(TitleHeaderTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
-            cell.configure(style: map(style), title: title, subtitle: subtitle, showInfo: showInfo)
+            cell.configure(
+                style: map(style),
+                title: title,
+                subtitle: subtitle,
+                showInfo: showInfo,
+                showRefresh: showRefresh,
+                isRefreshing: isRefreshing,
+                tooltipText: tooltipText
+            )
+            cell.onTapInfo = { [weak self] in
+                self?.profileViewModel.toggleKeywordInfoTooltip()
+            }
+            cell.onTapRefresh = { [weak self] in
+                self?.profileViewModel.refreshKeywords()
+            }
             return cell
 
         case let .myCollections(items):
@@ -182,22 +211,22 @@ extension ProfileViewController: UITableViewDataSource {
                 self?.pushCollectionDetail(collectionIdString: entity.id)
             }
             return cell
-
+            
         case let .savedContents(items):
             let cell = tableView.dequeueReusableCell(RecentSavedContentTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(items: items)
             cell.onTapItem = { [weak self] content in
                 guard let self else { return }
-
+                
                 let platforms: [OTTPlatform] = content.ottList.compactMap { ott in
                     OTTPlatform.fromServerName(ott.ottName)
                 }
-
+                
                 if platforms.isEmpty {
                     print("ottList 비어있음 or 매핑 실패. contentId:", content.id)
                 }
-
+                
                 self.presentOTTBottomSheet(platforms: platforms)
             }
             return cell

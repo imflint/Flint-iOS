@@ -19,7 +19,7 @@ public struct BaseResponse<T: Codable>: Codable {
     public let additionalInfo: [String: String]?
     
     public let status: Int
-    public let message: String
+    public let message: String?
     public let data: T?
 }
 
@@ -36,7 +36,7 @@ extension BaseResponse {
             errorCode: errorCode ?? "",
             additionalInfo: additionalInfo ?? [:],
             status: status,
-            message: message
+            message: message ?? ""
         )
     }
 }

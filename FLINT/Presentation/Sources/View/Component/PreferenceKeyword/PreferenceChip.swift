@@ -66,8 +66,8 @@ public final class PreferenceChip: BaseView {
 
     // MARK: - Public
 
-    public func configure(keyword: KeywordEntity) {
-        style = PreferenceChipStyle.from(rank: keyword.rank, color: keyword.color)
+    public func configure(keyword: KeywordEntity, displayRank: Int? = nil) {
+        style = PreferenceChipStyle.from(rank: displayRank ?? keyword.rank, color: keyword.color)
 
         keywordLabel.attributedText = .pretendard(.head2_m_20, text: keyword.name, color: .white)
 
