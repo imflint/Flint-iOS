@@ -24,8 +24,7 @@ public final class LoginViewController: BaseViewController<LoginView> {
     
     public init(loginViewModel: LoginViewModel, viewControllerFactory: ViewControllerFactory) {
         self.loginViewModel = loginViewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
     
     required init?(coder: NSCoder) {

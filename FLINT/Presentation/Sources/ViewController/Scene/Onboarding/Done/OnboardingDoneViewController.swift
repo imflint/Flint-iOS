@@ -26,8 +26,7 @@ public final class OnboardingDoneViewController: BaseViewController<OnboardingDo
     
     public init(onboardingViewModel: OnboardingViewModel, viewControllerFactory: ViewControllerFactory) {
         self.onboardingViewModel = onboardingViewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
     
     required init?(coder: NSCoder) {

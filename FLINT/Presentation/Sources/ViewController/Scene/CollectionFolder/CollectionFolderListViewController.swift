@@ -24,8 +24,7 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
     
     public init(viewModel: CollectionFolderListViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
         self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
 
     @available(*, unavailable)

@@ -17,6 +17,8 @@ public struct SelectedContentReasonTableViewCellItem {
 
     public var isSpoiler: Bool
     public var reasonText: String?
+    public var photos: [UIImage]
+    public var customImageKeys: [String] = []
 
     public init(
         contentId: Int64,
@@ -26,7 +28,8 @@ public struct SelectedContentReasonTableViewCellItem {
         director: String,
         year: String,
         isSpoiler: Bool = false,
-        reasonText: String? = nil
+        reasonText: String? = nil,
+        photos: [UIImage] = []
     ) {
         self.contentId = contentId
         self.posterURL = posterURL
@@ -36,5 +39,6 @@ public struct SelectedContentReasonTableViewCellItem {
         self.year = year
         self.isSpoiler = isSpoiler
         self.reasonText = reasonText
+        self.photos = photos
     }
 }

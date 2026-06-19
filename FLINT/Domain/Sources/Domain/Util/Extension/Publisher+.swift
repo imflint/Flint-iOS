@@ -9,13 +9,13 @@ import Foundation
 import Combine
 
 extension Publisher {
-    public func sinkHandledCompletion(receiveValue: @escaping ((Self.Output) -> Void), filename: String = #file, line: Int = #line, funcName: String = #function) -> AnyCancellable {
+    public func sinkHandledCompletion(receiveValue: @escaping ((Self.Output) -> Void), fileName: String = #file, line: Int = #line, funcName: String = #function) -> AnyCancellable {
         return self.sink(receiveCompletion: { completion in
             switch completion {
             case .finished:
                 break
             case .failure(let error):
-                Log.e(error.localizedDescription, filename: filename, line: line, funcName: funcName)
+                Log.e(error.localizedDescription, fileName: fileName, line: line, funcName: funcName)
             }
         }, receiveValue: receiveValue)
     }

@@ -26,8 +26,7 @@ public final class HomeViewController: BaseViewController<HomeView> {
     
     public init(viewModel: HomeViewModel, viewControllerFactory: ViewControllerFactory) {
         self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
     
     required init?(coder: NSCoder) {
