@@ -18,8 +18,8 @@ public protocol SplashViewControllerFactory {
 public final class SplashViewController: BaseViewController<SplashView> {
     
     public init(viewControllerFactory: ViewControllerFactory) {
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
+        
     }
     
     required init?(coder: NSCoder) {

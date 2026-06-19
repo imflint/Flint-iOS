@@ -11,6 +11,8 @@ import UIKit
 import SnapKit
 import Then
 
+import Domain
+
 import View
 
 public class BaseViewController<RootView: UIView>: UIViewController {
@@ -31,6 +33,20 @@ public class BaseViewController<RootView: UIView>: UIViewController {
     public let rootView: RootView = RootView()
     
     // MARK: - Lifecycle
+    
+    public init(viewControllerFactory: (any ViewControllerFactory)?) {
+        self.viewControllerFactory = viewControllerFactory
+        super.init(nibName: nil, bundle: nil)
+        Log.lifeCycle.d(Self.self, "init")
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        Log.lifeCycle.d(Self.self, "deinit")
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
