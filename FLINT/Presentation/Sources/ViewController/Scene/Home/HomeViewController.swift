@@ -121,7 +121,7 @@ public final class HomeViewController: BaseViewController<HomeView> {
                 }
             } receiveValue: { [weak self] entities in
                 guard let self else { return }
-                let platforms = entities.compactMap { OTTPlatform.fromServerName($0.name) }  
+                let platforms = entities.compactMap { OTTPlatform.fromServerName($0.name) }
                 self.presentOTTBottomSheet(platforms: platforms)
             }
             .store(in: &cancellables)
