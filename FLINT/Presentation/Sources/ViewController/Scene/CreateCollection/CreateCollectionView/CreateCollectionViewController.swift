@@ -12,14 +12,16 @@ import Domain
 import View
 import ViewModel
 
+import PhotosUI
+
 public protocol CreateCollectionViewControllerFactory {
     func makeCreateCollectionViewController() -> CreateCollectionViewController
 }
 
 public final class CreateCollectionViewController: BaseViewController<CreateCollectionView> {
-    
+
     // MARK: - Enum
-    
+
     enum CreateCollectionRow: Int, CaseIterable {
         case header
         case title
@@ -27,48 +29,55 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
         case visibility
         case addContent
     }
-    
+
     // MARK: - State
-    
+
     private var collectionTitleText: String = ""
     private var collectionDescriptionText: String = ""
     private var isPublic: Bool = false
-    
+
     private var selectedContents: [SavedContentItemViewModel] = []
     private var selectedReasonItems: [SelectedContentReasonTableViewCellItem] = []
-    
+    private var currentPhotoPickerIndex: Int?
+
     private let viewModel: CreateCollectionViewModel
-    
+
+    private var headerImage: UIImage?
+    private var headerImageKey: String?
+
     // MARK: - Init
-    
-    public init(viewModel: CreateCollectionViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
+
+    public init(
+        viewModel: CreateCollectionViewModel,
+        viewControllerFactory: ViewControllerFactory? = nil
+    ) {
         self.viewModel = viewModel
         super.init(viewControllerFactory: viewControllerFactory)
     }
-    
+
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
+
     // MARK: - Lifecycle
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         setTableView()
         registerCells()
         bindViewModel()
     }
-    
+
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         rootView.refreshFooterLayout()
     }
-    
-    // MARK: - Setup
-    
+
+    // MARK: - Override Points
+
     public override func setUI() {
         super.setUI()
-        
+
         view.backgroundColor = DesignSystem.Color.background
-        
+
         setNavigationBar(
             .init(
                 left: .back,
@@ -82,12 +91,12 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
 // MARK: - Private
 
 private extension CreateCollectionViewController {
-    
+
     func setTableView() {
         rootView.tableView.dataSource = self
         rootView.tableView.delegate = self
     }
-    
+
     func registerCells() {
         rootView.tableView.register(CreateCollectionHeaderImageCell.self)
         rootView.tableView.register(CreateCollectionTitleInputCell.self)
@@ -97,7 +106,7 @@ private extension CreateCollectionViewController {
         rootView.tableView.register(CreateCollectionAddContentButtonCell.self)
         rootView.tableView.register(SelectedContentReasonTableViewCell.self)
     }
-    
+
     func bindViewModel() {
         viewModel.isDoneEnabled
             .receive(on: RunLoop.main)
@@ -105,119 +114,121 @@ private extension CreateCollectionViewController {
                 self?.rootView.setCompleteEnabled(isEnabled)
             }
             .store(in: &cancellables)
-        
+
         viewModel.createSuccess
             .receive(on: RunLoop.main)
-            .sink { [weak self] in
-                #warning("TODO: - 성공 처리")
-                self?.navigationController?.popViewController(animated: true)
-                print("CreateCollection 성공")
+            .sink { [weak self] collectionId in
+                guard let self, let factory = self.viewControllerFactory else { return }
+                let detailVC = factory.makeCollectionDetailViewController(collectionId: collectionId)
+                self.navigationController?.pushViewController(detailVC, animated: true)
             }
             .store(in: &cancellables)
-        
+
         viewModel.createFailure
             .receive(on: RunLoop.main)
             .sink { error in
                 print("CreateCollection 실패:", error)
             }
             .store(in: &cancellables)
-        
+
         rootView.onTapComplete = { [weak self] in
             guard let self else { return }
             self.updateCreatePayload()
             self.viewModel.createCollection()
         }
     }
+
     func updateCreatePayload() {
         viewModel.updateTitle(collectionTitleText)
         viewModel.updateDescription(collectionDescriptionText)
         viewModel.updateVisibility(isPublic)
+        viewModel.updateImageUrl(headerImageKey ?? "")
         viewModel.updateContentList(makeContentList())
     }
-    
+
     func makeContentList() -> [CreateCollectionEntity.CreateCollectionContents] {
         return selectedReasonItems.map { item in
-            
             return CreateCollectionEntity.CreateCollectionContents(
                 contentId: item.contentId,
                 isSpoiler: item.isSpoiler,
-                reason: item.reasonText ?? ""
+                reason: item.reasonText ?? "",
+                customImages: item.customImageKeys
             )
         }
     }
-    
+
     func syncReasonItems(with models: [SavedContentItemViewModel]) {
         func key(of model: SavedContentItemViewModel) -> String {
             "\(model.title)|\(model.director)|\(model.year)"
         }
-        
+
         let existingByKey = Dictionary(uniqueKeysWithValues: selectedReasonItems.map {
             ("\($0.title)|\($0.director)|\($0.year)", $0)
         })
-        
+
         selectedReasonItems = models.map { model in
             let k = key(of: model)
-            
+
             if var existing = existingByKey[k] {
                 existing.posterURL = model.posterURL
                 existing.posterImage = model.posterImage
                 return existing
             }
-            
+
             return SelectedContentReasonTableViewCellItem(
                 contentId: model.contentId,
                 posterURL: model.posterURL,
-                posterImage: model.posterImage, title: model.title,
+                posterImage: model.posterImage,
+                title: model.title,
                 director: model.director,
                 year: model.year,
                 isSpoiler: false,
                 reasonText: nil
             )
         }
-        
+
         updateCreatePayload()
     }
-    
-    
+
     func presentAddContentSelect() {
         guard let factory = viewControllerFactory else { return }
-        
+
         let vc = factory.makeAddContentSelectViewController()
         vc.initialSelected = selectedContents
         vc.protectedDeleteKeys = Set(
             selectedContents.map { "\($0.title)|\($0.director)|\($0.year)" }
         )
-        
+
         vc.onComplete = { [weak self] selectedItems in
             guard let self else { return }
             self.selectedContents = selectedItems
             self.syncReasonItems(with: selectedItems)
             self.rootView.tableView.reloadData()
         }
-        
+
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .overFullScreen
         present(nav, animated: true)
     }
-    
+
     func deleteReasonItem(_ item: SelectedContentReasonTableViewCellItem, at index: Int) {
         selectedReasonItems.remove(at: index)
-        
+
         selectedContents.removeAll { model in
             model.title == item.title &&
             model.director == item.director &&
             model.year == item.year
         }
-        
+
         updateCreatePayload()
         rootView.tableView.reloadData()
     }
-    
+
     func presentDeleteConfirmModal(onConfirm: @escaping () -> Void) {
         let hostView: UIView = navigationController?.view ?? view
-        
+
         var modalRef: Modal?
-        
+
         let modal = Modal(
             image: DesignSystem.Icon.Gradient.none,
             title: "작품을 삭제할까요?",
@@ -234,20 +245,41 @@ private extension CreateCollectionViewController {
                 }
             }
         )
-        
+
         modalRef = modal
         modal.show(in: hostView)
+    }
+
+    func presentPhotoPicker() {
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 5
+        config.filter = .images
+
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+
+    func presentHeaderPhotoPicker() {
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 1
+        config.filter = .images
+
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        currentPhotoPickerIndex = -1
+        present(picker, animated: true)
     }
 }
 
 // MARK: - UITableViewDataSource
 
 extension CreateCollectionViewController: UITableViewDataSource {
-    
+
     public func numberOfSections(in tableView: UITableView) -> Int {
         2
     }
-    
+
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return CreateCollectionRow.allCases.count - 1
@@ -255,25 +287,51 @@ extension CreateCollectionViewController: UITableViewDataSource {
             return selectedReasonItems.count + 2
         }
     }
-    
+
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+
         if indexPath.section == 0 {
             guard let row = CreateCollectionRow(rawValue: indexPath.row) else { return UITableViewCell() }
-            
+
             switch row {
             case .header:
-                return tableView.dequeueReusableCell(
+                let cell = tableView.dequeueReusableCell(
                     withIdentifier: CreateCollectionHeaderImageCell.reuseIdentifier,
                     for: indexPath
-                )
-                
+                ) as! CreateCollectionHeaderImageCell
+                cell.configure(with: headerImage)
+                cell.onTapAddPhoto = { [weak self] in
+                    guard let self else { return }
+                    let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                    sheet.overrideUserInterfaceStyle = .dark
+
+                    sheet.addAction(UIAlertAction(title: "앨범에서 선택", style: .default) { [weak self] _ in
+                        self?.presentHeaderPhotoPicker()
+                    })
+
+                    sheet.addAction(UIAlertAction(title: "커버 사진 삭제", style: .destructive) { [weak self] _ in
+                        guard let self else { return }
+                        self.headerImage = nil
+                        self.headerImageKey = nil
+                        self.updateCreatePayload()
+                        self.rootView.tableView.reloadRows(
+                            at: [IndexPath(row: 0, section: 0)],
+                            with: .none
+                        )
+                    })
+
+                    sheet.addAction(UIAlertAction(title: "닫기", style: .cancel))
+
+                    self.present(sheet, animated: true)
+                }
+                return cell
+
             case .title:
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: CreateCollectionTitleInputCell.reuseIdentifier,
                     for: indexPath
                 ) as! CreateCollectionTitleInputCell
-                
+
                 cell.onChangeTitle = { [weak self] text in
                     guard let self else { return }
                     self.collectionTitleText = text
@@ -281,13 +339,13 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 }
                 cell.setText(collectionTitleText)
                 return cell
-                
+
             case .description:
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: CreateCollectionDescriptionInputCell.reuseIdentifier,
                     for: indexPath
                 ) as! CreateCollectionDescriptionInputCell
-                
+
                 cell.onChangeDescription = { [weak self] text in
                     guard let self else { return }
                     self.collectionDescriptionText = text
@@ -295,101 +353,113 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 }
                 cell.setText(collectionDescriptionText)
                 return cell
-                
+
             case .visibility:
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: CreateCollectionVisibilityCell.reuseIdentifier,
                     for: indexPath
                 ) as! CreateCollectionVisibilityCell
-                
+
                 cell.onChangeVisibility = { [weak self] visibility in
                     guard let self else { return }
                     self.isPublic = (visibility == .public)
                     self.updateCreatePayload()
                 }
                 return cell
-                
+
             case .addContent:
                 return UITableViewCell()
             }
         }
 
         if indexPath.section == 1 {
-            
+
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: CreateCollectionAddContentHeaderCell.reuseIdentifier,
                     for: indexPath
                 ) as! CreateCollectionAddContentHeaderCell
-                
+
                 cell.configure(selectedCount: selectedReasonItems.count, maxCount: 10)
                 return cell
             }
-            
+
             let reasonIndex = indexPath.row - 1
-            
+
             if reasonIndex < selectedReasonItems.count {
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: SelectedContentReasonTableViewCell.reuseIdentifier,
                     for: indexPath
                 ) as! SelectedContentReasonTableViewCell
-                
+
                 let item = selectedReasonItems[reasonIndex]
                 cell.configure(with: item)
-                
+
                 cell.onTapClose = { [weak self, weak cell] in
                     guard let self, let cell,
                           let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
-                    
                     let reasonIndex = indexPath.row - 1
                     let item = self.selectedReasonItems[reasonIndex]
                     self.deleteReasonItem(item, at: reasonIndex)
                 }
-                
+
                 cell.onTapCloseWithDraft = { [weak self, weak cell] in
                     guard let self, let cell,
                           let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
-                    
                     let reasonIndex = indexPath.row - 1
                     let item = self.selectedReasonItems[reasonIndex]
                     self.presentDeleteConfirmModal {
                         self.deleteReasonItem(item, at: reasonIndex)
                     }
                 }
-                
+
                 cell.onToggleSpoiler = { [weak self, weak cell] isOn in
                     guard let self, let cell,
                           let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
-                    
                     let reasonIndex = indexPath.row - 1
                     self.selectedReasonItems[reasonIndex].isSpoiler = isOn
                     self.updateCreatePayload()
                 }
-                
+
                 cell.onChangeReasonText = { [weak self, weak cell] text in
                     guard let self, let cell,
                           let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
-                    
                     let reasonIndex = indexPath.row - 1
                     self.selectedReasonItems[reasonIndex].reasonText = text
                     self.updateCreatePayload()
                 }
-                
+
+                cell.onTapAddPhoto = { [weak self, weak cell] in
+                    guard let self, let cell,
+                          let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+                    self.currentPhotoPickerIndex = indexPath.row - 1
+                    self.presentPhotoPicker()
+                }
+
+                cell.onPhotosChanged = { [weak self, weak cell] in
+                    guard let self, let cell,
+                          let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+                    let reasonIndex = indexPath.row - 1
+                    self.selectedReasonItems[reasonIndex].photos = cell.currentPhotos
+                    self.rootView.tableView.beginUpdates()
+                    self.rootView.tableView.endUpdates()
+                }
+
                 return cell
             }
-            
+
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: CreateCollectionAddContentButtonCell.reuseIdentifier,
                 for: indexPath
             ) as! CreateCollectionAddContentButtonCell
-            
+
             cell.onTapAdd = { [weak self] in
                 self?.presentAddContentSelect()
             }
-            
+
             return cell
         }
-        
+
         return UITableViewCell()
     }
 }
@@ -397,9 +467,96 @@ extension CreateCollectionViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension CreateCollectionViewController: UITableViewDelegate {
-    
+
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0, indexPath.row == 0 { return 220 }
         return UITableView.automaticDimension
+    }
+}
+
+// MARK: - PHPickerViewControllerDelegate
+
+extension CreateCollectionViewController: PHPickerViewControllerDelegate {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        guard let index = currentPhotoPickerIndex else { return }
+
+        Task { @MainActor in
+            let images = await self.loadImages(from: results)
+            guard let image = images.first else { return }
+
+            if index == -1 {
+                viewModel.uploadImages([image])
+                    .receive(on: RunLoop.main)
+                    .sink(
+                        receiveCompletion: { completion in
+                            if case .failure(let error) = completion {
+                                print("헤더 이미지 업로드 실패:", error)
+                            }
+                        },
+                        receiveValue: { [weak self] keys in
+                            guard let self else { return }
+                            self.headerImage = image
+                            self.headerImageKey = keys.first
+                            self.rootView.tableView.reloadRows(
+                                at: [IndexPath(row: 0, section: 0)],
+                                with: .none
+                            )
+                        }
+                    )
+                    .store(in: &cancellables)
+                return
+            }
+
+            viewModel.uploadImages(images)
+                .receive(on: RunLoop.main)
+                .sink(
+                    receiveCompletion: { completion in
+                        if case .failure(let error) = completion {
+                            print("이미지 업로드 실패:", error)
+                        }
+                    },
+                    receiveValue: { [weak self] keys in
+                        guard let self else { return }
+                        if let cell = self.rootView.tableView.cellForRow(
+                            at: IndexPath(row: index + 1, section: 1)
+                        ) as? SelectedContentReasonTableViewCell {
+                            self.selectedReasonItems[index].reasonText = cell.currentReasonText
+                        }
+                        self.selectedReasonItems[index].photos = images
+                        self.selectedReasonItems[index].customImageKeys = keys
+                        self.rootView.tableView.reloadRows(
+                            at: [IndexPath(row: index + 1, section: 1)],
+                            with: .none
+                        )
+                    }
+                )
+                .store(in: &cancellables)
+        }
+    }
+
+    private func loadImages(from results: [PHPickerResult]) async -> [UIImage] {
+        await withTaskGroup(of: (Int, UIImage?).self) { group in
+            for (index, result) in results.enumerated() {
+                group.addTask {
+                    await withCheckedContinuation { continuation in
+                        result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
+                            continuation.resume(returning: (index, object as? UIImage))
+                        }
+                    }
+                }
+            }
+
+            var indexedImages: [(Int, UIImage)] = []
+            for await (index, image) in group {
+                if let image = image {
+                    indexedImages.append((index, image))
+                }
+            }
+
+            return indexedImages
+                .sorted { $0.0 < $1.0 }
+                .map { $0.1 }
+        }
     }
 }

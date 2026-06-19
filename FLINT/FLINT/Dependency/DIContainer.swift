@@ -27,7 +27,9 @@ typealias DependencyFactory = ViewControllerFactory &
                               CreateCollectionViewModelFactory &
                               AddContentSelectViewModelFactory &
                               CollectionFolderListViewModelFactory &
-                              CollectionDetailViewModelFactory
+                              CollectionDetailViewModelFactory &
+                              StorageRepositoryFactory &
+                              UploadCollectionImageUseCaseFactory
 
 final class DIContainer: DependencyFactory {
     

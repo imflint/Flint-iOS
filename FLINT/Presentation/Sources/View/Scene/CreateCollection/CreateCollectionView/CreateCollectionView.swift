@@ -87,7 +87,22 @@ public final class CreateCollectionView: BaseView {
         footerContainerView.subviews.forEach { $0.removeFromSuperview() }
         footerContainerView.backgroundColor = .clear
 
-        footerContainerView.addSubview(button)
+        let copyrightLabel = UILabel().then {
+            $0.attributedText = .pretendard(
+                .caption1_r_12,
+                text: "Flint에서 제공하는 영화 · 드라마를 포함한 모든 콘텐츠의 저작권은 각 권리자에게 있으며, 관련 법령에 따라 보호됩니다. 컬렉션 이용 시 저작권을 준수해 주세요.",
+                color: .flintGray300
+            )
+            $0.textAlignment = .left
+            $0.numberOfLines = 3
+        }
+
+        footerContainerView.addSubviews(copyrightLabel, button)
+
+        copyrightLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(4)
+            $0.horizontalEdges.equalToSuperview().inset(footerSideInset)
+        }
 
         button.addAction(
             UIAction { [weak self] _ in
@@ -97,21 +112,20 @@ public final class CreateCollectionView: BaseView {
         )
 
         button.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.top.equalTo(copyrightLabel.snp.bottom).offset(4)
             $0.horizontalEdges.equalToSuperview().inset(footerSideInset)
             $0.height.equalTo(footerButtonHeight)
             $0.bottom.equalToSuperview().inset(footerBottomInset)
         }
 
-        let footerHeight = footerButtonHeight + footerBottomInset
+        let footerHeight = footerButtonHeight + footerBottomInset + 8 + 8
         footerContainerView.frame = CGRect(
             x: 0,
             y: 0,
             width: tableView.bounds.width,
-            height: footerHeight
+            height: footerHeight + 40
         )
 
         tableView.tableFooterView = footerContainerView
     }
-
 }
