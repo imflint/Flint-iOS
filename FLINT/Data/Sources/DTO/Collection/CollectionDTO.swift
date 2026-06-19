@@ -34,7 +34,7 @@ extension CollectionDTO {
                 bookmarkCount: bookmarkCount ?? 0,
                 isBookmarked: isBookmarked ?? false,
                 user: UserProfileEntity(
-                    id: unwrap(userId),
+                    id: userId ?? "",
                     nickname: nickname ?? "",
                     profileImageUrl: URL(string: profileImageUrl ?? ""),
                     role: .unknown
