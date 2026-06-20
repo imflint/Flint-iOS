@@ -15,7 +15,7 @@ import View
 import ViewModel
 
 public protocol NicknameViewControllerFactory {
-    func makeNicknameViewController() -> NicknameViewController
+    func makeNicknameViewController(onboardingViewModel: OnboardingViewModel) -> NicknameViewController
 }
 
 public final class NicknameViewController: BaseViewController<NicknameView> {
