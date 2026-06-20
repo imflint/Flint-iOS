@@ -42,9 +42,12 @@ package final class TermAgreementCollectionViewCell: BaseCollectionViewListCell 
         $0.numberOfLines = 0
     }
     package let termDetailMoreButton = UIButton().then {
-        $0.setAttributedTitle(NSMutableAttributedString(.pretendard(.body2_r_14, text: "자세히 보기")).configured {
-            $0.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: $0.length))
-        }, for: .normal)
+        $0.setAttributedTitle(
+            NSMutableAttributedString(.pretendard(.body2_r_14, text: "자세히 보기")).configured {
+                $0.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: $0.length))
+            },
+            for: .normal
+        )
         $0.setTitleColor(.flintPrimary200, for: .normal)
     }
     
