@@ -84,6 +84,18 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
     }
     
     public override func bind() {
+        onboardingViewModel.isLoading.sink { [weak self] isLoading in
+            Log.d(isLoading)
+            guard let self else { return }
+            if isLoading && onboardingViewModel.contents.value.isEmpty {
+                rootView.emptyView.isHidden = true
+                rootView.loadingIndicator.startAnimating()
+            } else {
+                rootView.loadingIndicator.stopAnimating()
+            }
+        }
+        .store(in: &cancellables)
+        
         onboardingViewModel.nickname.sink { [weak self] nickname in
             guard let self else { return }
             rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
@@ -92,7 +104,7 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         
         onboardingViewModel.contents.sink { [weak self] contents in
             guard let self else { return }
-            rootView.emptyView.isHidden = !contents.isEmpty
+            rootView.emptyView.isHidden = !contents.isEmpty || onboardingViewModel.isLoading.value
             contentCollectionViewDataSource?.apply(makeContentCollectionViewSnapshot(contentEntities: contents), animatingDifferences: false)
         }
         .store(in: &cancellables)
@@ -128,6 +140,8 @@ extension ContentSelectViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView === rootView.contentCollectionView {
             contentCollectionView(collectionView, didSelectItemAt: indexPath)
+        } else if collectionView === rootView.genreCollectionView {
+            genreCollectionView(collectionView, didSelectItemAt: indexPath)
         }
     }
 }
@@ -248,7 +262,7 @@ extension ContentSelectViewController {
     private func setupSelectedContentCollectionView() {
         rootView.selectedContentCollectionView.dataSource = selectedContentCollectionViewDataSource
         
-        selectedContentCollectionViewDataSource = SelectedContentCollectionViewDataSource(collectionView: rootView.selectedContentCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+        selectedContentCollectionViewDataSource = SelectedContentCollectionViewDataSource(collectionView: rootView.selectedContentCollectionView, cellProvider: { [weak self] collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .content(let content):
                 let cell = collectionView.dequeueReusableCell(SelectedContentCollectionViewCell.self, for: indexPath)
@@ -285,6 +299,7 @@ extension ContentSelectViewController {
     }
     
     private func setupGenreCollectionView() {
+        rootView.genreCollectionView.delegate = self
         rootView.genreCollectionView.dataSource = genreCollectionViewDataSource
         
         genreCollectionViewDataSource = GenreCollectionViewDataSource(collectionView: rootView.genreCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
@@ -292,6 +307,10 @@ extension ContentSelectViewController {
             case let .genre(genre):
                 let cell = collectionView.dequeueReusableCell(GenreCollectionViewCell.self, for: indexPath)
                 cell.configure(genre: genre)
+//                cell.capsuleButton.addAction(UIAction(handler: { _ in
+//                    Log.d(indexPath)
+//                    cell.capsuleButton.isSelected.toggle()
+//                }), for: .touchUpInside)
                 return cell
             }
         })
@@ -304,6 +323,16 @@ extension ContentSelectViewController {
         snapshot.appendItems(Genre.allCases.map { GenreCollectionViewItem.genre($0) }, toSection: .main)
         return snapshot
     }
+    
+    public func genreCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        onboardingViewModel.filterGenre.value.insert(Genre.allCases[indexPath.row])
+        Log.d(onboardingViewModel.filterGenre.value)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        onboardingViewModel.filterGenre.value.remove(Genre.allCases[indexPath.row])
+        Log.d(onboardingViewModel.filterGenre.value)
+    }
 }
 
 // MARK: - SearchTextField
@@ -312,13 +341,13 @@ extension ContentSelectViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         guard let text = textField.text else { return true }
-        onboardingViewModel.searchContents(text)
+        onboardingViewModel.keyword.send(text)
         return true
     }
     
     private func setupTextField() {
         rootView.searchTextField.searchAction = { [weak self] keyword in
-            self?.onboardingViewModel.searchContents(keyword ?? "")
+            self?.onboardingViewModel.keyword.send(keyword)
         }
         rootView.searchTextField.clearAction = { [weak self] in
             self?.onboardingViewModel.fetchPopularContents()

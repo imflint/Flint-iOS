@@ -7,13 +7,13 @@
 
 import Foundation
 
-public enum Genre: CaseIterable, Sendable {
-    case action
-    case romance
-    case sf
-    case drama
-    case comedy
-    case horror
+public enum Genre: String, CaseIterable, Sendable {
+    case action = "ACTION"
+    case romance = "ROMANCE"
+    case sf = "SCIENCE_FICTION"
+    case drama = "DRAMA"
+    case comedy = "COMEDY"
+    case horror = "HORROR"
     
     public var title: String {
         switch self {
