@@ -20,6 +20,7 @@ public protocol CollectionService {
     func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<CreateCollectionDTO, Error>
     func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailDTO, Error>
     func fetchRecentViewedCollections() -> AnyPublisher<CollectionsDTO, Error>
+    func reportCollection(collectionId: Int64, reasons: [String], otherDetail: String?) -> AnyPublisher<Void, Error>
 }
 
 public final class DefaultCollectionService: CollectionService {
@@ -47,5 +48,12 @@ public final class DefaultCollectionService: CollectionService {
     public func fetchRecentViewedCollections() -> AnyPublisher<CollectionsDTO, Error> {
         return collectionAPIProvider.requestPublisher(.fetchRecentViewedCollections)
             .mapBaseResponseData(CollectionsDTO.self)
+    }
+    
+    public func reportCollection(collectionId: Int64, reasons: [String], otherDetail: String?) -> AnyPublisher<Void, Error> {
+        return collectionAPIProvider.requestPublisher(.reportCollection(collectionId: collectionId, reasons: reasons, otherDetail: otherDetail))
+            .mapBaseResponseData(BlankData.self)
+            .map { _ in }
+            .eraseToAnyPublisher()
     }
 }

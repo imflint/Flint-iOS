@@ -24,6 +24,8 @@ typealias DependencyFactory = ViewControllerFactory &
                               ExploreViewModelFactory &
                               ProfileViewModelFactory &
                               
+                              ReportViewModelFactory &
+                              
                               CreateCollectionViewModelFactory &
                               AddContentSelectViewModelFactory &
                               CollectionFolderListViewModelFactory &
