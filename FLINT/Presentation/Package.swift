@@ -43,6 +43,7 @@ let package = Package(
                 .product(name: "SnapKit", package: "SnapKit"),
                 .product(name: "Then", package: "Then"),
                 .product(name: "Lottie", package: "lottie-ios"),
+                .product(name: "Kingfisher", package: "Kingfisher"),
             ],
             resources: [
                 .process("Resource"),
