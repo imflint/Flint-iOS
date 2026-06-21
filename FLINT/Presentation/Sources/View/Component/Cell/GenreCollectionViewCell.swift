@@ -17,7 +17,15 @@ public final class GenreCollectionViewCell: BaseCollectionViewCell {
         }
     }
     
-    public let capsuleButton = CapsuleButton(style: .outlined)
+    public let capsuleButton = CapsuleButton(style: .outlined).then {
+        $0.isUserInteractionEnabled = false
+    }
+    
+//    public override func prepare() {
+//        super.prepare()
+//        
+//        capsuleButton.removeTarget(nil, action: nil, for: .allEvents)
+//    }
     
     // MARK: - Setup
     

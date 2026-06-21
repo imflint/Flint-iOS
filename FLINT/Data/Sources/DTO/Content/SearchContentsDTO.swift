@@ -10,7 +10,7 @@ import Foundation
 import Entity
 
 public struct SearchContentsDTO: Codable {
-    public let contents: [ContentDTO]?
+    public let data: [ContentDTO]?
 }
 
 extension SearchContentsDTO {
@@ -26,7 +26,7 @@ extension SearchContentsDTO {
 extension SearchContentsDTO {
     public var entities: [ContentEntity] {
         get throws {
-            return try contents?.map({ try $0.entity }) ?? []
+            return try data?.map({ try $0.entity }) ?? []
         }
     }
 }

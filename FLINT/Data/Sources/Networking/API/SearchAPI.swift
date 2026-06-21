@@ -10,6 +10,7 @@ import Foundation
 import Moya
 
 public enum SearchAPI {
+    // FIXME: - Deprecated
     /// keyword가 nil인 경우 인기 순 작품 리스트를 받는다.
     case searchContents(keyword: String?)
 }
