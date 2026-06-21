@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 import Then
 
+import Kingfisher
+
 public final class CollectionDetailHeaderTableViewCell: BaseTableViewCell {
     
     // MARK: - Property
@@ -24,6 +26,8 @@ public final class CollectionDetailHeaderTableViewCell: BaseTableViewCell {
     
     private let backgroundImageView = UIImageView().then {
         $0.image = UIImage(resource: .imgBackgroundGradient)
+        $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
     }
     
     private let titleLabel = UILabel().then {
@@ -72,12 +76,23 @@ public final class CollectionDetailHeaderTableViewCell: BaseTableViewCell {
         super.prepareForReuse()
         onTapSave = nil
         isSaved = false
+        backgroundImageView.kf.cancelDownloadTask()
+        backgroundImageView.image = UIImage(resource: .imgBackgroundGradient)
     }
-    
+
     // MARK: - Public
-    public func configure(title: String, isSaved: Bool) {
+    public func configure(title: String, isSaved: Bool, thumbnailURL: URL? = nil) {
         titleLabel.attributedText = .pretendard(.display2_m_28, text: title)
         self.isSaved = isSaved
+
+        if let thumbnailURL {
+            backgroundImageView.kf.setImage(
+                with: thumbnailURL,
+                placeholder: UIImage(resource: .imgBackgroundGradient)
+            )
+        } else {
+            backgroundImageView.image = UIImage(resource: .imgBackgroundGradient)
+        }
     }
     
     // MARK: - Action

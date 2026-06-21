@@ -43,6 +43,7 @@ extension CollectionDetailEntity {
         public let id: String
         public let title: String
         public let imageUrl: URL?
+        public let customImageUrls: [URL]
         public let director: String
         public let isBookmarked: Bool
         public let bookmarkCount: Int
@@ -54,6 +55,7 @@ extension CollectionDetailEntity {
             id: String,
             title: String,
             imageUrl: URL?,
+            customImageUrls: [URL],
             director: String,
             isBookmarked: Bool,
             bookmarkCount: Int,
@@ -64,6 +66,7 @@ extension CollectionDetailEntity {
             self.id = id
             self.title = title
             self.imageUrl = imageUrl
+            self.customImageUrls = customImageUrls
             self.director = director
             self.isBookmarked = isBookmarked
             self.bookmarkCount = bookmarkCount

@@ -19,7 +19,8 @@ public final class CollectionDetailViewModel {
         case loading
         case loaded(
             detail: CollectionDetailEntity,
-            bookmarkedUsers: CollectionBookmarkUsersEntity?
+            bookmarkedUsers: CollectionBookmarkUsersEntity?,
+            isOwner: Bool
         )
         case failed(String)
     }
@@ -55,12 +56,16 @@ public final class CollectionDetailViewModel {
     private let collectionId: Int64
     private let fetchCollectionDetailUseCase: FetchCollectionDetailUseCase
     private let fetchCollectionBookmarkUsersUseCase: FetchCollectionBookmarkUsersUseCase
+    private let fetchProfileUseCase: FetchProfileUseCase
+    private let deleteCollectionUseCase: DeleteCollectionUseCase
     private let toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase
     private let toggleContentBookmarkUseCase: ToggleContentBookmarkUseCase
 
     // MARK: - Private
 
     private let stateSubject = CurrentValueSubject<State, Never>(.idle)
+    public let deleteSuccess = PassthroughSubject<Void, Never>()
+    public let deleteFailure = PassthroughSubject<Error, Never>()
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
@@ -69,14 +74,36 @@ public final class CollectionDetailViewModel {
         collectionId: Int64,
         fetchCollectionDetailUseCase: FetchCollectionDetailUseCase,
         fetchCollectionBookmarkUsersUseCase: FetchCollectionBookmarkUsersUseCase,
+        fetchProfileUseCase: FetchProfileUseCase,
+        deleteCollectionUseCase: DeleteCollectionUseCase,
         toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase,
         toggleContentBookmarkUseCase: ToggleContentBookmarkUseCase
     ) {
         self.collectionId = collectionId
         self.fetchCollectionDetailUseCase = fetchCollectionDetailUseCase
         self.fetchCollectionBookmarkUsersUseCase = fetchCollectionBookmarkUsersUseCase
+        self.fetchProfileUseCase = fetchProfileUseCase
+        self.deleteCollectionUseCase = deleteCollectionUseCase
         self.toggleCollectionBookmarkUseCase = toggleCollectionBookmarkUseCase
         self.toggleContentBookmarkUseCase = toggleContentBookmarkUseCase
+    }
+
+    // MARK: - Action
+
+    public func deleteCollection() {
+        deleteCollectionUseCase(collectionId: collectionId)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    if case let .failure(error) = completion {
+                        self?.deleteFailure.send(error)
+                    }
+                },
+                receiveValue: { [weak self] in
+                    self?.deleteSuccess.send(())
+                }
+            )
+            .store(in: &cancellables)
     }
 
     // MARK: - Transform
@@ -110,7 +137,13 @@ public final class CollectionDetailViewModel {
     private func fetch() {
         stateSubject.send(.loading)
 
-        fetchCollectionDetailUseCase(collectionId: collectionId)
+        // 본인 판별이 실패해도 상세는 보여줘야 하므로, myProfileId는 에러 시 nil로 대체
+        let myProfileIdPublisher = fetchProfileUseCase(for: .me)
+            .map { Optional($0.id) }
+            .catch { _ in Just<String?>(nil).setFailureType(to: Error.self) }
+            .eraseToAnyPublisher()
+
+        Publishers.Zip(myProfileIdPublisher, fetchCollectionDetailUseCase(collectionId: collectionId))
             .sink(
                 receiveCompletion: { [weak self] completion in
                     guard let self else { return }
@@ -118,17 +151,18 @@ public final class CollectionDetailViewModel {
                         self.stateSubject.send(.failed(error.localizedDescription))
                     }
                 },
-                receiveValue: { [weak self] detail in
+                receiveValue: { [weak self] myProfileId, detail in
                     guard let self else { return }
+                    let isOwner = (myProfileId == detail.author.id)
 
-                    self.stateSubject.send(.loaded(detail: detail, bookmarkedUsers: nil))
+                    self.stateSubject.send(.loaded(detail: detail, bookmarkedUsers: nil, isOwner: isOwner))
 
                     self.fetchCollectionBookmarkUsersUseCase(collectionId: self.collectionId)
                         .sink(
                             receiveCompletion: { _ in },
                             receiveValue: { [weak self] users in
                                 guard let self else { return }
-                                self.stateSubject.send(.loaded(detail: detail, bookmarkedUsers: users))
+                                self.stateSubject.send(.loaded(detail: detail, bookmarkedUsers: users, isOwner: isOwner))
                             }
                         )
                         .store(in: &self.cancellables)

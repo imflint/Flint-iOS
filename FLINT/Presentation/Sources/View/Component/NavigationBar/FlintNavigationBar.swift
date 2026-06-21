@@ -79,6 +79,19 @@ public final class FlintNavigationBar: BaseView {
         applyTitle(config.title)
         applyRight(config.right)
     }
+
+    /// 우측 버튼의 시각 영역(=contentInsets 제외) frame을 주어진 뷰의 좌표계로 변환해 반환합니다.
+    /// 메뉴 등을 버튼 옆에 정렬할 때 hit area가 아닌 실제 아이콘 위치를 기준으로 삼기 위해 사용합니다.
+    public func rightButtonFrame(in view: UIView) -> CGRect {
+        var frame = rightButton.convert(rightButton.bounds, to: view)
+        if let insets = rightButton.configuration?.contentInsets {
+            frame.origin.x += insets.leading
+            frame.size.width -= (insets.leading + insets.trailing)
+            frame.origin.y += insets.top
+            frame.size.height -= (insets.top + insets.bottom)
+        }
+        return frame
+    }
     
     public func applyLeft(_ item: NavLeftItem) {
         leftButton.isHidden = false
@@ -115,6 +128,10 @@ public final class FlintNavigationBar: BaseView {
             rightButton.setImage(UIImage(resource: .icCancel), for: .normal)
             setPadding(button: rightButton, padding: 12, image: .icCancel)
 
+        case .kebab:
+            rightButton.setImage(UIImage(resource: .icKebab), for: .normal)
+            setPadding(button: rightButton, padding: 12, image: .icKebab)
+          
         case .setting:
             let image = UIImage(named: "ic_setting", in: .module, with: nil) ?? UIImage()
             rightButton.tintColor = .flintWhite

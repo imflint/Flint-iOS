@@ -14,6 +14,8 @@ import Domain
 public enum CollectionAPI {
     case fetchCollections(cursor: Int64?, size: Int32)
     case createCollection(collectionInfo: CreateCollectionEntity)
+    case updateCollection(collectionId: Int64, collectionInfo: CreateCollectionEntity)
+    case deleteCollection(collectionId: Int64)
     case fetchCollectionDetail(collectionId: Int64)
     case fetchRecentViewedCollections
 }
@@ -25,20 +27,28 @@ extension CollectionAPI: TargetType {
             return "/api/v1/collections"
         case let .fetchCollectionDetail(collectionId):
             return "/api/v1/collections/\(collectionId)"
+        case let .updateCollection(collectionId, _):
+            return "/api/v1/collections/\(collectionId)"
+        case let .deleteCollection(collectionId):
+            return "/api/v1/collections/\(collectionId)"
         case .fetchRecentViewedCollections:
             return "/api/v1/collections/recent"
         }
     }
-    
+
     public var method: Moya.Method {
         switch self {
         case .fetchCollections, .fetchCollectionDetail, .fetchRecentViewedCollections:
             return .get
         case .createCollection:
             return .post
+        case .updateCollection:
+            return .put
+        case .deleteCollection:
+            return .delete
         }
     }
-    
+
     public var task: Moya.Task {
         switch self {
         case let .fetchCollections(cursor, size):
@@ -54,7 +64,9 @@ extension CollectionAPI: TargetType {
             )
         case let .createCollection(collectionInfo):
             return .requestJSONEncodable(collectionInfo)
-        case .fetchCollectionDetail, .fetchRecentViewedCollections:
+        case let .updateCollection(_, collectionInfo):
+            return .requestJSONEncodable(collectionInfo)
+        case .deleteCollection, .fetchCollectionDetail, .fetchRecentViewedCollections:
             return .requestPlain
         }
     }
