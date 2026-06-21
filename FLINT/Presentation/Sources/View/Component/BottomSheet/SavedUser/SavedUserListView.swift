@@ -104,7 +104,7 @@ public final class SavedUserListView: BaseView {
 
         guard let id = view.accessibilityIdentifier,
               let user = users.first(where: { $0.userId == id }) else {
-            print("❌ didTapUserRow: user not found")
+            print("didTapUserRow: user not found")
             return
         }
 

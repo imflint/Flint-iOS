@@ -32,8 +32,9 @@ public typealias ViewControllerFactory =
     ProfileViewControllerFactory &
     
     // MARK: - Collection
-    
+
     CollectionFolderListViewControllerFactory &
     CollectionDetailViewControllerFactory &
+    SavedCollectionListViewControllerFactory &
     AddContentSelectViewControllerFactory &
     CreateCollectionViewControllerFactory
