@@ -39,7 +39,7 @@ public final class ProfileView: UIView {
 
     private func setLayout() {
         tableView.snp.makeConstraints {
-            $0.edges.equalTo(safeAreaLayoutGuide)
+            $0.edges.equalToSuperview()
         }
     }
 }

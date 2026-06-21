@@ -27,8 +27,8 @@ public protocol OnboardingViewModelInput {
 }
 
 public protocol OnboardingViewModelOutput {
-    // terms
-    var agreedTermsIds: CurrentValueSubject<[String], Never> { get }
+    // term
+    var agreedTerms: CurrentValueSubject<[SignUpTerm: Bool], Never> { get }
     
     // nickname
     var nickname: CurrentValueSubject<String, Never> { get }
@@ -52,8 +52,10 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     private let searchContentsUseCase: SearchContentsUseCase
     private let signupUseCase: SignupUseCase
     
-    #warning("TODO: - Temp. 약관 동의 구현 후 수정할 것!!!!")
-    public let agreedTermsIds: CurrentValueSubject<[String], Never> = .init(["1", "2"])
+    public let agreedTerms: CurrentValueSubject<[SignUpTerm: Bool], Never> = .init([
+        .service: false,
+        .privacy: false,
+    ])
     
     public let nickname: CurrentValueSubject<String, Never> = .init("")
     public let nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
@@ -155,7 +157,10 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
                 favoriteContentIds: selectedContents.value.compactMap({ content in
                     Int(content.id)
                 }),
-                agreedTermsIds: agreedTermsIds.value
+                agreedTermsIds: agreedTerms.value
+                    .filter { $0.value }
+                    .map(\.key.id)
+                    .map { String($0) }
             )
         )
         .manageThread()
