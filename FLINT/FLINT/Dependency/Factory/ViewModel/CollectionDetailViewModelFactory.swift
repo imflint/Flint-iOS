@@ -27,7 +27,7 @@ extension CollectionDetailViewModelFactory {
             fetchCollectionDetailUseCase: makeFetchCollectionDetailUseCase(),
             fetchCollectionBookmarkUsersUseCase: makeFetchCollectionBookmarkUsersUseCase(),
             fetchProfileUseCase: makeFetchProfileUseCase(),
-            deleteCollectionUseCase: makeDeleteCollectionUseCase()
+            deleteCollectionUseCase: makeDeleteCollectionUseCase(),
             toggleCollectionBookmarkUseCase: makeToggleCollectionBookmarkUseCase(),
             toggleContentBookmarkUseCase: makeToggleContentBookmarkUseCase()
         )

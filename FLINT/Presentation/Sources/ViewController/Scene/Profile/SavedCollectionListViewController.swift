@@ -24,8 +24,7 @@ public final class SavedCollectionListViewController: BaseViewController<Collect
 
     public init(viewModel: SavedCollectionListViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
         self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-        self.viewControllerFactory = viewControllerFactory
+        super.init(viewControllerFactory: viewControllerFactory)
     }
 
     @available(*, unavailable)

@@ -49,12 +49,12 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setNavigationBar(.init(left: .back, backgroundStyle: .clear))
 
+        let leftItem: NavLeftItem = profileViewModel.isMe ? .none : .back
         let rightItem: NavRightItem = profileViewModel.isMe ? .setting : .none
 
         setNavigationBar(
-            .init(left: .back, right: rightItem, backgroundStyle: .clear),
+            .init(left: leftItem, right: rightItem, backgroundStyle: .clear),
             onTapRight: { [weak self] in
                 self?.didTapSetting()
             }
@@ -76,6 +76,7 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         tableView.register(TitleHeaderTableViewCell.self)
         tableView.register(MoreNoMoreCollectionTableViewCell.self)
         tableView.register(RecentSavedContentTableViewCell.self)
+        tableView.register(KeywordGraphTableViewCell.self)
     }
     
     public override func bind() {
