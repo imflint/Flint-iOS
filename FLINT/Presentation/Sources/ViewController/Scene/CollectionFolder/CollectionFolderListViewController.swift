@@ -64,7 +64,7 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
         setNavigationBar(
             .init(
                 left: .back,
-                title: "눈여겨보고 있는 컬렉션",
+                title: "인기 컬렉션",
                 right: .none,
                 backgroundStyle: .solid(DesignSystem.Color.background)
             )

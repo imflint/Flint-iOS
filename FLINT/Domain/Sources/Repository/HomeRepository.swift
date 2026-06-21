@@ -12,4 +12,5 @@ import Entity
 
 public protocol HomeRepository {
     func fetchRecommendedCollections() -> AnyPublisher<[CollectionEntity], Error>
+    func fetchPopularCollections() -> AnyPublisher<[CollectionEntity], Error> 
 }
