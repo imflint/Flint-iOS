@@ -15,6 +15,7 @@ public enum NavLeftItem {
 
 public enum NavRightItem {
     case close
+    case kebab
     case text(title: String, color: UIColor)
     case none
 }

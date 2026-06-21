@@ -16,12 +16,12 @@ import Entity
 public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
 
     // MARK: - Property
-    
+
     public var onTapRevealSpoiler: (() -> Void)?
 
     // MARK: - Component
-    
-    private let poster = UIImageView().then {
+
+    private let posterImageView = UIImageView().then {
         $0.image = UIImage(resource: .imgBackgroundGradiantLarge)
         $0.layer.cornerRadius = 0
         $0.layer.masksToBounds = true
@@ -61,7 +61,7 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
     private let dividerView = UIView().then {
         $0.backgroundColor = .flintGray500
     }
-    
+
     private let descriptionContainerView = UIView().then {
         $0.backgroundColor = .clear
         $0.clipsToBounds = true
@@ -83,7 +83,7 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
         $0.isUserInteractionEnabled = true
         $0.backgroundColor = .clear
     }
-    
+
 
     private let blurEffectView = VisualEffectView().then {
         $0.blurRadius = 4
@@ -116,13 +116,13 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
     private let revealButton = UIButton.flintMoreButton()
 
     // MARK: - State
-    
+
     private var isSpoiler: Bool = false {
         didSet { spoilerOverlayView.isHidden = !isSpoiler }
     }
 
     // MARK: - Init
-    
+
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         bind()
@@ -138,7 +138,7 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
     }
 
     // MARK: - Setup
-    
+
     public override func setStyle() {
         backgroundColor = .clear
         contentView.backgroundColor = .flintBackground
@@ -147,7 +147,7 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
 
     public override func setHierarchy() {
         contentView.addSubviews(
-            poster,
+            posterImageView,
             filmInfoStackView,
             bookmarkButton,
             dividerView,
@@ -155,9 +155,9 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
         )
 
         descriptionContainerView.addSubviews(descriptionLabel)
-        
+
         descriptionContainerView.addSubview(spoilerOverlayView)
-        
+
         filmInfoStackView.addArrangedSubviews(titleLabel, yearLabel, directorLabel)
 
         spoilerOverlayView.addSubviews(blurEffectView, dimView, overlayStackView)
@@ -165,74 +165,76 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
     }
 
     public override func setLayout() {
-        poster.snp.makeConstraints {
-            $0.top.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(poster.snp.width).multipliedBy(1.4)
+        posterImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(32)
+            $0.leading.equalToSuperview().inset(16)
+            $0.width.equalTo(60)
+            $0.height.equalTo(90)
         }
 
         bookmarkButton.snp.makeConstraints {
-            $0.top.equalTo(poster.snp.bottom).offset(32)
-            $0.trailing.equalToSuperview().inset(4)
-            $0.width.height.equalTo(48)
+            $0.top.equalTo(posterImageView.snp.top)
+            $0.trailing.equalToSuperview().inset(16)
+            $0.width.equalTo(24)
         }
 
         filmInfoStackView.snp.makeConstraints {
-            $0.top.equalTo(poster.snp.bottom).offset(32)
-            $0.leading.equalToSuperview().inset(16)
+            $0.top.equalTo(posterImageView.snp.top)
+            $0.leading.equalTo(posterImageView.snp.trailing).offset(14)
             $0.trailing.lessThanOrEqualTo(bookmarkButton.snp.leading).offset(-12)
         }
 
         dividerView.snp.makeConstraints {
-            $0.top.equalTo(filmInfoStackView.snp.bottom).offset(24)
+            $0.top.equalTo(posterImageView.snp.bottom).offset(24)
             $0.height.equalTo(1)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
-        
+
         descriptionContainerView.snp.makeConstraints {
             $0.top.equalTo(dividerView.snp.bottom).offset(24)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(24)
+            $0.bottom.equalToSuperview().inset(20)
         }
-        
+
         descriptionLabel.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
+
         spoilerOverlayView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
+
         blurEffectView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
+
         dimView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
+
         overlayStackView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.leading.trailing.lessThanOrEqualToSuperview().inset(24)
         }
-        
+
         lockImageView.snp.makeConstraints {
             $0.size.equalTo(44)
         }
     }
 
     // MARK: - Action
-    
+
     @objc private func didTapReveal() {
         onTapRevealSpoiler?()
     }
 
     // MARK: - Public
-    
+
     public override func prepareForReuse() {
             super.prepareForReuse()
 
-            poster.kf.cancelDownloadTask()
-            poster.image = UIImage(resource: .imgBackgroundGradiantLarge)
+            posterImageView.kf.cancelDownloadTask()
+            posterImageView.image = UIImage(resource: .imgBackgroundGradiantLarge)
 
             configureSpoiler(isSpoiler: false)
             onTapRevealSpoiler = nil
@@ -259,7 +261,7 @@ extension UIButton.Configuration {
 
         let titleAttr = AttributedString(.pretendard(.head3_m_18, text: "보기"))
         config.attributedTitle = titleAttr
-        
+
         config.image = UIImage(resource: .icMore)
             .withRenderingMode(.alwaysTemplate)
         config.imagePlacement = .trailing
@@ -281,11 +283,11 @@ extension UIButton {
 public extension CollectionDetailFilmTableViewCell {
 
     func configure(item: CollectionDetailEntity.CollectionContentEntity) {
-        // 이미지
+        // 작은 포스터 이미지
         if let url = item.imageUrl {
-            poster.kf.setImage(with: url)
+            posterImageView.kf.setImage(with: url)
         } else {
-            poster.image = UIImage(resource: .imgBackgroundGradiantLarge)
+            posterImageView.image = UIImage(resource: .imgBackgroundGradiantLarge)
         }
 
         titleLabel.attributedText = .pretendard(.head2_sb_20, text: item.title, color: .white)
@@ -310,6 +312,11 @@ public extension CollectionDetailFilmTableViewCell {
             color: .flintGray100,
             lineBreakMode: .byWordWrapping,
             lineBreakStrategy: .hangulWordPriority
+        )
+
+        bookmarkButton.configure(
+            isBookmarked: item.isBookmarked,
+            countText: "\(item.bookmarkCount)"
         )
 
         configureSpoiler(isSpoiler: item.isSpoiler)

@@ -25,6 +25,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
     private enum Row {
         case header
         case description
+        case filmImage(Int)
         case film(Int)
         case saveUsers
     }
@@ -58,7 +59,12 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         super.viewDidLoad()
         view.backgroundColor = DesignSystem.Color.background
         setupTableView()
-        setNavigationBar(.init(left: .back, backgroundStyle: .clear))
+        setNavigationBar(
+            .init(left: .back, right: .kebab, backgroundStyle: .clear),
+            onTapRight: { [weak self] in
+                self?.didTapKebab()
+            }
+        )
     }
 
     // MARK: - Bind
@@ -97,11 +103,19 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         self.entity = entity
 
         var result: [Row] = [.header, .description]
-        result += (0..<entity.contents.count).map { .film($0) }
+        result += entity.contents.enumerated().flatMap { idx, content -> [Row] in
+            content.customImageUrls.isEmpty ? [.film(idx)] : [.filmImage(idx), .film(idx)]
+        }
         result += [.saveUsers]
         self.rows = result
 
         rootView.tableView.reloadData()
+    }
+
+    // MARK: - Action
+
+    private func didTapKebab() {
+        // TODO: 컬렉션 옵션 바텀시트 연결
     }
     
     private func presentSavedUsersBottomSheet(users: [SavedUserRowItem]) {
@@ -172,6 +186,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
 
         tableView.register(CollectionDetailHeaderTableViewCell.self)
         tableView.register(CollectionDetailDescriptionTableViewCell.self)
+        tableView.register(CollectionDetailFilmImageTableViewCell.self)
         tableView.register(CollectionDetailFilmTableViewCell.self)
         tableView.register(CollectionSaveUserTableViewCell.self)
 
@@ -229,6 +244,19 @@ extension CollectionDetailViewController: UITableViewDataSource {
                 dateText: dateText,
                 description: description
             )
+            return cell
+
+        case .filmImage(let idx):
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: CollectionDetailFilmImageTableViewCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionDetailFilmImageTableViewCell
+
+            cell.selectionStyle = .none
+
+            let urls = entity?.contents[safe: idx]?.customImageUrls ?? []
+            cell.configure(imageURLs: urls)
+
             return cell
 
         case .film(let idx):

@@ -114,11 +114,15 @@ public final class FlintNavigationBar: BaseView {
         case .close:
             rightButton.setImage(UIImage(resource: .icCancel), for: .normal)
             setPadding(button: rightButton, padding: 12, image: .icCancel)
-            
+
+        case .kebab:
+            rightButton.setImage(UIImage(resource: .icKebab), for: .normal)
+            setPadding(button: rightButton, padding: 12, image: .icKebab)
+
         case .text(let title, let color):
             rightButton.setAttributedTitle(.pretendard(.body1_b_16, text: title, color: color, alignment: .center), for: .normal)
             setPadding(button: rightButton, padding: 16, image: nil)
-            
+
         case .none:
             rightButton.isHidden = true
         }

@@ -72,6 +72,15 @@ extension CollectionDetailDTO.AuthorDTO {
     }
 }
 
+private extension String {
+    var asURL: URL? {
+        if let url = URL(string: self) { return url }
+        if let encoded = addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+           let url = URL(string: encoded) { return url }
+        return nil
+    }
+}
+
 extension CollectionDetailDTO.ContentDTO {
     public var entity: CollectionDetailEntity.CollectionContentEntity {
         get throws {
@@ -79,6 +88,7 @@ extension CollectionDetailDTO.ContentDTO {
                 id: unwrap(id),
                 title: title ?? "",
                 imageUrl: URL(string: imageUrl ?? ""),
+                customImageUrls: customImageUrls?.compactMap(\.asURL) ?? [],
                 director: director ?? "",
                 isBookmarked: isBookmarked ?? false,
                 bookmarkCount: bookmarkCount ?? 0,
