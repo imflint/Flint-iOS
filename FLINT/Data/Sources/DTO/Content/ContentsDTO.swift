@@ -10,7 +10,10 @@ import Foundation
 import Entity
 
 public struct ContentsDTO: Codable {
+    // /api/v1/users/{userId}/bookmarked-contents 응답 (GetContentListRes)
     public let contents: [ContentDTO]?
+    // /api/v1/contents/bookmarks 응답 (PaginationResponseGetContentDetailRes)
+    public let data: [ContentDTO]?
 }
 
 extension ContentsDTO {
@@ -31,7 +34,8 @@ extension ContentsDTO {
 extension ContentsDTO {
     public var entities: [ContentInfoEntity] {
         get throws {
-            return try contents?.map { try $0.entity } ?? []
+            let items = contents ?? data ?? []
+            return try items.map { try $0.entity }
         }
     }
 }

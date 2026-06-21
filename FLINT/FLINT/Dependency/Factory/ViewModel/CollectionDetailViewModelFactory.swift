@@ -9,7 +9,14 @@ import Foundation
 
 import Presentation
 
-protocol CollectionDetailViewModelFactory: FetchCollectionDetailUseCaseFactory, FetchCollectionBookmarkUsersUseCaseFactory, FetchProfileUseCaseFactory, DeleteCollectionUseCaseFactory {
+
+protocol CollectionDetailViewModelFactory:
+    FetchCollectionDetailUseCaseFactory,
+    FetchCollectionBookmarkUsersUseCaseFactory,
+    ToggleCollectionBookmarkUseCaseFactory,
+    ToggleContentBookmarkUseCaseFactory,
+    FetchProfileUseCaseFactory, 
+    DeleteCollectionUseCaseFactory{
     func makeCollectionDetailViewModel(collectionId: Int64) -> CollectionDetailViewModel
 }
 
@@ -21,6 +28,8 @@ extension CollectionDetailViewModelFactory {
             fetchCollectionBookmarkUsersUseCase: makeFetchCollectionBookmarkUsersUseCase(),
             fetchProfileUseCase: makeFetchProfileUseCase(),
             deleteCollectionUseCase: makeDeleteCollectionUseCase()
+            toggleCollectionBookmarkUseCase: makeToggleCollectionBookmarkUseCase(),
+            toggleContentBookmarkUseCase: makeToggleContentBookmarkUseCase()
         )
     }
 }

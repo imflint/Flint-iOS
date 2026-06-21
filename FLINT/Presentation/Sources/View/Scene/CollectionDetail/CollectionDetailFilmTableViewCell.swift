@@ -18,6 +18,7 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
     // MARK: - Property
 
     public var onTapRevealSpoiler: (() -> Void)?
+    public var onTapBookmark: ((Bool, Int) -> Void)?
 
     // MARK: - Component
 
@@ -135,6 +136,10 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
 
     private func bind() {
         revealButton.addTarget(self, action: #selector(didTapReveal), for: .touchUpInside)
+
+        bookmarkButton.onTap = { [weak self] isBookmarked, count in
+            self?.onTapBookmark?(isBookmarked, count)
+        }
     }
 
     // MARK: - Setup
@@ -238,6 +243,7 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
 
             configureSpoiler(isSpoiler: false)
             onTapRevealSpoiler = nil
+            onTapBookmark = nil
         }
 
         public func configureSpoiler(isSpoiler: Bool) {

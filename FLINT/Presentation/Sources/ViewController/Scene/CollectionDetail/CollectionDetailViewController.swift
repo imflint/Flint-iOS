@@ -47,6 +47,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
     // Input
     private let viewDidLoadSubject = PassthroughSubject<Void, Never>()
     private let tapHeaderSaveSubject = PassthroughSubject<Bool, Never>()
+    private let tapContentBookmarkSubject = PassthroughSubject<Int64, Never>()
 
     // MARK: - Init
 
@@ -78,7 +79,8 @@ public final class CollectionDetailViewController: BaseViewController<Collection
     public override func bind() {
         let input = CollectionDetailViewModel.Input(
             viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher(),
-            tapHeaderSave: tapHeaderSaveSubject.eraseToAnyPublisher()
+            tapHeaderSave: tapHeaderSaveSubject.eraseToAnyPublisher(),
+            tapContentBookmark: tapContentBookmarkSubject.eraseToAnyPublisher()
         )
 
         let output = viewModel.transform(input: input)
@@ -299,7 +301,24 @@ extension CollectionDetailViewController: UITableViewDataSource {
 
             cell.configure(title: title, isSaved: isSaved, thumbnailURL: thumbnailURL)
             cell.onTapSave = { [weak self] isSaved in
-                self?.tapHeaderSaveSubject.send(isSaved)
+                guard let self else { return }
+                self.tapHeaderSaveSubject.send(isSaved)
+
+                if isSaved {
+                    Toast.action(
+                        image: DesignSystem.Icon.Gradient.bookmark,
+                        title: "취향이 하나 더 쌓였어요",
+                        actionTitle: "저장한 컬렉션 보러가기",
+                        action: { [weak self] _ in
+                            guard let self else { return }
+                            guard let factory = self.viewControllerFactory else { return }
+                            let vc = factory.makeSavedCollectionListViewController()
+                            self.navigationController?.pushViewController(vc, animated: true)
+                        }
+                    ).show()
+                } else {
+                    Toast.text("컬렉션 저장이 취소되었어요").show()
+                }
             }
             return cell
 
@@ -356,6 +375,18 @@ extension CollectionDetailViewController: UITableViewDataSource {
 
             cell.onTapRevealSpoiler = { [weak cell] in
                 cell?.configureSpoiler(isSpoiler: false)
+            }
+
+            cell.onTapBookmark = { [weak self] isBookmarked, _ in
+                guard let self else { return }
+                guard let contentId = Int64(item.id) else { return }
+                self.tapContentBookmarkSubject.send(contentId)
+
+                if isBookmarked {
+                    Toast.text("작품을 저장했어요").show()
+                } else {
+                    Toast.text("작품 저장을 취소했어요").show()
+                }
             }
 
             return cell
