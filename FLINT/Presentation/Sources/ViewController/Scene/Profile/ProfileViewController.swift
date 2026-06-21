@@ -39,6 +39,9 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        rootView.snp.remakeConstraints {
+            $0.edges.equalToSuperview()
+        }
         setupTableView()
         bind()
         profileViewModel.load()
@@ -48,9 +51,21 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         super.viewWillAppear(animated)
         setNavigationBar(.init(left: .back, backgroundStyle: .clear))
 
+        let rightItem: NavRightItem = profileViewModel.isMe ? .setting : .none
+
+        setNavigationBar(
+            .init(left: .back, right: rightItem, backgroundStyle: .clear),
+            onTapRight: { [weak self] in
+                self?.didTapSetting()
+            }
+        )
     }
 
-    
+    private func didTapSetting() {
+        // TODO: SettingViewController push (DI에 SettingViewControllerFactory 등록 후 연결)
+        print("setting tapped")
+    }
+
     private func setupTableView() {
         let tableView = rootView.tableView
         tableView.dataSource = self
@@ -83,6 +98,15 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         let vc = BaseBottomSheetViewController(content: .ott(platforms: platforms))
         present(vc, animated: false)
     }
+
+    private func pushCollectionDetail(collectionIdString: String) {
+        guard let collectionId = Int64(collectionIdString) else {
+            print("invalid collectionId:", collectionIdString)
+            return
+        }
+        guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
 }
 
@@ -101,6 +125,8 @@ extension ProfileViewController: UITableViewDelegate {
         case .titleHeader:
             return 0
         case .preferenceChips:
+            return 32
+        case .keywordGraph:
             return 48
         case .myCollections, .savedCollections:
             return 24
@@ -142,18 +168,38 @@ extension ProfileViewController: UITableViewDataSource {
             cell.configure(keywords: keywords)
             return cell
 
-        case let .titleHeader(style, title, subtitle):
+        case let .keywordGraph(keywords):
+            let cell = tableView.dequeueReusableCell(KeywordGraphTableViewCell.self, for: indexPath)
+            cell.selectionStyle = .none
+            cell.configure(keywords: keywords)
+            return cell
+
+        case let .titleHeader(style, title, subtitle, showInfo, showRefresh, isRefreshing, tooltipText):
             let cell = tableView.dequeueReusableCell(TitleHeaderTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
-            cell.configure(style: map(style), title: title, subtitle: subtitle)
+            cell.configure(
+                style: map(style),
+                title: title,
+                subtitle: subtitle,
+                showInfo: showInfo,
+                showRefresh: showRefresh,
+                isRefreshing: isRefreshing,
+                tooltipText: tooltipText
+            )
+            cell.onTapInfo = { [weak self] in
+                self?.profileViewModel.toggleKeywordInfoTooltip()
+            }
+            cell.onTapRefresh = { [weak self] in
+                self?.profileViewModel.refreshKeywords()
+            }
             return cell
 
         case let .myCollections(items):
             let cell = tableView.dequeueReusableCell(MoreNoMoreCollectionTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(items: items)
-            cell.onSelectItem = { entity in
-                print("컬렉션 선택:", entity.id)
+            cell.onSelectItem = { [weak self] entity in
+                self?.pushCollectionDetail(collectionIdString: entity.id)
             }
             return cell
 
@@ -161,8 +207,8 @@ extension ProfileViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(MoreNoMoreCollectionTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(items: items)
-            cell.onSelectItem = { entity in
-                print("저장 컬렉션 선택:", entity.id)
+            cell.onSelectItem = { [weak self] entity in
+                self?.pushCollectionDetail(collectionIdString: entity.id)
             }
             return cell
             

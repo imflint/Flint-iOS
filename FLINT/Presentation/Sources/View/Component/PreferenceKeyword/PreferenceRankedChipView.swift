@@ -32,7 +32,10 @@ public final class PreferenceRankedChipView: BaseView {
     }
 
     public func configure(keywords: [KeywordEntity]) {
-        let byRank = Dictionary(uniqueKeysWithValues: keywords.map { ($0.rank, $0) })
+        let sortedKeywords = keywords.sorted { $0.rank < $1.rank }
+        let byRank = Dictionary(
+            uniqueKeysWithValues: sortedKeywords.enumerated().map { ($0.offset + 1, $0.element) }
+        )
 
         let sumA = [1, 2, 4].compactMap { byRank[$0]?.name.count }.reduce(0, +)
         let sumB = [3, 5, 6].compactMap { byRank[$0]?.name.count }.reduce(0, +)
@@ -72,7 +75,7 @@ public final class PreferenceRankedChipView: BaseView {
             rankRow.forEach { r in
                 guard let dto = byRank[r] else { return }
                 let chip = PreferenceChip()
-                chip.configure(keyword: dto)
+                chip.configure(keyword: dto, displayRank: r)
                 rowStack.addArrangedSubview(chip)
             }
 

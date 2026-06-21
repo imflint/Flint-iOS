@@ -131,10 +131,20 @@ public final class FlintNavigationBar: BaseView {
         case .kebab:
             rightButton.setImage(UIImage(resource: .icKebab), for: .normal)
             setPadding(button: rightButton, padding: 12, image: .icKebab)
+          
+        case .setting:
+            let image = UIImage(named: "ic_setting", in: .module, with: nil) ?? UIImage()
+            rightButton.tintColor = .flintWhite
+            setPadding(button: rightButton, padding: 12, image: image)
 
         case .text(let title, let color):
             rightButton.setAttributedTitle(.pretendard(.body1_b_16, text: title, color: color, alignment: .center), for: .normal)
             setPadding(button: rightButton, padding: 16, image: nil)
+
+        case .icon(let name, let tint):
+            let image = UIImage(named: name, in: .module, with: nil) ?? UIImage()
+            rightButton.tintColor = tint
+            setPadding(button: rightButton, padding: 12, image: image.withRenderingMode(.alwaysTemplate))
 
         case .none:
             rightButton.isHidden = true
