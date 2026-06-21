@@ -295,8 +295,9 @@ extension CollectionDetailViewController: UITableViewDataSource {
 
             let title = entity?.title ?? ""
             let isSaved = entity?.isBookmarked ?? false
+            let thumbnailURL = entity?.thumbnailUrl
 
-            cell.configure(title: title, isSaved: isSaved)
+            cell.configure(title: title, isSaved: isSaved, thumbnailURL: thumbnailURL)
             cell.onTapSave = { [weak self] isSaved in
                 self?.tapHeaderSaveSubject.send(isSaved)
             }
