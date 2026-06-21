@@ -30,6 +30,20 @@ extension AnyPublisher where Output == Response, Failure == MoyaError {
             })
             .eraseToAnyPublisher()
     }
+
+    /// `data` 필드가 null/누락된 응답(예: 단순 성공 메시지만 내려오는 PUT/DELETE)을 위한 helper.
+    /// status만 200대인지 검사하고, 본문은 무시합니다.
+    public func mapBaseResponseEmpty(fileName: String = #file, line: Int = #line, funcName: String = #function) -> AnyPublisher<Void, Error> {
+        return map(BaseResponse<BlankData>.self)
+            .tryMap({ baseResponse in
+                Log.d(baseResponse, fileName: fileName, line: line, funcName: funcName)
+                guard (200..<300).contains(baseResponse.status) else {
+                    throw NetworkError.httpStatusCode(baseResponse.serverError)
+                }
+                return ()
+            })
+            .eraseToAnyPublisher()
+    }
     
     public func logged(fileName: String = #fileID, line: Int = #line, funcName: String = #function) -> AnyPublisher<Output, Failure> {
         return self.handleEvents(receiveOutput: { output in

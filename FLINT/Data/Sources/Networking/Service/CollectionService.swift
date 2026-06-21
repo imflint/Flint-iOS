@@ -18,6 +18,8 @@ import DTO
 public protocol CollectionService {
     func fetchCollections(cursor: Int64?, size: Int32) -> AnyPublisher<PagedCollectionsDTO, Error>
     func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<CreateCollectionDTO, Error>
+    func updateCollection(collectionId: Int64, collectionInfo: CreateCollectionEntity) -> AnyPublisher<Void, Error>
+    func deleteCollection(collectionId: Int64) -> AnyPublisher<Void, Error>
     func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailDTO, Error>
     func fetchRecentViewedCollections() -> AnyPublisher<CollectionsDTO, Error>
 }
@@ -37,6 +39,16 @@ public final class DefaultCollectionService: CollectionService {
     public func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<CreateCollectionDTO, Error> {
         return collectionAPIProvider.requestPublisher(.createCollection(collectionInfo: collectionInfo))
             .mapBaseResponseData(CreateCollectionDTO.self)
+    }
+
+    public func updateCollection(collectionId: Int64, collectionInfo: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
+        return collectionAPIProvider.requestPublisher(.updateCollection(collectionId: collectionId, collectionInfo: collectionInfo))
+            .mapBaseResponseEmpty()
+    }
+
+    public func deleteCollection(collectionId: Int64) -> AnyPublisher<Void, Error> {
+        return collectionAPIProvider.requestPublisher(.deleteCollection(collectionId: collectionId))
+            .mapBaseResponseEmpty()
     }
     
     public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailDTO, Error> {
