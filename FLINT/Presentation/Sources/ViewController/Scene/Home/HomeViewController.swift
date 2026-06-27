@@ -109,7 +109,7 @@ public final class HomeViewController: BaseViewController<HomeView> {
             title: "이 작품을 볼 수 있는 OTT",
             content: .ott(platforms: platforms)
         )
-        present(vc, animated: false)
+        present(vc, animated: true)
     }
     
     private func fetchAndPresentOTT(contentId: Int64) {
@@ -246,9 +246,10 @@ extension HomeViewController: UITableViewDataSource {
             
             cell.onTapItem = { [weak self] content in
                 guard let self else { return }
-                guard let contentId = Int64(content.id) else { return }
-                
-                self.fetchAndPresentOTT(contentId: contentId)
+                let platforms: [OTTPlatform] = content.ottList.compactMap { ott in
+                    OTTPlatform.fromServerName(ott.ottName)
+                }
+                self.presentOTTBottomSheet(platforms: platforms)
             }
             
             return cell
