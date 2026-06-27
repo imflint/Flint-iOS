@@ -74,18 +74,18 @@ public final class DefaultAuthService: AuthService {
         }
         return authAPIProvider.requestPublisher(.logout(refreshToken: refreshToken))
             .logged()
-            .mapBaseResponseData(BlankData.self)
-            .map({ [weak self] _ in
+            .tryMap { [weak self] response in
+                guard (200..<300).contains(response.statusCode) else {
+                    throw MoyaError.statusCode(response)
+                }
                 self?.tokenStorage.clearAll()
-            })
+            }
             .eraseToAnyPublisher()
     }
     
     public func withDraw(agreedTermsIds: [String]) -> AnyPublisher<Void, Error> {
         return authAPIProvider.requestPublisher(.withdraw(agreedTermsIds: agreedTermsIds))
             .logged()
-            .mapBaseResponseData(BlankData.self)
-            .map({ _ in })
-            .eraseToAnyPublisher()
+            .mapBaseResponseEmpty()
     }
 }
