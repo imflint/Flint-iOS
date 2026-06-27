@@ -81,8 +81,8 @@ public final class ReportViewController: BaseViewController<ReportView> {
         output.submitSuccess
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                print("신고 성공")
                 self?.navigationController?.popViewController(animated: true)
+                Toast.text("신고가 접수되었어요").show()
             }
             .store(in: &cancellables)
         

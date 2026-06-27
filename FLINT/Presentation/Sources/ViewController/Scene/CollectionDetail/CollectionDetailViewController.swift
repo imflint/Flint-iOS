@@ -194,7 +194,9 @@ public final class CollectionDetailViewController: BaseViewController<Collection
 
     private func didTapReport() {
         guard let entity, let collectionId = Int64(entity.id) else { return }
-        onTapReport?(collectionId)
+        guard let factory = viewControllerFactory else { return }
+        let reportVC = factory.makeReportViewController(collectionId: collectionId)
+        navigationController?.pushViewController(reportVC, animated: true)
     }
     
     private func presentSavedUsersBottomSheet(users: [SavedUserRowItem]) {
