@@ -62,8 +62,9 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
     }
 
     private func didTapSetting() {
-        // TODO: SettingViewController push (DI에 SettingViewControllerFactory 등록 후 연결)
-        print("setting tapped")
+        guard let factory = viewControllerFactory else { return }
+        let settingVC = factory.makeSettingViewController()
+        navigationController?.pushViewController(settingVC, animated: true)
     }
 
     private func setupTableView() {
