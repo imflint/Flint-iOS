@@ -12,6 +12,10 @@ import Combine
 import View
 import ViewModel
 
+public protocol WithdrawalViewControllerFactory {
+    func makeWithdrawalViewController() -> WithdrawalViewController
+}
+
 public final class WithdrawalViewController: BaseViewController<WithdrawalView> {
     
     // MARK: - Property
@@ -23,10 +27,9 @@ public final class WithdrawalViewController: BaseViewController<WithdrawalView> 
     
     // MARK: - Init
     
-    public init(viewModel: WithdrawViewModel) {
+    public init(viewModel: WithdrawViewModel, viewControllerFactory: (any ViewControllerFactory)?) {
         self.viewModel = viewModel
-        // FIXME: viewControllerFactory 주입해주기
-        super.init(viewControllerFactory: nil)
+        super.init(viewControllerFactory: viewControllerFactory)
     }
     
     required init?(coder: NSCoder) {
@@ -65,8 +68,15 @@ public final class WithdrawalViewController: BaseViewController<WithdrawalView> 
         output.withdrawSuccess
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                print("탈퇴 성공")
-                self?.navigationController?.popViewController(animated: true)
+                guard let self else { return }
+                guard let loginVC = viewControllerFactory?.makeLoginViewController() else { return }
+                let nav = UINavigationController(rootViewController: loginVC)
+                nav.modalPresentationStyle = .fullScreen
+                if let window = view.window {
+                    UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve) {
+                        window.rootViewController = nav
+                    }
+                }
             }
             .store(in: &cancellables)
         
@@ -78,7 +88,7 @@ public final class WithdrawalViewController: BaseViewController<WithdrawalView> 
             .store(in: &cancellables)
     }
     
-    // MARK: - Setup  
+    // MARK: - Setup
     
     private func setupNavigationBar() {
         setNavigationBar(.init(

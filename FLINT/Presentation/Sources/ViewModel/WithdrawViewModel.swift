@@ -5,19 +5,23 @@
 //  Created by 소은 on 5/13/26.
 //
 
-
 import Foundation
 import Combine
 
+import Domain
+
 public final class WithdrawViewModel {
-    
+
     // MARK: - Property
-    
+
+    private let withDrawUseCase: WithDrawUseCase
     private var cancellables = Set<AnyCancellable>()
-    
+
     // MARK: - Init
-    
-    public init() {}
+
+    public init(withDrawUseCase: WithDrawUseCase) {
+        self.withDrawUseCase = withDrawUseCase
+    }
     
     // MARK: - Input
     
@@ -85,10 +89,9 @@ public final class WithdrawViewModel {
     // MARK: - Custom Method
     
     private func withdraw() -> AnyPublisher<Result<Void, Error>, Never> {
-        // TODO: UseCase 호출
-        
-        // 임시 구현
-        return Just(Result.success(()))
+        return withDrawUseCase(agreedTermsIds: ["10"])
+            .map { Result.success($0) }
+            .catch { Just(Result.failure($0)) }
             .eraseToAnyPublisher()
     }
 }

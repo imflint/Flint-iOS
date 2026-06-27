@@ -25,7 +25,12 @@ typealias DependencyFactory = ViewControllerFactory &
                               ExploreViewModelFactory &
                               ProfileViewModelFactory &
                               
+<<<<<<< HEAD
                               ReportViewModelFactory &
+=======
+                              SettingViewModelFactory &
+                              WithdrawViewModelFactory &
+>>>>>>> network/#201-setting-api
                               
                               CreateCollectionViewModelFactory &
                               AddContentSelectViewModelFactory &

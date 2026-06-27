@@ -18,7 +18,8 @@ import DTO
 public protocol AuthService {
     func signup(userInfo: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error>
     func socialVerify(socialAuthCredential: SocialVerifyRequestDTO) -> AnyPublisher<SocialVerifyResponseDTO, Error>
-    func withDraw() -> AnyPublisher<Void, Error>
+    func logout() -> AnyPublisher<Void, Error>
+    func withDraw(agreedTermsIds: [String]) -> AnyPublisher<Void, Error>
 }
 
 public final class DefaultAuthService: AuthService {
@@ -67,8 +68,22 @@ public final class DefaultAuthService: AuthService {
             .eraseToAnyPublisher()
     }
     
-    public func withDraw() -> AnyPublisher<Void, Error> {
-        authAPIProvider.requestPublisher(.withdraw)
+    public func logout() -> AnyPublisher<Void, Error> {
+        guard let refreshToken = tokenStorage.load(type: .refreshToken) else {
+            return Fail(error: TokenError.noToken).eraseToAnyPublisher()
+        }
+        return authAPIProvider.requestPublisher(.logout(refreshToken: refreshToken))
+            .logged()
+            .mapBaseResponseData(BlankData.self)
+            .map({ [weak self] _ in
+                self?.tokenStorage.clearAll()
+            })
+            .eraseToAnyPublisher()
+    }
+    
+    public func withDraw(agreedTermsIds: [String]) -> AnyPublisher<Void, Error> {
+        return authAPIProvider.requestPublisher(.withdraw(agreedTermsIds: agreedTermsIds))
+            .logged()
             .mapBaseResponseData(BlankData.self)
             .map({ _ in })
             .eraseToAnyPublisher()

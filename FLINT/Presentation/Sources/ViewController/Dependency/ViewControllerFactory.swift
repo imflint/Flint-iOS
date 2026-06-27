@@ -38,4 +38,5 @@ public typealias ViewControllerFactory =
     SavedCollectionListViewControllerFactory &
     AddContentSelectViewControllerFactory &
     CreateCollectionViewControllerFactory &
-    ReportViewControllerFactory
+    SettingViewControllerFactory &
+    WithdrawalViewControllerFactory
