@@ -10,39 +10,46 @@ import Foundation
 
 import Domain
 
-//public protocol ProfileViewModelInput {
-//    
-//}
-
-//public protocol ProfileViewModelOutput {
-//    var userProfileEntity: CurrentValueSubject<UserProfileEntity, Never> { get set }
-//}
-
-//public typealias ProfileViewModel = ProfileViewModelInput & ProfileViewModelOutput
-
-//public final class DefaultProfileViewModel: ProfileViewModel {
 public final class ProfileViewModel {
-//    public var userProfileEntity: CurrentValueSubject<Entity.UserProfileEntity, Never>
     
     
     private let target: UserTarget
     
     public enum Row {
         case profileHeader(nickname: String, profileImageUrl: URL?, isFliner: Bool)
-        case titleHeader(style: TitleHeaderStyle, title: String, subtitle: String)
+        case titleHeader(
+            style: TitleHeaderStyle,
+            title: String,
+            subtitle: String,
+            showInfo: Bool,
+            showRefresh: Bool,
+            isRefreshing: Bool,
+            tooltipText: String?
+        )
         case preferenceChips(keywords: [KeywordEntity])
+        case keywordGraph(keywords: [KeywordEntity])
         case myCollections(items: [CollectionEntity])
         case savedCollections(items: [CollectionEntity])
         case savedContents(items: [ContentInfoEntity])
+    }
+
+    private enum Const {
+        static let keywordInfoTooltipText =
+        "저장한 작품들에서 반복되는 키워드를 분석해 취향키워드를 만들어요. 20개 이상 작품이 쌓이면 업데이트할 수 있어요."
     }
     
     public enum TitleHeaderStyle {
         case normal
         case more
     }
-    
+
     // MARK: - Output
     @Published public private(set) var rows: [Row] = []
+
+    public var isMe: Bool {
+        if case .me = target { return true }
+        return false
+    }
     
     // MARK: - Dependencies
     private let fetchProfileUseCase: FetchProfileUseCase
@@ -50,18 +57,21 @@ public final class ProfileViewModel {
     private let fetchCreatedCollectionsUseCase: FetchCreatedCollectionsUseCase
     private let fetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase
     private let fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase
+    private let recalculateKeywordsUseCase: RecalculateKeywordsUseCase
     private var cancellables = Set<AnyCancellable>()
-    
+
     // MARK: - State
     private var nickname: String
     private var isFliner: Bool
     private var profileImageUrl: URL?
-    
+
     private var keywords: [KeywordEntity] = []
     private var myCollections: [CollectionEntity] = []
     private var savedCollections: [CollectionEntity] = []
     private var savedContents: [ContentInfoEntity] = []
-    
+    private var isKeywordInfoTooltipVisible: Bool = false
+    private var isRefreshing: Bool = false
+
     public init(
         target: UserTarget,
         fetchProfileUseCase: FetchProfileUseCase,
@@ -69,6 +79,7 @@ public final class ProfileViewModel {
         fetchCreatedCollectionsUseCase: FetchCreatedCollectionsUseCase,
         fetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase,
         fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase,
+        recalculateKeywordsUseCase: RecalculateKeywordsUseCase,
         initialNickname: String = "플링",
         initialIsFliner: Bool = true
     ) {
@@ -78,6 +89,7 @@ public final class ProfileViewModel {
         self.fetchCreatedCollectionsUseCase = fetchCreatedCollectionsUseCase
         self.fetchBookmarkedCollectionsUseCase = fetchBookmarkedCollectionsUseCase
         self.fetchBookmarkedContentsUseCase = fetchBookmarkedContentsUseCase
+        self.recalculateKeywordsUseCase = recalculateKeywordsUseCase
         self.nickname = initialNickname
         self.isFliner = initialIsFliner
         self.rows = makeRows()
@@ -101,7 +113,7 @@ public final class ProfileViewModel {
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchKeywords failed:", error)
+                    print("fetchKeywords failed:", error)
                 }
             } receiveValue: { [weak self] keywords in
                 guard let self else { return }
@@ -114,7 +126,7 @@ public final class ProfileViewModel {
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchMyCollections failed:", error)
+                    print("fetchMyCollections failed:", error)
                 }
             } receiveValue: { [weak self] items in
                 guard let self else { return }
@@ -127,7 +139,7 @@ public final class ProfileViewModel {
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchSavedCollections failed:", error)
+                    print("fetchSavedCollections failed:", error)
                 }
             } receiveValue: { [weak self] items in
                 print("asdf", items.count)
@@ -141,7 +153,7 @@ public final class ProfileViewModel {
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print("❌ fetchSavedContents failed:", error)
+                    print("fetchSavedContents failed:", error)
                 }
             } receiveValue: { [weak self] items in
                 guard let self else { return }
@@ -151,6 +163,38 @@ public final class ProfileViewModel {
             .store(in: &cancellables)
     }
     
+    public func toggleKeywordInfoTooltip() {
+        guard isMe else { return }
+        isKeywordInfoTooltipVisible.toggle()
+        rows = makeRows()
+    }
+
+    public func refreshKeywords() {
+        guard isMe, !isRefreshing else { return }
+        isRefreshing = true
+        rows = makeRows()
+
+        let target = self.target
+        let fetchKeywords = fetchKeywordsUseCase
+
+        recalculateKeywordsUseCase()
+            .flatMap { _ in fetchKeywords(for: target) }
+            .manageThread()
+            .sink { [weak self] completion in
+                guard let self else { return }
+                self.isRefreshing = false
+                if case let .failure(error) = completion {
+                    print("recalculateKeywords failed:", error)
+                }
+                self.rows = self.makeRows()
+            } receiveValue: { [weak self] keywords in
+                guard let self else { return }
+                self.keywords = keywords
+                self.rows = self.makeRows()
+            }
+            .store(in: &cancellables)
+    }
+
     // MARK: - Row builder
     private func makeRows() -> [Row] {
         var result: [Row] = []
@@ -175,46 +219,64 @@ public final class ProfileViewModel {
             result.append(content)
         }
         
-        // 취향 키워드
-        appendSectionIfNotEmpty(
-            keywords.isEmpty,
-            header: .titleHeader(
-                style: .normal,
-                title: "\(nickname)님의 취향 키워드",
-                subtitle: "\(nickname)님이 관심 있어 하는 키워드에요"
-            ),
-            content: .preferenceChips(keywords: keywords)
-        )
-        
+        // 취향 키워드 (header + chips + graph)
+        if !keywords.isEmpty {
+            result.append(
+                .titleHeader(
+                    style: .normal,
+                    title: "\(nickname)님의 취향 키워드",
+                    subtitle: "\(nickname)님이 관심 있어 하는 키워드에요",
+                    showInfo: isMe,
+                    showRefresh: isMe,
+                    isRefreshing: isRefreshing,
+                    tooltipText: (isMe && isKeywordInfoTooltipVisible) ? Const.keywordInfoTooltipText : nil
+                )
+            )
+            result.append(.preferenceChips(keywords: keywords))
+            result.append(.keywordGraph(keywords: keywords))
+        }
+
         // 내가 만든 컬렉션
         appendSectionIfNotEmpty(
             myCollections.isEmpty,
             header: .titleHeader(
-                style: .normal,
+                style: .more,
                 title: "\(nickname)님의 컬렉션",
-                subtitle: "\(nickname)님이 생성한 컬렉션이에요"
+                subtitle: "\(nickname)님이 생성한 컬렉션이에요",
+                showInfo: false,
+                showRefresh: false,
+                isRefreshing: false,
+                tooltipText: nil
             ),
             content: .myCollections(items: myCollections)
         )
-        
+
         // 저장한 컬렉션
         appendSectionIfNotEmpty(
             savedCollections.isEmpty,
             header: .titleHeader(
-                style: .normal,
+                style: .more,
                 title: "저장한 컬렉션",
-                subtitle: "\(nickname)님이 저장한 컬렉션이에요"
+                subtitle: "\(nickname)님이 저장한 컬렉션이에요",
+                showInfo: false,
+                showRefresh: false,
+                isRefreshing: false,
+                tooltipText: nil
             ),
             content: .savedCollections(items: savedCollections)
         )
-        
-        // 저장한 콘텐츠
+
+        // 저장한 작품
         appendSectionIfNotEmpty(
             savedContents.isEmpty,
             header: .titleHeader(
-                style: .normal,
-                title: "저장한 콘텐츠",
-                subtitle: "\(nickname)님이 저장한 콘텐츠에요"
+                style: .more,
+                title: "저장한 작품",
+                subtitle: "\(nickname)님이 저장한 작품이에요",
+                showInfo: false,
+                showRefresh: false,
+                isRefreshing: false,
+                tooltipText: nil
             ),
             content: .savedContents(items: savedContents)
         )

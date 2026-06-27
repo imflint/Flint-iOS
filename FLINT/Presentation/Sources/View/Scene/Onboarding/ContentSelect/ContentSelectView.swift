@@ -45,6 +45,7 @@ public final class ContentSelectView: BaseView {
         }
     ).then {
         $0.register(GenreCollectionViewCell.self)
+        $0.allowsMultipleSelection = true
         $0.backgroundColor = .flintBackground
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
@@ -125,6 +126,11 @@ public final class ContentSelectView: BaseView {
         $0.isEnabled = false
     }
     
+    public let loadingIndicator = UIActivityIndicatorView().then {
+        $0.startAnimating()
+        $0.hidesWhenStopped = true
+        $0.color = .flintWhite
+    }
     public let emptyView = UIView().then {
         $0.isHidden = true
     }
@@ -170,6 +176,7 @@ public final class ContentSelectView: BaseView {
             progressInfoView,
             searchView,
             nextButton,
+            loadingIndicator,
             emptyView
         )
         collectionViewStackView.addArrangedSubviews(
@@ -238,6 +245,9 @@ public final class ContentSelectView: BaseView {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(48)
             $0.bottom.equalTo(safeAreaLayoutGuide)
+        }
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalTo(contentCollectionView)
         }
         emptyView.snp.makeConstraints {
             $0.edges.equalTo(contentCollectionView)

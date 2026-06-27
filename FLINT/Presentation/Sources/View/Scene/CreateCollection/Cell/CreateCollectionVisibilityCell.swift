@@ -76,6 +76,12 @@ public final class CreateCollectionVisibilityCell: BaseTableViewCell {
     
     public override func prepare() {
         onChangeVisibility = nil
+        selectedVisibility = nil
+        applySelectionUI()
+    }
+
+    public func configure(visibility: Visibility?) {
+        selectedVisibility = visibility
         applySelectionUI()
     }
 }

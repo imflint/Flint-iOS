@@ -16,6 +16,7 @@ import PhotosUI
 
 public protocol CreateCollectionViewControllerFactory {
     func makeCreateCollectionViewController() -> CreateCollectionViewController
+    func makeEditCollectionViewController(collectionId: Int64, prefill: CollectionDetailEntity) -> CreateCollectionViewController
 }
 
 public final class CreateCollectionViewController: BaseViewController<CreateCollectionView> {
@@ -32,9 +33,12 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
 
     // MARK: - State
 
+    private let mode: CreateCollectionMode
+
     private var collectionTitleText: String = ""
     private var collectionDescriptionText: String = ""
     private var isPublic: Bool = false
+    private var selectedVisibility: CreateCollectionVisibilityCell.Visibility?
 
     private var selectedContents: [SavedContentItemViewModel] = []
     private var selectedReasonItems: [SelectedContentReasonTableViewCellItem] = []
@@ -43,19 +47,71 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
     private let viewModel: CreateCollectionViewModel
 
     private var headerImage: UIImage?
+    private var headerImageURL: URL?
     private var headerImageKey: String?
 
     // MARK: - Init
 
     public init(
+        mode: CreateCollectionMode = .create,
         viewModel: CreateCollectionViewModel,
         viewControllerFactory: ViewControllerFactory? = nil
     ) {
+        self.mode = mode
         self.viewModel = viewModel
         super.init(viewControllerFactory: viewControllerFactory)
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    // MARK: - Prefill (edit mode)
+
+    /// 편집 모드 진입 시 기존 컬렉션 데이터를 폼에 채워 넣습니다.
+    /// 가시성(공개/비공개)은 상세 응답에 포함되지 않아 prefill 대상에서 제외됩니다 — 사용자가 다시 선택해야 합니다.
+    public func prefill(from entity: CollectionDetailEntity) {
+        collectionTitleText = entity.title
+        collectionDescriptionText = entity.description
+
+        // 상세 응답에 isPublic 필드가 없어 항상 공개로 prefill — 사용자가 비공개로 다시 토글 가능
+        isPublic = true
+        selectedVisibility = .public
+
+        // 헤더 이미지: 표시는 URL로, 제출 시 imageUrl 필드에는 기존 URL을 그대로 전송
+        headerImageURL = entity.thumbnailUrl
+        headerImageKey = entity.thumbnailUrl?.absoluteString
+
+        let prefillItems: [SelectedContentReasonTableViewCellItem] = entity.contents.compactMap { content in
+            guard let contentId = Int64(content.id) else { return nil }
+            var item = SelectedContentReasonTableViewCellItem(
+                contentId: contentId,
+                posterURL: content.imageUrl,
+                posterImage: nil,
+                title: content.title,
+                director: content.director,
+                year: String(content.year),
+                isSpoiler: content.isSpoiler,
+                reasonText: content.reason,
+                photos: []
+            )
+            item.customImageKeys = content.customImageUrls.map { $0.absoluteString }
+            return item
+        }
+        selectedReasonItems = prefillItems
+
+        selectedContents = entity.contents.compactMap { content in
+            guard let contentId = Int64(content.id) else { return nil }
+            return SavedContentItemViewModel(
+                contentId: contentId,
+                posterURL: content.imageUrl,
+                posterImage: nil,
+                title: content.title,
+                director: content.director,
+                year: String(content.year)
+            )
+        }
+
+        updateCreatePayload()
+    }
 
     // MARK: - Lifecycle
 
@@ -92,6 +148,23 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
 
 private extension CreateCollectionViewController {
 
+    /// 생성/수정 성공 시 동일하게 사용: 본인(create/edit VC)을 스택에서 제거하고,
+    /// 그 직전 VC가 CollectionDetail이면 같이 제거한 뒤 새 detail VC를 push.
+    /// - create: [..., entry, self(create)] → [..., entry, newDetail]
+    /// - edit:   [..., entry, oldDetail, self(edit)] → [..., entry, newDetail]
+    func replaceCurrentFlowWithDetail(_ detailVC: UIViewController) {
+        guard let nav = self.navigationController else { return }
+        var stack = nav.viewControllers
+        if let idx = stack.lastIndex(where: { $0 === self }) {
+            stack.removeSubrange(idx..<stack.count)
+        }
+        if stack.last is CollectionDetailViewController {
+            stack.removeLast()
+        }
+        stack.append(detailVC)
+        nav.setViewControllers(stack, animated: true)
+    }
+
     func setTableView() {
         rootView.tableView.dataSource = self
         rootView.tableView.delegate = self
@@ -120,14 +193,19 @@ private extension CreateCollectionViewController {
             .sink { [weak self] collectionId in
                 guard let self, let factory = self.viewControllerFactory else { return }
                 let detailVC = factory.makeCollectionDetailViewController(collectionId: collectionId)
-                self.navigationController?.pushViewController(detailVC, animated: true)
+                self.replaceCurrentFlowWithDetail(detailVC)
             }
             .store(in: &cancellables)
 
         viewModel.createFailure
             .receive(on: RunLoop.main)
-            .sink { error in
-                print("CreateCollection 실패:", error)
+            .sink { [weak self] error in
+                let label: String
+                switch self?.mode {
+                case .edit: label = "UpdateCollection 실패"
+                default: label = "CreateCollection 실패"
+                }
+                print(label + ":", error)
             }
             .store(in: &cancellables)
 
@@ -299,7 +377,11 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     withIdentifier: CreateCollectionHeaderImageCell.reuseIdentifier,
                     for: indexPath
                 ) as! CreateCollectionHeaderImageCell
-                cell.configure(with: headerImage)
+                if let headerImage {
+                    cell.configure(with: headerImage)
+                } else {
+                    cell.configure(with: headerImageURL)
+                }
                 cell.onTapAddPhoto = { [weak self] in
                     guard let self else { return }
                     let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -312,6 +394,7 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     sheet.addAction(UIAlertAction(title: "커버 사진 삭제", style: .destructive) { [weak self] _ in
                         guard let self else { return }
                         self.headerImage = nil
+                        self.headerImageURL = nil
                         self.headerImageKey = nil
                         self.updateCreatePayload()
                         self.rootView.tableView.reloadRows(
@@ -360,8 +443,10 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     for: indexPath
                 ) as! CreateCollectionVisibilityCell
 
+                cell.configure(visibility: selectedVisibility)
                 cell.onChangeVisibility = { [weak self] visibility in
                     guard let self else { return }
+                    self.selectedVisibility = visibility
                     self.isPublic = (visibility == .public)
                     self.updateCreatePayload()
                 }
@@ -497,6 +582,7 @@ extension CreateCollectionViewController: PHPickerViewControllerDelegate {
                         receiveValue: { [weak self] keys in
                             guard let self else { return }
                             self.headerImage = image
+                            self.headerImageURL = nil
                             self.headerImageKey = keys.first
                             self.rootView.tableView.reloadRows(
                                 at: [IndexPath(row: 0, section: 0)],

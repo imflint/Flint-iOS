@@ -26,4 +26,10 @@ public final class DefaultHomeRepository: HomeRepository {
             .tryMap { try $0.entities }
             .eraseToAnyPublisher()
     }
+    
+    public func fetchPopularCollections() -> AnyPublisher<[CollectionEntity], Error> {  // ← 추가
+        return homeService.fetchPopularCollections()
+            .tryMap { try $0.entities }
+            .eraseToAnyPublisher()
+    }
 }

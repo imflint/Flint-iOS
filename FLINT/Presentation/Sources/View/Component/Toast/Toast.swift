@@ -33,23 +33,23 @@ public class Toast {
         config: ToastConfiguration = ToastConfiguration(),
         customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
     ) -> Toast {
-        return plain(image: .icCheck, title: text, customConstraints: customConstraints)
+        return plain(image: .icCheck, title: text, config: config, customConstraints: customConstraints)
     }
-    
+
     public static func failure(
         _ text: String,
         config: ToastConfiguration = ToastConfiguration(),
         customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
     ) -> Toast {
-        return plain(image: .icX, title: text, customConstraints: customConstraints)
+        return plain(image: .icX, title: text, config: config, customConstraints: customConstraints)
     }
-    
+
     public static func text(
         _ text: String,
         config: ToastConfiguration = ToastConfiguration(),
         customConstraints: ((_ make: ConstraintMaker) -> Void)? = nil
     ) -> Toast {
-        return plain(title: text, customConstraints: customConstraints)
+        return plain(title: text, config: config, customConstraints: customConstraints)
     }
     
     public static func plain(
@@ -122,6 +122,7 @@ public class Toast {
     /// - Parameter delay: Time after which the toast is shown
     public func show(after delay: TimeInterval = 0) {
         UIView.performWithoutAnimation {
+            view.translatesAutoresizingMaskIntoConstraints = false
             config.view?.addSubview(view) ?? ToastHelper.topController()?.view.addSubview(view)
             view.createView(for: self)
             view.layoutIfNeeded()

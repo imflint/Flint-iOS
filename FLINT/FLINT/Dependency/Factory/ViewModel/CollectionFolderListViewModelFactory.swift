@@ -10,16 +10,16 @@ import Foundation
 import Presentation
 
 protocol CollectionFolderListViewModelFactory:
-    FetchRecentViewedCollectionsUseCaseFactory &
-    ToggleCollectionBookmarkUseCaseFactory { 
+    FetchPopularCollectionsUseCaseFactory &
+    ToggleCollectionBookmarkUseCaseFactory {
     func makeCollectionFolderListViewModel() -> CollectionFolderListViewModel
 }
 
 extension CollectionFolderListViewModelFactory {
     func makeCollectionFolderListViewModel() -> CollectionFolderListViewModel {
         return CollectionFolderListViewModel(
-            fetchRecentViewedCollectionsUseCase: makeFetchRecentViewedCollectionsUseCase(),
-            toggleCollectionBookmarkUseCase: makeToggleCollectionBookmarkUseCase()  
+            fetchPopularCollectionsUseCase: makeFetchPopularCollectionsUseCase(),  
+            toggleCollectionBookmarkUseCase: makeToggleCollectionBookmarkUseCase()
         )
     }
 }

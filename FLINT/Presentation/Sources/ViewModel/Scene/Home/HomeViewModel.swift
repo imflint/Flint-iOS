@@ -12,17 +12,36 @@ import Domain
 
 public final class HomeViewModel {
     
-    // MARK: - Section / Row
-
+    // MARK: - Output
+    
+    @Published public private(set) var sections: [SectionModel] = []
+    
+    // MARK: - Property
+    
+    private let fetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase
+    private let fetchPopularCollectionsUseCase: FetchPopularCollectionsUseCase
+    private let fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase
+    private let fetchProfileUseCase: FetchProfileUseCase
+    private let fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase
+    private var cancellables = Set<AnyCancellable>()
+    
+    private var userName: String
+    private var flinerCollections: [CollectionEntity] = []
+    private var popularCollections: [CollectionEntity] = []
+    private var recentSavedContents: [ContentInfoEntity] = []
+    private var watchingCollections: [CollectionEntity] = []
+    
+    // MARK: - Model
+    
     public struct SectionModel {
         public let rows: [Row]
     }
-
+    
     public enum TitleHeaderStyle {
         case normal
         case more
     }
-
+    
     public enum Row {
         case greeting(userName: String)
         case header(style: TitleHeaderStyle, title: String, subtitle: String)
@@ -31,52 +50,34 @@ public final class HomeViewModel {
         case recentSavedContents(items: [ContentInfoEntity])
         case ctaButton(title: String)
     }
-
-    // MARK: - Output
-
-    @Published public private(set) var sections: [SectionModel] = []
-
-    // MARK: - Dependencies
-
-    private let fetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase
-    private let fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase
-    private let fetchProfileUseCase: FetchProfileUseCase
-    private let fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase
-    private var cancellables = Set<AnyCancellable>()
-
-    // MARK: - State
-
-    private var userName: String
-    private var flinerCollections: [CollectionEntity] = []
-    private var recentSavedContents: [ContentInfoEntity] = []
-    private var watchingCollections: [CollectionEntity] = []
-
+    
     // MARK: - Init
-
+    
     public init(
         fetchRecommendedCollectionsUseCase: FetchRecommendedCollectionsUseCase,
+        fetchPopularCollectionsUseCase: FetchPopularCollectionsUseCase,
         fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase,
         fetchProfileUseCase: FetchProfileUseCase,
         fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase,
         initialUserName: String = "얀비"
     ) {
         self.fetchRecommendedCollectionsUseCase = fetchRecommendedCollectionsUseCase
+        self.fetchPopularCollectionsUseCase = fetchPopularCollectionsUseCase
         self.fetchBookmarkedContentsUseCase = fetchBookmarkedContentsUseCase
         self.fetchProfileUseCase = fetchProfileUseCase
         self.fetchRecentViewedCollectionsUseCase = fetchRecentViewedCollectionsUseCase
         self.userName = initialUserName
         self.sections = makeSections()
     }
-
+    
     // MARK: - Input
-
+    
     public func load() {
-        
         fetchProfileUseCase(for: .me)
             .manageThread()
             .sink { completion in
                 if case let .failure(error) = completion {
-                    print(" fetchUserProfile failed:", error)
+                    print("fetchUserProfile failed:", error)
                 }
             } receiveValue: { [weak self] profile in
                 guard let self else { return }
@@ -84,7 +85,7 @@ public final class HomeViewModel {
                 self.sections = self.makeSections()
             }
             .store(in: &cancellables)
-
+        
         fetchRecommendedCollectionsUseCase()
             .manageThread()
             .sink { completion in
@@ -93,13 +94,24 @@ public final class HomeViewModel {
                 }
             } receiveValue: { [weak self] items in
                 guard let self else { return }
-
                 self.flinerCollections = items
-
                 self.sections = self.makeSections()
             }
             .store(in: &cancellables)
-
+        
+        fetchPopularCollectionsUseCase()
+            .manageThread()
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("fetchPopularCollections failed:", error)
+                }
+            } receiveValue: { [weak self] items in
+                guard let self else { return }
+                self.popularCollections = items
+                self.sections = self.makeSections()
+            }
+            .store(in: &cancellables)
+        
         fetchBookmarkedContentsUseCase(for: .me)
             .manageThread()
             .sink { completion in
@@ -126,9 +138,8 @@ public final class HomeViewModel {
             }
             .store(in: &cancellables)
     }
-
-    // MARK: - Builder
-
+    
+    // MARK: - Custom Method
     private func makeSections() -> [SectionModel] {
         var result: [SectionModel] = []
 
@@ -166,31 +177,17 @@ public final class HomeViewModel {
 
         result.append(.init(rows: recentRows))
 
-        let watchingRows: [Row]
+        let popularRows: [Row] = [
+            .header(
+                style: .more,
+                title: "인기 컬렉션",
+                subtitle: "사람들이 눈여겨보는 컬렉션들이에요"
+            ),
+            .fliner(items: popularCollections)
+        ]
 
-                if watchingCollections.isEmpty {
-                    watchingRows = [
-                        .header(
-                            style: .normal,
-                            title: "아직 읽어본 컬렉션이 없어요",
-                            subtitle: "천천히 둘러보며 끌리는 취향을 발견해보세요"
-                        ),
-                        .ctaButton(title: "취향 발견하러 가기")
-                    ]
-                } else {
-                    watchingRows = [
-                        .header(
-                            style: .more,
-                            title: "눈여겨보고 있는 컬렉션",
-                            subtitle: "\(userName)님이 최근 살펴본 컬렉션이에요"
-                        ),
-                        .fliner(items: watchingCollections)
-                    ]
-                }
-
-                result.append(.init(rows: watchingRows))
+        result.append(.init(rows: popularRows))
 
         return result
     }
 }
-

@@ -9,12 +9,12 @@ import Foundation
 
 import Domain
 
-protocol SearchContentsUseCaseFactory: SearchRepositoryFactory {
+protocol SearchContentsUseCaseFactory: ContentRepositoryFactory {
     func makeSearchContentsUseCase() -> SearchContentsUseCase
 }
 
 extension SearchContentsUseCaseFactory {
     func makeSearchContentsUseCase() -> SearchContentsUseCase {
-        return DefaultSearchContentsUseCase(searchRepository: makeSearchRepository())
+        return DefaultSearchContentsUseCase(contentRepository: makeContentRepository())
     }
 }

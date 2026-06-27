@@ -66,6 +66,6 @@ public final class LoginViewController: BaseViewController<LoginView> {
     
     private func pushToTabBar() {
         guard let tabBarViewController = viewControllerFactory?.makeTabBarViewController() else { return }
-        navigationController?.pushViewController(tabBarViewController, animated: true)
+        navigationController?.setViewControllers([tabBarViewController], animated: false)
     }
 }

@@ -18,7 +18,7 @@ public protocol OnboardingViewModelInput {
     
     // content select
     func fetchPopularContents()
-    func searchContents(_ keyword: String)
+    func searchContents()
     func clickContent(_ content: ContentEntity)
     func deleteContent(_ content: ContentEntity)
     
@@ -35,6 +35,9 @@ public protocol OnboardingViewModelOutput {
     var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> { get }
     
     // content select
+    var isLoading: CurrentValueSubject<Bool, Never> { get }
+    var keyword: CurrentValueSubject<String?, Never> { get }
+    var filterGenre: CurrentValueSubject<Set<Genre>, Never> { get }
     var requiredContentCount: Int { get }
     var contents: CurrentValueSubject<[ContentEntity], Never> { get }
     var selectedContents: CurrentValueSubject<[ContentEntity], Never> { get }
@@ -61,6 +64,9 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     public let nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
     private var profileImageKey: String?
     
+    public let isLoading: CurrentValueSubject<Bool, Never> = .init(false)
+    public let keyword: CurrentValueSubject<String?, Never> = .init(nil)
+    public let filterGenre: CurrentValueSubject<Set<Genre>, Never> = .init([])
     public let requiredContentCount: Int = 7
     public let contents: CurrentValueSubject<[ContentEntity], Never> = .init([])
     public let selectedContents: CurrentValueSubject<[ContentEntity], Never> = .init([])
@@ -82,6 +88,24 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         self.fetchPopularContentsUseCase = fetchPopularContentsUseCase
         self.searchContentsUseCase = searchContentsUseCase
         self.signupUseCase = signupUseCase
+        
+        bind()
+    }
+    
+    private func bind() {
+        keyword.sink { [weak self] keyword in
+            guard let self else { return }
+            contents.send([])
+            searchContents()
+        }
+        .store(in: &cancellables)
+        
+        filterGenre.sink { [weak self] filterGenre in
+            guard let self else { return }
+            contents.send([])
+            searchContents()
+        }
+        .store(in: &cancellables)
     }
     
     public func uploadProfileImage(_ image: UIImage) {
@@ -110,19 +134,23 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func fetchPopularContents() {
-        fetchPopularContentsUseCase()
+        isLoading.send(true)
+        searchContentsUseCase(keyword: nil, genre: filterGenre.value, mediaType: nil, cursor: nil)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.contents.send(contents)
+                self?.isLoading.send(false)
             }
             .store(in: &cancellables)
     }
     
-    public func searchContents(_ keyword: String) {
-        searchContentsUseCase(keyword: keyword)
+    public func searchContents() {
+        isLoading.send(true)
+        searchContentsUseCase(keyword: keyword.value, genre: filterGenre.value, mediaType: nil, cursor: nil)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.contents.send(contents)
+                self?.isLoading.send(false)
             }
             .store(in: &cancellables)
     }
