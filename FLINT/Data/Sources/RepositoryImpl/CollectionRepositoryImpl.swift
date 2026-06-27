@@ -52,4 +52,8 @@ public final class DefaultCollectionRepository: CollectionRepository {
             .tryMap { try $0.entities }
             .eraseToAnyPublisher()
     }
+    
+    public func reportCollection(collectionId: Int64, reasons: [String], otherDetail: String?) -> AnyPublisher<Void, Error> {
+        return collectionService.reportCollection(collectionId: collectionId, reasons: reasons, otherDetail: otherDetail)
+    }
 }
