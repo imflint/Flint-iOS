@@ -11,6 +11,7 @@ import Moya
 
 public enum HomeAPI {
     case fetchRecommendedCollections
+    case fetchPopularCollections
 }
 
 extension HomeAPI: TargetType {
@@ -18,19 +19,22 @@ extension HomeAPI: TargetType {
         switch self {
         case .fetchRecommendedCollections:
             return "/api/v1/home/recommended-collections"
+            
+        case .fetchPopularCollections:
+            return "/api/v1/home/popular-collections"
         }
     }
     
     public var method: Moya.Method {
         switch self {
-        case .fetchRecommendedCollections:
+        case .fetchRecommendedCollections, .fetchPopularCollections:
             return .get
         }
     }
     
     public var task: Moya.Task {
         switch self {
-        case .fetchRecommendedCollections:
+        case .fetchRecommendedCollections, .fetchPopularCollections:
             return .requestPlain
         }
     }

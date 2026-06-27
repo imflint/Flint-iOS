@@ -12,18 +12,18 @@ import Entity
 import Repository
 
 public protocol SearchContentsUseCase: AnyObject {
-    func callAsFunction(keyword: String) -> AnyPublisher<[ContentEntity], Error>
+    func callAsFunction(keyword: String?, genre: Set<Genre>, mediaType: MediaType?, cursor: String?) -> AnyPublisher<[ContentEntity], Error>
 }
 
 public class DefaultSearchContentsUseCase: SearchContentsUseCase {
     
-    let searchRepository: SearchRepository
+    let contentRepository: ContentRepository
     
-    public init(searchRepository: SearchRepository) {
-        self.searchRepository = searchRepository
+    public init(contentRepository: ContentRepository) {
+        self.contentRepository = contentRepository
     }
     
-    public func callAsFunction(keyword: String) -> AnyPublisher<[ContentEntity], Error> {
-        return searchRepository.searchContents(keyword: keyword)
+    public func callAsFunction(keyword: String?, genre: Set<Genre>, mediaType: MediaType?, cursor: String?) -> AnyPublisher<[ContentEntity], Error> {
+        return contentRepository.searchContents(keyword: keyword, genre: genre, mediaType: mediaType, cursor: cursor, size: 20)
     }
 }

@@ -13,6 +13,9 @@ import Entity
 public protocol CollectionRepository {
     func fetchCollections(cursor: Int64?, size: Int32) -> AnyPublisher<CollectionPagingEntity, Error>
     func createCollection(collectionInfo: CreateCollectionEntity) -> AnyPublisher<Int64, Error>
+    func updateCollection(collectionId: Int64, collectionInfo: CreateCollectionEntity) -> AnyPublisher<Void, Error>
+    func deleteCollection(collectionId: Int64) -> AnyPublisher<Void, Error>
     func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error>
     func fetchRecentViewedCollections() -> AnyPublisher<[CollectionEntity], Error>
+    func reportCollection(collectionId: Int64, reasons: [String], otherDetail: String?) -> AnyPublisher<Void, Error>
 }

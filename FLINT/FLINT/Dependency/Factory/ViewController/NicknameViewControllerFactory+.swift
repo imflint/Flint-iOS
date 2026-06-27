@@ -9,8 +9,8 @@ import Foundation
 
 import Presentation
 
-extension NicknameViewControllerFactory where Self: OnboardingViewModelFactory & ViewControllerFactory {
-    func makeNicknameViewController() -> NicknameViewController {
-        return NicknameViewController(onboardingViewModel: makeOnboardingViewModel(), viewControllerFactory: self)
+extension NicknameViewControllerFactory where Self: ViewControllerFactory {
+    func makeNicknameViewController(onboardingViewModel: OnboardingViewModel) -> NicknameViewController {
+        return NicknameViewController(onboardingViewModel: onboardingViewModel, viewControllerFactory: self)
     }
 }

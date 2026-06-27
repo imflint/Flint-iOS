@@ -32,6 +32,14 @@ public final class DefaultCollectionRepository: CollectionRepository {
             .tryMap { try $0.createdCollectionId }
             .eraseToAnyPublisher()
     }
+
+    public func updateCollection(collectionId: Int64, collectionInfo: CreateCollectionEntity) -> AnyPublisher<Void, Error> {
+        return collectionService.updateCollection(collectionId: collectionId, collectionInfo: collectionInfo)
+    }
+
+    public func deleteCollection(collectionId: Int64) -> AnyPublisher<Void, Error> {
+        return collectionService.deleteCollection(collectionId: collectionId)
+    }
     
     public func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error> {
         return collectionService.fetchCollectionDetail(collectionId: collectionId)
@@ -43,5 +51,9 @@ public final class DefaultCollectionRepository: CollectionRepository {
         return collectionService.fetchRecentViewedCollections()
             .tryMap { try $0.entities }
             .eraseToAnyPublisher()
+    }
+    
+    public func reportCollection(collectionId: Int64, reasons: [String], otherDetail: String?) -> AnyPublisher<Void, Error> {
+        return collectionService.reportCollection(collectionId: collectionId, reasons: reasons, otherDetail: otherDetail)
     }
 }

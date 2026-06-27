@@ -14,6 +14,7 @@ import Moya
 import DTO
 
 public protocol ContentService {
+    func searchContents(keyword: String?, genre: [String], mediaType: String?, cursor: String?, size: Int32) -> AnyPublisher<SearchContentsDTO, Error>
     func fetchMyBookmarkedContents() -> AnyPublisher<ContentsDTO, Error>
     func fetchOTTPlatformsForContent(contentId: Int64) -> AnyPublisher<OTTPlatformsDTO, Error>
 }
@@ -24,6 +25,19 @@ public final class DefaultContentService: ContentService {
 
     public init(contentAPIProvider: MoyaProvider<ContentAPI>) {
         self.contentAPIProvider = contentAPIProvider
+    }
+    
+    public func searchContents(keyword: String?, genre: [String], mediaType: String?, cursor: String?, size: Int32) -> AnyPublisher<SearchContentsDTO, Error> {
+        return contentAPIProvider.requestPublisher(
+            .searchContents(
+                keyword: keyword,
+                genre: genre,
+                mediaType: mediaType,
+                cursor: cursor,
+                size: size
+            )
+        )
+        .mapBaseResponseData(SearchContentsDTO.self)
     }
     
     public func fetchMyBookmarkedContents() -> AnyPublisher<ContentsDTO, Error> {

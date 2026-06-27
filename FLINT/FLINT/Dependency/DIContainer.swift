@@ -21,16 +21,22 @@ typealias DependencyFactory = ViewControllerFactory &
                               OnboardingViewModelFactory &
                               
                               HomeViewModelFactory &
+                              FetchOTTPlatformsForContentUseCaseFactory &  
                               ExploreViewModelFactory &
                               ProfileViewModelFactory &
                               
+<<<<<<< HEAD
+                              ReportViewModelFactory &
+=======
                               SettingViewModelFactory &
                               WithdrawViewModelFactory &
+>>>>>>> network/#201-setting-api
                               
                               CreateCollectionViewModelFactory &
                               AddContentSelectViewModelFactory &
                               CollectionFolderListViewModelFactory &
                               CollectionDetailViewModelFactory &
+                              SavedCollectionListViewModelFactory&
                               StorageRepositoryFactory &
                               UploadCollectionImageUseCaseFactory
 

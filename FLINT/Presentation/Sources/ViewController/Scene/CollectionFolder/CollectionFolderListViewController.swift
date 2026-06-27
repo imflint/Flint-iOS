@@ -64,7 +64,7 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
         setNavigationBar(
             .init(
                 left: .back,
-                title: "눈여겨보고 있는 컬렉션",
+                title: "인기 컬렉션",
                 right: .none,
                 backgroundStyle: .solid(DesignSystem.Color.background)
             )
@@ -136,10 +136,15 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
             if wasBookmarked == false, isBookmarked == true {
                 Toast.action(
                     image: DesignSystem.Icon.Gradient.bookmark,
-                    title: "컬렉션을 저장했어요",
-                    actionTitle: "컬렉션 보기",
-                    action: { _ in
-                        #warning("TODO: - 저장된 컬렉션 뷰로 이동")
+                    title: "취향이 하나 더 쌓였어요",
+                    actionTitle: "저장한 컬렉션 보러가기",
+                    action: { [weak self] _ in
+                        guard let self else { return }
+                        let factory = self.viewControllerFactory
+                            ?? (self.parent as? TabBarViewController)?.viewControllerFactory
+                        guard let factory else { return }
+                        let vc = factory.makeSavedCollectionListViewController()
+                        self.navigationController?.pushViewController(vc, animated: true)
                     }
                 ).show()
                 return

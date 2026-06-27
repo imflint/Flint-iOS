@@ -89,7 +89,7 @@ public extension DefaultAddContentSelectViewModel {
 
         isSearching.send(true)
 
-        searchContentsUseCase(keyword: keyword)
+        searchContentsUseCase(keyword: keyword, genre: [], mediaType: nil, cursor: nil)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.results.send(contents)

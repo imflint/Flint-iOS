@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 import Then
 
+import Kingfisher
+
 public final class CreateCollectionHeaderImageCell: BaseTableViewCell {
     
     public var onTapAddPhoto: (() -> Void)?
@@ -60,7 +62,17 @@ public final class CreateCollectionHeaderImageCell: BaseTableViewCell {
     }
     
     public func configure(with image: UIImage?) {
+        headerImageView.kf.cancelDownloadTask()
         headerImageView.image = image ?? .imgBackgroundGradiantMiddle
+    }
+
+    public func configure(with imageURL: URL?) {
+        headerImageView.kf.cancelDownloadTask()
+        if let imageURL {
+            headerImageView.kf.setImage(with: imageURL, placeholder: UIImage.imgBackgroundGradiantMiddle)
+        } else {
+            headerImageView.image = .imgBackgroundGradiantMiddle
+        }
     }
     
     @objc private func didTapAddPhoto() {

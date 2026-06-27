@@ -25,6 +25,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
     private enum Row {
         case header
         case description
+        case filmImage(Int)
         case film(Int)
         case saveUsers
     }
@@ -36,10 +37,17 @@ public final class CollectionDetailViewController: BaseViewController<Collection
     private var entity: CollectionDetailEntity?
     private var rows: [Row] = [.header, .description, .saveUsers]
     private var bookmarkedUsers: CollectionBookmarkUsersEntity?
+    private var isOwner: Bool = false
+    private var kebabMenu: KebabMenu?
+
+    /// kebab → 신고 탭 시 호출. 인자는 신고 대상 컬렉션 id.
+    /// 신고 화면은 별도 담당자가 구현 예정이므로, 호출부에서 closure 만 주입하면 됨.
+    public var onTapReport: ((Int64) -> Void)?
 
     // Input
     private let viewDidLoadSubject = PassthroughSubject<Void, Never>()
     private let tapHeaderSaveSubject = PassthroughSubject<Bool, Never>()
+    private let tapContentBookmarkSubject = PassthroughSubject<Int64, Never>()
 
     // MARK: - Init
 
@@ -58,7 +66,12 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         super.viewDidLoad()
         view.backgroundColor = DesignSystem.Color.background
         setupTableView()
-        setNavigationBar(.init(left: .back, backgroundStyle: .clear))
+        setNavigationBar(
+            .init(left: .back, right: .kebab, backgroundStyle: .clear),
+            onTapRight: { [weak self] in
+                self?.didTapKebab()
+            }
+        )
     }
 
     // MARK: - Bind
@@ -66,7 +79,8 @@ public final class CollectionDetailViewController: BaseViewController<Collection
     public override func bind() {
         let input = CollectionDetailViewModel.Input(
             viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher(),
-            tapHeaderSave: tapHeaderSaveSubject.eraseToAnyPublisher()
+            tapHeaderSave: tapHeaderSaveSubject.eraseToAnyPublisher(),
+            tapContentBookmark: tapContentBookmarkSubject.eraseToAnyPublisher()
         )
 
         let output = viewModel.transform(input: input)
@@ -80,13 +94,28 @@ public final class CollectionDetailViewController: BaseViewController<Collection
                     break
                 case .loading:
                     break
-                case .loaded(let detail, let bookmarkedUsers):
+                case .loaded(let detail, let bookmarkedUsers, let isOwner):
                     self.entity = detail
                     self.bookmarkedUsers = bookmarkedUsers
+                    self.isOwner = isOwner
                     self.apply(entity: detail)
                 case .failed(let message):
                     print("Collection detail load failed:", message)
                 }
+            }
+            .store(in: &cancellables)
+
+        viewModel.deleteSuccess
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            .store(in: &cancellables)
+
+        viewModel.deleteFailure
+            .receive(on: DispatchQueue.main)
+            .sink { error in
+                print("Collection delete failed:", error)
             }
             .store(in: &cancellables)
 
@@ -97,11 +126,75 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         self.entity = entity
 
         var result: [Row] = [.header, .description]
-        result += (0..<entity.contents.count).map { .film($0) }
+        result += entity.contents.enumerated().flatMap { idx, content -> [Row] in
+            content.customImageUrls.isEmpty ? [.film(idx)] : [.filmImage(idx), .film(idx)]
+        }
         result += [.saveUsers]
         self.rows = result
 
         rootView.tableView.reloadData()
+    }
+
+    // MARK: - Action
+
+    private func didTapKebab() {
+        kebabMenu?.dismiss()
+
+        let items: [KebabMenuItem] = isOwner
+            ? [
+                KebabMenuItem(title: "수정") { [weak self] in
+                    self?.didTapEdit()
+                },
+                KebabMenuItem(
+                    title: "삭제",
+                    titleColor: DesignSystem.Color.error500
+                ) { [weak self] in
+                    self?.didTapDelete()
+                }
+            ]
+            : [
+                KebabMenuItem(title: "신고") { [weak self] in
+                    self?.didTapReport()
+                }
+            ]
+
+        let menu = KebabMenu(items: items)
+        let anchorFrame = navigationBarView.rightButtonFrame(in: view)
+        menu.show(in: view, anchorFrame: anchorFrame)
+        kebabMenu = menu
+    }
+
+    private func didTapEdit() {
+        guard let entity, let collectionId = Int64(entity.id) else { return }
+        guard let factory = viewControllerFactory else { return }
+        let editVC = factory.makeEditCollectionViewController(collectionId: collectionId, prefill: entity)
+        navigationController?.pushViewController(editVC, animated: true)
+    }
+
+    private func didTapDelete() {
+        let hostView: UIView = navigationController?.view ?? view
+        var modalRef: Modal?
+        let modal = Modal(
+            image: DesignSystem.Icon.Gradient.trash,
+            title: "컬렉션을 삭제할까요?",
+            caption: "삭제한 컬렉션은 복구할 수 없어요.",
+            leftButtonTitle: "취소",
+            rightButtonTitle: "삭제",
+            rightButtonColor: DesignSystem.Color.error500,
+            onLeft: { _ in modalRef?.dismiss() },
+            onRight: { [weak self] _ in
+                modalRef?.dismiss {
+                    self?.viewModel.deleteCollection()
+                }
+            }
+        )
+        modalRef = modal
+        modal.show(in: hostView)
+    }
+
+    private func didTapReport() {
+        guard let entity, let collectionId = Int64(entity.id) else { return }
+        onTapReport?(collectionId)
     }
     
     private func presentSavedUsersBottomSheet(users: [SavedUserRowItem]) {
@@ -172,6 +265,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
 
         tableView.register(CollectionDetailHeaderTableViewCell.self)
         tableView.register(CollectionDetailDescriptionTableViewCell.self)
+        tableView.register(CollectionDetailFilmImageTableViewCell.self)
         tableView.register(CollectionDetailFilmTableViewCell.self)
         tableView.register(CollectionSaveUserTableViewCell.self)
 
@@ -203,10 +297,28 @@ extension CollectionDetailViewController: UITableViewDataSource {
 
             let title = entity?.title ?? ""
             let isSaved = entity?.isBookmarked ?? false
+            let thumbnailURL = entity?.thumbnailUrl
 
-            cell.configure(title: title, isSaved: isSaved)
+            cell.configure(title: title, isSaved: isSaved, thumbnailURL: thumbnailURL)
             cell.onTapSave = { [weak self] isSaved in
-                self?.tapHeaderSaveSubject.send(isSaved)
+                guard let self else { return }
+                self.tapHeaderSaveSubject.send(isSaved)
+
+                if isSaved {
+                    Toast.action(
+                        image: DesignSystem.Icon.Gradient.bookmark,
+                        title: "취향이 하나 더 쌓였어요",
+                        actionTitle: "저장한 컬렉션 보러가기",
+                        action: { [weak self] _ in
+                            guard let self else { return }
+                            guard let factory = self.viewControllerFactory else { return }
+                            let vc = factory.makeSavedCollectionListViewController()
+                            self.navigationController?.pushViewController(vc, animated: true)
+                        }
+                    ).show()
+                } else {
+                    Toast.text("컬렉션 저장이 취소되었어요").show()
+                }
             }
             return cell
 
@@ -231,6 +343,19 @@ extension CollectionDetailViewController: UITableViewDataSource {
             )
             return cell
 
+        case .filmImage(let idx):
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: CollectionDetailFilmImageTableViewCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionDetailFilmImageTableViewCell
+
+            cell.selectionStyle = .none
+
+            let urls = entity?.contents[safe: idx]?.customImageUrls ?? []
+            cell.configure(imageURLs: urls)
+
+            return cell
+
         case .film(let idx):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: CollectionDetailFilmTableViewCell.reuseIdentifier,
@@ -250,6 +375,18 @@ extension CollectionDetailViewController: UITableViewDataSource {
 
             cell.onTapRevealSpoiler = { [weak cell] in
                 cell?.configureSpoiler(isSpoiler: false)
+            }
+
+            cell.onTapBookmark = { [weak self] isBookmarked, _ in
+                guard let self else { return }
+                guard let contentId = Int64(item.id) else { return }
+                self.tapContentBookmarkSubject.send(contentId)
+
+                if isBookmarked {
+                    Toast.text("작품을 저장했어요").show()
+                } else {
+                    Toast.text("작품 저장을 취소했어요").show()
+                }
             }
 
             return cell

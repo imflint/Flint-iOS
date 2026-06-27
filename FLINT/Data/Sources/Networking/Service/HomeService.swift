@@ -15,6 +15,7 @@ import DTO
 
 public protocol HomeService {
     func fetchRecommendedCollections() -> AnyPublisher<CollectionsDTO, Error>
+    func fetchPopularCollections() -> AnyPublisher<CollectionsDTO, Error>
 }
 
 public final class DefaultHomeService: HomeService {
@@ -29,5 +30,9 @@ public final class DefaultHomeService: HomeService {
         return homeAPIProvider.requestPublisher(.fetchRecommendedCollections)
             .mapBaseResponseData(CollectionsDTO.self)
     }
+    
+    public func fetchPopularCollections() -> AnyPublisher<CollectionsDTO, Error> {  // ← 추가
+        return homeAPIProvider.requestPublisher(.fetchPopularCollections)
+            .mapBaseResponseData(CollectionsDTO.self)
+    }
 }
-

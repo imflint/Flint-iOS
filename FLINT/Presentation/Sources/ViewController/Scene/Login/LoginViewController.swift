@@ -60,12 +60,12 @@ public final class LoginViewController: BaseViewController<LoginView> {
     }
     
     private func register() {
-        guard let nicknameViewController = viewControllerFactory?.makeNicknameViewController() else { return }
-        navigationController?.pushViewController(nicknameViewController, animated: true)
+        guard let termsAgreementViewController = viewControllerFactory?.makeTermsAgreementViewController() else { return }
+        navigationController?.pushViewController(termsAgreementViewController, animated: true)
     }
     
     private func pushToTabBar() {
         guard let tabBarViewController = viewControllerFactory?.makeTabBarViewController() else { return }
-        navigationController?.pushViewController(tabBarViewController, animated: true)
+        navigationController?.setViewControllers([tabBarViewController], animated: false)
     }
 }

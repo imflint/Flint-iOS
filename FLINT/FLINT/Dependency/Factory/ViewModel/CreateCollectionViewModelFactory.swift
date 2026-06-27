@@ -9,14 +9,16 @@ import Foundation
 
 import Presentation
 
-protocol CreateCollectionViewModelFactory: CreateCollectionUseCaseFactory, UploadCollectionImageUseCaseFactory {
-    func makeCreateCollectionViewModel() -> CreateCollectionViewModel
+protocol CreateCollectionViewModelFactory: CreateCollectionUseCaseFactory, UpdateCollectionUseCaseFactory, UploadCollectionImageUseCaseFactory {
+    func makeCreateCollectionViewModel(mode: CreateCollectionMode) -> CreateCollectionViewModel
 }
 
 extension CreateCollectionViewModelFactory {
-    func makeCreateCollectionViewModel() -> CreateCollectionViewModel {
+    func makeCreateCollectionViewModel(mode: CreateCollectionMode = .create) -> CreateCollectionViewModel {
         return DefaultCreateCollectionViewModel(
+            mode: mode,
             createCollectionUseCase: makeCreateCollectionUseCase(),
+            updateCollectionUseCase: makeUpdateCollectionUseCase(),
             uploadImageUseCase: makeUploadCollectionImageUseCase()
         )
     }

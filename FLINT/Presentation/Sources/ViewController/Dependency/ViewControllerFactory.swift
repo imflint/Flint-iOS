@@ -22,6 +22,7 @@ public typealias ViewControllerFactory =
     ContentSelectViewControllerFactory &
 //    OttSelectViewControllerFactory &
     OnboardingDoneViewControllerFactory &
+    TermsAgreementViewControllerFactory &
     
     // MARK: - Main
     
@@ -31,9 +32,10 @@ public typealias ViewControllerFactory =
     ProfileViewControllerFactory &
     
     // MARK: - Collection
-    
+
     CollectionFolderListViewControllerFactory &
     CollectionDetailViewControllerFactory &
+    SavedCollectionListViewControllerFactory &
     AddContentSelectViewControllerFactory &
     CreateCollectionViewControllerFactory &
     SettingViewControllerFactory &

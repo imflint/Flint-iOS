@@ -9,8 +9,12 @@ import Foundation
 
 import Presentation
 
-extension HomeViewControllerFactory where Self: HomeViewModelFactory & ViewControllerFactory {
+extension HomeViewControllerFactory where Self: HomeViewModelFactory & FetchOTTPlatformsForContentUseCaseFactory & ViewControllerFactory {
     func makeHomeViewController() -> HomeViewController {
-        return HomeViewController(viewModel: makeHomeViewModel(), viewControllerFactory: self)
+        return HomeViewController(
+            viewModel: makeHomeViewModel(),
+            fetchOTTPlatformsForContentUseCase: makeFetchOTTPlatformsForContentUseCase(),
+            viewControllerFactory: self
+        )
     }
 }

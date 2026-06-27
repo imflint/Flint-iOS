@@ -10,7 +10,18 @@ import Foundation
 import Entity
 
 public struct ContentsDTO: Codable {
-    public let contents: [ContentDTO]?
+    public let data: [ContentDTO]?
+    public let meta: MetaDTO?
+}
+
+public struct MetaDTO: Codable {
+    public let type: String?
+    public let returned: Int?
+    public let nextCursor: String?
+    public let page: Int?
+    public let size: Int?
+    public let totalElements: String?
+    public let totalPages: Int?
 }
 
 extension ContentsDTO {
@@ -19,6 +30,7 @@ extension ContentsDTO {
         public let title: String?
         public let imageUrl: String?
         public let year: Int?
+        public let bookmarkCount: Int?
         public let getOttSimpleList: [OttSimpleDTO]?
     }
     
@@ -31,7 +43,7 @@ extension ContentsDTO {
 extension ContentsDTO {
     public var entities: [ContentInfoEntity] {
         get throws {
-            return try contents?.map { try $0.entity } ?? []
+            return try data?.map { try $0.entity } ?? []
         }
     }
 }
