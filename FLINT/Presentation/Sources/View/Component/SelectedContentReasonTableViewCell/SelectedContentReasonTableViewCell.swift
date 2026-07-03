@@ -337,10 +337,12 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     }
     
     private func makePhotoWrapper(image: UIImage, realIndex: Int) -> UIView {
-        let wrapper = UIView().then { $0.clipsToBounds = true }
-        
+        let wrapper = UIView().then {
+            $0.clipsToBounds = true
+            $0.backgroundColor = .flintGray800
+        }
         let imageView = UIImageView().then {
-            $0.contentMode = .scaleAspectFill
+            $0.contentMode = .scaleAspectFit
             $0.clipsToBounds = true
             $0.image = image
         }
