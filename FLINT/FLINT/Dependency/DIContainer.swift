@@ -24,8 +24,9 @@ typealias DependencyFactory = ViewControllerFactory &
                               FetchOTTPlatformsForContentUseCaseFactory &  
                               ExploreViewModelFactory &
                               ProfileViewModelFactory &
-                              
-                              ReportViewModelFactory &
+
+                              SettingViewModelFactory &
+                              WithdrawViewModelFactory &
                               
                               CreateCollectionViewModelFactory &
                               AddContentSelectViewModelFactory &

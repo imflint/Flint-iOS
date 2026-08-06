@@ -314,7 +314,8 @@ private extension SettingViewController {
     }
     
     func showWithdrawalAlert() {
-        print("Navigate to Withdrawal Page")
+        guard let vc = viewControllerFactory?.makeWithdrawalViewController() else { return }
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func handleLogoutSuccess() {

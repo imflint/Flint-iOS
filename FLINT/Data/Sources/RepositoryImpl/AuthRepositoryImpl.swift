@@ -33,7 +33,11 @@ public final class DefaultAuthRepository: AuthRepository {
             .eraseToAnyPublisher()
     }
     
-    public func withDraw() -> AnyPublisher<Void, Error> {
-        return authService.withDraw()
+    public func logout() -> AnyPublisher<Void, Error> {
+        return authService.logout()
+    }
+    
+    public func withDraw(agreedTermsIds: [String]) -> AnyPublisher<Void, Error> {
+        return authService.withDraw(agreedTermsIds: agreedTermsIds)
     }
 }

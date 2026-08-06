@@ -18,7 +18,8 @@ import DTO
 public protocol AuthService {
     func signup(userInfo: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error>
     func socialVerify(socialAuthCredential: SocialVerifyRequestDTO) -> AnyPublisher<SocialVerifyResponseDTO, Error>
-    func withDraw() -> AnyPublisher<Void, Error>
+    func logout() -> AnyPublisher<Void, Error>
+    func withDraw(agreedTermsIds: [String]) -> AnyPublisher<Void, Error>
 }
 
 public final class DefaultAuthService: AuthService {
@@ -67,10 +68,24 @@ public final class DefaultAuthService: AuthService {
             .eraseToAnyPublisher()
     }
     
-    public func withDraw() -> AnyPublisher<Void, Error> {
-        authAPIProvider.requestPublisher(.withdraw)
-            .mapBaseResponseData(BlankData.self)
-            .map({ _ in })
+    public func logout() -> AnyPublisher<Void, Error> {
+        guard let refreshToken = tokenStorage.load(type: .refreshToken) else {
+            return Fail(error: TokenError.noToken).eraseToAnyPublisher()
+        }
+        return authAPIProvider.requestPublisher(.logout(refreshToken: refreshToken))
+            .logged()
+            .tryMap { [weak self] response in
+                guard (200..<300).contains(response.statusCode) else {
+                    throw MoyaError.statusCode(response)
+                }
+                self?.tokenStorage.clearAll()
+            }
             .eraseToAnyPublisher()
+    }
+    
+    public func withDraw(agreedTermsIds: [String]) -> AnyPublisher<Void, Error> {
+        return authAPIProvider.requestPublisher(.withdraw(agreedTermsIds: agreedTermsIds))
+            .logged()
+            .mapBaseResponseEmpty()
     }
 }

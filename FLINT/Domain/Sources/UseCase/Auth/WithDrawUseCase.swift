@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol WithDrawUseCase {
-    func callAsFunction() -> AnyPublisher<Void, Error>
+    func callAsFunction(agreedTermsIds: [String]) -> AnyPublisher<Void, Error>
 }
 
 public final class DefaultWithDrawUseCase: WithDrawUseCase {
@@ -23,7 +23,7 @@ public final class DefaultWithDrawUseCase: WithDrawUseCase {
         self.authRepository = authRepository
     }
     
-    public func callAsFunction() -> AnyPublisher<Void, Error> {
-        return authRepository.withDraw()
+    public func callAsFunction(agreedTermsIds: [String]) -> AnyPublisher<Void, Error> {
+        return authRepository.withDraw(agreedTermsIds: agreedTermsIds)
     }
 }
