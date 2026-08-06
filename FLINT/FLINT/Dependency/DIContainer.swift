@@ -33,6 +33,7 @@ typealias DependencyFactory = ViewControllerFactory &
                               CollectionFolderListViewModelFactory &
                               CollectionDetailViewModelFactory &
                               SavedCollectionListViewModelFactory&
+                              ReportViewModelFactory & 
                               StorageRepositoryFactory &
                               UploadCollectionImageUseCaseFactory
 

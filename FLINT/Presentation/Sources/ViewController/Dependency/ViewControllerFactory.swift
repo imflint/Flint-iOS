@@ -39,4 +39,5 @@ public typealias ViewControllerFactory =
     AddContentSelectViewControllerFactory &
     CreateCollectionViewControllerFactory &
     SettingViewControllerFactory &
-    WithdrawalViewControllerFactory
+    WithdrawalViewControllerFactory &
+    ReportViewControllerFactory
