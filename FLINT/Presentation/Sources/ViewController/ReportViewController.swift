@@ -11,6 +11,14 @@ import Combine
 import View
 import ViewModel
 
+// MARK: - ReportViewControllerFactory
+
+public protocol ReportViewControllerFactory {
+    func makeReportViewController(collectionId: Int64) -> ReportViewController
+}
+
+// MARK: - ReportViewController
+
 public final class ReportViewController: BaseViewController<ReportView> {
     
     // MARK: - Property
@@ -29,10 +37,9 @@ public final class ReportViewController: BaseViewController<ReportView> {
     
     // MARK: - Init
     
-    public init(viewModel: ReportViewModel) {
+    public init(viewModel: ReportViewModel, viewControllerFactory: (any ViewControllerFactory)?) {
         self.viewModel = viewModel
-        // FIXME: viewControllerFactor 주입
-        super.init(viewControllerFactory: nil)
+        super.init(viewControllerFactory: viewControllerFactory)
     }
     
     required init?(coder: NSCoder) {
@@ -74,8 +81,8 @@ public final class ReportViewController: BaseViewController<ReportView> {
         output.submitSuccess
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                print("신고 성공")
                 self?.navigationController?.popViewController(animated: true)
+                Toast.text("신고가 접수되었어요").show()
             }
             .store(in: &cancellables)
         
@@ -98,13 +105,13 @@ public final class ReportViewController: BaseViewController<ReportView> {
     }
     
     private func setupTextViewObserver() {
-          NotificationCenter.default.addObserver(
-              self,
-              selector: #selector(textViewDidBeginEditing),
-              name: UITextView.textDidBeginEditingNotification,
-              object: rootView.textView
-          )
-      }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textViewDidBeginEditing),
+            name: UITextView.textDidBeginEditingNotification,
+            object: rootView.textView
+        )
+    }
     
     private func setupActions() {
         for (index, button) in rootView.radioButtons.enumerated() {
@@ -150,7 +157,6 @@ public final class ReportViewController: BaseViewController<ReportView> {
         selectedRadioIndex = 4
         radioSelectionSubject.send(4)
     }
-        
     
     // MARK: - Custom Method
     

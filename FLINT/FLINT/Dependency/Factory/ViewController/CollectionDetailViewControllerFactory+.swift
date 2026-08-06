@@ -11,6 +11,10 @@ import Presentation
 
 extension CollectionDetailViewControllerFactory where Self: CollectionDetailViewModelFactory & ViewControllerFactory {
     func makeCollectionDetailViewController(collectionId: Int64) -> CollectionDetailViewController {
-        return CollectionDetailViewController(viewModel: makeCollectionDetailViewModel(collectionId: collectionId), viewControllerFactory: self)
+        let vc = CollectionDetailViewController(viewModel: makeCollectionDetailViewModel(collectionId: collectionId), viewControllerFactory: self)
+        vc.onTapReport = { collectionId in
+            let reportVC = vc.viewControllerFactory?.makeReportViewController(collectionId: collectionId)
+        }
+        return vc
     }
 }

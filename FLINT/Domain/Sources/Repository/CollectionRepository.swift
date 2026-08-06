@@ -17,4 +17,5 @@ public protocol CollectionRepository {
     func deleteCollection(collectionId: Int64) -> AnyPublisher<Void, Error>
     func fetchCollectionDetail(collectionId: Int64) -> AnyPublisher<CollectionDetailEntity, Error>
     func fetchRecentViewedCollections() -> AnyPublisher<[CollectionEntity], Error>
+    func reportCollection(collectionId: Int64, reasons: [String], otherDetail: String?) -> AnyPublisher<Void, Error>
 }

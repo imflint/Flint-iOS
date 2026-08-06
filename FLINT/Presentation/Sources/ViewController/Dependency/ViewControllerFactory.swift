@@ -18,11 +18,11 @@ public typealias ViewControllerFactory =
     
     // MARK: - Onboarding
     
-    TermsAgreementViewControllerFactory &
     NicknameViewControllerFactory &
     ContentSelectViewControllerFactory &
 //    OttSelectViewControllerFactory &
     OnboardingDoneViewControllerFactory &
+    TermsAgreementViewControllerFactory &
     
     // MARK: - Main
     
@@ -37,4 +37,5 @@ public typealias ViewControllerFactory =
     CollectionDetailViewControllerFactory &
     SavedCollectionListViewControllerFactory &
     AddContentSelectViewControllerFactory &
-    CreateCollectionViewControllerFactory
+    CreateCollectionViewControllerFactory &
+    ReportViewControllerFactory

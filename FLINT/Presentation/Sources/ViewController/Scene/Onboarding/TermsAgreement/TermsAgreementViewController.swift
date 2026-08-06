@@ -28,6 +28,7 @@ public final class TermsAgreementViewController: BaseViewController<TermsAgreeme
     
     // MARK: - Basic
     
+    //TODO: - 오류떠서 우선 수정
     public init(onboardingViewModel: OnboardingViewModel, viewControllerFactory: ViewControllerFactory) {
         self.onboardingViewModel = onboardingViewModel
         super.init(viewControllerFactory: viewControllerFactory)

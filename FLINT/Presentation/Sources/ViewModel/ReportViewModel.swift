@@ -8,17 +8,27 @@
 import Foundation
 import Combine
 
+import Domain
+
 public final class ReportViewModel {
     
     // MARK: - Property
     
+    private let reportCollectionUseCase: ReportCollectionUseCase
+    private let collectionId: Int64
     private var cancellables = Set<AnyCancellable>()
-    private var selectedRadioIndex: Int?
+    
+    private static let reasonKeys = ["ABUSE", "OBSCENE", "SPAM", "COPYRIGHT", "OTHER"]
+    
+    private var selectedRadioIndex: Int = -1
     private var textInput: String = ""
     
     // MARK: - Init
     
-    public init() {}
+    public init(reportCollectionUseCase: ReportCollectionUseCase, collectionId: Int64) {
+        self.reportCollectionUseCase = reportCollectionUseCase
+        self.collectionId = collectionId
+    }
     
     // MARK: - Input
     
@@ -50,15 +60,11 @@ public final class ReportViewModel {
     
     public func transform(input: Input) -> Output {
         input.radioSelected
-            .sink { [weak self] index in
-                self?.selectedRadioIndex = index
-            }
+            .sink { [weak self] index in self?.selectedRadioIndex = index }
             .store(in: &cancellables)
         
         input.textInput
-            .sink { [weak self] text in
-                self?.textInput = text
-            }
+            .sink { [weak self] text in self?.textInput = text }
             .store(in: &cancellables)
         
         let isSubmitEnabledPublisher = Publishers.CombineLatest(
@@ -66,39 +72,36 @@ public final class ReportViewModel {
             input.textInput.prepend("")
         )
         .map { radioIndex, text -> Bool in
-            if radioIndex == -1 {
-                return false
-            }
-            if radioIndex == 4 {
-                return !text.isEmpty
-            }
+            if radioIndex == -1 { return false }
+            if radioIndex == 4 { return !text.isEmpty }
             return true
         }
         .eraseToAnyPublisher()
         
         let submitResult = input.submitButtonTapped
             .flatMap { [weak self] _ -> AnyPublisher<Result<Void, Error>, Never> in
-                guard let self = self else {
+                guard let self, self.selectedRadioIndex >= 0 else {
                     return Empty().eraseToAnyPublisher()
                 }
-                return self.submitReport()
+                let reason = Self.reasonKeys[self.selectedRadioIndex]
+                let otherDetail = self.selectedRadioIndex == 4 ? self.textInput : nil
+                return self.reportCollectionUseCase(collectionId: self.collectionId, reasons: [reason], otherDetail: otherDetail)
+                    .map { Result.success($0) }
+                    .catch { Just(Result.failure($0)) }
+                    .eraseToAnyPublisher()
             }
             .share()
         
         let submitSuccess = submitResult
             .compactMap { result -> Void? in
-                if case .success = result {
-                    return ()
-                }
+                if case .success = result { return () }
                 return nil
             }
             .eraseToAnyPublisher()
         
         let submitError = submitResult
             .compactMap { result -> Error? in
-                if case .failure(let error) = result {
-                    return error
-                }
+                if case .failure(let error) = result { return error }
                 return nil
             }
             .eraseToAnyPublisher()
@@ -108,15 +111,5 @@ public final class ReportViewModel {
             submitSuccess: submitSuccess,
             submitError: submitError
         )
-    }
-    
-    // MARK: - Custom Method
-    
-    private func submitReport() -> AnyPublisher<Result<Void, Error>, Never> {
-        // TODO: UseCase 호출
-        
-        // 임시 구현
-        return Just(Result.success(()))
-            .eraseToAnyPublisher()
     }
 }
