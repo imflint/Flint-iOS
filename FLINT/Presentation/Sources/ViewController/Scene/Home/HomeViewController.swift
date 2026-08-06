@@ -33,6 +33,7 @@ public final class HomeViewController: BaseViewController<HomeView> {
          self.viewModel = viewModel
          self.fetchOTTPlatformsForContentUseCase = fetchOTTPlatformsForContentUseCase
          super.init(viewControllerFactory: viewControllerFactory)
+
          self.viewControllerFactory = viewControllerFactory
     }
     
