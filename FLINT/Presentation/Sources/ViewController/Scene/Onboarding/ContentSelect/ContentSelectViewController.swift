@@ -79,7 +79,7 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         rootView.layoutIfNeeded()
         rootView.contentCollectionView.contentOffset.y = -rootView.contentCollectionView.contentInset.top
         
-        rootView.nextButton.addAction(UIAction(weak: self, handler: ContentSelectViewController.pushOnboardingDoneViewController(_:)), for: .touchUpInside)
+        rootView.nextButton.addAction(UIAction(weak: self, handler: ContentSelectViewController.touchUpInsideNextButton(_:)), for: .touchUpInside)
     }
     
     public override func bind() {
@@ -127,9 +127,9 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         .store(in: &cancellables)
     }
     
-    private func pushOnboardingDoneViewController(_ action: UIAction) {
-        guard let onboardingDoneViewController = viewControllerFactory?.makeOnboardingDoneViewController(onboardingViewModel: onboardingViewModel) else { return }
-        navigationController?.pushViewController(onboardingDoneViewController, animated: true)
+    private func touchUpInsideNextButton(_ action: UIAction) {
+        guard let nicknameViewController = viewControllerFactory?.makeNicknameViewController(onboardingViewModel: onboardingViewModel) else { return }
+        navigationController?.pushViewController(nicknameViewController, animated: true)
     }
 }
 

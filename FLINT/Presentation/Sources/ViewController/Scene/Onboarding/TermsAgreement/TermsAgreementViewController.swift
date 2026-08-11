@@ -66,8 +66,8 @@ public final class TermsAgreementViewController: BaseViewController<TermsAgreeme
     }
     
     @objc private func touchUpInsideNextButton(_ sender: UIButton) {
-        guard let nicknameViewController = viewControllerFactory?.makeNicknameViewController(onboardingViewModel: onboardingViewModel) else { return }
-        navigationController?.pushViewController(nicknameViewController, animated: true)
+        guard let contentSelectViewController = viewControllerFactory?.makeContentSelectViewController(onboardingViewModel: onboardingViewModel) else { return }
+        navigationController?.pushViewController(contentSelectViewController, animated: true)
     }
 }
 
