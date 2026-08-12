@@ -80,6 +80,7 @@ public final class SettingViewController: BaseViewController<SettingView> {
         ))
         setupTableView()
         setupActions()
+        bind()
     }
     
     // MARK: - Bind
@@ -164,7 +165,7 @@ extension SettingViewController {
                     
                 case let .menu(menuItem):
                     let cell = tableView.dequeueReusableCell(withIdentifier: SettingMenuCell.identifier, for: indexPath) as! SettingMenuCell
-                    cell.configure(with: menuItem.title)  
+                    cell.configure(with: menuItem.title)
                     return cell
                 }
             }
@@ -178,7 +179,8 @@ extension SettingViewController {
         
         snapshot.appendSections([.account])
         if let profile = profile {
-            snapshot.appendItems([.account(profile.id)], toSection: .account)
+            let displayText = profile.email.isEmpty ? profile.id : profile.email
+            snapshot.appendItems([.account(displayText)], toSection: .account)
         }
         
         snapshot.appendSections([.menu])
@@ -209,7 +211,7 @@ extension SettingViewController: UITableViewDelegate {
         
         switch section {
         case .account:
-            settingViewModel.accountTapped()
+            break
             
         case .menu:
             guard let item = tableViewDataSource?.itemIdentifier(for: indexPath),
@@ -319,7 +321,6 @@ private extension SettingViewController {
     }
     
     func handleLogoutSuccess() {
-        // 우선 .. 로그인 화면으로 이동 로직읽어봐야함
         guard let loginVC = viewControllerFactory?.makeLoginViewController() else { return }
         
         let navigationController = UINavigationController(rootViewController: loginVC)

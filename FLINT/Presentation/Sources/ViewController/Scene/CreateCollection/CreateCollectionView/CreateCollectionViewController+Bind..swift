@@ -254,7 +254,7 @@ extension CreateCollectionViewController {
         }
 
         if isTitleEmpty || isVisibilityEmpty || isContentInsufficient || hasEmptyReason {
-            Toast.text("필수 항목을 모두 입력해주세요").show()
+            Toast.failure("필수 항목을 모두 입력해주세요").show()
         }
 
         if let indexPath = firstErrorIndexPath {

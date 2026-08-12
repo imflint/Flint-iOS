@@ -36,6 +36,7 @@ extension CollectionDTO {
                 user: UserProfileEntity(
                     id: userId ?? "",
                     nickname: nickname ?? "",
+                    email: "",
                     profileImageUrl: URL(string: profileImageUrl ?? ""),
                     role: .unknown
                 )
