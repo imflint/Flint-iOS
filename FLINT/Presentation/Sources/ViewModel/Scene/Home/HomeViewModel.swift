@@ -190,4 +190,21 @@ public final class HomeViewModel {
 
         return result
     }
+    
+    public func reloadBookmarkedContents() {
+        fetchBookmarkedContentsUseCase(for: .me)
+            .manageThread()
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("fetchMyBookmarkedContents failed:", error)
+                }
+            } receiveValue: { [weak self] contents in
+                guard let self else { return }
+                self.recentSavedContents = contents
+                self.sections = self.makeSections()
+            }
+            .store(in: &cancellables)
+    }
 }
+
+
