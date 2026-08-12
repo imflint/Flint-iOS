@@ -218,7 +218,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
             $0.centerY.equalTo(checkboxToggleView)
             $0.leading.equalToSuperview().inset(Metric.horizontalInset)
             $0.width.equalTo(48)
-            $0.height.equalTo(28)
+            $0.height.equalTo(48)
         }
         
         checkboxToggleView.snp.makeConstraints {
@@ -287,6 +287,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         photos = []
         photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         applyPhotoLayout(hasPhotos: false)
+        updateAddPhotoButton()
     }
     
     private func configurePhotos(_ newPhotos: [UIImage]) {
@@ -294,6 +295,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         applyPhotoLayout(hasPhotos: !photos.isEmpty)
+        updateAddPhotoButton()  // 추가
         guard !photos.isEmpty else { return }
         
         pageControl.numberOfPages = photos.count
@@ -368,6 +370,12 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         }
         
         return wrapper
+    }
+    
+    private func updateAddPhotoButton() {
+        let image = photos.count >= 5 ? UIImage.icAddPhotoDisable : UIImage.icAddPhoto
+        addPhotoButton.setImage(image, for: .normal)
+        addPhotoButton.isUserInteractionEnabled = photos.count < 5
     }
     
     // MARK: - Action
