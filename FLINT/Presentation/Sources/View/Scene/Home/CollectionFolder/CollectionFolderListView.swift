@@ -5,7 +5,6 @@
 //  Created by 소은 on 1/20/26.
 //
 
-
 import UIKit
 
 import SnapKit
@@ -13,7 +12,7 @@ import Then
 
 public final class CollectionFolderListView: BaseView {
     
-    //MARK: UI
+    // MARK: - UI
     
     public let countLabel = UILabel()
     
@@ -24,6 +23,7 @@ public final class CollectionFolderListView: BaseView {
         layout.minimumLineSpacing = 12
         layout.sectionInset = UIEdgeInsets(top: 18, left: 20, bottom: 24, right: 20)
         layout.itemSize = CGSize(width: 154, height: 246)
+        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 44)
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
     
@@ -41,7 +41,7 @@ public final class CollectionFolderListView: BaseView {
         backgroundColor = .flintBackground
         
         countLabel.numberOfLines = 1
-        countLabel.attributedText = .pretendard(.body2_r_14, text: "총 0개", color: .red)
+        countLabel.isHidden = true
         
         collectionView.backgroundColor = .clear
         collectionView.showsVerticalScrollIndicator = false
@@ -51,6 +51,11 @@ public final class CollectionFolderListView: BaseView {
             CollectionFolderCollectionViewCell.self,
             forCellWithReuseIdentifier: String(describing: CollectionFolderCollectionViewCell.self)
         )
+        collectionView.register(
+            CollectionFolderHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: CollectionFolderHeaderView.identifier
+        )
     }
     
     public override func setHierarchy() {
@@ -58,14 +63,8 @@ public final class CollectionFolderListView: BaseView {
     }
     
     public override func setLayout() {
-        countLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(16)
-            $0.leading.equalToSuperview().inset(24)
-        }
-        
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(countLabel.snp.bottom).offset(14)
-            $0.horizontalEdges.bottom.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
         
         bottomGradientView.snp.makeConstraints {
