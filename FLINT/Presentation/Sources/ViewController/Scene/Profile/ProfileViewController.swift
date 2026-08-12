@@ -42,23 +42,19 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         rootView.snp.remakeConstraints {
             $0.edges.equalToSuperview()
         }
-        setupTableView()
-        bind()
-        profileViewModel.load()
-    }
-    
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
+        
         let leftItem: NavLeftItem = profileViewModel.isMe ? .none : .back
         let rightItem: NavRightItem = profileViewModel.isMe ? .setting : .none
-
         setNavigationBar(
             .init(left: leftItem, right: rightItem, backgroundStyle: .clear),
             onTapRight: { [weak self] in
                 self?.didTapSetting()
             }
         )
+        
+        setupTableView()
+        bind()
+        profileViewModel.load()
     }
 
     private func didTapSetting() {
@@ -137,7 +133,6 @@ extension ProfileViewController: UITableViewDelegate {
         }
     }
 
-    // (선택) 셀 선택 막고 싶으면 이미 selectionStyle = .none이라 없어도 됨
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
