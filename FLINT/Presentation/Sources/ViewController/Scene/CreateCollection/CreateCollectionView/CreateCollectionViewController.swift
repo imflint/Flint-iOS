@@ -64,19 +64,13 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    // MARK: - Prefill (edit mode)
-
-    /// 편집 모드 진입 시 기존 컬렉션 데이터를 폼에 채워 넣습니다.
-    /// 가시성(공개/비공개)은 상세 응답에 포함되지 않아 prefill 대상에서 제외됩니다 — 사용자가 다시 선택해야 합니다.
     public func prefill(from entity: CollectionDetailEntity) {
         collectionTitleText = entity.title
         collectionDescriptionText = entity.description
 
-        // 상세 응답에 isPublic 필드가 없어 항상 공개로 prefill — 사용자가 비공개로 다시 토글 가능
         isPublic = true
         selectedVisibility = .public
 
-        // 헤더 이미지: 표시는 URL로, 제출 시 imageUrl 필드에는 기존 URL을 그대로 전송
         headerImageURL = entity.thumbnailUrl
         headerImageKey = entity.thumbnailUrl?.absoluteString
 
@@ -148,10 +142,6 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
 
 private extension CreateCollectionViewController {
 
-    /// 생성/수정 성공 시 동일하게 사용: 본인(create/edit VC)을 스택에서 제거하고,
-    /// 그 직전 VC가 CollectionDetail이면 같이 제거한 뒤 새 detail VC를 push.
-    /// - create: [..., entry, self(create)] → [..., entry, newDetail]
-    /// - edit:   [..., entry, oldDetail, self(edit)] → [..., entry, newDetail]
     func replaceCurrentFlowWithDetail(_ detailVC: UIViewController) {
         guard let nav = self.navigationController else { return }
         var stack = nav.viewControllers
@@ -362,7 +352,8 @@ extension CreateCollectionViewController: UITableViewDataSource {
         if section == 0 {
             return CreateCollectionRow.allCases.count - 1
         } else {
-            return selectedReasonItems.count + 2
+            let hasButton = selectedReasonItems.count < 10
+            return selectedReasonItems.count + 1 + (hasButton ? 1 : 0)
         }
     }
 
@@ -531,6 +522,10 @@ extension CreateCollectionViewController: UITableViewDataSource {
                 }
 
                 return cell
+            }
+
+            guard selectedReasonItems.count < 10 else {
+                return UITableViewCell()
             }
 
             let cell = tableView.dequeueReusableCell(
