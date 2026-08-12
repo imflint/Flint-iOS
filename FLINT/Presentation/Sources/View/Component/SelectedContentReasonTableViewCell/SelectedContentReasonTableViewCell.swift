@@ -424,3 +424,11 @@ extension SelectedContentReasonTableViewCell: UITextViewDelegate {
         onChangeReasonText?(textView.text ?? "")
     }
 }
+
+public extension SelectedContentReasonTableViewCell {
+    func setError(_ isError: Bool) {
+        textView.layer.borderColor = isError ? DesignSystem.Color.error500.cgColor : UIColor.clear.cgColor
+        textView.layer.borderWidth = isError ? 1 : 0
+        textView.layer.cornerRadius = 8
+    }
+}

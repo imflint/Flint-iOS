@@ -14,6 +14,7 @@ public final class CreateCollectionView: BaseView {
 
     public var onChangeTitle: ((String) -> Void)?
     public var onTapComplete: (() -> Void)?
+    public var onTapCompleteWhenDisabled: (() -> Void)?
 
     private var currentTitle: String = ""
     private var isPublicSelected: Bool = false
@@ -45,7 +46,7 @@ public final class CreateCollectionView: BaseView {
         super.setUI()
         backgroundColor = .flintBackground
 
-        applyFooter(button: completeBUtton)
+        applyFooter(button: completeBUtton, isEnabled: false)
     }
 
     public override func setHierarchy() {
@@ -80,10 +81,10 @@ public final class CreateCollectionView: BaseView {
         : FlintButton(style: .disable, title: "완료")
 
         completeBUtton = newButton
-        applyFooter(button: newButton)
+        applyFooter(button: newButton, isEnabled: enabled)
     }
 
-    private func applyFooter(button: FlintButton) {
+    private func applyFooter(button: FlintButton, isEnabled: Bool) {
         footerContainerView.subviews.forEach { $0.removeFromSuperview() }
         footerContainerView.backgroundColor = .clear
 
@@ -110,6 +111,21 @@ public final class CreateCollectionView: BaseView {
             },
             for: .touchUpInside
         )
+
+        if !isEnabled {
+            let overlayButton = UIButton()
+            overlayButton.backgroundColor = .clear
+            footerContainerView.addSubview(overlayButton)
+            overlayButton.addAction(
+                UIAction { [weak self] _ in
+                    self?.onTapCompleteWhenDisabled?()
+                },
+                for: .touchUpInside
+            )
+            overlayButton.snp.makeConstraints {
+                $0.edges.equalTo(button)
+            }
+        }
 
         button.snp.makeConstraints {
             $0.top.equalTo(copyrightLabel.snp.bottom).offset(4)

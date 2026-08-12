@@ -50,6 +50,7 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
     private var titleText: String = ""
     private var descriptionText: String = ""
     private var isPublic: Bool? = nil
+    
     private var contentList: [CreateCollectionEntity.CreateCollectionContents] = []
 
     private var createEntity: CreateCollectionEntity?
@@ -149,10 +150,13 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
         let titleValid = !titleText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let countValid = contentList.count >= 2
         let visibilityValid = isPublic != nil
+        let reasonValid = contentList.count >= 2 && contentList.allSatisfy {
+            !$0.reason.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
         let descriptionValid = true
         let imageValid = true
 
-        let canCreate = titleValid && countValid && visibilityValid && descriptionValid && imageValid
+        let canCreate = titleValid && countValid && visibilityValid && reasonValid && descriptionValid && imageValid
 
         if canCreate {
             createEntity = CreateCollectionEntity(

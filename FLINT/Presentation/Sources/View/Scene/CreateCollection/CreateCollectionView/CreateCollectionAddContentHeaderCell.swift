@@ -71,3 +71,13 @@ public final class CreateCollectionAddContentHeaderCell: BaseTableViewCell {
         )
     }
 }
+
+public extension CreateCollectionAddContentHeaderCell {
+    func setError(_ isError: Bool) {
+        subtitleLabel.attributedText = .pretendard(
+            .body2_r_14,
+            text: "작품을 2개 이상 추가해주세요.",
+            color: isError ? DesignSystem.Color.error500 : .flintGray300
+        )
+    }
+}

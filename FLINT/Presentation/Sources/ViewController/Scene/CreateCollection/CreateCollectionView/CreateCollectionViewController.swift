@@ -204,14 +204,30 @@ private extension CreateCollectionViewController {
             self.updateCreatePayload()
             self.viewModel.createCollection()
         }
+
+        rootView.onTapCompleteWhenDisabled = { [weak self] in
+            guard let self else { return }
+            guard !self.viewModel.isDoneEnabled.value else { return }
+            self.showValidationErrors()
+        }
     }
 
     func updateCreatePayload() {
         viewModel.updateTitle(collectionTitleText)
         viewModel.updateDescription(collectionDescriptionText)
-        viewModel.updateVisibility(isPublic)
+        if let visibility = selectedVisibility {
+            viewModel.updateVisibility(visibility == .public)
+        }
         viewModel.updateImageUrl(headerImageKey ?? "")
         viewModel.updateContentList(makeContentList())
+
+        if selectedReasonItems.count >= 2 {
+            if let headerCell = rootView.tableView.cellForRow(
+                at: IndexPath(row: 0, section: 1)
+            ) as? CreateCollectionAddContentHeaderCell {
+                headerCell.setError(false)
+            }
+        }
     }
 
     func makeContentList() -> [CreateCollectionEntity.CreateCollectionContents] {
@@ -338,6 +354,45 @@ private extension CreateCollectionViewController {
         currentPhotoPickerIndex = -1
         present(picker, animated: true)
     }
+    
+    func showValidationErrors() {
+        let isTitleEmpty = collectionTitleText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let isVisibilityEmpty = selectedVisibility == nil
+        let isContentInsufficient = selectedReasonItems.count < 2
+
+        if let titleCell = rootView.tableView.cellForRow(
+            at: IndexPath(row: CreateCollectionRow.title.rawValue, section: 0)
+        ) as? CreateCollectionTitleInputCell {
+            titleCell.setError(isTitleEmpty)
+        }
+
+        if let visibilityCell = rootView.tableView.cellForRow(
+            at: IndexPath(row: CreateCollectionRow.visibility.rawValue, section: 0)
+        ) as? CreateCollectionVisibilityCell {
+            visibilityCell.setError(isVisibilityEmpty)
+        }
+
+        if let headerCell = rootView.tableView.cellForRow(
+            at: IndexPath(row: 0, section: 1)
+        ) as? CreateCollectionAddContentHeaderCell {
+            headerCell.setError(isContentInsufficient)
+        }
+
+        var hasEmptyReason = false
+        for (index, item) in selectedReasonItems.enumerated() {
+            let isEmpty = (item.reasonText ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            if isEmpty { hasEmptyReason = true }
+            if let cell = rootView.tableView.cellForRow(
+                at: IndexPath(row: index + 1, section: 1)
+            ) as? SelectedContentReasonTableViewCell {
+                cell.setError(isEmpty)
+            }
+        }
+
+        if isTitleEmpty || isVisibilityEmpty || isContentInsufficient || hasEmptyReason {
+            Toast.text("필수 항목을 모두 입력해주세요").show()
+        }
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -410,6 +465,9 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     guard let self else { return }
                     self.collectionTitleText = text
                     self.updateCreatePayload()
+                    if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        cell.setError(false)
+                    }
                 }
                 cell.setText(collectionTitleText)
                 return cell
@@ -440,6 +498,7 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     self.selectedVisibility = visibility
                     self.isPublic = (visibility == .public)
                     self.updateCreatePayload()
+                    cell.setError(false)
                 }
                 return cell
 
@@ -503,6 +562,9 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     let reasonIndex = indexPath.row - 1
                     self.selectedReasonItems[reasonIndex].reasonText = text
                     self.updateCreatePayload()
+                    if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        cell.setError(false)
+                    }
                 }
 
                 cell.onTapAddPhoto = { [weak self, weak cell] in
