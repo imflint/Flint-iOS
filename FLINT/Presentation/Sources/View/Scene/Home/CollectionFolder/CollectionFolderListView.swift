@@ -44,7 +44,7 @@ public final class CollectionFolderListView: BaseView {
         countLabel.isHidden = true
         
         collectionView.backgroundColor = .clear
-        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = true
         collectionView.contentInsetAdjustmentBehavior = .never
         
         collectionView.register(
