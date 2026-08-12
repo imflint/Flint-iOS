@@ -127,19 +127,20 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
     // MARK: - UI
 
     private func applyUI() {
-        rootView.setPreviewHidden(selectedViewModels.isEmpty)
+            rootView.setPreviewHidden(selectedViewModels.isEmpty)
 
-        let hasResult = !results.isEmpty
-        if isSearching {
-            rootView.setEmptyHidden(hasResult)
-        } else {
-            rootView.setEmptyHidden(true)
+            let hasResult = !results.isEmpty
+            if isSearching {
+                rootView.setEmptyHidden(hasResult)
+            } else {
+                rootView.setEmptyHidden(true)
+            }
+
+            rootView.selectedPreviewCollectionView.reloadData()
+            rootView.tableView.reloadData()
+            updateAddButtonState()
         }
 
-        rootView.selectedPreviewCollectionView.reloadData()
-        rootView.tableView.reloadData()
-        updateAddButtonState()
-    }
 
     private func updateAddButtonState() {
         let isActive = selectedViewModels.count >= 1
