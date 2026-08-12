@@ -39,6 +39,7 @@ public final class DefaultAddContentSelectViewModel: AddContentSelectViewModel {
     private let keywordSubject = CurrentValueSubject<String, Never>("")
     private var cancellables = Set<AnyCancellable>()
     private var searchCancellable: AnyCancellable?
+    private var fetchCancellable: AnyCancellable?
 
     // MARK: - Init
 
@@ -58,16 +59,14 @@ public final class DefaultAddContentSelectViewModel: AddContentSelectViewModel {
     }
 
     public func fetchContents() {
-        searchCancellable?.cancel()
         searchCancellable = nil
         isSearching.send(false)
 
-        fetchPopularContentsUseCase()
+        fetchCancellable = fetchPopularContentsUseCase()
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.results.send(contents)
             }
-            .store(in: &cancellables)
     }
 }
 
@@ -85,16 +84,14 @@ public extension DefaultAddContentSelectViewModel {
     }
 
     func searchIfNeeded(keyword: String) {
-        searchCancellable?.cancel()
-        searchCancellable = nil
-
         if keyword.isEmpty {
             fetchContents()
             return
         }
 
+        fetchCancellable = nil
+        searchCancellable = nil
         isSearching.send(true)
-        results.send([])
 
         searchCancellable = searchContentsUseCase(keyword: keyword, genre: [], mediaType: nil, cursor: nil)
             .manageThread()

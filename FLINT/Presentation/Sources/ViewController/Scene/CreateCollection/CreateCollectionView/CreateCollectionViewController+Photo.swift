@@ -59,8 +59,10 @@ extension CreateCollectionViewController: PHPickerViewControllerDelegate {
                         ) as? SelectedContentReasonTableViewCell {
                             self.selectedReasonItems[index].reasonText = cell.currentReasonText
                         }
-                        self.selectedReasonItems[index].photos = images
-                        self.selectedReasonItems[index].customImageKeys = keys
+                        let existingPhotos = self.selectedReasonItems[index].photos
+                        let existingKeys = self.selectedReasonItems[index].customImageKeys
+                        self.selectedReasonItems[index].photos = existingPhotos + images
+                        self.selectedReasonItems[index].customImageKeys = existingKeys + keys
                         self.rootView.tableView.reloadRows(
                             at: [IndexPath(row: index + 1, section: 1)],
                             with: .none
@@ -72,8 +74,14 @@ extension CreateCollectionViewController: PHPickerViewControllerDelegate {
     }
 
     func presentPhotoPicker() {
+        let currentCount = currentPhotoPickerIndex.flatMap { idx in
+            idx >= 0 ? selectedReasonItems[safe: idx]?.photos.count : nil
+        } ?? 0
+        let remaining = max(0, 5 - currentCount)
+        guard remaining > 0 else { return }
+
         var config = PHPickerConfiguration()
-        config.selectionLimit = 5
+        config.selectionLimit = remaining
         config.filter = .images
 
         let picker = PHPickerViewController(configuration: config)
