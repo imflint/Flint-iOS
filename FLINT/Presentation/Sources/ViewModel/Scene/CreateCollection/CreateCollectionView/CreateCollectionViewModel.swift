@@ -49,7 +49,7 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
     private var imageUrl: String = ""
     private var titleText: String = ""
     private var descriptionText: String = ""
-    private var isPublic: Bool = false
+    private var isPublic: Bool? = nil
     private var contentList: [CreateCollectionEntity.CreateCollectionContents] = []
 
     private var createEntity: CreateCollectionEntity?
@@ -148,7 +148,7 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
     private func evaluateDoneEnabled() {
         let titleValid = !titleText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let countValid = contentList.count >= 2
-        let visibilityValid = isPublic == true
+        let visibilityValid = isPublic != nil
         let descriptionValid = true
         let imageValid = true
 
@@ -159,7 +159,7 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
                 imgaeUrl: imageUrl,
                 title: titleText,
                 description: descriptionText,
-                isPublic: isPublic,
+                isPublic: isPublic ?? false,
                 contentList: contentList
             )
         } else {
