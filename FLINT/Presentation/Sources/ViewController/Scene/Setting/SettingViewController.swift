@@ -321,9 +321,9 @@ private extension SettingViewController {
     }
     
     func handleLogoutSuccess() {
-        guard let loginVC = viewControllerFactory?.makeLoginViewController() else { return }
+        guard let splashVC = viewControllerFactory?.makeSplashViewController() else { return }
         
-        let navigationController = UINavigationController(rootViewController: loginVC)
+        let navigationController = UINavigationController(rootViewController: splashVC)
         navigationController.modalPresentationStyle = .fullScreen
         
         if let window = view.window {
