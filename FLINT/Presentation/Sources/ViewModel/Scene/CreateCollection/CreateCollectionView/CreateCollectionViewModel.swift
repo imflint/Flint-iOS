@@ -156,6 +156,8 @@ public final class DefaultCreateCollectionViewModel: CreateCollectionViewModel {
         let descriptionValid = true
         let imageValid = true
 
+        
+        
         let canCreate = titleValid && countValid && visibilityValid && reasonValid && descriptionValid && imageValid
 
         if canCreate {
