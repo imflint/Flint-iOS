@@ -25,12 +25,12 @@ public final class DefaultUploadCollectionImageUseCase: UploadCollectionImageUse
     }
     
     public func callAsFunction(_ image: UIImage) -> AnyPublisher<String, any Error> {
-        storageRepository.fetchPresignedURL(uploadType: .collectionContent, fileExtension: .png)
+        storageRepository.fetchPresignedURL(uploadType: .collectionContent, fileExtension: .jpeg)
             .flatMap { [storageRepository] presignedUrlInfoEntity in
-                guard let imageData = image.pngData() else {
+                guard let imageData = image.jpegData(compressionQuality: 0.8) else {
                     return Fail<String, Error>(error: FlintError.imageEncodingFailed).eraseToAnyPublisher()
                 }
-                return storageRepository.uploadImageToS3(imageData: imageData, uploadUrl: presignedUrlInfoEntity.uploadUrl, fileExtension: .png)
+                return storageRepository.uploadImageToS3(imageData: imageData, uploadUrl: presignedUrlInfoEntity.uploadUrl, fileExtension: .jpeg)
                     .map { _ in return presignedUrlInfoEntity.key }
                     .eraseToAnyPublisher()
             }
