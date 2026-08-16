@@ -18,8 +18,6 @@ public protocol ContentSelectViewControllerFactory {
     func makeContentSelectViewController(onboardingViewModel: OnboardingViewModel) -> ContentSelectViewController
 }
 
-#warning("TODO: - shadow")
-
 public final class ContentSelectViewController: BaseViewController<ContentSelectView> {
     
     // MARK: - Enum
@@ -110,6 +108,7 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         
         onboardingViewModel.selectedContents.sink { [weak self] selectedContents in
             guard let self else { return }
+            rootView.searchView.clipsToBounds = !selectedContents.isEmpty
             UIView.animate(withDuration: 0.2, animations: {
                 self.rootView.selectedContentCollectionView.isHidden = selectedContents.isEmpty
             })

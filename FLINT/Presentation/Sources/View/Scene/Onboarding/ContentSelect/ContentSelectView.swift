@@ -32,8 +32,9 @@ public final class ContentSelectView: BaseView {
     public let foldableView = UIView()
     
     public let titleLabel = UILabel().then {
+        $0.attributedText = .pretendard(.display2_m_28, text: "내 취향에 가까운 작품\n7개를 골라주세요")
         $0.textColor = .flintWhite
-        $0.numberOfLines = 0
+        $0.numberOfLines = 2
     }
     public let genreCollectionView = UICollectionView(
         frame: .zero,
@@ -51,13 +52,6 @@ public final class ContentSelectView: BaseView {
         $0.showsVerticalScrollIndicator = false
         $0.contentInset = .init(top: 8, left: 16, bottom: 8, right: 16)
     }
-//    public let subtitleLabelView = UIView().then {
-//        $0.backgroundColor = .flintBackground
-//    }
-//    public let subtitleLabel = UILabel().then {
-//        $0.textColor = .flintGray300
-//    }
-    
     public let searchView = UIView().then {
         $0.backgroundColor = .flintBackground
         $0.layer.applyShadow(alpha: 0.25, blur: 12, y: 12)
@@ -183,6 +177,7 @@ public final class ContentSelectView: BaseView {
             selectedContentCollectionView,
             contentCollectionView,
         )
+        collectionViewStackView.bringSubviewToFront(selectedContentCollectionView) // selectedContentCollectionView의 shadow가 contentCollectionView에 가려져 보이지 않는 현상 방지
         progressInfoView.addSubviews(progressView, progressLabel)
         foldableView.addSubview(titleLabel)
         searchView.addSubview(searchTextField)
