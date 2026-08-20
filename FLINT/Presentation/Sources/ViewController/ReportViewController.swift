@@ -97,11 +97,21 @@ public final class ReportViewController: BaseViewController<ReportView> {
     // MARK: - Setup
     
     private func setupNavigationBar() {
-        setNavigationBar(.init(
-            left: .none,
-            title: "신고",
-            right: .close
-        ))
+        setNavigationBar(
+            .init(
+                left: .none,
+                title: "신고",
+                right: .close
+            ),
+            onTapRight: { [weak self] in
+                guard let self else { return }
+                if let nav = self.navigationController, nav.viewControllers.count > 1 {
+                    nav.popViewController(animated: true)
+                } else {
+                    self.dismiss(animated: true)
+                }
+            }
+        )
     }
     
     private func setupTextViewObserver() {

@@ -181,8 +181,22 @@ public final class CollectionDetailViewModel {
                         print("toggleCollectionBookmark failed:", error)
                     }
                 },
-                receiveValue: { isBookmarked in
-                    print("toggleCollectionBookmark success:", isBookmarked)
+                receiveValue: { [weak self] _ in
+                    self?.refreshBookmarkedUsers()
+                }
+            )
+            .store(in: &cancellables)
+    }
+
+    private func refreshBookmarkedUsers() {
+        guard case let .loaded(detail, _, isOwner) = stateSubject.value else { return }
+
+        fetchCollectionBookmarkUsersUseCase(collectionId: collectionId)
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [weak self] users in
+                    guard let self else { return }
+                    self.stateSubject.send(.loaded(detail: detail, bookmarkedUsers: users, isOwner: isOwner))
                 }
             )
             .store(in: &cancellables)

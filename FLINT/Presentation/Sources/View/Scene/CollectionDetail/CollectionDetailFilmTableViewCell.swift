@@ -35,6 +35,12 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
         $0.alignment = .leading
     }
 
+    private let yearDirectorStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 0
+        $0.alignment = .leading
+    }
+
     private let titleLabel = UILabel().then {
         $0.numberOfLines = 0
         $0.attributedText = .pretendard(.head2_sb_20, text: "노트북, The Notebook", color: .white)
@@ -122,6 +128,8 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
         didSet { spoilerOverlayView.isHidden = !isSpoiler }
     }
 
+    private var spoilerMinHeightConstraint: Constraint?
+
     // MARK: - Init
 
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -163,7 +171,8 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
 
         descriptionContainerView.addSubview(spoilerOverlayView)
 
-        filmInfoStackView.addArrangedSubviews(titleLabel, yearLabel, directorLabel)
+        yearDirectorStackView.addArrangedSubviews(yearLabel, directorLabel)
+        filmInfoStackView.addArrangedSubviews(titleLabel, yearDirectorStackView)
 
         spoilerOverlayView.addSubviews(blurEffectView, dimView, overlayStackView)
         overlayStackView.addArrangedSubviews(lockImageView, spoilerLabel, revealButton)
@@ -204,6 +213,11 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
         descriptionLabel.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+
+        descriptionContainerView.snp.makeConstraints {
+            spoilerMinHeightConstraint = $0.height.greaterThanOrEqualTo(180).constraint
+        }
+        spoilerMinHeightConstraint?.deactivate()
 
         spoilerOverlayView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -251,6 +265,12 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
 
             spoilerOverlayView.isHidden = !isSpoiler
             spoilerOverlayView.alpha = isSpoiler ? 1.0 : 0.0
+
+            if isSpoiler {
+                spoilerMinHeightConstraint?.activate()
+            } else {
+                spoilerMinHeightConstraint?.deactivate()
+            }
 
             UIView.animate(withDuration: 0.3) {
                 self.spoilerOverlayView.alpha = isSpoiler ? 1.0 : 0.0
