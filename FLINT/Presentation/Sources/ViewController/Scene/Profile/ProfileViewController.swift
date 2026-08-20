@@ -42,7 +42,7 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         rootView.snp.remakeConstraints {
             $0.edges.equalToSuperview()
         }
-        
+
         let leftItem: NavLeftItem = profileViewModel.isMe ? .none : .back
         let rightItem: NavRightItem = profileViewModel.isMe ? .setting : .none
         setNavigationBar(
@@ -51,9 +51,14 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
                 self?.didTapSetting()
             }
         )
-        
+
         setupTableView()
         bind()
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // 프로필 진입마다 최신 데이터 재fetch (취향키워드 재계산 가능 여부 포함)
         profileViewModel.load()
     }
 

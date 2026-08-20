@@ -16,7 +16,14 @@ public struct UserProfileEntity: Equatable {
     /// GET /users/me 에만 포함. 다른 유저 조회 시 nil.
     public let keywordRecalculatable: Bool?
 
-    public init(id: String, nickname: String, email: String, profileImageUrl: URL?, role: UserRole)  {
+    public init(
+        id: String,
+        nickname: String,
+        email: String,
+        profileImageUrl: URL?,
+        role: UserRole,
+        keywordRecalculatable: Bool? = nil
+    ) {
         self.id = id
         self.nickname = nickname
         self.email = email

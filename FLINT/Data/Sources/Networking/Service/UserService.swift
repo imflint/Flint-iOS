@@ -84,9 +84,7 @@ public final class DefaultUserService: UserService {
     
     public func recalculateMyKeywords() -> AnyPublisher<Void, Error> {
         return userAPIProvider.requestPublisher(.recalculateMyKeywords)
-            .mapBaseResponseData(BlankData.self)
-            .map({ _ in })
-            .eraseToAnyPublisher()
+            .mapBaseResponseEmpty()
     }
     
     public func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error> {
