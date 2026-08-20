@@ -44,9 +44,8 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         }
         setupTableView()
         bind()
-        profileViewModel.load()
     }
-    
+
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -59,6 +58,8 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
                 self?.didTapSetting()
             }
         )
+
+        profileViewModel.load()
     }
 
     private func didTapSetting() {
@@ -109,7 +110,24 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
         navigationController?.pushViewController(vc, animated: true)
     }
-    
+
+    private func didTapMore(for nextRow: ProfileViewModel.Row?) {
+        guard let factory = viewControllerFactory else { return }
+
+        switch nextRow {
+        case .savedCollections:
+            let vc = factory.makeSavedCollectionListViewController()
+            navigationController?.pushViewController(vc, animated: true)
+        case .myCollections:
+            let vc = factory.makeCreatedCollectionListViewController(target: profileViewModel.target)
+            navigationController?.pushViewController(vc, animated: true)
+        case .savedContents:
+            let vc = factory.makeSavedFilmListViewController()
+            navigationController?.pushViewController(vc, animated: true)
+        default:
+            break
+        }
+    }
 }
 
 // MARK: - UITableViewDelegate
@@ -176,7 +194,7 @@ extension ProfileViewController: UITableViewDataSource {
             cell.configure(keywords: keywords)
             return cell
 
-        case let .titleHeader(style, title, subtitle, showInfo, showRefresh, isRefreshing, tooltipText):
+        case let .titleHeader(style, title, subtitle, showInfo, showRefresh, isRefreshEnabled, isRefreshing, tooltipText):
             let cell = tableView.dequeueReusableCell(TitleHeaderTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(
@@ -185,6 +203,7 @@ extension ProfileViewController: UITableViewDataSource {
                 subtitle: subtitle,
                 showInfo: showInfo,
                 showRefresh: showRefresh,
+                isRefreshEnabled: isRefreshEnabled,
                 isRefreshing: isRefreshing,
                 tooltipText: tooltipText
             )
@@ -193,6 +212,12 @@ extension ProfileViewController: UITableViewDataSource {
             }
             cell.onTapRefresh = { [weak self] in
                 self?.profileViewModel.refreshKeywords()
+            }
+            let nextSection = indexPath.section + 1
+            let nextRow = profileViewModel.rows.indices.contains(nextSection)
+                ? profileViewModel.rows[nextSection] : nil
+            cell.onTapMore = { [weak self] in
+                self?.didTapMore(for: nextRow)
             }
             return cell
 
@@ -220,15 +245,12 @@ extension ProfileViewController: UITableViewDataSource {
             cell.configure(items: items)
             cell.onTapItem = { [weak self] content in
                 guard let self else { return }
-                
+
                 let platforms: [OTTPlatform] = content.ottList.compactMap { ott in
                     OTTPlatform.fromServerName(ott.ottName)
                 }
-                
-                if platforms.isEmpty {
-                    print("ottList 비어있음 or 매핑 실패. contentId:", content.id)
-                }
-                
+
+                guard !platforms.isEmpty else { return }
                 self.presentOTTBottomSheet(platforms: platforms)
             }
             return cell

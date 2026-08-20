@@ -202,6 +202,7 @@ public final class TitleHeaderTableViewCell: BaseTableViewCell {
         subtitle: String,
         showInfo: Bool = false,
         showRefresh: Bool = false,
+        isRefreshEnabled: Bool = true,
         isRefreshing: Bool = false,
         tooltipText: String? = nil
     ) {
@@ -211,11 +212,17 @@ public final class TitleHeaderTableViewCell: BaseTableViewCell {
 
         titleLabel.attributedText = .pretendard(.head3_sb_18, text: title)
         subtitleLabel.attributedText = .pretendard(.body2_r_14, text: subtitle, color: .flintGray200)
+
+        let refreshColor: UIColor = isRefreshEnabled
+            ? DesignSystem.Color.secondary400
+            : .flintGray500
+        refreshIconImageView.tintColor = refreshColor
         refreshLabel.attributedText = .pretendard(
             .micro1_m_10,
             text: "업데이트",
-            color: DesignSystem.Color.secondary400
+            color: refreshColor
         )
+        refreshStack.isUserInteractionEnabled = isRefreshEnabled
 
         if showRefresh && isRefreshing {
             startRefreshAnimationIfNeeded()

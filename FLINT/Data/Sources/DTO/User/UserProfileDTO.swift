@@ -14,6 +14,7 @@ public struct UserProfileDTO: Codable {
     public let nickname: String?
     public let profileImageUrl: String?
     public let isFliner: Bool?
+    public let keywordRecalculatable: Bool?
 }
 
 extension UserProfileDTO {
@@ -23,7 +24,8 @@ extension UserProfileDTO {
                 id: unwrap(id),
                 nickname: nickname ?? "",
                 profileImageUrl: URL(string: profileImageUrl ?? ""),
-                role: (isFliner ?? false) ? .fliner : .unknown
+                role: (isFliner ?? false) ? .fliner : .unknown,
+                keywordRecalculatable: keywordRecalculatable
             )
         }
     }

@@ -120,7 +120,31 @@ public final class CollectionDetailViewController: BaseViewController<Collection
             }
             .store(in: &cancellables)
 
+        viewModel.contentBookmarkRemovalBlocked
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] contentId in
+                guard let self else { return }
+                self.presentMinimumBookmarkModal()
+                self.restoreFilmCellBookmark(contentId: contentId)
+            }
+            .store(in: &cancellables)
+
         viewDidLoadSubject.send(())
+    }
+
+    private func presentMinimumBookmarkModal() {
+        let host: UIView = navigationController?.view ?? view
+        Modal.presentMinimumBookmarkLimit(in: host)
+    }
+
+    private func restoreFilmCellBookmark(contentId: Int64) {
+        // 차단된 콘텐츠 셀만 다시 configure 해서 북마크 시각 상태 복원
+        guard let entity else { return }
+        guard let idx = entity.contents.firstIndex(where: { Int64($0.id) == contentId }) else { return }
+        guard let rowIndex = rows.firstIndex(where: {
+            if case .film(let i) = $0 { return i == idx } else { return false }
+        }) else { return }
+        rootView.tableView.reloadRows(at: [IndexPath(row: rowIndex, section: 0)], with: .none)
     }
 
     private func apply(entity: CollectionDetailEntity) {
