@@ -36,8 +36,8 @@ public protocol OnboardingViewModelOutput {
     
     // content select
     var isLoading: CurrentValueSubject<Bool, Never> { get }
-    var keyword: CurrentValueSubject<String?, Never> { get }
-    var filterGenre: CurrentValueSubject<Set<Genre>, Never> { get }
+    var keyword: String? { get set }
+    var filterGenre: Set<Genre> { get set }
     var requiredContentCount: Int { get }
     var contents: CurrentValueSubject<[ContentEntity], Never> { get }
     var selectedContents: CurrentValueSubject<[ContentEntity], Never> { get }
@@ -65,8 +65,8 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     private var profileImageKey: String?
     
     public let isLoading: CurrentValueSubject<Bool, Never> = .init(false)
-    public let keyword: CurrentValueSubject<String?, Never> = .init(nil)
-    public let filterGenre: CurrentValueSubject<Set<Genre>, Never> = .init([])
+    public var keyword: String? = nil
+    public var filterGenre: Set<Genre> = []
     public let requiredContentCount: Int = 7
     public let contents: CurrentValueSubject<[ContentEntity], Never> = .init([])
     public let selectedContents: CurrentValueSubject<[ContentEntity], Never> = .init([])
@@ -88,24 +88,6 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         self.fetchPopularContentsUseCase = fetchPopularContentsUseCase
         self.searchContentsUseCase = searchContentsUseCase
         self.signupUseCase = signupUseCase
-        
-        bind()
-    }
-    
-    private func bind() {
-        keyword.sink { [weak self] keyword in
-            guard let self else { return }
-            contents.send([])
-            searchContents()
-        }
-        .store(in: &cancellables)
-        
-        filterGenre.sink { [weak self] filterGenre in
-            guard let self else { return }
-            contents.send([])
-            searchContents()
-        }
-        .store(in: &cancellables)
     }
     
     public func uploadProfileImage(_ image: UIImage) {
@@ -135,7 +117,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
     public func fetchPopularContents() {
         isLoading.send(true)
-        searchContentsUseCase(keyword: nil, genre: filterGenre.value, mediaType: nil, cursor: nil)
+        searchContentsUseCase(keyword: nil, genre: filterGenre, mediaType: nil, cursor: nil)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.contents.send(contents)
@@ -146,13 +128,17 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
     public func searchContents() {
         isLoading.send(true)
-        searchContentsUseCase(keyword: keyword.value, genre: filterGenre.value, mediaType: nil, cursor: nil)
+        searchContentsUseCase(keyword: keyword, genre: filterGenre, mediaType: nil, cursor: nil)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
                 self?.contents.send(contents)
                 self?.isLoading.send(false)
             }
             .store(in: &cancellables)
+    }
+    
+    public func fetchMoreContents() {
+        
     }
     
     public func clickContent(_ content: ContentEntity) {

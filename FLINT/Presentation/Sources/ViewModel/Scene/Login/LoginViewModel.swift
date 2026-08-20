@@ -15,6 +15,7 @@ import Domain
 
 public protocol LoginViewModelInput {
     func kakaoLogin()
+//    func appleLogin()
 }
 
 public protocol LoginViewModelOutput {
@@ -63,5 +64,9 @@ public final class DefaultLoginViewModel: LoginViewModel {
             }
             .store(in: &cancellables)
         }
+    }
+    
+    public func appleLogin(authorizationCode: String) {
+//        socialVerifyUseCase(socialAuthCredential: SocialVerifyEntity(provider: ., accessToken: <#T##String#>))
     }
 }

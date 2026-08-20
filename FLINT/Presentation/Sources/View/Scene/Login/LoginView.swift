@@ -39,6 +39,25 @@ public final class LoginView: BaseView {
         $0.textAlignment = .center
         $0.numberOfLines = 1
     }
+    
+    public let appleButton = UIButton(type: .custom).then {
+        $0.backgroundColor = UIColor(hex: 0xFFFFFF, alpha: 1)
+        $0.layer.cornerRadius = 8
+        $0.clipsToBounds = true
+    }
+    
+    private let appleIconView = UIImageView().then {
+        $0.image = UIImage(resource: .imgApple)
+        $0.contentMode = .scaleAspectFit
+    }
+    
+    private let appleTitleLabel = UILabel().then {
+        $0.attributedText = .pretendard(.body1_m_16,
+                                        text: "Apple로 시작하기",
+                                        color: .flintBackground)
+        $0.textAlignment = .center
+        $0.numberOfLines = 1
+    }
 
     // MARK: - Override
 
@@ -49,9 +68,12 @@ public final class LoginView: BaseView {
     public override func setHierarchy() {
         addSubview(backgroundImageView)
         addSubview(kakaoButton)
+        addSubviews(appleButton)
 
         kakaoButton.addSubview(kakaoIconView)
         kakaoButton.addSubview(kakaoTitleLabel)
+        
+        appleButton.addSubviews(appleIconView, appleTitleLabel)
     }
 
     public override func setLayout() {
@@ -61,7 +83,7 @@ public final class LoginView: BaseView {
 
         kakaoButton.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalTo(safeAreaLayoutGuide).inset(60)
+            $0.bottom.equalTo(appleButton.snp.top).offset(-16)
             $0.height.equalTo(56)
         }
 
@@ -72,6 +94,22 @@ public final class LoginView: BaseView {
         }
 
         kakaoTitleLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        appleButton.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(60)
+            $0.height.equalTo(56)
+        }
+
+        appleIconView.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(24)
+        }
+
+        appleTitleLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
     }

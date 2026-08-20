@@ -9,4 +9,5 @@ import Foundation
 
 public enum SocialLoginType: String {
     case kakao = "KAKAO"
+    case apple = "APPLE"
 }

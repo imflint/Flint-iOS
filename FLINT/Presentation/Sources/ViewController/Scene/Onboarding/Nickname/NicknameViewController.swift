@@ -43,6 +43,13 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
         addActions()
     }
     
+    public override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        rootView.successToast.close(animated: false)
+        rootView.failureToast.close(animated: false)
+    }
+    
     // MARK: - Bind
     
     public override func bind() {
@@ -82,7 +89,7 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     private func addActions() {
         rootView.profileImageSettingView.settingButton.addAction(UIAction(weak: self, handler: NicknameViewController.showProfileImageSettingAlert(_:)), for: .touchUpInside)
         rootView.verifyButton.addAction(UIAction(weak: self, handler: NicknameViewController.verifyNickname(_:)), for: .touchUpInside)
-        rootView.nextButton.addAction(UIAction(weak: self, handler: NicknameViewController.nextButtonTapped(_:)), for: .touchUpInside)
+        rootView.nextButton.addAction(UIAction(weak: self, handler: NicknameViewController.touchUpInsideNextButton(_:)), for: .touchUpInside)
     }
     
     private func showProfileImageSettingAlert(_ action: UIAction) {
@@ -161,11 +168,9 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
         onboardingViewModel.checkNickname(nickname)
     }
     
-    private func nextButtonTapped(_ action: UIAction) {
-        rootView.successToast.close(animated: false)
-        rootView.failureToast.close(animated: false)
-        guard let contentSelectViewController = viewControllerFactory?.makeContentSelectViewController(onboardingViewModel: onboardingViewModel) else { return }
-        navigationController?.pushViewController(contentSelectViewController, animated: true)
+    private func touchUpInsideNextButton(_ action: UIAction) {
+        guard let onboardingDoneViewController = viewControllerFactory?.makeOnboardingDoneViewController(onboardingViewModel: onboardingViewModel) else { return }
+        navigationController?.pushViewController(onboardingDoneViewController, animated: true)
     }
 }
 

@@ -18,8 +18,6 @@ public protocol ContentSelectViewControllerFactory {
     func makeContentSelectViewController(onboardingViewModel: OnboardingViewModel) -> ContentSelectViewController
 }
 
-#warning("TODO: - shadow")
-
 public final class ContentSelectViewController: BaseViewController<ContentSelectView> {
     
     // MARK: - Enum
@@ -39,7 +37,7 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
     
     // MARK: - ViewModel
     
-    private let onboardingViewModel: OnboardingViewModel
+    private var onboardingViewModel: OnboardingViewModel
     
     // MARK: - DataSource
     
@@ -79,15 +77,14 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         rootView.layoutIfNeeded()
         rootView.contentCollectionView.contentOffset.y = -rootView.contentCollectionView.contentInset.top
         
-        rootView.nextButton.addAction(UIAction(weak: self, handler: ContentSelectViewController.pushOnboardingDoneViewController(_:)), for: .touchUpInside)
+        rootView.nextButton.addAction(UIAction(weak: self, handler: ContentSelectViewController.touchUpInsideNextButton(_:)), for: .touchUpInside)
     }
     
     public override func bind() {
         onboardingViewModel.isLoading.sink { [weak self] isLoading in
             Log.d(isLoading)
             guard let self else { return }
-            if isLoading && onboardingViewModel.contents.value.isEmpty {
-                rootView.emptyView.isHidden = true
+            if isLoading {
                 rootView.loadingIndicator.startAnimating()
             } else {
                 rootView.loadingIndicator.stopAnimating()
@@ -95,21 +92,16 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         }
         .store(in: &cancellables)
         
-        onboardingViewModel.nickname.sink { [weak self] nickname in
-            guard let self else { return }
-            rootView.titleLabel.attributedText = .pretendard(.display2_m_28, text: "\(onboardingViewModel.nickname.value) 님이 좋아하는 작품 7개를 골라주세요", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
-        }
-        .store(in: &cancellables)
-        
         onboardingViewModel.contents.sink { [weak self] contents in
             guard let self else { return }
-            rootView.emptyView.isHidden = !contents.isEmpty || onboardingViewModel.isLoading.value
+            rootView.emptyView.isHidden = !contents.isEmpty
             contentCollectionViewDataSource?.apply(makeContentCollectionViewSnapshot(contentEntities: contents), animatingDifferences: false)
         }
         .store(in: &cancellables)
         
         onboardingViewModel.selectedContents.sink { [weak self] selectedContents in
             guard let self else { return }
+            rootView.searchView.clipsToBounds = !selectedContents.isEmpty
             UIView.animate(withDuration: 0.2, animations: {
                 self.rootView.selectedContentCollectionView.isHidden = selectedContents.isEmpty
             })
@@ -127,9 +119,9 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
         .store(in: &cancellables)
     }
     
-    private func pushOnboardingDoneViewController(_ action: UIAction) {
-        guard let onboardingDoneViewController = viewControllerFactory?.makeOnboardingDoneViewController(onboardingViewModel: onboardingViewModel) else { return }
-        navigationController?.pushViewController(onboardingDoneViewController, animated: true)
+    private func touchUpInsideNextButton(_ action: UIAction) {
+        guard let nicknameViewController = viewControllerFactory?.makeNicknameViewController(onboardingViewModel: onboardingViewModel) else { return }
+        navigationController?.pushViewController(nicknameViewController, animated: true)
     }
 }
 
@@ -154,6 +146,7 @@ extension ContentSelectViewController {
     
     private enum ContentCollectionViewSection: Int {
         case main
+        case loading
     }
     
     private enum ContentCollectionViewItem: Hashable, Sendable {
@@ -168,7 +161,7 @@ extension ContentSelectViewController {
             guard let self else { return UICollectionViewCell() }
             
             switch itemIdentifier {
-            case .content(let content):
+            case let .content(content):
                 let cell = collectionView.dequeueReusableCell(OnboardingContentCollectionViewCell.self, for: indexPath)
                 let isSelected = onboardingViewModel.selectedContents.value.contains(where: {
                     $0 == content
@@ -177,6 +170,12 @@ extension ContentSelectViewController {
                 return cell
             }
         })
+        contentCollectionViewDataSource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
+            Log.d(ContentCollectionViewSection(rawValue: indexPath.section))
+//            guard let section = ContentCollectionViewSection(rawValue: indexPath.section), section == .loading else { return UICollectionReusableView() }
+            Log.d("supple")
+            return collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: LoadingHeaderView.self), for: indexPath)
+        }
         contentCollectionViewDataSource?.apply(makeContentCollectionViewSnapshot(contentEntities: onboardingViewModel.contents.value), animatingDifferences: false)
         
         rootView.contentCollectionView.panGestureRecognizer.addTarget(self, action: #selector(contentCollectionViewPanGesture))
@@ -184,7 +183,7 @@ extension ContentSelectViewController {
     
     private func makeContentCollectionViewSnapshot(contentEntities: [ContentEntity]) -> ContentCollectionViewSnapshot {
         var snapshot = ContentCollectionViewSnapshot()
-        snapshot.appendSections([.main])
+        snapshot.appendSections([.main, .loading])
         snapshot.appendItems(contentEntities.map({ ContentCollectionViewItem.content($0) }), toSection: .main)
         return snapshot
     }
@@ -324,13 +323,13 @@ extension ContentSelectViewController {
     }
     
     public func genreCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        onboardingViewModel.filterGenre.value.insert(Genre.allCases[indexPath.row])
-        Log.d(onboardingViewModel.filterGenre.value)
+        onboardingViewModel.filterGenre.insert(Genre.allCases[indexPath.row])
+        onboardingViewModel.searchContents()
     }
     
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        onboardingViewModel.filterGenre.value.remove(Genre.allCases[indexPath.row])
-        Log.d(onboardingViewModel.filterGenre.value)
+        onboardingViewModel.filterGenre.remove(Genre.allCases[indexPath.row])
+        onboardingViewModel.searchContents()
     }
 }
 
@@ -340,15 +339,18 @@ extension ContentSelectViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         guard let text = textField.text else { return true }
-        onboardingViewModel.keyword.send(text)
+        onboardingViewModel.keyword = textField.text
+        onboardingViewModel.searchContents()
         return true
     }
     
     private func setupTextField() {
         rootView.searchTextField.searchAction = { [weak self] keyword in
-            self?.onboardingViewModel.keyword.send(keyword)
+            self?.onboardingViewModel.keyword = keyword
+            self?.onboardingViewModel.searchContents()
         }
         rootView.searchTextField.clearAction = { [weak self] in
+            self?.onboardingViewModel.keyword = nil
             self?.onboardingViewModel.fetchPopularContents()
         }
         
