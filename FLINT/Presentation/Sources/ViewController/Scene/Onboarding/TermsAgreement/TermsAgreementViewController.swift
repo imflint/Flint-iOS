@@ -5,6 +5,7 @@
 //  Created by 김호성 on 2026.05.27.
 //
 
+import SafariServices
 import UIKit
 
 import Domain
@@ -89,6 +90,10 @@ extension TermsAgreementViewController {
             let signUpTerm = item.0
             let agreed = item.1
             cell.configure(signUpTerm)
+            cell.termDetailMoreButton.removeTarget(nil, action: nil, for: .allEvents)
+            cell.termDetailMoreButton.addAction(UIAction(handler: { [weak self] _ in
+                self?.present(SFSafariViewController(url: signUpTerm.url), animated: true)
+            }), for: .touchUpInside)
             cell.termAgreeCheckbox.isSelected = agreed
             cell.termAgreeCheckbox.addAction(UIAction(handler: { [weak self, weak sender = cell.termAgreeCheckbox] action in
                 guard let self, let sender, let term = SignUpTerm(id: indexPath.row+1) else { return }

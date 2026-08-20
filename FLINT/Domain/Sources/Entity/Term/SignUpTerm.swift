@@ -65,4 +65,13 @@ extension SignUpTerm {
             return true
         }
     }
+    
+    public var url: URL {
+        switch self {
+        case .service:
+            return URL(string: "https://artistic-bacon-a40.notion.site/35650cdb714e8054a69bcbd110ed19dd?source=copy_link")!
+        case .privacy:
+            return URL(string: "https://artistic-bacon-a40.notion.site/35650cdb714e804cb642eb2cc576a62c?source=copy_link")!
+        }
+    }
 }
