@@ -126,7 +126,7 @@ public final class ProfileViewModel {
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
-        
+
         fetchCreatedCollectionsUseCase(for: target)
             .manageThread()
             .sink { completion in
@@ -179,11 +179,7 @@ public final class ProfileViewModel {
         isRefreshing = true
         rows = makeRows()
 
-        let target = self.target
-        let fetchKeywords = fetchKeywordsUseCase
-
         recalculateKeywordsUseCase()
-            .flatMap { _ in fetchKeywords(for: target) }
             .manageThread()
             .sink { [weak self] completion in
                 guard let self else { return }
@@ -191,14 +187,12 @@ public final class ProfileViewModel {
                 if case let .failure(error) = completion {
                     print("recalculateKeywords failed:", error)
                     self.canRefresh = false
+                    self.rows = self.makeRows()
                 }
-                self.rows = self.makeRows()
-            } receiveValue: { [weak self] keywords in
+            } receiveValue: { [weak self] _ in
                 guard let self else { return }
-                self.keywords = keywords
-                // 방금 재계산했으므로 이후 20개 새로 쌓일 때까지 재활성 불가
-                self.canRefresh = false
-                self.rows = self.makeRows()
+                self.isRefreshing = false
+                self.load()
             }
             .store(in: &cancellables)
     }
