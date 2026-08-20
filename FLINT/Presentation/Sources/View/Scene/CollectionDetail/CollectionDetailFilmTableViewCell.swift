@@ -69,6 +69,10 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
         $0.backgroundColor = .flintGray500
     }
 
+    private let cardView = UIView().then {
+        $0.backgroundColor = .flintSubBackground
+    }
+
     private let descriptionContainerView = UIView().then {
         $0.backgroundColor = .clear
         $0.clipsToBounds = true
@@ -159,7 +163,8 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
     }
 
     public override func setHierarchy() {
-        contentView.addSubviews(
+        contentView.addSubview(cardView)
+        cardView.addSubviews(
             posterImageView,
             filmInfoStackView,
             bookmarkButton,
@@ -179,6 +184,12 @@ public final class CollectionDetailFilmTableViewCell: BaseTableViewCell {
     }
 
     public override func setLayout() {
+        cardView.snp.makeConstraints {
+            $0.top.horizontalEdges.equalToSuperview()
+            // 다음 컨텐츠와의 시각적 간격 36
+            $0.bottom.equalToSuperview().inset(36)
+        }
+
         posterImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(32)
             $0.leading.equalToSuperview().inset(16)
