@@ -12,6 +12,7 @@ import Entity
 public struct UserProfileDTO: Codable {
     public let id: String?
     public let nickname: String?
+    public let email: String?
     public let profileImageUrl: String?
     public let isFliner: Bool?
     public let keywordRecalculatable: Bool?
@@ -23,6 +24,7 @@ extension UserProfileDTO {
             return try UserProfileEntity(
                 id: unwrap(id),
                 nickname: nickname ?? "",
+                email: email ?? "",
                 profileImageUrl: URL(string: profileImageUrl ?? ""),
                 role: (isFliner ?? false) ? .fliner : .unknown,
                 keywordRecalculatable: keywordRecalculatable

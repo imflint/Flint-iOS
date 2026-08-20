@@ -41,6 +41,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
     private var selectedEntities: [ContentEntity] = []
     private var selectedViewModels: [SavedContentItemViewModel] = []
     private var isSearching: Bool = false
+    private var hasSearchCompleted: Bool = false
     
     private let maxSelectionCount: Int = 10
 
@@ -94,6 +95,9 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
             .receive(on: RunLoop.main)
             .sink { [weak self] searching in
                 guard let self else { return }
+                if searching {
+                    self.hasSearchCompleted = false
+                }
                 self.isSearching = searching
                 self.applyUI()
             }
@@ -103,8 +107,10 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
             .receive(on: RunLoop.main)
             .sink { [weak self] newResults in
                 guard let self else { return }
-
                 self.results = newResults
+                if self.viewModel.isSearching.value {
+                    self.hasSearchCompleted = true
+                }
                 self.syncSelectedEntitiesFromResultsIfNeeded()
                 self.applyUI()
             }
@@ -131,8 +137,9 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
 
         let hasResult = !results.isEmpty
         if isSearching {
-            rootView.setEmptyHidden(hasResult)
+            rootView.setEmptyHidden(hasResult || !hasSearchCompleted)
         } else {
+            hasSearchCompleted = false
             rootView.setEmptyHidden(true)
         }
 
@@ -140,7 +147,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         rootView.tableView.reloadData()
         updateAddButtonState()
     }
-
+    
     private func updateAddButtonState() {
         let isActive = selectedViewModels.count >= 1
         let color: UIColor = isActive ? DesignSystem.Color.secondary400 : DesignSystem.Color.gray300
@@ -194,13 +201,15 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if trimmed.isEmpty {
-            isSearching = false
+            isSearching = false  
+            hasSearchCompleted = false
             viewModel.updateKeyword(keyword: "")
             applyUI()
             return
         }
 
         isSearching = true
+        hasSearchCompleted = false
         viewModel.updateKeyword(keyword: trimmed)
         applyUI()
     }

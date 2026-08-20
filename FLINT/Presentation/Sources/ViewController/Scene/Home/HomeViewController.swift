@@ -78,6 +78,11 @@ public final class HomeViewController: BaseViewController<HomeView> {
             .store(in: &cancellables)
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.reloadBookmarkedContents()
+    }
+    
     // MARK: - Private Methods
     
     private func setTableView() {
