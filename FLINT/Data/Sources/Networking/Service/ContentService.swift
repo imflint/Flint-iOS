@@ -15,7 +15,8 @@ import DTO
 
 public protocol ContentService {
     func searchContents(keyword: String?, genre: [String], mediaType: String?, cursor: String?, size: Int32) -> AnyPublisher<SearchContentsDTO, Error>
-    func fetchMyBookmarkedContents() -> AnyPublisher<ContentsDTO, Error>
+    func fetchMyBookmarkedContents(cursor: String?, size: Int32?) -> AnyPublisher<ContentsDTO, Error>
+    func fetchMyBookmarkedContentCount() -> AnyPublisher<BookmarkedContentCountDTO, Error>
     func fetchOTTPlatformsForContent(contentId: Int64) -> AnyPublisher<OTTPlatformsDTO, Error>
 }
 
@@ -40,11 +41,16 @@ public final class DefaultContentService: ContentService {
         .mapBaseResponseData(SearchContentsDTO.self)
     }
     
-    public func fetchMyBookmarkedContents() -> AnyPublisher<ContentsDTO, Error> {
-        return contentAPIProvider.requestPublisher(.fetchMyBookmarkedContents)
+    public func fetchMyBookmarkedContents(cursor: String?, size: Int32?) -> AnyPublisher<ContentsDTO, Error> {
+        return contentAPIProvider.requestPublisher(.fetchMyBookmarkedContents(cursor: cursor, size: size))
             .mapBaseResponseData(ContentsDTO.self)
     }
-    
+
+    public func fetchMyBookmarkedContentCount() -> AnyPublisher<BookmarkedContentCountDTO, Error> {
+        return contentAPIProvider.requestPublisher(.fetchMyBookmarkedContentCount)
+            .mapBaseResponseData(BookmarkedContentCountDTO.self)
+    }
+
     public func fetchOTTPlatformsForContent(contentId: Int64) -> AnyPublisher<OTTPlatformsDTO, Error> {
         return contentAPIProvider.requestPublisher(.fetchOTTPlatformsForContent(contentId: contentId))
             .mapBaseResponseData(OTTPlatformsDTO.self)
