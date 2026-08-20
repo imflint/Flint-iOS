@@ -113,3 +113,12 @@ private extension CreateCollectionTitleInputCell {
         onChangeTitle?(titleTextView.text ?? "")
     }
 }
+
+
+public extension CreateCollectionTitleInputCell {
+    func setError(_ isError: Bool) {
+        titleTextView.layer.borderColor = isError ? DesignSystem.Color.error500.cgColor : UIColor.clear.cgColor
+        titleTextView.layer.borderWidth = isError ? 1 : 0
+        titleTextView.layer.cornerRadius = 8
+    }
+}

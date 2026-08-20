@@ -143,7 +143,7 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         cardContainerView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
-            $0.size.equalTo(154)
+            $0.height.equalTo(cardContainerView.snp.width)
         }
         
         cardContentView.snp.makeConstraints {
@@ -153,15 +153,15 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         firstPosterImageView.snp.makeConstraints {
             $0.leading.equalTo(cardContainerView.snp.leading).offset(17)
             $0.top.equalTo(cardContainerView.snp.top).offset(11)
-            $0.width.equalTo(80)
-            $0.height.equalTo(120)
+            $0.width.equalTo(cardContainerView.snp.width).multipliedBy(0.52)
+            $0.height.equalTo(firstPosterImageView.snp.width).multipliedBy(1.5)
         }
-        
+
         secondPosterShadowView.snp.makeConstraints {
             $0.leading.equalTo(firstPosterImageView.snp.leading).offset(38)
             $0.top.equalTo(firstPosterImageView.snp.top).offset(15)
-            $0.width.equalTo(80)
-            $0.height.equalTo(120)
+            $0.width.equalTo(cardContainerView.snp.width).multipliedBy(0.52)
+            $0.height.equalTo(secondPosterShadowView.snp.width).multipliedBy(1.5)
         }
         
         secondPosterImageView.snp.makeConstraints {
@@ -185,7 +185,7 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         }
         
         bookmarkView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(74)
+            $0.top.equalToSuperview().inset(8)
             $0.trailing.equalToSuperview().inset(12)
         }
         

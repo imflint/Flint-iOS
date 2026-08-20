@@ -36,7 +36,6 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
     public override func viewDidLoad() {
         super.viewDidLoad()
         bind()
-        applyCount()
         viewModel.load()
     }
     
@@ -51,7 +50,6 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
             .sink { [weak self] _ in
                 guard let self else { return }
                 self.rootView.collectionView.reloadData()
-                self.applyCount()
             }
             .store(in: &cancellables)
     }
@@ -75,16 +73,6 @@ public final class CollectionFolderListViewController: BaseViewController<Collec
             self?.navigationController?.popViewController(animated: true)
         }
     }
-    
-    // MARK: - Private
-    
-    private func applyCount() {
-        rootView.countLabel.attributedText = .pretendard(
-            .body2_r_14,
-            text: "총 \(viewModel.items.count)개",
-            color: DesignSystem.Color.gray100
-        )
-    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -93,6 +81,23 @@ extension CollectionFolderListViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         viewModel.items.count
+    }
+    
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionHeader,
+              let header = collectionView.dequeueReusableSupplementaryView(
+                  ofKind: kind,
+                  withReuseIdentifier: CollectionFolderHeaderView.identifier,
+                  for: indexPath
+              ) as? CollectionFolderHeaderView else {
+            return UICollectionReusableView()
+        }
+        header.configure(count: viewModel.items.count)
+        return header
     }
     
     public func collectionView(
@@ -222,4 +227,3 @@ extension CollectionFolderListViewController: UICollectionViewDelegateFlowLayout
         minimumLineSpacingForSectionAt section: Int
     ) -> CGFloat { 24 }
 }
-

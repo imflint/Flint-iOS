@@ -41,8 +41,11 @@ public final class HomeGreetingTableViewCell: BaseTableViewCell {
         }
         
         logoImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(18)
-            $0.size.equalTo(CGSize(width: 90, height: 20))
+            let statusBarHeight = UIApplication.shared.connectedScenes
+                   .compactMap { $0 as? UIWindowScene }
+                   .first?.statusBarManager?.statusBarFrame.height ?? 44
+               $0.top.equalToSuperview().inset(statusBarHeight + 18)
+               $0.size.equalTo(CGSize(width: 90, height: 20))
         }
                
         

@@ -29,7 +29,7 @@ public final class CreateCollectionDescriptionInputCell: BaseTableViewCell {
     
     private let descriptionTextView = FlintTextView(
         placeholder: "컬렉션의 소개를 작성해주세요",
-        maxLength: 200
+        maxLength: 45
     ).then {
         $0.isScrollEnabled = false
         $0.returnKeyType = .default
@@ -37,7 +37,7 @@ public final class CreateCollectionDescriptionInputCell: BaseTableViewCell {
     
     private let countLabel = UILabel().then {
         $0.textAlignment = .right
-        $0.attributedText = .pretendard(.caption1_m_12, text: "0/200", color: .flintWhite)
+        $0.attributedText = .pretendard(.caption1_m_12, text: "0/45", color: .flintWhite)
     }
     
     //MARK: - Setup
@@ -88,7 +88,7 @@ public final class CreateCollectionDescriptionInputCell: BaseTableViewCell {
     public override func prepare() {
         onChangeDescription = nil
         descriptionTextView.text = nil
-        countLabel.attributedText = .pretendard(.caption1_m_12, text: "0/200", color: .flintWhite)
+        countLabel.attributedText = .pretendard(.caption1_m_12, text: "0/45", color: .flintWhite)
         
         NotificationCenter.default.removeObserver(
             self,

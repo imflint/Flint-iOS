@@ -38,6 +38,7 @@ public final class CollectionFolderListViewModel {
                 }
             } receiveValue: { [weak self] items in
                 guard let self else { return }
+                items.forEach { Log.d("description: \($0.description)") }
                 self.items = items
             }
             .store(in: &cancellables)
