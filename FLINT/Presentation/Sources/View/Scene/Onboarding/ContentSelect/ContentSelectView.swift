@@ -105,7 +105,16 @@ public final class ContentSelectView: BaseView {
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 16
         section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
-        
+        section.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(24)),
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+        ]
+//        let layout = UICollectionViewCompositionalLayout { section, <#any NSCollectionLayoutEnvironment#> in
+//            <#code#>
+//        }
         let layout = UICollectionViewCompositionalLayout(section: section)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         section.contentInsets = .zero
@@ -113,6 +122,7 @@ public final class ContentSelectView: BaseView {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(OnboardingContentCollectionViewCell.self)
+        collectionView.register(LoadingHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: LoadingHeaderView.self))
         return collectionView
     }()
     
