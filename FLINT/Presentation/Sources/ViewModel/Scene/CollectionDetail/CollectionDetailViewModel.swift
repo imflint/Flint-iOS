@@ -60,12 +60,20 @@ public final class CollectionDetailViewModel {
     private let deleteCollectionUseCase: DeleteCollectionUseCase
     private let toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase
     private let toggleContentBookmarkUseCase: ToggleContentBookmarkUseCase
+    private let fetchBookmarkedContentCountUseCase: FetchBookmarkedContentCountUseCase
+
+    // MARK: - Constant
+
+    public static let minimumBookmarkCount = 5
 
     // MARK: - Private
 
     private let stateSubject = CurrentValueSubject<State, Never>(.idle)
     public let deleteSuccess = PassthroughSubject<Void, Never>()
     public let deleteFailure = PassthroughSubject<Error, Never>()
+    /// 저장 취소가 최소 개수 제한에 걸림 (VC 에서 안내 모달 표시)
+    /// - Payload: 시각 상태 원복이 필요한 콘텐츠 id
+    public let contentBookmarkRemovalBlocked = PassthroughSubject<Int64, Never>()
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
@@ -77,7 +85,8 @@ public final class CollectionDetailViewModel {
         fetchProfileUseCase: FetchProfileUseCase,
         deleteCollectionUseCase: DeleteCollectionUseCase,
         toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase,
-        toggleContentBookmarkUseCase: ToggleContentBookmarkUseCase
+        toggleContentBookmarkUseCase: ToggleContentBookmarkUseCase,
+        fetchBookmarkedContentCountUseCase: FetchBookmarkedContentCountUseCase
     ) {
         self.collectionId = collectionId
         self.fetchCollectionDetailUseCase = fetchCollectionDetailUseCase
@@ -86,6 +95,7 @@ public final class CollectionDetailViewModel {
         self.deleteCollectionUseCase = deleteCollectionUseCase
         self.toggleCollectionBookmarkUseCase = toggleCollectionBookmarkUseCase
         self.toggleContentBookmarkUseCase = toggleContentBookmarkUseCase
+        self.fetchBookmarkedContentCountUseCase = fetchBookmarkedContentCountUseCase
     }
 
     // MARK: - Action
@@ -181,14 +191,54 @@ public final class CollectionDetailViewModel {
                         print("toggleCollectionBookmark failed:", error)
                     }
                 },
-                receiveValue: { isBookmarked in
-                    print("toggleCollectionBookmark success:", isBookmarked)
+                receiveValue: { [weak self] _ in
+                    self?.refreshBookmarkedUsers()
+                }
+            )
+            .store(in: &cancellables)
+    }
+
+    private func refreshBookmarkedUsers() {
+        guard case let .loaded(detail, _, isOwner) = stateSubject.value else { return }
+
+        fetchCollectionBookmarkUsersUseCase(collectionId: collectionId)
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [weak self] users in
+                    guard let self else { return }
+                    self.stateSubject.send(.loaded(detail: detail, bookmarkedUsers: users, isOwner: isOwner))
                 }
             )
             .store(in: &cancellables)
     }
 
     private func toggleContentBookmark(contentId: Int64) {
+        let isCurrentlyBookmarked = currentContentIsBookmarked(contentId: contentId)
+
+        // 저장 → 저장 취소 흐름일 때만 최소 개수 가드 필요
+        guard isCurrentlyBookmarked else {
+            performContentBookmarkToggle(contentId: contentId)
+            return
+        }
+
+        fetchBookmarkedContentCountUseCase()
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    print("fetchBookmarkedContentCount failed:", error)
+                }
+            } receiveValue: { [weak self] count in
+                guard let self else { return }
+                if count <= Self.minimumBookmarkCount {
+                    self.contentBookmarkRemovalBlocked.send(contentId)
+                } else {
+                    self.performContentBookmarkToggle(contentId: contentId)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func performContentBookmarkToggle(contentId: Int64) {
         toggleContentBookmarkUseCase(contentId: contentId)
             .sink(
                 receiveCompletion: { completion in
@@ -201,5 +251,10 @@ public final class CollectionDetailViewModel {
                 }
             )
             .store(in: &cancellables)
+    }
+
+    private func currentContentIsBookmarked(contentId: Int64) -> Bool {
+        guard case let .loaded(detail, _, _) = stateSubject.value else { return false }
+        return detail.contents.first { Int64($0.id) == contentId }?.isBookmarked ?? false
     }
 }

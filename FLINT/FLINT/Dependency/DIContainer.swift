@@ -32,8 +32,10 @@ typealias DependencyFactory = ViewControllerFactory &
                               AddContentSelectViewModelFactory &
                               CollectionFolderListViewModelFactory &
                               CollectionDetailViewModelFactory &
-                              SavedCollectionListViewModelFactory&
-                              ReportViewModelFactory & 
+                              SavedCollectionListViewModelFactory &
+                              CreatedCollectionListViewModelFactory &
+                              SavedFilmListViewModelFactory &
+                              ReportViewModelFactory &
                               StorageRepositoryFactory &
                               UploadCollectionImageUseCaseFactory
 

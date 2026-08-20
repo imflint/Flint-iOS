@@ -1,8 +1,8 @@
 //
-//  SavedCollectionListViewController.swift
+//  CreatedCollectionListViewController.swift
 //  FLINT
 //
-//  Created by 진소은 on 2026/06/19.
+//  Created by 진소은 on 8/20/26.
 //
 
 import UIKit
@@ -12,17 +12,17 @@ import ViewModel
 
 import Domain
 
-public protocol SavedCollectionListViewControllerFactory {
-    func makeSavedCollectionListViewController() -> SavedCollectionListViewController
+public protocol CreatedCollectionListViewControllerFactory {
+    func makeCreatedCollectionListViewController(target: UserTarget) -> CreatedCollectionListViewController
 }
 
-public final class SavedCollectionListViewController: BaseViewController<CollectionFolderListView> {
+public final class CreatedCollectionListViewController: BaseViewController<CollectionFolderListView> {
 
     // MARK: - Data
 
-    private let viewModel: SavedCollectionListViewModel
+    private let viewModel: CreatedCollectionListViewModel
 
-    public init(viewModel: SavedCollectionListViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
+    public init(viewModel: CreatedCollectionListViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
         self.viewModel = viewModel
         super.init(viewControllerFactory: viewControllerFactory)
     }
@@ -40,7 +40,7 @@ public final class SavedCollectionListViewController: BaseViewController<Collect
 
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // 다른 화면에서 저장/취소 변화가 있을 수 있어 진입마다 재로드
+        // 저장/생성 변화 반영을 위해 진입마다 재로드
         viewModel.load()
     }
 
@@ -68,7 +68,7 @@ public final class SavedCollectionListViewController: BaseViewController<Collect
         setNavigationBar(
             .init(
                 left: .back,
-                title: "저장한 컬렉션",
+                title: "전체 컬렉션",
                 right: .none,
                 backgroundStyle: .solid(DesignSystem.Color.background)
             )
@@ -93,7 +93,7 @@ public final class SavedCollectionListViewController: BaseViewController<Collect
 
 // MARK: - UICollectionViewDataSource
 
-extension SavedCollectionListViewController: UICollectionViewDataSource {
+extension CreatedCollectionListViewController: UICollectionViewDataSource {
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         viewModel.items.count
@@ -134,12 +134,19 @@ extension SavedCollectionListViewController: UICollectionViewDataSource {
                   let indexPath = collectionView.indexPath(for: cell) else { return }
 
             let wasBookmarked = self.viewModel.items[indexPath.item].isBookmarked
-
             self.viewModel.updateBookmark(at: indexPath.item, isBookmarked: isBookmarked)
 
             if wasBookmarked == false, isBookmarked == true {
-                // 이미 저장 컬렉션 리스트 페이지 → CTA 없이 간단 토스트
-                Toast.text("컬렉션이 저장되었어요").show()
+                Toast.action(
+                    image: DesignSystem.Icon.Gradient.bookmark,
+                    title: "취향이 하나 더 쌓였어요",
+                    actionTitle: "저장한 컬렉션 보러가기",
+                    action: { [weak self] _ in
+                        guard let self, let factory = self.viewControllerFactory else { return }
+                        let vc = factory.makeSavedCollectionListViewController()
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    }
+                ).show()
                 return
             }
 
@@ -147,19 +154,16 @@ extension SavedCollectionListViewController: UICollectionViewDataSource {
                 Toast.text("컬렉션 저장이 취소되었어요").show()
             }
         }
+
         return cell
     }
 }
 
 // MARK: - UICollectionViewDelegate
 
-extension SavedCollectionListViewController: UICollectionViewDelegate {
+extension CreatedCollectionListViewController: UICollectionViewDelegate {
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        didSelectItem(at: indexPath)
-    }
-
-    private func didSelectItem(at indexPath: IndexPath) {
         let entity = viewModel.items[indexPath.item]
 
         guard let collectionId = Int64(entity.id) else {
@@ -173,7 +177,7 @@ extension SavedCollectionListViewController: UICollectionViewDelegate {
     }
 }
 
-extension SavedCollectionListViewController: UICollectionViewDelegateFlowLayout {
+extension CreatedCollectionListViewController: UICollectionViewDelegateFlowLayout {
 
     public func collectionView(
         _ collectionView: UICollectionView,

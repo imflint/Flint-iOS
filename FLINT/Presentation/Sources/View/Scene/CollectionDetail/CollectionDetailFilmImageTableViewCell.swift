@@ -58,7 +58,7 @@ public final class CollectionDetailFilmImageTableViewCell: BaseTableViewCell {
 
     public override func setStyle() {
         backgroundColor = .clear
-        contentView.backgroundColor = .flintBackground
+        contentView.backgroundColor = .flintSubBackground
         selectionStyle = .none
         scrollView.delegate = self
     }

@@ -28,6 +28,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         case filmImage(Int)
         case film(Int)
         case saveUsers
+        case copyright
     }
 
     // MARK: - Property
@@ -35,7 +36,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
     private let viewModel: CollectionDetailViewModel
 
     private var entity: CollectionDetailEntity?
-    private var rows: [Row] = [.header, .description, .saveUsers]
+    private var rows: [Row] = [.header, .description, .copyright]
     private var bookmarkedUsers: CollectionBookmarkUsersEntity?
     private var isOwner: Bool = false
     private var kebabMenu: KebabMenu?
@@ -67,7 +68,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         view.backgroundColor = DesignSystem.Color.background
         setupTableView()
         setNavigationBar(
-            .init(left: .back, right: .kebab, backgroundStyle: .clear),
+            .init(left: .back, right: .kebab, backgroundStyle: .solid(DesignSystem.Color.background)),
             onTapRight: { [weak self] in
                 self?.didTapKebab()
             }
@@ -119,7 +120,31 @@ public final class CollectionDetailViewController: BaseViewController<Collection
             }
             .store(in: &cancellables)
 
+        viewModel.contentBookmarkRemovalBlocked
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] contentId in
+                guard let self else { return }
+                self.presentMinimumBookmarkModal()
+                self.restoreFilmCellBookmark(contentId: contentId)
+            }
+            .store(in: &cancellables)
+
         viewDidLoadSubject.send(())
+    }
+
+    private func presentMinimumBookmarkModal() {
+        let host: UIView = navigationController?.view ?? view
+        Modal.presentMinimumBookmarkLimit(in: host)
+    }
+
+    private func restoreFilmCellBookmark(contentId: Int64) {
+        // 차단된 콘텐츠 셀만 다시 configure 해서 북마크 시각 상태 복원
+        guard let entity else { return }
+        guard let idx = entity.contents.firstIndex(where: { Int64($0.id) == contentId }) else { return }
+        guard let rowIndex = rows.firstIndex(where: {
+            if case .film(let i) = $0 { return i == idx } else { return false }
+        }) else { return }
+        rootView.tableView.reloadRows(at: [IndexPath(row: rowIndex, section: 0)], with: .none)
     }
 
     private func apply(entity: CollectionDetailEntity) {
@@ -129,7 +154,11 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         result += entity.contents.enumerated().flatMap { idx, content -> [Row] in
             content.customImageUrls.isEmpty ? [.film(idx)] : [.filmImage(idx), .film(idx)]
         }
-        result += [.saveUsers]
+        let hasSavedUsers = !(bookmarkedUsers?.users.isEmpty ?? true)
+        if hasSavedUsers {
+            result += [.saveUsers]
+        }
+        result += [.copyright]
         self.rows = result
 
         rootView.tableView.reloadData()
@@ -198,11 +227,22 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         let reportVC = factory.makeReportViewController(collectionId: collectionId)
         navigationController?.pushViewController(reportVC, animated: true)
     }
+
+    private func didTapAuthor() {
+        guard let entity, let authorId = Int64(entity.author.id) else { return }
+        guard let factory = viewControllerFactory else { return }
+        let profileVC = factory.makeProfileViewController(target: .user(id: authorId))
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.pushViewController(profileVC, animated: true)
+    }
     
     private func presentSavedUsersBottomSheet(users: [SavedUserRowItem]) {
         guard !users.isEmpty else { return }
-        
-        let sheet = BaseBottomSheetViewController(content: .savedUsers(users: users))
+
+        let sheet = BaseBottomSheetViewController(
+            title: "이 컬렉션을 저장한 사람들",
+            content: .savedUsers(users: users)
+        )
         
         sheet.onSelectSavedUser = { [weak self, weak sheet] user in
             guard let self else { return }
@@ -270,6 +310,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         tableView.register(CollectionDetailFilmImageTableViewCell.self)
         tableView.register(CollectionDetailFilmTableViewCell.self)
         tableView.register(CollectionSaveUserTableViewCell.self)
+        tableView.register(CollectionDetailCopyrightTableViewCell.self)
 
         tableView.reloadData()
         tableView.layoutIfNeeded()
@@ -343,6 +384,9 @@ extension CollectionDetailViewController: UITableViewDataSource {
                 dateText: dateText,
                 description: description
             )
+            cell.onTapAuthor = { [weak self] in
+                self?.didTapAuthor()
+            }
             return cell
 
         case .filmImage(let idx):
@@ -409,6 +453,15 @@ extension CollectionDetailViewController: UITableViewDataSource {
                     let items = self.makeSavedUserRowItems()
                     self.presentSavedUsersBottomSheet(users: items)
             }
+            return cell
+
+        case .copyright:
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: CollectionDetailCopyrightTableViewCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionDetailCopyrightTableViewCell
+
+            cell.selectionStyle = .none
             return cell
         }
     }

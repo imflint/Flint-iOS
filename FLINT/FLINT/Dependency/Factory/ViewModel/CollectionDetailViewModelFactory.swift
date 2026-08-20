@@ -15,8 +15,9 @@ protocol CollectionDetailViewModelFactory:
     FetchCollectionBookmarkUsersUseCaseFactory,
     ToggleCollectionBookmarkUseCaseFactory,
     ToggleContentBookmarkUseCaseFactory,
-    FetchProfileUseCaseFactory, 
-    DeleteCollectionUseCaseFactory{
+    FetchProfileUseCaseFactory,
+    DeleteCollectionUseCaseFactory,
+    FetchBookmarkedContentCountUseCaseFactory {
     func makeCollectionDetailViewModel(collectionId: Int64) -> CollectionDetailViewModel
 }
 
@@ -29,7 +30,8 @@ extension CollectionDetailViewModelFactory {
             fetchProfileUseCase: makeFetchProfileUseCase(),
             deleteCollectionUseCase: makeDeleteCollectionUseCase(),
             toggleCollectionBookmarkUseCase: makeToggleCollectionBookmarkUseCase(),
-            toggleContentBookmarkUseCase: makeToggleContentBookmarkUseCase()
+            toggleContentBookmarkUseCase: makeToggleContentBookmarkUseCase(),
+            fetchBookmarkedContentCountUseCase: makeFetchBookmarkedContentCountUseCase()
         )
     }
 }

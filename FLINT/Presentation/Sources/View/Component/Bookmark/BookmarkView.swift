@@ -18,11 +18,12 @@ public final class BookmarkView: BaseView {
     
     private var isBookmarked: Bool = false
     private var count: Int = 0
-    
+    private var showCount: Bool = true
+
     private let bookmarkButton = UIButton(type: .system).then {
         $0.setImage(UIImage.icBookmarkEmpty.withRenderingMode(.alwaysOriginal), for: .normal)
     }
-    
+
     private let countLabel = UILabel().then {
         $0.numberOfLines = 1
     }
@@ -57,7 +58,7 @@ public final class BookmarkView: BaseView {
     }
     
     private func updateCountLabel() {
-        countLabel.isHidden = false
+        countLabel.isHidden = !showCount
         countLabel.attributedText = .pretendard(.caption1_r_12, text: "\(count)", color: .flintWhite)
     }
     
@@ -80,10 +81,12 @@ public final class BookmarkView: BaseView {
 
     public func configure(isBookmarked: Bool, countText: String? = "0") {
         self.isBookmarked = isBookmarked
+        // countText == nil이면 카운트 숨김 (예: 저장수 정보 없는 리스트)
+        self.showCount = (countText != nil)
         self.count = Int(countText ?? "") ?? 0
-        
+
         if self.isBookmarked { self.count = max(1, self.count) }
-        
+
         updateIcon()
         updateCountLabel()
     }
