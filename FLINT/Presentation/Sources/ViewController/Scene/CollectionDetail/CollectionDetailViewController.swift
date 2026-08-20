@@ -68,7 +68,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         view.backgroundColor = DesignSystem.Color.background
         setupTableView()
         setNavigationBar(
-            .init(left: .back, right: .kebab, backgroundStyle: .clear),
+            .init(left: .back, right: .kebab, backgroundStyle: .solid(DesignSystem.Color.background)),
             onTapRight: { [weak self] in
                 self?.didTapKebab()
             }
