@@ -114,6 +114,7 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
         setTableView()
         registerCells()
         bindViewModel()
+        hideKeyboardWhenTappedAround(activeOnAction: false)
     }
 
     public override func viewDidLayoutSubviews() {
