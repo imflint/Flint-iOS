@@ -34,7 +34,6 @@ public final class SavedFilmListViewController: BaseViewController<SavedFilmList
         super.viewDidLoad()
         setupTableView()
         setupSearch()
-        bind()
         viewModel.load()
     }
 

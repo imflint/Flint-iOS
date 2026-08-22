@@ -80,7 +80,6 @@ public final class SettingViewController: BaseViewController<SettingView> {
         ))
         setupTableView()
         setupActions()
-        bind()
     }
     
     // MARK: - Bind
