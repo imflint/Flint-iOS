@@ -17,6 +17,7 @@ import Presentation
 
 typealias DependencyFactory = ViewControllerFactory &
                               
+                              SplashViewModelFactory &
                               LoginViewModelFactory &
                               OnboardingViewModelFactory &
                               
