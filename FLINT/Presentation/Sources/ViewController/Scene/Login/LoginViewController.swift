@@ -97,8 +97,13 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         switch authorization.credential {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
-            Log.d(String(data: appleIdCredential.identityToken!, encoding: .utf8))
-            Log.d(String(data: appleIdCredential.authorizationCode!, encoding: .utf8))
+            guard let tokenData = appleIdCredential.identityToken,
+                  let codeData = appleIdCredential.authorizationCode,
+                  let token = String(data: tokenData, encoding: .utf8),
+                  let code = String(data: codeData, encoding: .utf8)
+            else { return }
+            
+            loginViewModel.appleLogin(code: code, accessToken: token)
         default: break
         }
     }
