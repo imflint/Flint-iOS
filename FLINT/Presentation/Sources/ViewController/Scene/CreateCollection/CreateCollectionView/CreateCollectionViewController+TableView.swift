@@ -94,6 +94,8 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     guard let self else { return }
                     self.collectionDescriptionText = text
                     self.updateCreatePayload()
+                    self.rootView.tableView.beginUpdates()
+                    self.rootView.tableView.endUpdates()
                 }
                 cell.setText(collectionDescriptionText)
                 return cell
@@ -177,6 +179,8 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         cell.setError(false)
                     }
+                    self.rootView.tableView.beginUpdates()
+                    self.rootView.tableView.endUpdates()
                 }
 
                 cell.onTapAddPhoto = { [weak self, weak cell] in
