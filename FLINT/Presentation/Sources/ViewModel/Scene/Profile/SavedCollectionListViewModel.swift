@@ -16,20 +16,23 @@ public final class SavedCollectionListViewModel {
     @Published public private(set) var items: [CollectionEntity] = []
 
     // MARK: - Dependency
+    private let target: UserTarget
     private let fetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase
     private let toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase
     private var cancellables = Set<AnyCancellable>()
 
     public init(
+        target: UserTarget,
         fetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase,
         toggleCollectionBookmarkUseCase: ToggleCollectionBookmarkUseCase
     ) {
+        self.target = target
         self.fetchBookmarkedCollectionsUseCase = fetchBookmarkedCollectionsUseCase
         self.toggleCollectionBookmarkUseCase = toggleCollectionBookmarkUseCase
     }
 
     public func load() {
-        fetchBookmarkedCollectionsUseCase(for: .me)
+        fetchBookmarkedCollectionsUseCase(for: target)
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 if case let .failure(error) = completion {

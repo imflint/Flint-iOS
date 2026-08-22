@@ -116,7 +116,7 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
 
         switch nextRow {
         case .savedCollections:
-            let vc = factory.makeSavedCollectionListViewController()
+            let vc = factory.makeSavedCollectionListViewController(target: profileViewModel.target)
             navigationController?.pushViewController(vc, animated: true)
         case .myCollections:
             let vc = factory.makeCreatedCollectionListViewController(target: profileViewModel.target)

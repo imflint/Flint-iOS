@@ -7,12 +7,13 @@
 
 import Foundation
 
+import Domain
 import Presentation
 
 extension SavedCollectionListViewControllerFactory where Self: SavedCollectionListViewModelFactory & ViewControllerFactory {
-    func makeSavedCollectionListViewController() -> SavedCollectionListViewController {
+    func makeSavedCollectionListViewController(target: UserTarget) -> SavedCollectionListViewController {
         return SavedCollectionListViewController(
-            viewModel: makeSavedCollectionListViewModel(),
+            viewModel: makeSavedCollectionListViewModel(target: target),
             viewControllerFactory: self
         )
     }

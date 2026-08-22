@@ -13,7 +13,13 @@ import ViewModel
 import Domain
 
 public protocol SavedCollectionListViewControllerFactory {
-    func makeSavedCollectionListViewController() -> SavedCollectionListViewController
+    func makeSavedCollectionListViewController(target: UserTarget) -> SavedCollectionListViewController
+}
+
+public extension SavedCollectionListViewControllerFactory {
+    func makeSavedCollectionListViewController() -> SavedCollectionListViewController {
+        makeSavedCollectionListViewController(target: .me)
+    }
 }
 
 public final class SavedCollectionListViewController: BaseViewController<CollectionFolderListView> {
