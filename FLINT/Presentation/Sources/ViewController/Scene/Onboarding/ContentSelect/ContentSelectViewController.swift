@@ -190,7 +190,8 @@ extension ContentSelectViewController {
     
     public func contentCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard onboardingViewModel.selectedContents.value.count <= 6 else { return }
-        onboardingViewModel.clickContent(onboardingViewModel.contents.value[indexPath.item])
+        guard case let .content(content) = contentCollectionViewDataSource?.itemIdentifier(for: indexPath) else { return }
+        onboardingViewModel.clickContent(content)
     }
     
     @objc public func contentCollectionViewPanGesture(_ sender: UIPanGestureRecognizer) {
