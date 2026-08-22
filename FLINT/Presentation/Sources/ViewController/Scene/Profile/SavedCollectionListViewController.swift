@@ -34,7 +34,6 @@ public final class SavedCollectionListViewController: BaseViewController<Collect
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        bind()
         applyCount()
     }
 
