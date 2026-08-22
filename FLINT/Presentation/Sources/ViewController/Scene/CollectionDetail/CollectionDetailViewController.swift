@@ -84,25 +84,34 @@ public final class CollectionDetailViewController: BaseViewController<Collection
             tapContentBookmark: tapContentBookmarkSubject.eraseToAnyPublisher()
         )
 
-        let output = viewModel.transform(input: input)
+        viewModel.transform(input: input)
 
-        output.state
+        viewModel.$detail
+            .compactMap { $0 }
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .idle:
-                    break
-                case .loading:
-                    break
-                case .loaded(let detail, let bookmarkedUsers, let isOwner):
-                    self.entity = detail
-                    self.bookmarkedUsers = bookmarkedUsers
-                    self.isOwner = isOwner
-                    self.apply(entity: detail)
-                case .failed(let message):
-                    print("Collection detail load failed:", message)
-                }
+            .sink { [weak self] detail in
+                self?.apply(entity: detail)
+            }
+            .store(in: &cancellables)
+
+        viewModel.$bookmarkedUsers
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] users in
+                self?.applyBookmarkedUsers(users)
+            }
+            .store(in: &cancellables)
+
+        viewModel.$isOwner
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isOwner in
+                self?.isOwner = isOwner
+            }
+            .store(in: &cancellables)
+
+        viewModel.loadFailure
+            .receive(on: DispatchQueue.main)
+            .sink { message in
+                print("Collection detail load failed:", message)
             }
             .store(in: &cancellables)
 
@@ -147,9 +156,55 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         rootView.tableView.reloadRows(at: [IndexPath(row: rowIndex, section: 0)], with: .none)
     }
 
+    private func applyBookmarkedUsers(_ users: CollectionBookmarkUsersEntity?) {
+        let previousRows = self.rows
+        self.bookmarkedUsers = users
+
+        guard let entity else { return }
+        self.rows = buildRows(entity: entity)
+
+        let prevSaveIdx = previousRows.firstIndex(where: { if case .saveUsers = $0 { return true } else { return false } })
+        let nextSaveIdx = rows.firstIndex(where: { if case .saveUsers = $0 { return true } else { return false } })
+
+        switch (prevSaveIdx, nextSaveIdx) {
+        case (nil, nil):
+            break
+        case let (prev?, next?) where prev == next:
+            rootView.tableView.reloadRows(at: [IndexPath(row: next, section: 0)], with: .none)
+        case (nil, let next?):
+            rootView.tableView.performBatchUpdates {
+                rootView.tableView.insertRows(at: [IndexPath(row: next, section: 0)], with: .none)
+            }
+        case (let prev?, nil):
+            rootView.tableView.performBatchUpdates {
+                rootView.tableView.deleteRows(at: [IndexPath(row: prev, section: 0)], with: .none)
+            }
+        default:
+            rootView.tableView.reloadData()
+        }
+    }
+
     private func apply(entity: CollectionDetailEntity) {
         self.entity = entity
+        self.rows = buildRows(entity: entity)
+        rootView.tableView.reloadData()
+    }
 
+    private func updateEntityBookmark(isBookmarked: Bool) {
+        guard let old = entity else { return }
+        entity = CollectionDetailEntity(
+            id: old.id,
+            title: old.title,
+            description: old.description,
+            thumbnailUrl: old.thumbnailUrl,
+            createdAt: old.createdAt,
+            isBookmarked: isBookmarked,
+            author: old.author,
+            contents: old.contents
+        )
+    }
+
+    private func buildRows(entity: CollectionDetailEntity) -> [Row] {
         var result: [Row] = [.header, .description]
         result += entity.contents.enumerated().flatMap { idx, content -> [Row] in
             content.customImageUrls.isEmpty ? [.film(idx)] : [.filmImage(idx), .film(idx)]
@@ -159,9 +214,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
             result += [.saveUsers]
         }
         result += [.copyright]
-        self.rows = result
-
-        rootView.tableView.reloadData()
+        return result
     }
 
     // MARK: - Action
@@ -345,6 +398,7 @@ extension CollectionDetailViewController: UITableViewDataSource {
             cell.configure(title: title, isSaved: isSaved, thumbnailURL: thumbnailURL)
             cell.onTapSave = { [weak self] isSaved in
                 guard let self else { return }
+                self.updateEntityBookmark(isBookmarked: isSaved)
                 self.tapHeaderSaveSubject.send(isSaved)
 
                 if isSaved {
