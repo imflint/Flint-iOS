@@ -54,8 +54,8 @@ public final class SplashViewController: BaseViewController<SplashView> {
     }
     
     private func showHome() {
-        guard let homeViewController = viewControllerFactory?.makeHomeViewController() else { return }
-        navigationController?.setViewControllers([homeViewController], animated: false)
+        guard let tabBarViewController = viewControllerFactory?.makeTabBarViewController() else { return }
+        navigationController?.setViewControllers([tabBarViewController], animated: false)
     }
     
     private func showLogin() {

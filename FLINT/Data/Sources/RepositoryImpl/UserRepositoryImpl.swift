@@ -79,6 +79,14 @@ public final class DefaultUserRepository: UserRepository {
         return userService.recalculateMyKeywords()
     }
     
+    public func modifyNickname(nickname: String) -> AnyPublisher<Void, Error> {
+        return userService.modifyNickname(nickname: nickname)
+    }
+    
+    public func modifyProfileImage(key: String) -> AnyPublisher<Void, Error> {
+        return userService.modifyProfileImage(key: key)
+    }
+    
     public func checkNickname(_ nickname: String) -> AnyPublisher<Bool, Error> {
         return userService.checkNickname(nickname)
             .tryMap({ try $0.isAvailable })

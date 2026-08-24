@@ -9,6 +9,8 @@ import Foundation
 
 import Moya
 
+import DTO
+
 public enum UserAPI {
     case fetchUserProfile(userId: Int64)
     case fetchUserBookmarkedCollections(userId: Int64)
@@ -22,6 +24,8 @@ public enum UserAPI {
     case fetchMyKeywords
     case recalculateMyKeywords
     
+    case modifyNickname(_ nickname: NicknameDTO)
+    case modifyProfileImage(_ image: ProfileImageDTO)
     case checkNickname(_ nickname: String)
 }
 
@@ -50,6 +54,11 @@ extension UserAPI: TargetType {
         case .recalculateMyKeywords:
             return "/api/v1/users/me/keywords/recalculate"
         
+            
+        case .modifyNickname:
+            return "/api/v1/users/me/nickname"
+        case .modifyProfileImage:
+            return "/api/v1/users/me/profile-image"
         case .checkNickname:
             return "/api/v1/users/nickname/check"
         }
@@ -61,6 +70,8 @@ extension UserAPI: TargetType {
             return .get
         case .recalculateMyKeywords:
             return .patch
+        case .modifyNickname, .modifyProfileImage:
+            return .put
         }
     }
     
@@ -71,6 +82,10 @@ extension UserAPI: TargetType {
                 parameters: ["nickname": nickname],
                 encoding: URLEncoding.queryString
             )
+        case let .modifyNickname(nickname):
+            return .requestJSONEncodable(nickname)
+        case let .modifyProfileImage(image):
+            return .requestJSONEncodable(image)
         case .fetchUserProfile, .fetchUserBookmarkedCollections, .fetchUserBookmarkedContents, .fetchUserCreatedCollections, .fetchUserKeywords, .fetchMyProfile, .fetchMyBookmarkedCollections, .fetchMyCreatedCollections, .fetchMyKeywords, .recalculateMyKeywords:
             return .requestPlain
         }

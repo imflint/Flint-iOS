@@ -36,7 +36,8 @@ typealias DependencyFactory = ViewControllerFactory &
                               SavedCollectionListViewModelFactory&
                               ReportViewModelFactory & 
                               StorageRepositoryFactory &
-                              UploadCollectionImageUseCaseFactory
+                              UploadCollectionImageUseCaseFactory &
+                              ProfileSettingViewModelFactory
 
 final class DIContainer: DependencyFactory {
     

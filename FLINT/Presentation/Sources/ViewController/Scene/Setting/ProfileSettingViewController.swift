@@ -1,0 +1,207 @@
+//
+//  File.swift
+//  Presentation
+//
+//  Created by Hosung.Kim on 2026.08.23.
+//
+
+import Combine
+import PhotosUI
+import UIKit
+
+import Domain
+
+import View
+import ViewModel
+
+public protocol ProfileSettingViewControllerFactory {
+    func makeProfileSettingViewController(userProfile: UserProfileEntity) -> ProfileSettingViewController
+}
+
+public final class ProfileSettingViewController: BaseViewController<NicknameView> {
+    
+    // MARK: - ViewModel
+    
+    private let profileSettingViewModel: ProfileSettingViewModel
+    
+    // MARK: - Basic
+    
+    public init(userProfile: UserProfileEntity, profileSettingViewModel: ProfileSettingViewModel, viewControllerFactory: ViewControllerFactory) {
+        self.profileSettingViewModel = profileSettingViewModel
+        super.init(viewControllerFactory: viewControllerFactory)
+        if let url = userProfile.profileImageUrl {
+            rootView.profileImageSettingView.profileImageView.kf.setImage(with: url)
+        }
+        rootView.nicknameTextField.text = userProfile.nickname
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setNavigationBar(.init(left: .back))
+        
+        rootView.nextButton.title = "완료"
+        rootView.nextButton.isEnabled = false
+        
+        hideKeyboardWhenTappedAround()
+        addActions()
+    }
+    
+    public override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        rootView.successToast.close(animated: false)
+        rootView.failureToast.close(animated: false)
+    }
+    
+    // MARK: - Bind
+    
+    public override func bind() {
+        profileSettingViewModel.nicknameValidState.sink(receiveValue: { [weak self] nicknameValidState in
+            Log.d(nicknameValidState)
+            guard let self else { return }
+            switch nicknameValidState {
+            case .valid:
+                rootView.nextButton.isEnabled = true
+                rootView.nicknameWarningLabel.isHidden = true
+                rootView.nicknameTextField.layer.borderWidth = 0
+                rootView.nicknameTextField.layer.borderColor = nil
+                rootView.successToast.show()
+            case .invalid:
+                rootView.nextButton.isEnabled = false
+                rootView.nicknameWarningLabel.isHidden = false
+                rootView.nicknameTextField.layer.borderWidth = 1
+                rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
+            case .duplicate:
+                rootView.nextButton.isEnabled = false
+                rootView.nicknameWarningLabel.isHidden = true
+                rootView.nicknameTextField.layer.borderWidth = 1
+                rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
+                rootView.failureToast.show()
+            case .none:
+                rootView.nextButton.isEnabled = false
+                rootView.nicknameWarningLabel.isHidden = true
+                rootView.nicknameTextField.layer.borderWidth = 0
+                rootView.nicknameTextField.layer.borderColor = nil
+            }
+        })
+        .store(in: &cancellables)
+    }
+    
+    // MARK: - Private Function
+    
+    private func addActions() {
+        rootView.profileImageSettingView.settingButton.addAction(UIAction(weak: self, handler: ProfileSettingViewController.showProfileImageSettingAlert(_:)), for: .touchUpInside)
+        rootView.verifyButton.addAction(UIAction(weak: self, handler: ProfileSettingViewController.verifyNickname(_:)), for: .touchUpInside)
+        rootView.nextButton.addAction(UIAction(weak: self, handler: ProfileSettingViewController.touchUpInsideNextButton(_:)), for: .touchUpInside)
+    }
+    
+    private func showProfileImageSettingAlert(_ action: UIAction) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let selectAction = UIAlertAction(title: "앨범에서 선택", style: .default, handler: selectPhotoFromAlbum(_:))
+        let deleteAction = UIAlertAction(title: "프로필 사진 삭제", style: .destructive, handler: deleteProfileImage(_:))
+        let closeAction = UIAlertAction(title: "닫기", style: .cancel)
+        
+        alert.addAction(selectAction)
+        alert.addAction(deleteAction)
+        alert.addAction(closeAction)
+        
+        present(alert, animated: true)
+    }
+    
+    private func selectPhotoFromAlbum(_ action: UIAlertAction) {
+        getAlbumAuthorization()
+    }
+    
+    private func deleteProfileImage(_ action: UIAlertAction) {
+        rootView.profileImageSettingView.profileImageView.image = DesignSystem.Image.Common.profileGray
+    }
+    
+    private func getAlbumAuthorization() {
+        let authStatus: PHAuthorizationStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        switch authStatus {
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization(for: .readWrite, handler: { [weak self] status in
+                if status == .authorized, status == .limited {
+                    self?.presentPicker()
+                }
+            })
+        case .denied, .restricted:
+            presentAuthAlert()
+        case .authorized:
+            presentPicker()
+        case .limited:
+            presentPicker()
+        @unknown default:
+            Log.e("Unknown Album Authorization Status: \(authStatus)")
+        }
+    }
+    
+    private func presentPicker() {
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        config.selectionLimit = 1
+        
+        let pickerViewController = PHPickerViewController(configuration: config)
+        pickerViewController.delegate = self
+        
+        present(pickerViewController, animated: true)
+    }
+    
+    private func presentAuthAlert() {
+        let alert = UIAlertController(title: "앨범 접근 권한이 없습니다.", message: "설정에서 Flint의 사진 접근 권한을 허용해 주세요.", preferredStyle: .alert)
+        
+        let deleteAction = UIAlertAction(title: "취소", style: .destructive)
+        let selectAction = UIAlertAction(title: "설정으로 이동", style: .default, handler: openSettings(_:))
+        
+        alert.addAction(deleteAction)
+        alert.addAction(selectAction)
+        
+        present(alert, animated: true)
+    }
+    
+    private func openSettings(_ action: UIAlertAction) {
+        if let openSettingsURL = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(openSettingsURL, options: [:], completionHandler: nil)
+        }
+    }
+    
+    private func verifyNickname(_ action: UIAction) {
+        guard let nickname = rootView.nicknameTextField.text else { return }
+        profileSettingViewModel.checkNickname(nickname)
+    }
+    
+    private func touchUpInsideNextButton(_ action: UIAction) {
+        profileSettingViewModel.modifyProfileImage()
+        profileSettingViewModel.modifyNickname()
+        navigationController?.popViewController(animated: true)
+    }
+}
+
+extension ProfileSettingViewController: PHPickerViewControllerDelegate {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        
+        guard let itemProvider = results.map(\.itemProvider).first else {
+            Log.e("[PHPickerResult] is empty.")
+            return
+        }
+        guard itemProvider.canLoadObject(ofClass: UIImage.self) else {
+            Log.e("Can't load UIImage from itemProvider.")
+            return
+        }
+        
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+            guard let self, let image = image as? UIImage else { return }
+            DispatchQueue.main.async { [weak self] in
+                self?.rootView.profileImageSettingView.profileImageView.image = image
+                self?.profileSettingViewModel.uploadProfileImage(image)
+            }
+        }
+    }
+}
