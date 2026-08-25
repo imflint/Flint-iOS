@@ -21,9 +21,9 @@ public final class DefaultContentRepository: ContentRepository {
         self.contentService = contentService
     }
     
-    public func searchContents(keyword: String?, genre: Set<Genre>, mediaType: MediaType?, cursor: String?, size: Int32) -> AnyPublisher<[ContentEntity], Error> {
+    public func searchContents(keyword: String?, genre: Set<Genre>, mediaType: MediaType?, cursor: String?, size: Int32) -> AnyPublisher<SearchContentEntity, Error> {
         return contentService.searchContents(keyword: keyword, genre: genre.map { $0.rawValue }, mediaType: mediaType?.rawValue, cursor: cursor, size: size)
-            .tryMap({ try $0.entities })
+            .tryMap({ try $0.entity })
             .eraseToAnyPublisher()
     }
     

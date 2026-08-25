@@ -12,7 +12,7 @@ import Entity
 import Repository
 
 public protocol SearchContentsUseCase: AnyObject {
-    func callAsFunction(keyword: String?, genre: Set<Genre>, mediaType: MediaType?, cursor: String?) -> AnyPublisher<[ContentEntity], Error>
+    func callAsFunction(keyword: String?, genre: Set<Genre>, mediaType: MediaType?, cursor: String?) -> AnyPublisher<SearchContentEntity, Error>
 }
 
 public class DefaultSearchContentsUseCase: SearchContentsUseCase {
@@ -23,7 +23,7 @@ public class DefaultSearchContentsUseCase: SearchContentsUseCase {
         self.contentRepository = contentRepository
     }
     
-    public func callAsFunction(keyword: String?, genre: Set<Genre>, mediaType: MediaType?, cursor: String?) -> AnyPublisher<[ContentEntity], Error> {
+    public func callAsFunction(keyword: String?, genre: Set<Genre>, mediaType: MediaType?, cursor: String?) -> AnyPublisher<SearchContentEntity, Error> {
         return contentRepository.searchContents(keyword: keyword, genre: genre, mediaType: mediaType, cursor: cursor, size: 20)
     }
 }

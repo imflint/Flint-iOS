@@ -82,7 +82,6 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
     
     public override func bind() {
         onboardingViewModel.isLoading.sink { [weak self] isLoading in
-            Log.d(isLoading)
             guard let self else { return }
             if isLoading {
                 rootView.loadingIndicator.startAnimating()
@@ -135,6 +134,12 @@ extension ContentSelectViewController: UICollectionViewDelegate {
             genreCollectionView(collectionView, didSelectItemAt: indexPath)
         }
     }
+    
+    public func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+        if collectionView === rootView.contentCollectionView {
+            contentCollectionView(collectionView, willDisplaySupplementaryView: view, forElementKind: elementKind, at: indexPath)
+        }
+    }
 }
 
 // MARK: - ContentCollectionView
@@ -183,14 +188,26 @@ extension ContentSelectViewController {
     
     private func makeContentCollectionViewSnapshot(contentEntities: [ContentEntity]) -> ContentCollectionViewSnapshot {
         var snapshot = ContentCollectionViewSnapshot()
-        snapshot.appendSections([.main, .loading])
+        var sections: [ContentCollectionViewSection] = [.main]
+        if onboardingViewModel.cursor != nil {
+            sections.append(.loading)
+        }
+        snapshot.appendSections(sections)
         snapshot.appendItems(contentEntities.map({ ContentCollectionViewItem.content($0) }), toSection: .main)
         return snapshot
     }
     
-    public func contentCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    private func contentCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard onboardingViewModel.selectedContents.value.count <= 6 else { return }
         onboardingViewModel.clickContent(onboardingViewModel.contents.value[indexPath.item])
+    }
+    
+    private func contentCollectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+        guard let section = ContentCollectionViewSection(rawValue: indexPath.section) else { return }
+        
+        if case .loading = section {
+            onboardingViewModel.fetchMoreContents()
+        }
     }
     
     @objc public func contentCollectionViewPanGesture(_ sender: UIPanGestureRecognizer) {

@@ -11,7 +11,7 @@ import Foundation
 import Entity
 
 public protocol ContentRepository {
-    func searchContents(keyword: String?, genre: Set<Genre>, mediaType: MediaType?, cursor: String?, size: Int32) -> AnyPublisher<[ContentEntity], Error>
+    func searchContents(keyword: String?, genre: Set<Genre>, mediaType: MediaType?, cursor: String?, size: Int32) -> AnyPublisher<SearchContentEntity, Error>
     func fetchMyBookmarkedContents() -> AnyPublisher<[ContentInfoEntity], Error>
     func fetchOTTPlatformsForContent(contentId: Int64) -> AnyPublisher<[OTTPlatformEntity], Error>
 }

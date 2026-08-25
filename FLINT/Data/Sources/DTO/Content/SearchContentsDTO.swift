@@ -11,6 +11,7 @@ import Entity
 
 public struct SearchContentsDTO: Codable {
     public let data: [ContentDTO]?
+    public let meta: MetaDTO?
 }
 
 extension SearchContentsDTO {
@@ -24,6 +25,28 @@ extension SearchContentsDTO {
 }
 
 extension SearchContentsDTO {
+    public struct MetaDTO: Codable {
+        public let type: String?
+        public let returned: Int?
+        public let nextCursor: String?
+        public let page: Int?
+        public let size: Int?
+        public let totalElements: String?
+        public let totalPages: Int?
+    }
+}
+
+extension SearchContentsDTO {
+    public var entity: SearchContentEntity {
+        get throws {
+            return try SearchContentEntity(
+                data: data?.map({ try $0.entity }) ?? [],
+                meta: (meta?.entity).unwrap()
+            )
+        }
+    }
+    
+    // deprecated
     public var entities: [ContentEntity] {
         get throws {
             return try data?.map({ try $0.entity }) ?? []
@@ -40,6 +63,22 @@ extension SearchContentsDTO.ContentDTO {
                 author: author ?? "",
                 posterUrl: URL(string: posterUrl ?? ""),
                 year: year ?? 0
+            )
+        }
+    }
+}
+
+extension SearchContentsDTO.MetaDTO {
+    public var entity: SearchContentEntity.MetaEntity {
+        get {
+            return .init(
+                type: type,
+                returned: returned,
+                nextCursor: nextCursor,
+                page: page,
+                size: size,
+                totalElements: totalElements,
+                totalPages: totalPages
             )
         }
     }
