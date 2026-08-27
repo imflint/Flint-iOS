@@ -7,17 +7,19 @@
 
 import Foundation
 
+import Domain
 import Presentation
 
 protocol SavedCollectionListViewModelFactory:
     FetchBookmarkedCollectionsUseCaseFactory &
     ToggleCollectionBookmarkUseCaseFactory {
-    func makeSavedCollectionListViewModel() -> SavedCollectionListViewModel
+    func makeSavedCollectionListViewModel(target: UserTarget) -> SavedCollectionListViewModel
 }
 
 extension SavedCollectionListViewModelFactory {
-    func makeSavedCollectionListViewModel() -> SavedCollectionListViewModel {
+    func makeSavedCollectionListViewModel(target: UserTarget) -> SavedCollectionListViewModel {
         return SavedCollectionListViewModel(
+            target: target,
             fetchBookmarkedCollectionsUseCase: makeFetchBookmarkedCollectionsUseCase(),
             toggleCollectionBookmarkUseCase: makeToggleCollectionBookmarkUseCase()
         )

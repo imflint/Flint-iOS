@@ -24,16 +24,20 @@ public final class CreateCollectionHeaderImageCell: BaseTableViewCell {
         $0.image = .imgBackgroundGradiantMiddle
     }
     
-    private let blackOverlayView = UIView().then {
-        $0.backgroundColor = .black.withAlphaComponent(0.3)
+    private let gradientView = GradientView().then {
+        $0.colors = [
+            UIColor.black.withAlphaComponent(0),
+            UIColor.black.withAlphaComponent(0.8)
+        ]
+        $0.locations = [0.0, 1.0]
+        $0.startPoint = CGPoint(x: 0.5, y: 0)
+        $0.endPoint = CGPoint(x: 0.5, y: 1)
         $0.isUserInteractionEnabled = false
-        $0.clipsToBounds = true
     }
     
     private let addPhotoButton = UIButton().then {
         $0.setImage(.icBackgroundPhoto, for: .normal)
     }
-    
     
     public override func setStyle() {
         backgroundColor = .flintBackground
@@ -42,7 +46,7 @@ public final class CreateCollectionHeaderImageCell: BaseTableViewCell {
     }
     
     public override func setHierarchy() {
-        contentView.addSubviews(headerImageView, blackOverlayView, addPhotoButton)
+        contentView.addSubviews(headerImageView, gradientView, addPhotoButton)
     }
     
     public override func setLayout() {
@@ -51,7 +55,7 @@ public final class CreateCollectionHeaderImageCell: BaseTableViewCell {
             $0.height.equalTo(140)
         }
         
-        blackOverlayView.snp.makeConstraints {
+        gradientView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         

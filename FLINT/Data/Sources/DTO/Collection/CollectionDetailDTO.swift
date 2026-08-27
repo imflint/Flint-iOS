@@ -65,6 +65,7 @@ extension CollectionDetailDTO.AuthorDTO {
             return try UserProfileEntity(
                 id: unwrap(id),
                 nickname: nickname ?? "",
+                email: "",
                 profileImageUrl: URL(string: profileImageUrl ?? ""),
                 role: UserRole(rawValue: userRole ?? "") ?? .unknown
             )

@@ -13,7 +13,7 @@ import Domain
 public final class ProfileViewModel {
     
     
-    private let target: UserTarget
+    public let target: UserTarget
     
     public enum Row {
         case profileHeader(nickname: String, profileImageUrl: URL?, isFliner: Bool)
@@ -23,6 +23,7 @@ public final class ProfileViewModel {
             subtitle: String,
             showInfo: Bool,
             showRefresh: Bool,
+            isRefreshEnabled: Bool,
             isRefreshing: Bool,
             tooltipText: String?
         )
@@ -71,6 +72,7 @@ public final class ProfileViewModel {
     private var savedContents: [ContentInfoEntity] = []
     private var isKeywordInfoTooltipVisible: Bool = false
     private var isRefreshing: Bool = false
+    private var canRefresh: Bool = false
 
     public init(
         target: UserTarget,
@@ -80,8 +82,8 @@ public final class ProfileViewModel {
         fetchBookmarkedCollectionsUseCase: FetchBookmarkedCollectionsUseCase,
         fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase,
         recalculateKeywordsUseCase: RecalculateKeywordsUseCase,
-        initialNickname: String = "플링",
-        initialIsFliner: Bool = true
+        initialNickname: String = "",
+        initialIsFliner: Bool = false
     ) {
         self.target = target
         self.fetchProfileUseCase = fetchProfileUseCase
@@ -97,7 +99,9 @@ public final class ProfileViewModel {
     
     // MARK: - Input
     public func load() {
-        
+        // 중복 구독 방지: 이전 로드 subscription 정리
+        cancellables.removeAll()
+
         fetchProfileUseCase(for: target)
             .manageThread()
             .sinkHandledCompletion(receiveValue: { [weak self] userProfileEntity in
@@ -105,6 +109,7 @@ public final class ProfileViewModel {
                 nickname = userProfileEntity.nickname
                 isFliner = userProfileEntity.role == .fliner
                 profileImageUrl = userProfileEntity.profileImageUrl
+                canRefresh = userProfileEntity.keywordRecalculatable ?? false
                 rows = makeRows()
             })
             .store(in: &cancellables)
@@ -121,7 +126,7 @@ public final class ProfileViewModel {
                 self.rows = self.makeRows()
             }
             .store(in: &cancellables)
-        
+
         fetchCreatedCollectionsUseCase(for: target)
             .manageThread()
             .sink { completion in
@@ -170,27 +175,24 @@ public final class ProfileViewModel {
     }
 
     public func refreshKeywords() {
-        guard isMe, !isRefreshing else { return }
+        guard isMe, !isRefreshing, canRefresh else { return }
         isRefreshing = true
         rows = makeRows()
 
-        let target = self.target
-        let fetchKeywords = fetchKeywordsUseCase
-
         recalculateKeywordsUseCase()
-            .flatMap { _ in fetchKeywords(for: target) }
             .manageThread()
             .sink { [weak self] completion in
                 guard let self else { return }
                 self.isRefreshing = false
                 if case let .failure(error) = completion {
                     print("recalculateKeywords failed:", error)
+                    self.canRefresh = false
+                    self.rows = self.makeRows()
                 }
-                self.rows = self.makeRows()
-            } receiveValue: { [weak self] keywords in
+            } receiveValue: { [weak self] _ in
                 guard let self else { return }
-                self.keywords = keywords
-                self.rows = self.makeRows()
+                self.isRefreshing = false
+                self.load()
             }
             .store(in: &cancellables)
     }
@@ -228,6 +230,7 @@ public final class ProfileViewModel {
                     subtitle: "\(nickname)님이 관심 있어 하는 키워드에요",
                     showInfo: isMe,
                     showRefresh: isMe,
+                    isRefreshEnabled: canRefresh,
                     isRefreshing: isRefreshing,
                     tooltipText: (isMe && isKeywordInfoTooltipVisible) ? Const.keywordInfoTooltipText : nil
                 )
@@ -245,6 +248,7 @@ public final class ProfileViewModel {
                 subtitle: "\(nickname)님이 생성한 컬렉션이에요",
                 showInfo: false,
                 showRefresh: false,
+                isRefreshEnabled: true,
                 isRefreshing: false,
                 tooltipText: nil
             ),
@@ -260,6 +264,7 @@ public final class ProfileViewModel {
                 subtitle: "\(nickname)님이 저장한 컬렉션이에요",
                 showInfo: false,
                 showRefresh: false,
+                isRefreshEnabled: true,
                 isRefreshing: false,
                 tooltipText: nil
             ),
@@ -275,6 +280,7 @@ public final class ProfileViewModel {
                 subtitle: "\(nickname)님이 저장한 작품이에요",
                 showInfo: false,
                 showRefresh: false,
+                isRefreshEnabled: true,
                 isRefreshing: false,
                 tooltipText: nil
             ),

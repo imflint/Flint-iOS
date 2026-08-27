@@ -42,23 +42,24 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         rootView.snp.remakeConstraints {
             $0.edges.equalToSuperview()
         }
-        setupTableView()
-        bind()
-        profileViewModel.load()
-    }
-    
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
 
         let leftItem: NavLeftItem = profileViewModel.isMe ? .none : .back
         let rightItem: NavRightItem = profileViewModel.isMe ? .setting : .none
-
         setNavigationBar(
             .init(left: leftItem, right: rightItem, backgroundStyle: .clear),
             onTapRight: { [weak self] in
                 self?.didTapSetting()
             }
         )
+
+        setupTableView()
+        bind()
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // 프로필 진입마다 최신 데이터 재fetch (취향키워드 재계산 가능 여부 포함)
+        profileViewModel.load()
     }
 
     private func didTapSetting() {
@@ -109,7 +110,24 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
         navigationController?.pushViewController(vc, animated: true)
     }
-    
+
+    private func didTapMore(for nextRow: ProfileViewModel.Row?) {
+        guard let factory = viewControllerFactory else { return }
+
+        switch nextRow {
+        case .savedCollections:
+            let vc = factory.makeSavedCollectionListViewController(target: profileViewModel.target)
+            navigationController?.pushViewController(vc, animated: true)
+        case .myCollections:
+            let vc = factory.makeCreatedCollectionListViewController(target: profileViewModel.target)
+            navigationController?.pushViewController(vc, animated: true)
+        case .savedContents:
+            let vc = factory.makeSavedFilmListViewController()
+            navigationController?.pushViewController(vc, animated: true)
+        default:
+            break
+        }
+    }
 }
 
 // MARK: - UITableViewDelegate
@@ -137,7 +155,6 @@ extension ProfileViewController: UITableViewDelegate {
         }
     }
 
-    // (선택) 셀 선택 막고 싶으면 이미 selectionStyle = .none이라 없어도 됨
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -176,7 +193,7 @@ extension ProfileViewController: UITableViewDataSource {
             cell.configure(keywords: keywords)
             return cell
 
-        case let .titleHeader(style, title, subtitle, showInfo, showRefresh, isRefreshing, tooltipText):
+        case let .titleHeader(style, title, subtitle, showInfo, showRefresh, isRefreshEnabled, isRefreshing, tooltipText):
             let cell = tableView.dequeueReusableCell(TitleHeaderTableViewCell.self, for: indexPath)
             cell.selectionStyle = .none
             cell.configure(
@@ -185,6 +202,7 @@ extension ProfileViewController: UITableViewDataSource {
                 subtitle: subtitle,
                 showInfo: showInfo,
                 showRefresh: showRefresh,
+                isRefreshEnabled: isRefreshEnabled,
                 isRefreshing: isRefreshing,
                 tooltipText: tooltipText
             )
@@ -193,6 +211,12 @@ extension ProfileViewController: UITableViewDataSource {
             }
             cell.onTapRefresh = { [weak self] in
                 self?.profileViewModel.refreshKeywords()
+            }
+            let nextSection = indexPath.section + 1
+            let nextRow = profileViewModel.rows.indices.contains(nextSection)
+                ? profileViewModel.rows[nextSection] : nil
+            cell.onTapMore = { [weak self] in
+                self?.didTapMore(for: nextRow)
             }
             return cell
 
@@ -220,15 +244,12 @@ extension ProfileViewController: UITableViewDataSource {
             cell.configure(items: items)
             cell.onTapItem = { [weak self] content in
                 guard let self else { return }
-                
+
                 let platforms: [OTTPlatform] = content.ottList.compactMap { ott in
                     OTTPlatform.fromServerName(ott.ottName)
                 }
-                
-                if platforms.isEmpty {
-                    print("ottList 비어있음 or 매핑 실패. contentId:", content.id)
-                }
-                
+
+                guard !platforms.isEmpty else { return }
                 self.presentOTTBottomSheet(platforms: platforms)
             }
             return cell

@@ -13,7 +13,13 @@ import ViewModel
 import Domain
 
 public protocol SavedCollectionListViewControllerFactory {
-    func makeSavedCollectionListViewController() -> SavedCollectionListViewController
+    func makeSavedCollectionListViewController(target: UserTarget) -> SavedCollectionListViewController
+}
+
+public extension SavedCollectionListViewControllerFactory {
+    func makeSavedCollectionListViewController() -> SavedCollectionListViewController {
+        makeSavedCollectionListViewController(target: .me)
+    }
 }
 
 public final class SavedCollectionListViewController: BaseViewController<CollectionFolderListView> {
@@ -34,8 +40,12 @@ public final class SavedCollectionListViewController: BaseViewController<Collect
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        bind()
         applyCount()
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // 다른 화면에서 저장/취소 변화가 있을 수 있어 진입마다 재로드
         viewModel.load()
     }
 
@@ -133,14 +143,8 @@ extension SavedCollectionListViewController: UICollectionViewDataSource {
             self.viewModel.updateBookmark(at: indexPath.item, isBookmarked: isBookmarked)
 
             if wasBookmarked == false, isBookmarked == true {
-                Toast.action(
-                    image: DesignSystem.Icon.Gradient.bookmark,
-                    title: "취향이 하나 더 쌓였어요",
-                    actionTitle: "저장한 컬렉션 보러가기",
-                    action: { _ in
-                        print("컬렉션 저장")
-                    }
-                ).show()
+                // 이미 저장 컬렉션 리스트 페이지 → CTA 없이 간단 토스트
+                Toast.text("컬렉션이 저장되었어요").show()
                 return
             }
 

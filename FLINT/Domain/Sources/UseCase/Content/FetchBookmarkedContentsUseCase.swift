@@ -28,7 +28,9 @@ public final class DefaultFetchBookmarkedContentsUseCase: FetchBookmarkedContent
     public func callAsFunction(for target: UserTarget) -> AnyPublisher<[ContentInfoEntity], Error> {
         switch target {
         case .me:
-            return contentRepository.fetchMyBookmarkedContents()
+            return contentRepository.fetchMyBookmarkedContentsPage(cursor: nil, size: nil)
+                .map { $0.items }
+                .eraseToAnyPublisher()
         case let .user(id):
             return userRepository.fetchUserBookmarkedContents(userId: id)
         }

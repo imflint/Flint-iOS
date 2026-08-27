@@ -36,6 +36,8 @@ public typealias ViewControllerFactory =
     CollectionFolderListViewControllerFactory &
     CollectionDetailViewControllerFactory &
     SavedCollectionListViewControllerFactory &
+    CreatedCollectionListViewControllerFactory &
+    SavedFilmListViewControllerFactory &
     AddContentSelectViewControllerFactory &
     CreateCollectionViewControllerFactory &
     SettingViewControllerFactory &

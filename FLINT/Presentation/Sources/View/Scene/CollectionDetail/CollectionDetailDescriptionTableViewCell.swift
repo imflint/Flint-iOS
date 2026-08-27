@@ -31,6 +31,7 @@ public final class CollectionDetailDescriptionTableViewCell: BaseTableViewCell {
     private let authorLabel = UILabel().then {
         $0.textColor = .white
         $0.attributedText = .pretendard(.head2_sb_20, text: "쏘나기")
+        $0.isUserInteractionEnabled = true
     }
 
     private let verifiedBadgeImageView = UIImageView().then {
@@ -58,10 +59,21 @@ public final class CollectionDetailDescriptionTableViewCell: BaseTableViewCell {
 
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupAuthorTap()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        setupAuthorTap()
+    }
+
+    private func setupAuthorTap() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapAuthor))
+        authorLabel.addGestureRecognizer(tap)
+    }
+
+    @objc private func didTapAuthor() {
+        onTapAuthor?()
     }
 
     // MARK: - Override
@@ -114,6 +126,7 @@ public final class CollectionDetailDescriptionTableViewCell: BaseTableViewCell {
         dateLabel.text = nil
         descriptionLabel.text = nil
         verifiedBadgeImageView.isHidden = false
+        onTapAuthor = nil
     }
 
     // MARK: - Configure

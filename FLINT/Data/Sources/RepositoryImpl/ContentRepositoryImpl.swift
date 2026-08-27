@@ -27,12 +27,23 @@ public final class DefaultContentRepository: ContentRepository {
             .eraseToAnyPublisher()
     }
     
-    public func fetchMyBookmarkedContents() -> AnyPublisher<[ContentInfoEntity], Error> {
-        return contentService.fetchMyBookmarkedContents()
-            .tryMap { try $0.entities }
+    public func fetchMyBookmarkedContentsPage(cursor: String?, size: Int32?) -> AnyPublisher<BookmarkedContentPageEntity, Error> {
+        return contentService.fetchMyBookmarkedContents(cursor: cursor, size: size)
+            .tryMap { dto in
+                BookmarkedContentPageEntity(
+                    items: try dto.entities,
+                    nextCursor: dto.meta?.nextCursor
+                )
+            }
             .eraseToAnyPublisher()
     }
-    
+
+    public func fetchMyBookmarkedContentCount() -> AnyPublisher<Int, Error> {
+        return contentService.fetchMyBookmarkedContentCount()
+            .map { $0.totalCount ?? 0 }
+            .eraseToAnyPublisher()
+    }
+
     public func fetchOTTPlatformsForContent(contentId: Int64) -> AnyPublisher<[OTTPlatformEntity], Error> {
         return contentService.fetchOTTPlatformsForContent(contentId: contentId)
             .tryMap({ try $0.entity })

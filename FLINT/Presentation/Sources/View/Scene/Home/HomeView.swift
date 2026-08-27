@@ -20,6 +20,7 @@ public final class HomeView: BaseView {
         $0.backgroundColor = .flintBackground
         $0.separatorStyle = .none
         $0.showsVerticalScrollIndicator = false
+        $0.contentInsetAdjustmentBehavior = .never
     }
     
     public let flinerCollectionView: UICollectionView = {
@@ -64,7 +65,7 @@ public final class HomeView: BaseView {
         
         floatingButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(20)
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(36)
             $0.size.equalTo(48)
         }
     }

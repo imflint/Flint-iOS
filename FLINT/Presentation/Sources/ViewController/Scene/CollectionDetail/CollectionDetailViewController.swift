@@ -28,6 +28,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         case filmImage(Int)
         case film(Int)
         case saveUsers
+        case copyright
     }
 
     // MARK: - Property
@@ -35,7 +36,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
     private let viewModel: CollectionDetailViewModel
 
     private var entity: CollectionDetailEntity?
-    private var rows: [Row] = [.header, .description, .saveUsers]
+    private var rows: [Row] = [.header, .description, .copyright]
     private var bookmarkedUsers: CollectionBookmarkUsersEntity?
     private var isOwner: Bool = false
     private var kebabMenu: KebabMenu?
@@ -67,7 +68,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         view.backgroundColor = DesignSystem.Color.background
         setupTableView()
         setNavigationBar(
-            .init(left: .back, right: .kebab, backgroundStyle: .clear),
+            .init(left: .back, right: .kebab, backgroundStyle: .solid(DesignSystem.Color.background)),
             onTapRight: { [weak self] in
                 self?.didTapKebab()
             }
@@ -83,25 +84,34 @@ public final class CollectionDetailViewController: BaseViewController<Collection
             tapContentBookmark: tapContentBookmarkSubject.eraseToAnyPublisher()
         )
 
-        let output = viewModel.transform(input: input)
+        viewModel.transform(input: input)
 
-        output.state
+        viewModel.$detail
+            .compactMap { $0 }
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .idle:
-                    break
-                case .loading:
-                    break
-                case .loaded(let detail, let bookmarkedUsers, let isOwner):
-                    self.entity = detail
-                    self.bookmarkedUsers = bookmarkedUsers
-                    self.isOwner = isOwner
-                    self.apply(entity: detail)
-                case .failed(let message):
-                    print("Collection detail load failed:", message)
-                }
+            .sink { [weak self] detail in
+                self?.apply(entity: detail)
+            }
+            .store(in: &cancellables)
+
+        viewModel.$bookmarkedUsers
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] users in
+                self?.applyBookmarkedUsers(users)
+            }
+            .store(in: &cancellables)
+
+        viewModel.$isOwner
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isOwner in
+                self?.isOwner = isOwner
+            }
+            .store(in: &cancellables)
+
+        viewModel.loadFailure
+            .receive(on: DispatchQueue.main)
+            .sink { message in
+                print("Collection detail load failed:", message)
             }
             .store(in: &cancellables)
 
@@ -119,20 +129,92 @@ public final class CollectionDetailViewController: BaseViewController<Collection
             }
             .store(in: &cancellables)
 
+        viewModel.contentBookmarkRemovalBlocked
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] contentId in
+                guard let self else { return }
+                self.presentMinimumBookmarkModal()
+                self.restoreFilmCellBookmark(contentId: contentId)
+            }
+            .store(in: &cancellables)
+
         viewDidLoadSubject.send(())
+    }
+
+    private func presentMinimumBookmarkModal() {
+        let host: UIView = navigationController?.view ?? view
+        Modal.presentMinimumBookmarkLimit(in: host)
+    }
+
+    private func restoreFilmCellBookmark(contentId: Int64) {
+        // 차단된 콘텐츠 셀만 다시 configure 해서 북마크 시각 상태 복원
+        guard let entity else { return }
+        guard let idx = entity.contents.firstIndex(where: { Int64($0.id) == contentId }) else { return }
+        guard let rowIndex = rows.firstIndex(where: {
+            if case .film(let i) = $0 { return i == idx } else { return false }
+        }) else { return }
+        rootView.tableView.reloadRows(at: [IndexPath(row: rowIndex, section: 0)], with: .none)
+    }
+
+    private func applyBookmarkedUsers(_ users: CollectionBookmarkUsersEntity?) {
+        let previousRows = self.rows
+        self.bookmarkedUsers = users
+
+        guard let entity else { return }
+        self.rows = buildRows(entity: entity)
+
+        let prevSaveIdx = previousRows.firstIndex(where: { if case .saveUsers = $0 { return true } else { return false } })
+        let nextSaveIdx = rows.firstIndex(where: { if case .saveUsers = $0 { return true } else { return false } })
+
+        switch (prevSaveIdx, nextSaveIdx) {
+        case (nil, nil):
+            break
+        case let (prev?, next?) where prev == next:
+            rootView.tableView.reloadRows(at: [IndexPath(row: next, section: 0)], with: .none)
+        case (nil, let next?):
+            rootView.tableView.performBatchUpdates {
+                rootView.tableView.insertRows(at: [IndexPath(row: next, section: 0)], with: .none)
+            }
+        case (let prev?, nil):
+            rootView.tableView.performBatchUpdates {
+                rootView.tableView.deleteRows(at: [IndexPath(row: prev, section: 0)], with: .none)
+            }
+        default:
+            rootView.tableView.reloadData()
+        }
     }
 
     private func apply(entity: CollectionDetailEntity) {
         self.entity = entity
+        self.rows = buildRows(entity: entity)
+        rootView.tableView.reloadData()
+    }
 
+    private func updateEntityBookmark(isBookmarked: Bool) {
+        guard let old = entity else { return }
+        entity = CollectionDetailEntity(
+            id: old.id,
+            title: old.title,
+            description: old.description,
+            thumbnailUrl: old.thumbnailUrl,
+            createdAt: old.createdAt,
+            isBookmarked: isBookmarked,
+            author: old.author,
+            contents: old.contents
+        )
+    }
+
+    private func buildRows(entity: CollectionDetailEntity) -> [Row] {
         var result: [Row] = [.header, .description]
         result += entity.contents.enumerated().flatMap { idx, content -> [Row] in
             content.customImageUrls.isEmpty ? [.film(idx)] : [.filmImage(idx), .film(idx)]
         }
-        result += [.saveUsers]
-        self.rows = result
-
-        rootView.tableView.reloadData()
+        let hasSavedUsers = !(bookmarkedUsers?.users.isEmpty ?? true)
+        if hasSavedUsers {
+            result += [.saveUsers]
+        }
+        result += [.copyright]
+        return result
     }
 
     // MARK: - Action
@@ -198,11 +280,22 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         let reportVC = factory.makeReportViewController(collectionId: collectionId)
         navigationController?.pushViewController(reportVC, animated: true)
     }
+
+    private func didTapAuthor() {
+        guard let entity, let authorId = Int64(entity.author.id) else { return }
+        guard let factory = viewControllerFactory else { return }
+        let profileVC = factory.makeProfileViewController(target: .user(id: authorId))
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.pushViewController(profileVC, animated: true)
+    }
     
     private func presentSavedUsersBottomSheet(users: [SavedUserRowItem]) {
         guard !users.isEmpty else { return }
-        
-        let sheet = BaseBottomSheetViewController(content: .savedUsers(users: users))
+
+        let sheet = BaseBottomSheetViewController(
+            title: "이 컬렉션을 저장한 사람들",
+            content: .savedUsers(users: users)
+        )
         
         sheet.onSelectSavedUser = { [weak self, weak sheet] user in
             guard let self else { return }
@@ -270,6 +363,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         tableView.register(CollectionDetailFilmImageTableViewCell.self)
         tableView.register(CollectionDetailFilmTableViewCell.self)
         tableView.register(CollectionSaveUserTableViewCell.self)
+        tableView.register(CollectionDetailCopyrightTableViewCell.self)
 
         tableView.reloadData()
         tableView.layoutIfNeeded()
@@ -304,6 +398,7 @@ extension CollectionDetailViewController: UITableViewDataSource {
             cell.configure(title: title, isSaved: isSaved, thumbnailURL: thumbnailURL)
             cell.onTapSave = { [weak self] isSaved in
                 guard let self else { return }
+                self.updateEntityBookmark(isBookmarked: isSaved)
                 self.tapHeaderSaveSubject.send(isSaved)
 
                 if isSaved {
@@ -343,6 +438,9 @@ extension CollectionDetailViewController: UITableViewDataSource {
                 dateText: dateText,
                 description: description
             )
+            cell.onTapAuthor = { [weak self] in
+                self?.didTapAuthor()
+            }
             return cell
 
         case .filmImage(let idx):
@@ -409,6 +507,15 @@ extension CollectionDetailViewController: UITableViewDataSource {
                     let items = self.makeSavedUserRowItems()
                     self.presentSavedUsersBottomSheet(users: items)
             }
+            return cell
+
+        case .copyright:
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: CollectionDetailCopyrightTableViewCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionDetailCopyrightTableViewCell
+
+            cell.selectionStyle = .none
             return cell
         }
     }

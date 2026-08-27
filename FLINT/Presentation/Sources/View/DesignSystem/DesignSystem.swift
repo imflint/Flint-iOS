@@ -130,7 +130,6 @@ public enum DesignSystem {
             public static let save: UIImage = .icSaveGradient
             public static let share: UIImage = .icShareGradient
             public static let trash: UIImage = .icTrashGradient
-            public static let variant15: UIImage = .icVariant15Gradient
             
             public static let bookmarkSmall: UIImage = .icBookmarkGradientSmall
             public static let checkSmall: UIImage = .icCheckGradientSmall

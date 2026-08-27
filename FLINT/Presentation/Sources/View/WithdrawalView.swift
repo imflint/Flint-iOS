@@ -61,7 +61,7 @@ public final class WithdrawalView: BaseView {
         ]
         descriptionLabel.attributedText = .pretendard(
             .body1_m_16,
-            text: descriptions.joined(separator: "\n")
+            text: descriptions.joined(separator: "\n\n")
         )
     }
     

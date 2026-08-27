@@ -122,3 +122,16 @@ private extension CreateCollectionVisibilityCell {
         privateButton.isEnabled = true
     }
 }
+
+public extension CreateCollectionVisibilityCell {
+    func setError(_ isError: Bool) {
+        let borderColor = isError ? DesignSystem.Color.error500.cgColor : UIColor.clear.cgColor
+        let borderWidth: CGFloat = isError ? 1 : 0
+        publicButton.layer.borderColor = borderColor
+        publicButton.layer.borderWidth = borderWidth
+        publicButton.layer.cornerRadius = 8
+        privateButton.layer.borderColor = borderColor
+        privateButton.layer.borderWidth = borderWidth
+        privateButton.layer.cornerRadius = 8
+    }
+}

@@ -9,12 +9,15 @@ import Foundation
 
 import Presentation
 
-protocol SettingViewModelFactory: LogoutUseCaseFactory {
+protocol SettingViewModelFactory: LogoutUseCaseFactory, FetchProfileUseCaseFactory {
     func makeSettingViewModel() -> any SettingViewModel
 }
 
 extension SettingViewModelFactory {
     func makeSettingViewModel() -> any SettingViewModel {
-        return DefaultSettingViewModel(logoutUseCase: makeLogoutUseCase())
+        return DefaultSettingViewModel(
+            logoutUseCase: makeLogoutUseCase(),
+            fetchProfileUseCase: makeFetchProfileUseCase()
+        )
     }
 }

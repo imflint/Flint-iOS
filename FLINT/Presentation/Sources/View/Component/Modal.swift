@@ -50,6 +50,8 @@ public class Modal: BaseView {
     
     private let captionLabel = UILabel().then {
         $0.textColor = .white
+        $0.numberOfLines = 0
+        $0.textAlignment = .center
     }
     
     private let buttonStackView = UIStackView().then {
@@ -156,7 +158,7 @@ public class Modal: BaseView {
             titleLabel.text = nil
         }
         
-        captionLabel.attributedText = NSAttributedString.pretendard(.body1_m_16, text: caption)
+        captionLabel.attributedText = NSAttributedString.pretendard(.body1_m_16, text: caption, alignment: .center)
         
         if let leftButtonTitle {
             leftButton.isHidden = false

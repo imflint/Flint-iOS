@@ -40,6 +40,7 @@ extension CollectionBookmarkUsersDTO.UserDTO {
             return try UserProfileEntity(
                 id: unwrap(userId),
                 nickname: nickName ?? "",
+                email: "",
                 profileImageUrl: URL(string: profileImageUrl ?? ""),
                 role: UserRole(rawValue: userRole ?? "") ?? .unknown
             )
