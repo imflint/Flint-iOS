@@ -178,8 +178,7 @@ extension SettingViewController {
         
         snapshot.appendSections([.account])
         if let profile = profile {
-            let displayText = profile.email.isEmpty ? profile.id : profile.email
-            snapshot.appendItems([.account(displayText)], toSection: .account)
+            snapshot.appendItems([.account(profile.email)], toSection: .account)
         }
         
         snapshot.appendSections([.menu])
