@@ -19,6 +19,7 @@ public protocol AuthService {
     func signup(userInfo: SignupInfoEntity) -> AnyPublisher<SignupDTO, Error>
     func socialVerify(socialAuthCredential: SocialVerifyRequestDTO) -> AnyPublisher<SocialVerifyResponseDTO, Error>
     func logout() -> AnyPublisher<Void, Error>
+    func refresh() -> AnyPublisher<Void, Error>
     func withDraw(agreedTermsIds: [String]) -> AnyPublisher<Void, Error>
 }
 
@@ -80,6 +81,16 @@ public final class DefaultAuthService: AuthService {
                 }
                 self?.tokenStorage.clearAll()
             }
+            .eraseToAnyPublisher()
+    }
+    
+    public func refresh() -> AnyPublisher<Void, Error> {
+        guard let refreshToken = tokenStorage.load(type: .refreshToken) else {
+            return Fail(error: TokenError.noToken).eraseToAnyPublisher()
+        }
+        return authAPIProvider.requestPublisher(.refresh(refreshToken: refreshToken))
+            .logged()
+            .mapBaseResponseEmpty()
             .eraseToAnyPublisher()
     }
     

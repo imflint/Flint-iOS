@@ -14,7 +14,7 @@ import DTO
 public enum AuthAPI {
     case logout(refreshToken: String)
     case logoutAll
-    case refresh
+    case refresh(refreshToken: String)
     case signup(userInfo: SignupRequestDTO)
     case socialVerify(socialAuthCredential: SocialVerifyRequestDTO)
     case withdraw(agreedTermsIds: [String])
@@ -27,7 +27,9 @@ extension AuthAPI: TargetType {
             return "/api/v1/auth/signup"
         case .logout:
             return "/api/v1/auth/logout"
-        case .logoutAll, .refresh:
+        case .refresh:
+            return "api/v1/auth/refresh"
+        case .logoutAll:
             #warning("TODO: - 나중에 구현할 것")
             return "TODO"
         case .socialVerify:
@@ -52,7 +54,9 @@ extension AuthAPI: TargetType {
             return .requestJSONEncodable(socialAuthCredential)
         case let .logout(refreshToken):
             return .requestJSONEncodable(LogoutRequestDTO(refreshToken: refreshToken))
-        case .logoutAll, .refresh:
+        case let .refresh(refreshToken):
+            return .requestJSONEncodable(RefreshRequestDTO(refreshToken: refreshToken))
+        case .logoutAll:
             return .requestPlain
         case let .withdraw(agreedTermsIds):
             return .requestJSONEncodable(WithdrawRequestDTO(agreedTermsIds: agreedTermsIds))

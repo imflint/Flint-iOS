@@ -26,6 +26,8 @@ public protocol UserService {
     func fetchMyKeywords() -> AnyPublisher<KeywordsDTO, Error>
     func recalculateMyKeywords() -> AnyPublisher<Void, Error>
     
+    func modifyNickname(nickname: String) -> AnyPublisher<Void, Error>
+    func modifyProfileImage(key: String) -> AnyPublisher<Void, Error>
     func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error>
 }
 
@@ -85,6 +87,18 @@ public final class DefaultUserService: UserService {
     public func recalculateMyKeywords() -> AnyPublisher<Void, Error> {
         return userAPIProvider.requestPublisher(.recalculateMyKeywords)
             .mapBaseResponseEmpty()
+    }
+    
+    public func modifyNickname(nickname: String) -> AnyPublisher<Void, Error> {
+        return userAPIProvider.requestPublisher(.modifyNickname(NicknameDTO(nickname: nickname)))
+            .mapBaseResponseEmpty()
+            .eraseToAnyPublisher()
+    }
+    
+    public func modifyProfileImage(key: String) -> AnyPublisher<Void, Error> {
+        return userAPIProvider.requestPublisher(.modifyProfileImage(ProfileImageDTO(profileImage: key)))
+            .mapBaseResponseEmpty()
+            .eraseToAnyPublisher()
     }
     
     public func checkNickname(_ nickname: String) -> AnyPublisher<NicknameCheckDTO, Error> {

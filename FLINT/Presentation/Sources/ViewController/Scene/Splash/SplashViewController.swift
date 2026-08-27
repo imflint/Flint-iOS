@@ -17,9 +17,11 @@ public protocol SplashViewControllerFactory {
 
 public final class SplashViewController: BaseViewController<SplashView> {
     
-    public init(viewControllerFactory: ViewControllerFactory) {
+    private let splashViewModel: SplashViewModel
+    
+    public init(splashViewModel: SplashViewModel, viewControllerFactory: ViewControllerFactory) {
+        self.splashViewModel = splashViewModel
         super.init(viewControllerFactory: viewControllerFactory)
-        
     }
     
     required init?(coder: NSCoder) {
@@ -28,9 +30,9 @@ public final class SplashViewController: BaseViewController<SplashView> {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         rootView.onFinished = { [weak self] in
-            self?.showLogin()
+            self?.splashViewModel.refresh()
         }
     }
 
@@ -38,7 +40,24 @@ public final class SplashViewController: BaseViewController<SplashView> {
         super.viewDidAppear(animated)
         rootView.play()
     }
-
+    
+    public override func bind() {
+        splashViewModel.route.sink { [weak self] splashRoute in
+            switch splashRoute {
+            case .home:
+                self?.showHome()
+            case .login:
+                self?.showLogin()
+            }
+        }
+        .store(in: &cancellables)
+    }
+    
+    private func showHome() {
+        guard let tabBarViewController = viewControllerFactory?.makeTabBarViewController() else { return }
+        navigationController?.setViewControllers([tabBarViewController], animated: false)
+    }
+    
     private func showLogin() {
         guard let loginViewController = viewControllerFactory?.makeLoginViewController() else { return }
         navigationController?.setViewControllers([loginViewController], animated: false)

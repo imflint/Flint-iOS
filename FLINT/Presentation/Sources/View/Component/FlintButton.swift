@@ -20,7 +20,11 @@ public final class FlintButton: UIButton {
     }
     
     public var style: Style
-    public var title: String?
+    public var title: String? {
+        didSet {
+            setUI()
+        }
+    }
     public var image: UIImage?
     
     public override var isEnabled: Bool {

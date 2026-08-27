@@ -9,8 +9,8 @@ import Foundation
 
 import Presentation
 
-extension SplashViewControllerFactory where Self: ViewControllerFactory {
+extension SplashViewControllerFactory where Self: SplashViewModelFactory & ViewControllerFactory {
     func makeSplashViewController() -> SplashViewController {
-        return SplashViewController(viewControllerFactory: self)
+        return SplashViewController(splashViewModel: makeSplashViewModel(), viewControllerFactory: self)
     }
 }

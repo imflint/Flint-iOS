@@ -269,7 +269,8 @@ extension SettingViewController: UITableViewDelegate {
 
 private extension SettingViewController {
     func navigateToEditProfile() {
-        print("Navigate to Edit Profile")
+        guard let userProfile = settingViewModel.userProfile.value, let profileSettingViewController = viewControllerFactory?.makeProfileSettingViewController(userProfile: userProfile) else { return }
+        navigationController?.pushViewController(profileSettingViewController, animated: true)
     }
     
     func navigateToAccount() {

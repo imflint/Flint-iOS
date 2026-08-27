@@ -86,6 +86,7 @@ public final class DefaultTokenStorage: TokenStorage {
             return nil
         }
         Log.d("Keychain \(type.rawValue) loaded.")
+        Log.d(token)
         return token
     }
     

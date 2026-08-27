@@ -17,6 +17,7 @@ import Presentation
 
 typealias DependencyFactory = ViewControllerFactory &
                               
+                              SplashViewModelFactory &
                               LoginViewModelFactory &
                               OnboardingViewModelFactory &
                               
@@ -37,7 +38,8 @@ typealias DependencyFactory = ViewControllerFactory &
                               SavedFilmListViewModelFactory &
                               ReportViewModelFactory &
                               StorageRepositoryFactory &
-                              UploadCollectionImageUseCaseFactory
+                              UploadCollectionImageUseCaseFactory &
+                              ProfileSettingViewModelFactory
 
 final class DIContainer: DependencyFactory {
     
