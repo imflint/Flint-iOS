@@ -295,7 +295,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         applyPhotoLayout(hasPhotos: !photos.isEmpty)
-        updateAddPhotoButton()  // 추가
+        updateAddPhotoButton()
         guard !photos.isEmpty else { return }
         
         pageControl.numberOfPages = photos.count
@@ -385,7 +385,6 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     private func updateAddPhotoButton() {
         let image = photos.count >= 5 ? UIImage.icAddPhotoDisable : UIImage.icAddPhoto
         addPhotoButton.setImage(image, for: .normal)
-        addPhotoButton.isUserInteractionEnabled = photos.count < 5
     }
     
     // MARK: - Action
@@ -396,6 +395,10 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     }
     
     @objc private func didTapAddPhoto() {
+        guard photos.count < 5 else {
+            Toast.failure("작품 이미지는 최대 5개까지 추가할 수 있어요").show()
+            return
+        }
         onTapAddPhoto?()
     }
     
