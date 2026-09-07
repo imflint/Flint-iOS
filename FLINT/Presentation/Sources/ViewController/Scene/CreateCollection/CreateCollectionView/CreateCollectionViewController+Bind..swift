@@ -204,6 +204,49 @@ extension CreateCollectionViewController {
         modal.show(in: hostView)
     }
 
+    /// 제목/설명/공개범위/헤더이미지/작품 중 하나라도 입력된 게 있으면 true.
+    /// 나가기 확인 모달을 띄울지 판단하는 데 사용.
+    var hasUnsavedContent: Bool {
+        let hasTitle = !collectionTitleText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let hasDescription = !collectionDescriptionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let hasVisibility = selectedVisibility != nil
+        let hasHeaderImage = headerImage != nil || headerImageKey != nil
+        let hasContents = !selectedReasonItems.isEmpty
+
+        return hasTitle || hasDescription || hasVisibility || hasHeaderImage || hasContents
+    }
+
+    func presentExitConfirmModal() {
+        let hostView: UIView = navigationController?.view ?? view
+
+        var modalRef: Modal?
+
+        let modal = Modal(
+            image: DesignSystem.Icon.Gradient.trash,
+            title: "컬렉션 작성을 그만둘까요?",
+            caption: "작성한 내용이 모두 삭제돼요.",
+            leftButtonTitle: "취소",
+            rightButtonTitle: "나가기",
+            rightButtonColor: DesignSystem.Color.error500,
+            onLeft: { _ in
+                modalRef?.dismiss()
+            },
+            onRight: { [weak self] _ in
+                modalRef?.dismiss {
+                    guard let self else { return }
+                    if let nav = self.navigationController, nav.viewControllers.count > 1 {
+                        nav.popViewController(animated: true)
+                    } else {
+                        self.dismiss(animated: true)
+                    }
+                }
+            }
+        )
+
+        modalRef = modal
+        modal.show(in: hostView)
+    }
+
     func showValidationErrors() {
         let isTitleEmpty = collectionTitleText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let isVisibilityEmpty = selectedVisibility == nil

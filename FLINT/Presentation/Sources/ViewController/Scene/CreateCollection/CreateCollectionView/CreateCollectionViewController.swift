@@ -134,7 +134,19 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
                 left: .back,
                 right: .none,
                 backgroundStyle: .solid(DesignSystem.Color.background)
-            )
+            ),
+            onTapLeft: { [weak self] in
+                guard let self else { return }
+                if self.hasUnsavedContent {
+                    self.presentExitConfirmModal()
+                } else {
+                    if let nav = self.navigationController, nav.viewControllers.count > 1 {
+                        nav.popViewController(animated: true)
+                    } else {
+                        self.dismiss(animated: true)
+                    }
+                }
+            }
         )
     }
 }

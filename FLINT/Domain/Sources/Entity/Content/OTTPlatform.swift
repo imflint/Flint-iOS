@@ -26,22 +26,6 @@ public enum OTTPlatform: String, CaseIterable, Hashable {
         case .disneyPlus: return "디즈니+"
         }
     }
-
-    // MARK: - URL
-    
-    public var webURL: URL {
-        let urlString: String = {
-            switch self {
-            case .netflix: return "https://www.netflix.com"
-            case .tving: return "https://www.tving.com"
-            case .wavve: return "https://www.wavve.com"
-            case .coupangPlay: return "https://www.coupangplay.com"
-            case .watcha: return "https://watcha.com"
-            case .disneyPlus: return "https://www.disneyplus.com"
-            }
-        }()
-        return URL(string: urlString) ?? URL(string: "https://www.google.com")!
-    }
 }
 
 extension OTTPlatform {

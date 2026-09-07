@@ -71,9 +71,6 @@ public final class BaseBottomSheetViewController: UIViewController {
         case .ott(let platforms):
             let ottListView = OTTListView()
             ottListView.configure(platforms: platforms)
-            ottListView.onSelectPlatform = { platform in
-                UIApplication.shared.open(platform.webURL)
-            }
             sheetView.setContentView(ottListView)
             
         case .savedUsers(let users):
