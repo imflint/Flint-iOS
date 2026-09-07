@@ -37,16 +37,16 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
         $0.axis = .horizontal
         $0.spacing = 8
     }
-    
+
     private let nameLabel = UILabel().then {
         $0.textColor = .white
         $0.attributedText = .pretendard(.display2_m_28, text: "쏘나기")
     }
-    
+
     private let verificationBadge = UIImageView().then {
         $0.image = UIImage(resource: .icQuilified)
     }
-    
+
     public override func setHierarchy() {
         contentView.backgroundColor = .flintBackground
         contentView.addSubviews(profilebackgroundImageView, gradientView, profileImageView, nameStack)
@@ -75,7 +75,7 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
             $0.leading.equalToSuperview().inset(16)
             $0.top.equalTo(profileImageView.snp.bottom)
             $0.height.equalTo(42)
-            
+
             $0.bottom.equalToSuperview().inset(20)
         }
     }

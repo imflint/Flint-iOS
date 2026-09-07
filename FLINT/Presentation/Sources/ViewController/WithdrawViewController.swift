@@ -69,14 +69,8 @@ public final class WithdrawalViewController: BaseViewController<WithdrawalView> 
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self else { return }
-                guard let loginVC = viewControllerFactory?.makeLoginViewController() else { return }
-                let nav = UINavigationController(rootViewController: loginVC)
-                nav.modalPresentationStyle = .fullScreen
-                if let window = view.window {
-                    UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve) {
-                        window.rootViewController = nav
-                    }
-                }
+                guard let completeVC = viewControllerFactory?.makeWithdrawalCompleteViewController() else { return }
+                navigationController?.setViewControllers([completeVC], animated: true)
             }
             .store(in: &cancellables)
         

@@ -36,7 +36,13 @@ public final class FlintNavigationBar: BaseView {
     private let backgroundView = UIView().then {
         $0.backgroundColor = .flintBackground
     }
-    
+
+    private let gradientLayer = CAGradientLayer().then {
+        $0.startPoint = CGPoint(x: 0.5, y: 0)
+        $0.endPoint = CGPoint(x: 0.5, y: 1)
+        $0.isHidden = true
+    }
+
     public override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -47,10 +53,19 @@ public final class FlintNavigationBar: BaseView {
     
     public override func setHierarchy() {
         addSubview(backgroundView)
+        backgroundView.layer.addSublayer(gradientLayer)
         backgroundView.addSubviews(leftButton, titleLabel, rightButton)
 
         leftButton.addTarget(self, action: #selector(didTapLeft), for: .touchUpInside)
         rightButton.addTarget(self, action: #selector(didTapRight), for: .touchUpInside)
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        gradientLayer.frame = backgroundView.bounds
+        CATransaction.commit()
     }
     
     public override func setLayout() {
@@ -155,9 +170,17 @@ public final class FlintNavigationBar: BaseView {
         switch style {
         case .solid(let color):
             backgroundView.backgroundColor = color
+            gradientLayer.isHidden = true
 
         case .clear:
             backgroundView.backgroundColor = .clear
+            gradientLayer.isHidden = true
+
+        case let .verticalGradient(top, bottom):
+            backgroundView.backgroundColor = .clear
+            gradientLayer.colors = [top.cgColor, bottom.cgColor]
+            gradientLayer.isHidden = false
+            setNeedsLayout()
         }
     }
     

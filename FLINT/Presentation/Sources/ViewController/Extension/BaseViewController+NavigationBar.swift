@@ -30,6 +30,8 @@ extension BaseViewController {
             statusBarBackgroundView.backgroundColor = color
         case .clear:
             statusBarBackgroundView.backgroundColor = .clear
+        case let .verticalGradient(top, _):
+            statusBarBackgroundView.backgroundColor = top
         }
     }
     

@@ -68,7 +68,14 @@ public final class CollectionDetailViewController: BaseViewController<Collection
         view.backgroundColor = DesignSystem.Color.background
         setupTableView()
         setNavigationBar(
-            .init(left: .back, right: .kebab, backgroundStyle: .solid(DesignSystem.Color.background)),
+            .init(
+                left: .back,
+                right: .kebab,
+                backgroundStyle: .verticalGradient(
+                    top: DesignSystem.Color.background,
+                    bottom: DesignSystem.Color.background.withAlphaComponent(0)
+                )
+            ),
             onTapRight: { [weak self] in
                 self?.didTapKebab()
             }
@@ -119,6 +126,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.navigationController?.popViewController(animated: true)
+                Toast.text("컬렉션을 삭제했어요").show()
             }
             .store(in: &cancellables)
 

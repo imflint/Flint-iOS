@@ -106,6 +106,22 @@ extension SavedCollectionListViewController: UICollectionViewDataSource {
 
     public func collectionView(
         _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionHeader,
+              let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: CollectionFolderHeaderView.identifier,
+                for: indexPath
+              ) as? CollectionFolderHeaderView
+        else { return UICollectionReusableView() }
+        header.configure(count: viewModel.items.count)
+        return header
+    }
+
+    public func collectionView(
+        _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(

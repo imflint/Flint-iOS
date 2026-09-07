@@ -137,9 +137,12 @@ public final class KebabMenu: BaseView {
             $0.isUserInteractionEnabled = false
         }
         control.addSubview(label)
+        control.snp.makeConstraints {
+            $0.width.equalTo(104)
+            $0.height.equalTo(48)
+        }
         label.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.top.bottom.equalToSuperview().inset(6)
             $0.horizontalEdges.equalToSuperview().inset(24)
         }
         control.addAction(UIAction { [weak self] _ in

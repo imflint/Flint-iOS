@@ -185,7 +185,7 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         }
         
         bookmarkView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(8)
+            $0.bottom.equalTo(folderOverlayoutView.snp.bottom).inset(32)
             $0.trailing.equalToSuperview().inset(12)
         }
         
@@ -318,18 +318,31 @@ public final class CollectionFolderCollectionViewCell: BaseCollectionViewCell {
         }
 
         // 3) profile
+        let profilePlaceholder = configuration.profileImage ?? DesignSystem.Image.Common.profileGray
         if let url = configuration.profileImageURL {
             profileImageVIew.kf.setImage(
                 with: url,
-                placeholder: configuration.profileImage
+                placeholder: profilePlaceholder
             )
         } else {
-            profileImageVIew.image = configuration.profileImage
+            profileImageVIew.image = profilePlaceholder
         }
 
         nameLabel.attributedText = .pretendard(.caption1_m_12, text: configuration.name, color: .flintGray50)
-        titleLabel.attributedText = .pretendard(.body1_m_16, text: configuration.title, color: .flintWhite)
-        descriptionLabel.attributedText = .pretendard(.caption1_r_12, text: configuration.description, color: .flintGray300)
+        titleLabel.attributedText = .pretendard(
+            .body1_m_16,
+            text: configuration.title,
+            color: .flintWhite,
+            lineBreakMode: .byWordWrapping,
+            lineBreakStrategy: .hangulWordPriority
+        )
+        descriptionLabel.attributedText = .pretendard(
+            .caption1_r_12,
+            text: configuration.description,
+            color: .flintGray300,
+            lineBreakMode: .byWordWrapping,
+            lineBreakStrategy: .hangulWordPriority
+        )
 
         bookmarkView.configure(
             isBookmarked: configuration.isBookmarked,

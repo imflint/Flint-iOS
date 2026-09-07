@@ -35,7 +35,7 @@ public struct ToastConfiguration {
         enteringAnimation: Toast.AnimationType = .fade(alpha: 0),
         exitingAnimation: Toast.AnimationType = .fade(alpha: 0),
         attachTo view: UIView? = nil,
-        allowToastOverlap: Bool = true,
+        allowToastOverlap: Bool = false,
         fixedSize: CGSize? = nil
     ) {
         self.direction = direction

@@ -8,6 +8,8 @@
 import UIKit
 import Combine
 
+import Kingfisher
+
 import Domain
 import View
 import ViewModel
@@ -49,6 +51,23 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
     var headerImage: UIImage?
     var headerImageURL: URL?
     var headerImageKey: String?
+
+    /// 편집 진입 시점의 상태 스냅샷 (변경 감지용)
+    private var editInitialSnapshot: EditSnapshot?
+
+    private struct EditSnapshot: Equatable {
+        let title: String
+        let description: String
+        let headerImageKey: String?
+        let reasonSnapshots: [ReasonSnapshot]
+    }
+
+    private struct ReasonSnapshot: Equatable {
+        let contentId: Int64
+        let isSpoiler: Bool
+        let reasonText: String
+        let customImageKeys: [String]
+    }
 
     // MARK: - Init
 
@@ -105,6 +124,79 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
         }
 
         updateCreatePayload()
+
+        editInitialSnapshot = makeSnapshot()
+
+        // 기존에 등록된 작품 이미지 URL을 UIImage로 로드해서 셀에 반영
+        prefillPhotos(from: entity)
+    }
+
+    private func makeSnapshot() -> EditSnapshot {
+        let reasonSnapshots = selectedReasonItems.map {
+            ReasonSnapshot(
+                contentId: $0.contentId,
+                isSpoiler: $0.isSpoiler,
+                reasonText: $0.reasonText ?? "",
+                customImageKeys: $0.customImageKeys
+            )
+        }
+        return EditSnapshot(
+            title: collectionTitleText,
+            description: collectionDescriptionText,
+            headerImageKey: headerImageKey,
+            reasonSnapshots: reasonSnapshots
+        )
+    }
+
+    private var hasEditChanges: Bool {
+        guard let snapshot = editInitialSnapshot else { return false }
+        return snapshot != makeSnapshot()
+    }
+
+    private func prefillPhotos(from entity: CollectionDetailEntity) {
+        for (index, content) in entity.contents.enumerated() {
+            guard !content.customImageUrls.isEmpty else { continue }
+            let urls = content.customImageUrls
+            let total = urls.count
+            let box = LoadedPhotosBox()
+
+            for (i, url) in urls.enumerated() {
+                KingfisherManager.shared.retrieveImage(with: url) { [weak self] result in
+                    DispatchQueue.main.async {
+                        guard let self else { return }
+                        if case .success(let value) = result {
+                            box.append(index: i, image: value.image)
+                        } else {
+                            box.markMissed()
+                        }
+                        guard box.finishedCount == total else { return }
+                        guard index < self.selectedReasonItems.count else { return }
+                        self.selectedReasonItems[index].photos = box.orderedImages
+                        let indexPath = IndexPath(row: index + 1, section: 1)
+                        self.rootView.tableView.reloadRows(at: [indexPath], with: .none)
+                    }
+                }
+            }
+        }
+    }
+
+    /// 메인 큐에서만 뮤테이션하므로 안전. Swift 6 concurrency 통과용 @unchecked Sendable.
+    private final class LoadedPhotosBox: @unchecked Sendable {
+        private var items: [(Int, UIImage)] = []
+        private(set) var finishedCount: Int = 0
+
+        func append(index: Int, image: UIImage) {
+            items.append((index, image))
+            finishedCount += 1
+        }
+
+        func markMissed() {
+            finishedCount += 1
+        }
+
+        var orderedImages: [UIImage] {
+            items.sorted { $0.0 < $1.0 }.map { $0.1 }
+        }
     }
 
     // MARK: - Lifecycle
@@ -134,7 +226,39 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
                 left: .back,
                 right: .none,
                 backgroundStyle: .solid(DesignSystem.Color.background)
-            )
+            ),
+            onTapLeft: { [weak self] in
+                self?.didTapBack()
+            }
         )
+    }
+
+    private func didTapBack() {
+        if case .edit = mode, hasEditChanges {
+            presentExitConfirmModal()
+        } else {
+            navigationController?.popViewController(animated: true)
+        }
+    }
+
+    private func presentExitConfirmModal() {
+        let host: UIView = navigationController?.view ?? view
+        var modalRef: Modal?
+        let modal = Modal(
+            image: DesignSystem.Icon.Gradient.pencil,
+            title: "컬렉션 수정을 그만둘까요?",
+            caption: "변경한 내용은 저장되지 않아요.",
+            leftButtonTitle: "취소",
+            rightButtonTitle: "나가기",
+            rightButtonColor: DesignSystem.Color.error500,
+            onLeft: { _ in modalRef?.dismiss() },
+            onRight: { [weak self] _ in
+                modalRef?.dismiss {
+                    self?.navigationController?.popViewController(animated: true)
+                }
+            }
+        )
+        modalRef = modal
+        modal.show(in: host)
     }
 }

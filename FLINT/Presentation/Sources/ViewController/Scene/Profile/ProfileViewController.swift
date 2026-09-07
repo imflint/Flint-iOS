@@ -53,7 +53,19 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         )
 
         setupTableView()
+        setupTooltipDismissGesture()
         bind()
+    }
+
+    private func setupTooltipDismissGesture() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapForTooltip))
+        tap.cancelsTouchesInView = false
+        tap.delegate = self
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc private func handleTapForTooltip() {
+        profileViewModel.hideKeywordInfoTooltip()
     }
 
     public override func viewWillAppear(_ animated: Bool) {
