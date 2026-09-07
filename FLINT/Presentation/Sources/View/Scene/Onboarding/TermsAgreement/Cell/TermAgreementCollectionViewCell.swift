@@ -116,7 +116,8 @@ package final class TermAgreementCollectionViewCell: BaseCollectionViewListCell 
     // MARK: - Public Function
     
     package func configure(_ signUpTerm: SignUpTerm) {
-        termAgreeLabel.attributedText = .pretendard(.body1_r_16, text: signUpTerm.title)
+        let titleHeader = signUpTerm.isRequired ? "(필수) " : ""
+        termAgreeLabel.attributedText = .pretendard(.body1_r_16, text: titleHeader + signUpTerm.title)
         termDetailLabel.attributedText = .pretendard(.body2_r_14, text: signUpTerm.description)
     }
     
