@@ -25,6 +25,8 @@ public enum NavRightItem {
 public enum NavigationBarBackgroundStyle {
     case solid(UIColor)
     case clear
+    /// 상단 → 하단으로 페이드되는 그라디언트 (상태바 영역은 top 색상으로 solid)
+    case verticalGradient(top: UIColor, bottom: UIColor)
 }
 
 public struct NavigationBarConfig {

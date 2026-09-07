@@ -1,5 +1,5 @@
 {
-  "originHash" : "c95b4af140641978b2f57a74958c9190bb0ba5ebed92bff618c56503a9d2c924",
+  "originHash" : "ad8fc0713df7ec2a3ab67d511fe02aed6c9fa9a8994d4307f8945bfb1cc8672b",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "7595cbcf59809f9977c5f6378500de2ad73b7ddb",
         "version" : "5.12.0"
+      }
+    },
+    {
+      "identity" : "consolelog",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/H0sungKim/ConsoleLog.git",
+      "state" : {
+        "revision" : "585c6dc5ecaa5a080655a9439b5471a8299110df",
+        "version" : "1.2.2"
       }
     },
     {
@@ -44,6 +53,15 @@
       "state" : {
         "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
         "version" : "5.7.1"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "b90056de69eed23b3fb39ab69cf1780071dfb664",
+        "version" : "604.0.0-prerelease-2026-06-05"
       }
     },
     {

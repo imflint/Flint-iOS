@@ -29,6 +29,16 @@ public final class CollectionDetailHeaderTableViewCell: BaseTableViewCell {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
     }
+
+    private let thumbnailGradientView = UIView()
+    private let thumbnailGradientLayer = CAGradientLayer().then {
+        $0.startPoint = CGPoint(x: 0.5, y: 0)
+        $0.endPoint = CGPoint(x: 0.5, y: 1)
+        $0.colors = [
+            UIColor.flintBackground.cgColor,
+            UIColor.flintBackground.withAlphaComponent(0.3).cgColor
+        ]
+    }
     
     private let titleLabel = UILabel().then {
         $0.attributedText = .pretendard(.display2_m_28, text: "한 번 보면 못 빠져나오는\n사랑 이야기", lineBreakMode: .byWordWrapping, lineBreakStrategy: .hangulWordPriority)
@@ -43,28 +53,41 @@ public final class CollectionDetailHeaderTableViewCell: BaseTableViewCell {
     // MARK: - Setup
     
     public override func setHierarchy() {
-        contentView.addSubviews(backgroundImageView, titleLabel, saveButton)
+        contentView.addSubviews(backgroundImageView, thumbnailGradientView, titleLabel, saveButton)
+        thumbnailGradientView.layer.addSublayer(thumbnailGradientLayer)
     }
-    
+
     public override func setLayout() {
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
+
         backgroundImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.height.equalTo(360)
         }
-        
+
+        thumbnailGradientView.snp.makeConstraints {
+            $0.edges.equalTo(backgroundImageView)
+        }
+
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(51)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
-        
+
         saveButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(16)
             $0.bottom.equalTo(backgroundImageView).inset(19)
         }
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        thumbnailGradientLayer.frame = thumbnailGradientView.bounds
+        CATransaction.commit()
     }
     
     public override func setStyle() {

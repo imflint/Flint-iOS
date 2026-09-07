@@ -121,13 +121,18 @@ public class Toast {
     /// Show the toast
     /// - Parameter delay: Time after which the toast is shown
     public func show(after delay: TimeInterval = 0) {
+        if !config.allowToastOverlap {
+            closeOverlappedToasts()
+        }
+        Toast.activeToasts.append(self)
+
         UIView.performWithoutAnimation {
             view.translatesAutoresizingMaskIntoConstraints = false
             config.view?.addSubview(view) ?? ToastHelper.topController()?.view.addSubview(view)
             view.createView(for: self)
             view.layoutIfNeeded()
         }
-        
+
         multicast.invoke { $0.willShowToast(self) }
 
         config.enteringAnimation.apply(to: self.view)
@@ -138,19 +143,18 @@ public class Toast {
             self.backgroundView?.backgroundColor = endBackgroundColor
         } completion: { [self] _ in
             multicast.invoke { $0.didShowToast(self) }
-            
+
             configureCloseTimer()
-            if !config.allowToastOverlap {
-                closeOverlappedToasts()
-            }
-            Toast.activeToasts.append(self)
         }
     }
-    
+
     private func closeOverlappedToasts() {
-        Toast.activeToasts.forEach {
+        let existing = Toast.activeToasts
+        Toast.activeToasts.removeAll()
+        existing.forEach {
             $0.closeTimer?.invalidate()
-            $0.close(animated: false)
+            $0.view.removeFromSuperview()
+            $0.backgroundView?.removeFromSuperview()
         }
     }
     

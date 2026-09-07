@@ -177,7 +177,7 @@ extension SettingViewController {
         var snapshot = NSDiffableDataSourceSnapshot<SettingSection, SettingItem>()
         
         snapshot.appendSections([.account])
-        if let profile = profile {
+        if let profile = profile, !profile.email.isEmpty {
             snapshot.appendItems([.account(profile.email)], toSection: .account)
         }
         

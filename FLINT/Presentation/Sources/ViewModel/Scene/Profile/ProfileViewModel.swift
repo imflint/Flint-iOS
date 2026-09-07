@@ -174,6 +174,16 @@ public final class ProfileViewModel {
         rows = makeRows()
     }
 
+    public func hideKeywordInfoTooltip() {
+        guard isKeywordInfoTooltipVisible else { return }
+        isKeywordInfoTooltipVisible = false
+        rows = makeRows()
+    }
+
+    public var isTooltipVisible: Bool {
+        isKeywordInfoTooltipVisible
+    }
+
     public func refreshKeywords() {
         guard isMe, !isRefreshing, canRefresh else { return }
         isRefreshing = true
@@ -229,7 +239,7 @@ public final class ProfileViewModel {
                     title: "\(nickname)님의 취향 키워드",
                     subtitle: "\(nickname)님이 관심 있어 하는 키워드에요",
                     showInfo: isMe,
-                    showRefresh: isMe,
+                    showRefresh: isMe && canRefresh,
                     isRefreshEnabled: canRefresh,
                     isRefreshing: isRefreshing,
                     tooltipText: (isMe && isKeywordInfoTooltipVisible) ? Const.keywordInfoTooltipText : nil
