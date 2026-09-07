@@ -234,31 +234,15 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
     }
 
     private func didTapBack() {
-        if case .edit = mode, hasEditChanges {
+        let shouldConfirm: Bool = {
+            if case .edit = mode { return hasEditChanges }
+            return hasUnsavedContent
+        }()
+
+        if shouldConfirm {
             presentExitConfirmModal()
         } else {
             navigationController?.popViewController(animated: true)
         }
-    }
-
-    private func presentExitConfirmModal() {
-        let host: UIView = navigationController?.view ?? view
-        var modalRef: Modal?
-        let modal = Modal(
-            image: DesignSystem.Icon.Gradient.pencil,
-            title: "컬렉션 수정을 그만둘까요?",
-            caption: "변경한 내용은 저장되지 않아요.",
-            leftButtonTitle: "취소",
-            rightButtonTitle: "나가기",
-            rightButtonColor: DesignSystem.Color.error500,
-            onLeft: { _ in modalRef?.dismiss() },
-            onRight: { [weak self] _ in
-                modalRef?.dismiss {
-                    self?.navigationController?.popViewController(animated: true)
-                }
-            }
-        )
-        modalRef = modal
-        modal.show(in: host)
     }
 }

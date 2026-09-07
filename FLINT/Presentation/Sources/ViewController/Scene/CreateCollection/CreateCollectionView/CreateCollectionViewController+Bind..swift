@@ -219,12 +219,17 @@ extension CreateCollectionViewController {
     func presentExitConfirmModal() {
         let hostView: UIView = navigationController?.view ?? view
 
+        let isEdit: Bool = {
+            if case .edit = mode { return true }
+            return false
+        }()
+
         var modalRef: Modal?
 
         let modal = Modal(
-            image: DesignSystem.Icon.Gradient.trash,
-            title: "컬렉션 작성을 그만둘까요?",
-            caption: "작성한 내용이 모두 삭제돼요.",
+            image: isEdit ? DesignSystem.Icon.Gradient.pencil : DesignSystem.Icon.Gradient.trash,
+            title: isEdit ? "컬렉션 수정을 그만둘까요?" : "컬렉션 작성을 그만둘까요?",
+            caption: isEdit ? "변경한 내용은 저장되지 않아요." : "작성한 내용이 모두 삭제돼요.",
             leftButtonTitle: "취소",
             rightButtonTitle: "나가기",
             rightButtonColor: DesignSystem.Color.error500,
