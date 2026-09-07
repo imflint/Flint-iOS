@@ -102,22 +102,22 @@ public final class ContentSelectView: BaseView {
         )
         group.interItemSpacing = .fixed(14)
         
-        let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 16
-        section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
-        section.boundarySupplementaryItems = [
-            NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(24)),
-                elementKind: UICollectionView.elementKindSectionHeader,
-                alignment: .top
-            )
-        ]
-//        let layout = UICollectionViewCompositionalLayout { section, <#any NSCollectionLayoutEnvironment#> in
-//            <#code#>
-//        }
-        let layout = UICollectionViewCompositionalLayout(section: section)
+        let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
+            let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 16
+            section.contentInsets = .init(top: 8, leading: 16, bottom: 8, trailing: 16)
+            if sectionIndex == 1 {
+                section.boundarySupplementaryItems = [
+                    NSCollectionLayoutBoundarySupplementaryItem(
+                        layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(24)),
+                        elementKind: UICollectionView.elementKindSectionHeader,
+                        alignment: .top
+                    )
+                ]
+            }
+            return section
+        }
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        section.contentInsets = .zero
         collectionView.backgroundColor = .flintBackground
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false

@@ -23,5 +23,7 @@ public protocol UserRepository {
     func fetchMyKeywords() -> AnyPublisher<[KeywordEntity], Error>
     func recalculateMyKeywords() -> AnyPublisher<Void, Error>
     
+    func modifyNickname(nickname: String) -> AnyPublisher<Void, Error>
+    func modifyProfileImage(key: String) -> AnyPublisher<Void, Error>
     func checkNickname(_ nickname: String) -> AnyPublisher<Bool, Error>
 }

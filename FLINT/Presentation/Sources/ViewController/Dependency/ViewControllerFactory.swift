@@ -43,4 +43,5 @@ public typealias ViewControllerFactory =
     SettingViewControllerFactory &
     WithdrawalViewControllerFactory &
     WithdrawalCompleteViewControllerFactory &
-    ReportViewControllerFactory
+    ReportViewControllerFactory &
+    ProfileSettingViewControllerFactory

@@ -37,6 +37,10 @@ public final class DefaultAuthRepository: AuthRepository {
         return authService.logout()
     }
     
+    public func refresh() -> AnyPublisher<Void, Error> {
+        return authService.refresh()
+    }
+    
     public func withDraw(agreedTermsIds: [String]) -> AnyPublisher<Void, Error> {
         return authService.withDraw(agreedTermsIds: agreedTermsIds)
     }

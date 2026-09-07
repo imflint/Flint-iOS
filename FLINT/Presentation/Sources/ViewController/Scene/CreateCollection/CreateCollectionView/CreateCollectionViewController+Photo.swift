@@ -104,11 +104,8 @@ extension CreateCollectionViewController: PHPickerViewControllerDelegate {
         await withTaskGroup(of: (Int, UIImage?).self) { group in
             for (index, result) in results.enumerated() {
                 group.addTask {
-                    await withCheckedContinuation { continuation in
-                        result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
-                            continuation.resume(returning: (index, object as? UIImage))
-                        }
-                    }
+                    let image = await Self.loadImage(from: result.itemProvider)
+                    return (index, image)
                 }
             }
 
@@ -122,6 +119,22 @@ extension CreateCollectionViewController: PHPickerViewControllerDelegate {
             return indexedImages
                 .sorted { $0.0 < $1.0 }
                 .map { $0.1 }
+        }
+    }
+
+    private static func loadImage(from itemProvider: NSItemProvider) async -> UIImage? {
+        guard let typeIdentifier = itemProvider.registeredTypeIdentifiers.first(where: {
+            itemProvider.hasItemConformingToTypeIdentifier($0)
+        }) else { return nil }
+
+        return await withCheckedContinuation { continuation in
+            itemProvider.loadDataRepresentation(forTypeIdentifier: typeIdentifier) { data, _ in
+                guard let data, let image = UIImage(data: data) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                continuation.resume(returning: image)
+            }
         }
     }
 }

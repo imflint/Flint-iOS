@@ -18,7 +18,7 @@ extension OnboardingViewModelFactory {
         return DefaultOnboardingViewModel(
             uploadUserProfileUseCase: makeUploadUserProfileUseCase(),
             checkNicknameUseCase: makeCheckNicknameUseCase(),
-            fetchPopularContentsUseCase: makeFetchPopularContentsUseCase(),
+//            fetchPopularContentsUseCase: makeFetchPopularContentsUseCase(),
             searchContentsUseCase: makeSearchContentsUseCase(),
             signupUseCase: makeSignupUseCase()
         )

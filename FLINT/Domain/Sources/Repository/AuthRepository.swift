@@ -14,5 +14,6 @@ public protocol AuthRepository {
     func signup(userInfo: SignupInfoEntity) -> AnyPublisher<String, Error>
     func socialVerify(socialAuthCredential: SocialVerifyEntity) -> AnyPublisher<SocialVerifyResultEntity, Error>
     func logout() -> AnyPublisher<Void, Error>
+    func refresh() -> AnyPublisher<Void, Error>
     func withDraw(agreedTermsIds: [String]) -> AnyPublisher<Void, Error>
 }

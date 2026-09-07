@@ -71,8 +71,6 @@ public final class BaseBottomSheetViewController: UIViewController {
         case .ott(let platforms):
             let ottListView = OTTListView()
             ottListView.configure(platforms: platforms)
-            // 기획상 OTT 정보만 노출, 외부 이동 없음
-            ottListView.onSelectPlatform = { _ in }
             sheetView.setContentView(ottListView)
             
         case .savedUsers(let users):

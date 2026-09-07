@@ -96,7 +96,7 @@ public extension DefaultAddContentSelectViewModel {
         searchCancellable = searchContentsUseCase(keyword: keyword, genre: [], mediaType: nil, cursor: nil)
             .manageThread()
             .sinkHandledCompletion { [weak self] contents in
-                self?.results.send(contents)
+                self?.results.send(contents.data)
             }
     }
 }

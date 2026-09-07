@@ -295,7 +295,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         applyPhotoLayout(hasPhotos: !photos.isEmpty)
-        updateAddPhotoButton()  // 추가
+        updateAddPhotoButton()
         guard !photos.isEmpty else { return }
         
         pageControl.numberOfPages = photos.count
@@ -343,39 +343,48 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
             $0.clipsToBounds = true
             $0.backgroundColor = .flintGray800
         }
+
+        let imageRatio = image.size.width / image.size.height
+        let containerRatio = UIScreen.main.bounds.width / Metric.photoHeight
+
+        // 이미지 비율과 컨테이너 비율이 threshold배 이상 차이나면
+        // Crop 시 과도하게 잘리는 것으로 판단해 원본 비율 유지
+        let threshold: CGFloat = 1.6
+        let deviation = max(imageRatio, containerRatio) / min(imageRatio, containerRatio)
+        let isExtremeRatio = deviation > threshold
+
         let imageView = UIImageView().then {
-            $0.contentMode = .scaleAspectFit
+            $0.contentMode = isExtremeRatio ? .scaleAspectFit : .scaleAspectFill
             $0.clipsToBounds = true
             $0.image = image
         }
-        
+
         let deleteButton = UIButton().then {
             $0.setImage(.icBlackXmark, for: .normal)
             $0.tag = realIndex
             $0.addTarget(self, action: #selector(didTapDeletePhoto(_:)), for: .touchUpInside)
         }
-        
+
         wrapper.addSubviews(imageView, deleteButton)
-        
+
         imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        
+
         deleteButton.snp.makeConstraints {
             $0.top.trailing.equalToSuperview().inset(12)
             $0.size.equalTo(48)
         }
-        
+
         wrapper.snp.makeConstraints {
             $0.width.equalTo(UIScreen.main.bounds.width)
             $0.height.equalTo(Metric.photoHeight)
         }
-        
+
         return wrapper
     }
     
     private func updateAddPhotoButton() {
         let image = photos.count >= 5 ? UIImage.icAddPhotoDisable : UIImage.icAddPhoto
         addPhotoButton.setImage(image, for: .normal)
-        addPhotoButton.isUserInteractionEnabled = photos.count < 5
     }
     
     // MARK: - Action
@@ -386,6 +395,10 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     }
     
     @objc private func didTapAddPhoto() {
+        guard photos.count < 5 else {
+            Toast.failure("작품 이미지는 최대 5개까지 추가할 수 있어요").show()
+            return
+        }
         onTapAddPhoto?()
     }
     

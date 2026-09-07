@@ -19,6 +19,7 @@ public protocol OnboardingViewModelInput {
     // content select
     func fetchPopularContents()
     func searchContents()
+    func fetchMoreContents()
     func clickContent(_ content: ContentEntity)
     func deleteContent(_ content: ContentEntity)
     
@@ -37,6 +38,7 @@ public protocol OnboardingViewModelOutput {
     // content select
     var isLoading: CurrentValueSubject<Bool, Never> { get }
     var keyword: String? { get set }
+    var cursor: String? { get set }
     var filterGenre: Set<Genre> { get set }
     var requiredContentCount: Int { get }
     var contents: CurrentValueSubject<[ContentEntity], Never> { get }
@@ -51,7 +53,6 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
     private let uploadUserProfileUseCase: UploadUserProfileUseCase
     private let checkNicknameUseCase: CheckNicknameUseCase
-    private let fetchPopularContentsUseCase: FetchPopularContentsUseCase
     private let searchContentsUseCase: SearchContentsUseCase
     private let signupUseCase: SignupUseCase
     
@@ -66,6 +67,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
     public let isLoading: CurrentValueSubject<Bool, Never> = .init(false)
     public var keyword: String? = nil
+    public var cursor: String? = nil
     public var filterGenre: Set<Genre> = []
     public let requiredContentCount: Int = 7
     public let contents: CurrentValueSubject<[ContentEntity], Never> = .init([])
@@ -79,13 +81,11 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     public init(
         uploadUserProfileUseCase: UploadUserProfileUseCase,
         checkNicknameUseCase: CheckNicknameUseCase,
-        fetchPopularContentsUseCase: FetchPopularContentsUseCase,
         searchContentsUseCase: SearchContentsUseCase,
         signupUseCase: SignupUseCase,
     ) {
         self.uploadUserProfileUseCase = uploadUserProfileUseCase
         self.checkNicknameUseCase = checkNicknameUseCase
-        self.fetchPopularContentsUseCase = fetchPopularContentsUseCase
         self.searchContentsUseCase = searchContentsUseCase
         self.signupUseCase = signupUseCase
     }
@@ -119,8 +119,9 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         isLoading.send(true)
         searchContentsUseCase(keyword: nil, genre: filterGenre, mediaType: nil, cursor: nil)
             .manageThread()
-            .sinkHandledCompletion { [weak self] contents in
-                self?.contents.send(contents)
+            .sinkHandledCompletion { [weak self] searchContentEntity in
+                self?.cursor = searchContentEntity.meta.nextCursor
+                self?.contents.send(searchContentEntity.data)
                 self?.isLoading.send(false)
             }
             .store(in: &cancellables)
@@ -130,15 +131,24 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         isLoading.send(true)
         searchContentsUseCase(keyword: keyword, genre: filterGenre, mediaType: nil, cursor: nil)
             .manageThread()
-            .sinkHandledCompletion { [weak self] contents in
-                self?.contents.send(contents)
+            .sinkHandledCompletion { [weak self] searchContentEntity in
+                self?.cursor = searchContentEntity.meta.nextCursor
+                self?.contents.send(searchContentEntity.data)
                 self?.isLoading.send(false)
             }
             .store(in: &cancellables)
     }
     
     public func fetchMoreContents() {
-        
+        isLoading.send(true)
+        searchContentsUseCase(keyword: keyword, genre: filterGenre, mediaType: nil, cursor: cursor)
+            .manageThread()
+            .sinkHandledCompletion { [weak self] searchContentEntity in
+                self?.cursor = searchContentEntity.meta.nextCursor
+                self?.contents.value.append(contentsOf: searchContentEntity.data)
+                self?.isLoading.send(false)
+            }
+            .store(in: &cancellables)
     }
     
     public func clickContent(_ content: ContentEntity) {
