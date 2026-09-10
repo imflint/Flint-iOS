@@ -115,6 +115,37 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
                 self.applyUI()
             }
             .store(in: &cancellables)
+
+        viewModel.savedCount
+            .receive(on: RunLoop.main)
+            .sink { [weak self] count in
+                guard let self else { return }
+
+                let titlePart = NSMutableAttributedString(
+                    attributedString: NSAttributedString.pretendard(
+                        .head3_m_18,
+                        text: "저장한 작품",
+                        color: DesignSystem.Color.white
+                    )
+                )
+                titlePart.addAttribute(
+                    .kern,
+                    value: 12,
+                    range: NSRange(location: titlePart.length - 1, length: 1)
+                )
+
+                let countPart = NSAttributedString.pretendard(
+                    .body1_m_16,
+                    text: "총 \(count)개",
+                    color: DesignSystem.Color.gray300
+                )
+
+                let combined = NSMutableAttributedString(attributedString: titlePart)
+                combined.append(countPart)
+
+                self.rootView.savedCountLabel.attributedText = combined
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Setup
@@ -142,6 +173,8 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
             hasSearchCompleted = false
             rootView.setEmptyHidden(true)
         }
+
+        rootView.savedCountLabel.isHidden = isSearching
 
         rootView.selectedPreviewCollectionView.reloadData()
         rootView.tableView.reloadData()
@@ -201,7 +234,7 @@ public final class AddContentSelectViewController: BaseViewController<AddContent
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if trimmed.isEmpty {
-            isSearching = false  
+            isSearching = false
             hasSearchCompleted = false
             viewModel.updateKeyword(keyword: "")
             applyUI()
