@@ -76,9 +76,7 @@ public final class CreateCollectionView: BaseView {
     // MARK: - Private
 
     private func updateCompleteButton(enabled: Bool) {
-        let newButton: FlintButton = enabled
-        ? FlintButton(style: .able, title: "완료")
-        : FlintButton(style: .disable, title: "완료")
+        let newButton = FlintButton(style: .able, title: "완료")
 
         completeBUtton = newButton
         applyFooter(button: newButton, isEnabled: enabled)
