@@ -28,6 +28,7 @@ extension ContentsDTO {
     public struct ContentDTO: Codable {
         public let id: String?
         public let title: String?
+        public let author: String?
         public let imageUrl: String?
         public let year: Int?
         public let bookmarkCount: Int?
@@ -54,6 +55,7 @@ extension ContentsDTO.ContentDTO {
             return try ContentInfoEntity(
                 id: unwrap(id),
                 title: title ?? "",
+                author: author ?? "",
                 imageUrl: imageUrl ?? "",
                 year: year ?? 0,
                 ottList: getOttSimpleList?.map { try $0.entity } ?? []

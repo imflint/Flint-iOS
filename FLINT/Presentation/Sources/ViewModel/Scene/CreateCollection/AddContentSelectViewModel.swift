@@ -89,7 +89,7 @@ public final class DefaultAddContentSelectViewModel: AddContentSelectViewModel {
         ContentEntity(
             id: info.id,
             title: info.title,
-            author: "",
+            author: info.author,
             posterUrl: URL(string: info.imageUrl),
             year: info.year
         )
