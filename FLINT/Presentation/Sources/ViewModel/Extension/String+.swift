@@ -9,7 +9,12 @@ import Foundation
 
 extension String {
     func isValidNickname() -> Bool {
-        let nicknameRegex = "^[가-힣a-zA-Z]{2,10}$"
+        let nicknameRegex = "^[가-힣a-zA-Z0-9]{2,10}$"
+        return NSPredicate(format: "SELF MATCHES %@", nicknameRegex).evaluate(with: self)
+    }
+    
+    func isIncompleteHangul() -> Bool {
+        let nicknameRegex = "^[ㄱ-ㅎㅏ-ㅣ]+$"
         return NSPredicate(format: "SELF MATCHES %@", nicknameRegex).evaluate(with: self)
     }
 }

@@ -11,4 +11,5 @@ public enum NicknameValidState {
     case valid
     case invalid
     case duplicate
+    case incompleteHangul
 }

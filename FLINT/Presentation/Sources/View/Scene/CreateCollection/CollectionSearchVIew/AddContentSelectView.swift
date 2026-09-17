@@ -16,6 +16,8 @@ public final class AddContentSelectView: BaseView {
 
     public let searchTextField = SearchTextField(placeholder: "추천하고 싶은 작품을 검색해보세요")
 
+    public let savedCountLabel = UILabel()
+
     private let selectedPreviewContainerView = UIView().then {
         $0.backgroundColor = .flintBackground
         $0.clipsToBounds = false
@@ -55,7 +57,7 @@ public final class AddContentSelectView: BaseView {
     }
 
     public override func setHierarchy() {
-        addSubviews(searchTextField, selectedPreviewContainerView, tableView, emptyView)
+        addSubviews(searchTextField, savedCountLabel, selectedPreviewContainerView, tableView, emptyView)
         selectedPreviewContainerView.addSubview(selectedPreviewCollectionView)
     }
 
@@ -64,6 +66,11 @@ public final class AddContentSelectView: BaseView {
             $0.top.equalTo(safeAreaLayoutGuide.snp.top).offset(12)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(44)
+        }
+
+        savedCountLabel.snp.makeConstraints {
+            $0.top.equalTo(searchTextField.snp.bottom).offset(20)
+            $0.leading.equalToSuperview().inset(16)
         }
 
         selectedPreviewContainerView.snp.makeConstraints {
@@ -77,7 +84,7 @@ public final class AddContentSelectView: BaseView {
         }
 
         tableView.snp.makeConstraints {
-            $0.top.equalTo(selectedPreviewContainerView.snp.bottom).offset(8)
+            $0.top.equalTo(savedCountLabel.snp.bottom).offset(12)
             $0.horizontalEdges.bottom.equalToSuperview()
         }
 
@@ -108,7 +115,7 @@ public final class AddContentSelectView: BaseView {
 
         tableView.snp.remakeConstraints {
             if hidden {
-                $0.top.equalTo(searchTextField.snp.bottom).offset(24)
+                $0.top.equalTo(savedCountLabel.snp.bottom).offset(12)
             } else {
                 $0.top.equalTo(selectedPreviewContainerView.snp.bottom).offset(8)
             }

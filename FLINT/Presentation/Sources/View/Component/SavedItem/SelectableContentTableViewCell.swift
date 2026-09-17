@@ -118,12 +118,14 @@ public final class SelectableContentTableViewCell: BaseTableViewCell {
         posterImageView.image = model.posterImage
         
         titleLabel.attributedText = .pretendard(.head3_sb_18, text: model.title, color: .flintWhite)
+
+        directorLabel.isHidden = model.director.isEmpty
         directorLabel.attributedText = .pretendard(.body1_r_16, text: model.director, color: .flintGray300)
+
         yearLabel.attributedText = .pretendard(.body1_r_16, text: model.year, color: .flintGray300)
         
         isSelectedItem = isSelected
         updateCheckbox(isSelected: isSelected)
-   
     }
 
     // MARK: - Actions

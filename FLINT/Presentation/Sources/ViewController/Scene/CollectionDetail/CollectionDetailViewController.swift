@@ -10,7 +10,7 @@ import Combine
 
 import SnapKit
 
-import Entity
+import Domain
 import View
 import ViewModel
 
@@ -40,6 +40,8 @@ public final class CollectionDetailViewController: BaseViewController<Collection
     private var bookmarkedUsers: CollectionBookmarkUsersEntity?
     private var isOwner: Bool = false
     private var kebabMenu: KebabMenu?
+    
+    private var scrollFlag: String?
 
     /// kebab → 신고 탭 시 호출. 인자는 신고 대상 컬렉션 id.
     /// 신고 화면은 별도 담당자가 구현 예정이므로, 호출부에서 closure 만 주입하면 됨.
@@ -98,6 +100,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
             .receive(on: DispatchQueue.main)
             .sink { [weak self] detail in
                 self?.apply(entity: detail)
+                self?.scrollIfNeeded(entity: detail)
             }
             .store(in: &cancellables)
 
@@ -375,6 +378,29 @@ public final class CollectionDetailViewController: BaseViewController<Collection
 
         tableView.reloadData()
         tableView.layoutIfNeeded()
+    }
+    
+    public func setupScroll(title: String) {
+        scrollFlag = title
+        Log.d(rows)
+        Log.d("setupScroll")
+    }
+    
+    private func scrollIfNeeded(entity: CollectionDetailEntity) {
+        guard let scrollFlag else { return }
+        
+        guard let contentsIndex = entity.contents.firstIndex(where: { entity in
+            entity.title == scrollFlag
+        }) else { return }
+        
+        Log.d(contentsIndex)
+        
+        guard let tableIndex = rows.firstIndex(where: { row in
+            guard case let .film(idx) = row else { return false }
+            return idx == contentsIndex
+        }) else { return }
+        
+        rootView.tableView.scrollToRow(at: IndexPath(row: tableIndex, section: 0), at: .top, animated: true)
     }
 }
 
