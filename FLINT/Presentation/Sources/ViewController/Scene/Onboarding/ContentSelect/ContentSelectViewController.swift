@@ -140,6 +140,12 @@ extension ContentSelectViewController: UICollectionViewDelegate {
             contentCollectionView(collectionView, willDisplaySupplementaryView: view, forElementKind: elementKind, at: indexPath)
         }
     }
+    
+    public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if collectionView === rootView.genreCollectionView {
+            genreCollectionView(collectionView, didDeselectItemAt: indexPath)
+        }
+    }
 }
 
 // MARK: - ContentCollectionView
@@ -345,7 +351,7 @@ extension ContentSelectViewController {
         onboardingViewModel.searchContents()
     }
     
-    public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+    public func genreCollectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         onboardingViewModel.filterGenre.remove(Genre.allCases[indexPath.row])
         onboardingViewModel.searchContents()
     }
