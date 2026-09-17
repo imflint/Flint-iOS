@@ -23,6 +23,7 @@ let package = Package(
         .package(url: "https://github.com/devxoul/Then.git", "0.0.0"..."3.0.0"),
         .package(url: "https://github.com/airbnb/lottie-ios.git", "0.0.0"..."4.5.2"),
         .package(url: "https://github.com/kakao/kakao-ios-sdk.git", "0.0.0"..."2.27.1"),
+        .package(url: "https://github.com/amplitude/Amplitude-Swift.git", from: "1.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -35,6 +36,7 @@ let package = Package(
         .target(name: "ViewModel", dependencies: [
             .product(name: "Domain", package: "Domain"),
             .product(name: "KakaoSDK", package: "kakao-ios-sdk"),
+            .product(name: "AmplitudeSwift", package: "Amplitude-Swift"),
         ]),
         .target(
             name: "View",

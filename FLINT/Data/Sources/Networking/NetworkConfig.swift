@@ -35,4 +35,10 @@ public enum NetworkConfig {
         Log.d(testToken)
         return testToken
     }()
+
+    public static let amplitudeApiKey: String = {
+        guard let amplitudeApiKey = Bundle.main.object(forInfoDictionaryKey: "amplitude_api_key") as? String else { fatalError("amplitude_api_key not found.") }
+        Log.d(amplitudeApiKey)
+        return amplitudeApiKey
+    }()
 }
