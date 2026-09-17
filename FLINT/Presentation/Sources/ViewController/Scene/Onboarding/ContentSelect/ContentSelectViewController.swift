@@ -63,11 +63,13 @@ public final class ContentSelectViewController: BaseViewController<ContentSelect
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setNavigationBar(.init(left: .back, backgroundStyle: .solid(DesignSystem.Color.background)))
         hideKeyboardWhenTappedAround(activeOnAction: false)
-        
+
         onboardingViewModel.fetchPopularContents()
+
+        AnalyticsService.shared.track(.viewFilmselect)
         
         setupTextField()
         setupContentCollectionView()

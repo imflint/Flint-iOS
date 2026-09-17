@@ -7,7 +7,6 @@
 
 import UIKit
 
-import AmplitudeSwift
 import KakaoSDKCommon
 import KakaoSDKAuth
 import KakaoSDKUser
@@ -19,14 +18,10 @@ import Presentation
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    static var amplitude: Amplitude?
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UIFont.registerPretendardFonts()
         KakaoSDK.initSDK(appKey: NetworkConfig.kakaoAppKey)
-        AppDelegate.amplitude = Amplitude(
-            configuration: Configuration(apiKey: NetworkConfig.amplitudeApiKey)
-        )
+        AnalyticsService.shared.configure(apiKey: NetworkConfig.amplitudeApiKey)
         return true
     }
     

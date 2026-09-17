@@ -43,8 +43,10 @@ public final class LoginViewController: BaseViewController<LoginView> {
         loginViewModel.socialVerifyResultEntity.sink { [weak self] socialVerifyResultEntity in
             Log.d(socialVerifyResultEntity)
             if !socialVerifyResultEntity.isRegistered {
+                AnalyticsService.shared.track(.clickSignup)
                 self?.register()
             } else {
+                AnalyticsService.shared.track(.completeLogin)
                 self?.pushToTabBar()
             }
         }
