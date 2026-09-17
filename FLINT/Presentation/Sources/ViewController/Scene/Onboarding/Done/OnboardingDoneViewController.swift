@@ -47,6 +47,10 @@ public final class OnboardingDoneViewController: BaseViewController<OnboardingDo
             Log.d(userId)
             guard let userId, let tabBarViewController = self?.viewControllerFactory?.makeTabBarViewController() else { return }
             let duration = AnalyticsService.shared.onboardingDurationSec()
+            AnalyticsService.shared.setUserId(userId)
+            AnalyticsService.shared.setUserProperty(.signupDate(Date()))
+            AnalyticsService.shared.setUserProperty(.lastLoginDate(Date()))
+            AnalyticsService.shared.setUserProperty(.userType(.user))
             AnalyticsService.shared.track(.completeOnboarding(durationSec: duration))
             AnalyticsService.shared.track(.completeSignup)
             AnalyticsService.shared.clearOnboardingStart()

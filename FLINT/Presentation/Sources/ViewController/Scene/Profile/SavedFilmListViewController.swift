@@ -19,6 +19,7 @@ public protocol SavedFilmListViewControllerFactory {
 public final class SavedFilmListViewController: BaseViewController<SavedFilmListView> {
 
     private let viewModel: SavedFilmListViewModel
+    private var trackedSavedContentIds = Set<Int64>()
 
     public init(viewModel: SavedFilmListViewModel, viewControllerFactory: ViewControllerFactory? = nil) {
         self.viewModel = viewModel
@@ -170,7 +171,10 @@ extension SavedFilmListViewController: UITableViewDelegate {
     }
 
     public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        // 하단 근처(마지막 3행 이내) 진입 시 다음 페이지 로드
+        if let item = viewModel.displayItems[safe: indexPath.row], let contentId = Int64(item.id), !trackedSavedContentIds.contains(contentId) {
+            trackedSavedContentIds.insert(contentId)
+            AnalyticsService.shared.track(.viewSavedContent(contentId: contentId))
+        }
         if indexPath.row >= viewModel.displayItems.count - 3 {
             viewModel.loadNextPage()
         }

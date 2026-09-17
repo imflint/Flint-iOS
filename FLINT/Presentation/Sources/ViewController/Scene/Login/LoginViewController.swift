@@ -46,6 +46,10 @@ public final class LoginViewController: BaseViewController<LoginView> {
                 AnalyticsService.shared.track(.clickSignup)
                 self?.register()
             } else {
+                if let uid = socialVerifyResultEntity.userId {
+                    AnalyticsService.shared.setUserId(uid)
+                }
+                AnalyticsService.shared.setUserProperty(.lastLoginDate(Date()))
                 AnalyticsService.shared.track(.completeLogin)
                 self?.pushToTabBar()
             }
