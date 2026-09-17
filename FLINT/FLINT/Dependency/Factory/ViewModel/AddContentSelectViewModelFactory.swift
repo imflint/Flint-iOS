@@ -9,12 +9,16 @@ import Foundation
 
 import Presentation
 
-protocol AddContentSelectViewModelFactory: SearchContentsUseCaseFactory, FetchPopularContentsUseCaseFactory {
+protocol AddContentSelectViewModelFactory: SearchContentsUseCaseFactory, FetchBookmarkedContentsUseCaseFactory, FetchBookmarkedContentCountUseCaseFactory {
     func makeAddContentSelectViewModel() -> AddContentSelectViewModel
 }
 
 extension AddContentSelectViewModelFactory {
     func makeAddContentSelectViewModel() -> AddContentSelectViewModel {
-        return DefaultAddContentSelectViewModel(fetchPopularContentsUseCase: makeFetchPopularContentsUseCase(), searchContentsUseCase: makeSearchContentsUseCase())
+        return DefaultAddContentSelectViewModel(
+            fetchBookmarkedContentsUseCase: makeFetchBookmarkedContentsUseCase(),
+            fetchBookmarkedContentCountUseCase: makeFetchBookmarkedContentCountUseCase(),
+            searchContentsUseCase: makeSearchContentsUseCase()
+        )
     }
 }

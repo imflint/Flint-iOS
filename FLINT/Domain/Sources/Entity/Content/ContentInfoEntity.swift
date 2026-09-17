@@ -10,6 +10,7 @@ import Foundation
 public struct ContentInfoEntity: Equatable {
     public let id: String
     public let title: String
+    public let author: String
     public let imageUrl: String
     public let year: Int
     public let ottList: [OttSimpleEntity]
@@ -17,12 +18,14 @@ public struct ContentInfoEntity: Equatable {
     public init(
         id: String,
         title: String,
+        author: String,
         imageUrl: String,
         year: Int,
         ottList: [OttSimpleEntity]
     ) {
         self.id = id
         self.title = title
+        self.author = author
         self.imageUrl = imageUrl
         self.year = year
         self.ottList = ottList
