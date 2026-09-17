@@ -21,14 +21,20 @@ public protocol ExploreViewControllerFactory {
 }
 
 public final class ExploreViewController: BaseViewController<ExploreView> {
-    
+
     // MARK: - ViewModel
-    
+
     public let exploreViewModel: ExploreViewModel
-    
+
     // MARK: - DataSource
-    
+
     private var mainCollectionViewDataSource: UICollectionViewDiffableDataSource<MainCollectionViewSection, MainCollectionViewItem>?
+
+    // MARK: - Analytics
+
+    private var didTrackViewExplore = false
+    private var trackedExploreContentIds = Set<Int64>()
+    private var exploreEnteredAt: Date?
     
     // MARK: - Component
     
@@ -63,14 +69,39 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
         exploreViewModel.collections.sink { [weak self] exploreInfoEntities in
             guard let self else { return }
             mainCollectionViewDataSource?.apply(makeSnapshot(exploreInfoEntities: exploreInfoEntities, isCollectionsExhausted: exploreViewModel.cursor.value == nil), animatingDifferences: false)
+            if !didTrackViewExplore, let first = exploreInfoEntities.first {
+                didTrackViewExplore = true
+                AnalyticsService.shared.track(.viewExplore)
+                trackExploreContentImpression(collectionId: first.collectionId)
+            }
         }
         .store(in: &cancellables)
-        
+
         exploreViewModel.cursor.sink(receiveValue: { [weak self] cursor in
             guard let self else { return }
             mainCollectionViewDataSource?.apply(makeSnapshot(exploreInfoEntities: exploreViewModel.collections.value, isCollectionsExhausted: cursor == nil), animatingDifferences: false)
         })
         .store(in: &cancellables)
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        exploreEnteredAt = Date()
+    }
+
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if let start = exploreEnteredAt {
+            let duration = Int(Date().timeIntervalSince(start))
+            AnalyticsService.shared.track(.exitExplore(durationSec: duration))
+            exploreEnteredAt = nil
+        }
+    }
+
+    private func trackExploreContentImpression(collectionId: Int64) {
+        guard !trackedExploreContentIds.contains(collectionId) else { return }
+        trackedExploreContentIds.insert(collectionId)
+        AnalyticsService.shared.track(.viewExploreContent(contentId: collectionId))
     }
     
     public override func setBaseHierarchy() {
@@ -139,6 +170,7 @@ extension ExploreViewController {
     }
     
     private func pushCollectionDetailViewController(collectionId: Int64) {
+        AnalyticsService.shared.track(.clickExploreCollection(collectionId: collectionId))
         AnalyticsService.shared.track(.viewCollection(collectionId: collectionId, source: .explore))
         guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
         navigationController?.pushViewController(vc, animated: true)
@@ -165,6 +197,10 @@ extension ExploreViewController: UIScrollViewDelegate {
         guard let collectionView = scrollView as? UICollectionView else { return }
         guard let indexPath = collectionView.indexPathForItem(at: CGPoint(x: collectionView.bounds.midX, y: collectionView.bounds.midY)) else { return }
         exploreViewModel.indexUpdated(indexPath.item)
+        if indexPath.section == MainCollectionViewSection.main.rawValue,
+           let entity = exploreViewModel.collections.value[safe: indexPath.item] {
+            trackExploreContentImpression(collectionId: entity.collectionId)
+        }
         UIView.animate(withDuration: 0.25, animations: { [weak self] in
             guard let self else { return }
             if indexPath.section == MainCollectionViewSection.empty.rawValue {
