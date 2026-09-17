@@ -17,11 +17,12 @@ public protocol HomeViewControllerFactory {
 }
 
 public final class HomeViewController: BaseViewController<HomeView> {
-    
+
     // MARK: - Properties
-    
+
     private let viewModel: HomeViewModel
     private let fetchOTTPlatformsForContentUseCase: FetchOTTPlatformsForContentUseCase
+    private var didTrackViewHome = false
     
     // MARK: - Init
     
@@ -72,8 +73,13 @@ public final class HomeViewController: BaseViewController<HomeView> {
     public override func bind() {
         viewModel.$sections
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.rootView.tableView.reloadData()
+            .sink { [weak self] sections in
+                guard let self else { return }
+                rootView.tableView.reloadData()
+                if !didTrackViewHome, !sections.isEmpty {
+                    didTrackViewHome = true
+                    AnalyticsService.shared.track(.viewHome)
+                }
             }
             .store(in: &cancellables)
     }
@@ -207,27 +213,29 @@ extension HomeViewController: UITableViewDataSource {
             cell.configure(items: items)
             cell.onSelectItem = { [weak self] id in
                 guard let self, let collectionId = Int64(id) else { return }
+                AnalyticsService.shared.track(.clickHomeContent(contentType: .fliner))
                 guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
                 self.navigationController?.pushViewController(vc, animated: true)
             }
             return cell
-            
+
         case .fliner(let items):
             let cell = tableView.dequeueReusableCell(MoreNoMoreCollectionTableViewCell.self, for: indexPath)
             cell.configure(items: items)
-            
+
             cell.onSelectItem = { [weak self] entity in
                 guard let self else { return }
-                
+
                 guard let collectionId = Int64(entity.id) else {
                     print("invalid collectionId:", entity.id)
                     return
                 }
-                
+
+                AnalyticsService.shared.track(.clickHomeContent(contentType: .popular))
                 guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
                 self.navigationController?.pushViewController(vc, animated: true)
             }
-            
+
             return cell
             
         case .ctaButton(let title):
@@ -252,6 +260,7 @@ extension HomeViewController: UITableViewDataSource {
             
             cell.onTapItem = { [weak self] content in
                 guard let self else { return }
+                AnalyticsService.shared.track(.clickHomeContent(contentType: .recentlySaved))
                 let platforms: [OTTPlatform] = content.ottList.compactMap { ott in
                     OTTPlatform.fromServerName(ott.ottName)
                 }

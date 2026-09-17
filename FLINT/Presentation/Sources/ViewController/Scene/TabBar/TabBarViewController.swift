@@ -11,6 +11,7 @@ import SnapKit
 import Then
 
 import View
+import ViewModel
 
 public protocol TabBarViewControllerFactory {
     func makeTabBarViewController() -> TabBarViewController
@@ -64,12 +65,15 @@ public class TabBarViewController: UIViewController {
         containerViewController = homeViewController
         
         tabBarView.homeButton.addAction(UIAction(handler: { [weak self] _ in
+            AnalyticsService.shared.track(.clickBottomNavigation(tabName: .home))
             self?.switchTab(to: .home)
         }), for: .touchUpInside)
         tabBarView.exploreButton.addAction(UIAction(handler: { [weak self] _ in
+            AnalyticsService.shared.track(.clickBottomNavigation(tabName: .explore))
             self?.switchTab(to: .explore)
         }), for: .touchUpInside)
         tabBarView.myButton.addAction(UIAction(handler: { [weak self] _ in
+            AnalyticsService.shared.track(.clickBottomNavigation(tabName: .my))
             self?.switchTab(to: .my)
         }), for: .touchUpInside)
     }
