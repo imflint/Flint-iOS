@@ -21,8 +21,8 @@ public final class ExploreCollectionViewCell: BaseCollectionViewCell {
     }
     
     public let gradientView = GradientView().then {
-        $0.colors = [.clear, .clear, UIColor(hex: 0x000000, alpha: 0.8)]
-        $0.locations = [0, 0.35, 1]
+        $0.colors = [.clear, UIColor(hex: 0x000000), UIColor(hex: 0x000000)]
+        $0.locations = [0, 0.7, 1]
         $0.startPoint = .init(x: 0.5, y: 0.0)
         $0.endPoint = .init(x: 0.5, y: 1.0)
     }
