@@ -45,7 +45,6 @@ public final class ProfileSettingViewController: BaseViewController<NicknameView
         setNavigationBar(.init(left: .back))
         
         rootView.nextButton.title = "완료"
-        rootView.nextButton.isEnabled = false
         
         hideKeyboardWhenTappedAround()
         addActions()
@@ -76,14 +75,21 @@ public final class ProfileSettingViewController: BaseViewController<NicknameView
                 rootView.nicknameWarningLabel.isHidden = false
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
+                rootView.nicknameWarningLabel.attributedText = .pretendard(.body2_r_14, text: "닉네임은 한글, 영어, 숫자만 사용할 수 있어요.")
             case .duplicate:
                 rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = true
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
                 rootView.failureToast.show()
-            case .none:
+            case .incompleteHangul:
                 rootView.nextButton.isEnabled = false
+                rootView.nicknameWarningLabel.isHidden = false
+                rootView.nicknameTextField.layer.borderWidth = 1
+                rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
+                rootView.nicknameWarningLabel.attributedText = .pretendard(.body2_r_14, text: "사용할 수 없는 닉네임이에요")
+            case .none:
+                rootView.nextButton.isEnabled = true
                 rootView.nicknameWarningLabel.isHidden = true
                 rootView.nicknameTextField.layer.borderWidth = 0
                 rootView.nicknameTextField.layer.borderColor = nil

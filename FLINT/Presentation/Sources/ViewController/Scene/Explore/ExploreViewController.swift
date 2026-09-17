@@ -113,7 +113,7 @@ extension ExploreViewController {
                 cell.collectionTitleLabel.attributedText = .pretendard(.display2_m_28, text: collection.title)
                 cell.collectionDescriptionLabel.attributedText = .pretendard(.body1_r_16, text: collection.description)
                 cell.collectionDetailButton.addAction(UIAction(handler: { [weak self] _ in
-                    self?.pushCollectionDetailViewController(collectionId: collection.collectionId)
+                    self?.pushCollectionDetailViewController(collectionId: collection.collectionId, title: collection.title)
                 }), for: .touchUpInside)
                 return cell
                 
@@ -138,8 +138,9 @@ extension ExploreViewController {
         return snapshot
     }
     
-    private func pushCollectionDetailViewController(collectionId: Int64) {
+    private func pushCollectionDetailViewController(collectionId: Int64, title: String) {
         guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
+        vc.setupScroll(title: title)
         navigationController?.pushViewController(vc, animated: true)
     }
     

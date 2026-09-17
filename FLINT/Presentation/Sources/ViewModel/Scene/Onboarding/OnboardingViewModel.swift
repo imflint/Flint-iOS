@@ -100,6 +100,10 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     }
     
     public func checkNickname(_ nickname: String) {
+        guard !nickname.isIncompleteHangul() else {
+            nicknameValidState.send(.incompleteHangul)
+            return
+        }
         guard nickname.isValidNickname() else {
             nicknameValidState.send(.invalid)
             return

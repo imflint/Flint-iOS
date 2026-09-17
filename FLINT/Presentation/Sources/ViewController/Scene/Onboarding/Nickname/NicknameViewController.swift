@@ -48,6 +48,8 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
         
         rootView.successToast.close(animated: false)
         rootView.failureToast.close(animated: false)
+        
+        onboardingViewModel.nicknameValidState.send(nil)
     }
     
     // MARK: - Bind
@@ -68,12 +70,19 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
                 rootView.nicknameWarningLabel.isHidden = false
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
+                rootView.nicknameWarningLabel.attributedText = .pretendard(.body2_r_14, text: "닉네임은 한글, 영어, 숫자만 사용할 수 있어요.")
             case .duplicate:
                 rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = true
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
                 rootView.failureToast.show()
+            case .incompleteHangul:
+                rootView.nextButton.isEnabled = false
+                rootView.nicknameWarningLabel.isHidden = false
+                rootView.nicknameTextField.layer.borderWidth = 1
+                rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
+                rootView.nicknameWarningLabel.attributedText = .pretendard(.body2_r_14, text: "사용할 수 없는 닉네임이에요")
             case .none:
                 rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = true

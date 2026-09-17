@@ -49,7 +49,6 @@ public final class NicknameView: BaseView {
     public let nicknameWarningLabel = UILabel().then {
         $0.textColor = .flintError500
         $0.isHidden = true
-        $0.attributedText = .pretendard(.body2_r_14, text: "닉네임은 한글, 영어, 숫자만 사용할 수 있어요.")
     }
     
     public let verifyButton = BasicButton(title: "확인").then {
