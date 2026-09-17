@@ -9,7 +9,7 @@ import Foundation
 
 import AmplitudeSwift
 
-public final class AnalyticsService {
+public final class AnalyticsService: @unchecked Sendable {
 
     public static let shared = AnalyticsService()
 
@@ -22,6 +22,10 @@ public final class AnalyticsService {
         amplitude = Amplitude(configuration: Configuration(apiKey: apiKey))
     }
 
+    public func track(_ event: AnalyticsEvent) {
+        amplitude?.track(eventType: event.name, eventProperties: event.properties)
+    }
+
     public func setUserId(_ userId: String?) {
         amplitude?.setUserId(userId: userId)
     }
@@ -29,10 +33,6 @@ public final class AnalyticsService {
     public func clearUser() {
         amplitude?.setUserId(userId: nil)
         amplitude?.reset()
-    }
-
-    public func track(_ event: AnalyticsEvent) {
-        amplitude?.track(eventType: event.name, eventProperties: event.properties)
     }
 
     public func setUserProperty(_ property: AnalyticsUserProperty) {
