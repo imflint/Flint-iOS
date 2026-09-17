@@ -48,6 +48,8 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
         
         rootView.successToast.close(animated: false)
         rootView.failureToast.close(animated: false)
+        
+        onboardingViewModel.nicknameValidState.send(nil)
     }
     
     // MARK: - Bind
