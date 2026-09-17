@@ -114,11 +114,12 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
         present(vc, animated: false)
     }
 
-    private func pushCollectionDetail(collectionIdString: String) {
+    private func pushCollectionDetail(collectionIdString: String, source: AnalyticsEvent.CollectionSource) {
         guard let collectionId = Int64(collectionIdString) else {
             print("invalid collectionId:", collectionIdString)
             return
         }
+        AnalyticsService.shared.track(.viewCollection(collectionId: collectionId, source: source))
         guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -237,7 +238,7 @@ extension ProfileViewController: UITableViewDataSource {
             cell.selectionStyle = .none
             cell.configure(items: items)
             cell.onSelectItem = { [weak self] entity in
-                self?.pushCollectionDetail(collectionIdString: entity.id)
+                self?.pushCollectionDetail(collectionIdString: entity.id, source: .myCreated)
             }
             return cell
 
@@ -246,7 +247,7 @@ extension ProfileViewController: UITableViewDataSource {
             cell.selectionStyle = .none
             cell.configure(items: items)
             cell.onSelectItem = { [weak self] entity in
-                self?.pushCollectionDetail(collectionIdString: entity.id)
+                self?.pushCollectionDetail(collectionIdString: entity.id, source: .mySaved)
             }
             return cell
             

@@ -183,6 +183,7 @@ extension CollectionFolderListViewController: UICollectionViewDelegate {
             ?? (parent as? TabBarViewController)?.viewControllerFactory
         guard let factory else { return }
 
+        AnalyticsService.shared.track(.viewCollection(collectionId: collectionId, source: .homePopular))
         let vc = factory.makeCollectionDetailViewController(collectionId: collectionId)
         navigationController?.pushViewController(vc, animated: true)
     }

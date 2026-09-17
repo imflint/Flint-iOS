@@ -214,6 +214,7 @@ extension HomeViewController: UITableViewDataSource {
             cell.onSelectItem = { [weak self] id in
                 guard let self, let collectionId = Int64(id) else { return }
                 AnalyticsService.shared.track(.clickHomeContent(contentType: .fliner))
+                AnalyticsService.shared.track(.viewCollection(collectionId: collectionId, source: .homeFlinner))
                 guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
                 self.navigationController?.pushViewController(vc, animated: true)
             }
@@ -232,6 +233,7 @@ extension HomeViewController: UITableViewDataSource {
                 }
 
                 AnalyticsService.shared.track(.clickHomeContent(contentType: .popular))
+                AnalyticsService.shared.track(.viewCollection(collectionId: collectionId, source: .homePopular))
                 guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
                 self.navigationController?.pushViewController(vc, animated: true)
             }

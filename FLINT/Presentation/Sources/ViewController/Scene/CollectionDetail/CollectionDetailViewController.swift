@@ -409,6 +409,10 @@ extension CollectionDetailViewController: UITableViewDataSource {
                 self.updateEntityBookmark(isBookmarked: isSaved)
                 self.tapHeaderSaveSubject.send(isSaved)
 
+                if isSaved, let idString = self.entity?.id, let collectionId = Int64(idString) {
+                    AnalyticsService.shared.track(.saveCollection(collectionId: collectionId))
+                }
+
                 if isSaved {
                     Toast.action(
                         image: DesignSystem.Icon.Gradient.bookmark,
@@ -491,6 +495,7 @@ extension CollectionDetailViewController: UITableViewDataSource {
                 self.tapContentBookmarkSubject.send(contentId)
 
                 if isBookmarked {
+                    AnalyticsService.shared.track(.saveContent(contentId: contentId))
                     Toast.text("작품을 저장했어요").show()
                 } else {
                     Toast.text("작품 저장을 취소했어요").show()

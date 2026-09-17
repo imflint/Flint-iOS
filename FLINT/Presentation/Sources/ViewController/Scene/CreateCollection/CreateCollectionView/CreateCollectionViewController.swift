@@ -207,6 +207,10 @@ public final class CreateCollectionViewController: BaseViewController<CreateColl
         registerCells()
         bindViewModel()
         hideKeyboardWhenTappedAround(activeOnAction: false)
+
+        if case .create = mode {
+            AnalyticsService.shared.track(.viewCreateCollection)
+        }
     }
 
     public override func viewDidLayoutSubviews() {

@@ -189,6 +189,7 @@ extension SavedCollectionListViewController: UICollectionViewDelegate {
         }
 
         guard let factory = viewControllerFactory else { return }
+        AnalyticsService.shared.track(.viewCollection(collectionId: collectionId, source: .mySaved))
         let vc = factory.makeCollectionDetailViewController(collectionId: collectionId)
         navigationController?.pushViewController(vc, animated: true)
     }

@@ -139,6 +139,7 @@ extension ExploreViewController {
     }
     
     private func pushCollectionDetailViewController(collectionId: Int64) {
+        AnalyticsService.shared.track(.viewCollection(collectionId: collectionId, source: .explore))
         guard let vc = viewControllerFactory?.makeCollectionDetailViewController(collectionId: collectionId) else { return }
         navigationController?.pushViewController(vc, animated: true)
     }
