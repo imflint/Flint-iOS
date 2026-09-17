@@ -52,13 +52,16 @@ public final class TermsAgreementViewController: BaseViewController<TermsAgreeme
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setNavigationBar(.init(left: .back))
-        
+
         setupTermAgreementsCollectionView()
-        
+
         rootView.allAgreeCheckbox.addTarget(self, action: #selector(touchUpInsideAllAgreeCheckbox(_:)), for: .touchUpInside)
         rootView.nextButton.addTarget(self, action: #selector(touchUpInsideNextButton(_:)), for: .touchUpInside)
+
+        AnalyticsService.shared.markOnboardingStart()
+        AnalyticsService.shared.track(.viewTos)
     }
     
     @objc private func touchUpInsideAllAgreeCheckbox(_ sender: UIButton) {

@@ -37,10 +37,12 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setNavigationBar(.init(left: .back))
         hideKeyboardWhenTappedAround()
         addActions()
+
+        AnalyticsService.shared.track(.viewNickname)
     }
     
     public override func viewDidDisappear(_ animated: Bool) {

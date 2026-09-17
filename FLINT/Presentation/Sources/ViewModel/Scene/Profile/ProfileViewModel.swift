@@ -110,6 +110,10 @@ public final class ProfileViewModel {
                 isFliner = userProfileEntity.role == .fliner
                 profileImageUrl = userProfileEntity.profileImageUrl
                 canRefresh = userProfileEntity.keywordRecalculatable ?? false
+                if isMe {
+                    AnalyticsService.shared.setUserId(userProfileEntity.id)
+                    AnalyticsService.shared.setUserProperty(.userType(isFliner ? .fliner : .user))
+                }
                 rows = makeRows()
             })
             .store(in: &cancellables)
@@ -202,6 +206,9 @@ public final class ProfileViewModel {
             } receiveValue: { [weak self] _ in
                 guard let self else { return }
                 self.isRefreshing = false
+                AnalyticsService.shared.track(.updateKeyword)
+                AnalyticsService.shared.setUserProperty(.keywordUpdated(true))
+                AnalyticsService.shared.incrementUserProperty("keyword_update_count")
                 self.load()
             }
             .store(in: &cancellables)

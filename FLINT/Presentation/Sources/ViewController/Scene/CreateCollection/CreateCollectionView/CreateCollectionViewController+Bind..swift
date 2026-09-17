@@ -52,6 +52,10 @@ extension CreateCollectionViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] collectionId in
                 guard let self, let factory = self.viewControllerFactory else { return }
+                if case .create = self.mode {
+                    AnalyticsService.shared.track(.completeCreateCollection(collectionId: collectionId))
+                }
+                AnalyticsService.shared.track(.viewCollection(collectionId: collectionId, source: .myCreated))
                 let detailVC = factory.makeCollectionDetailViewController(collectionId: collectionId)
                 self.replaceCurrentFlowWithDetail(detailVC)
             }

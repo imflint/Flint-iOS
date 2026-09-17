@@ -53,5 +53,7 @@
 	<string>$(TEMP_TOKEN)</string>
 	<key>test_token</key>
 	<string>$(TEST_TOKEN)</string>
+	<key>amplitude_api_key</key>
+	<string>$(AMPLITUDE_API_KEY)</string>
 </dict>
 </plist>
