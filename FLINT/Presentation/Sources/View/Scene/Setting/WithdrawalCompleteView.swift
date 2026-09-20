@@ -40,6 +40,12 @@ public final class WithdrawalCompleteView: BaseView {
         )
     }
 
+    private let contentStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .center
+        $0.spacing = 16
+    }
+
     public let goHomeButton = FlintButton(style: .able, title: "첫 화면으로 이동하기")
 
     // MARK: - Setup
@@ -49,24 +55,28 @@ public final class WithdrawalCompleteView: BaseView {
     }
 
     public override func setHierarchy() {
-        addSubviews(iconImageView, titleLabel, captionLabel, goHomeButton)
+        addSubviews(contentStackView, goHomeButton)
+        contentStackView.addArrangedSubviews(iconImageView, titleLabel, captionLabel)
     }
 
     public override func setLayout() {
         iconImageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(-80)
             $0.size.equalTo(96)
         }
 
+        contentStackView.setCustomSpacing(8, after: titleLabel)
+
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(iconImageView.snp.bottom).offset(20)
-            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalTo(contentStackView)
         }
 
         captionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(12)
-            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalTo(contentStackView)
+        }
+
+        contentStackView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.centerY.equalTo(safeAreaLayoutGuide).multipliedBy(0.85)
         }
 
         goHomeButton.snp.makeConstraints {
