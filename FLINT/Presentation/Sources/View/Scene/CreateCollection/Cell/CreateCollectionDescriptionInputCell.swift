@@ -28,7 +28,7 @@ public final class CreateCollectionDescriptionInputCell: BaseTableViewCell {
     }
     
     private let descriptionTextView = FlintTextView(
-        placeholder: "컬렉션의 소개를 작성해주세요",
+        placeholder: "컬렉션의 소개를 작성해주세요.",
         maxLength: 45
     ).then {
         $0.isScrollEnabled = false
