@@ -35,6 +35,7 @@ public final class CollectionFolderListView: BaseView {
         $0.locations = [0.0, 1.0]
         $0.startPoint = CGPoint(x: 0.5, y: 0)
         $0.endPoint = CGPoint(x: 0.5, y: 1)
+        $0.isUserInteractionEnabled = false
     }
     
     public override func setUI() {
