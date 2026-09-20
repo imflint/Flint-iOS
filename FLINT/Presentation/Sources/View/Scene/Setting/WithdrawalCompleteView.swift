@@ -21,7 +21,12 @@ public final class WithdrawalCompleteView: BaseView {
 
     private let titleLabel = UILabel().then {
         $0.textAlignment = .center
-        $0.attributedText = .pretendard(.head1_sb_22, text: "회원 탈퇴 완료", color: .flintWhite)
+        $0.attributedText = .pretendard(
+            .head1_sb_22,
+            text: "회원 탈퇴 완료",
+            color: .flintWhite,
+            alignment: .center
+        )
     }
 
     private let captionLabel = UILabel().then {
