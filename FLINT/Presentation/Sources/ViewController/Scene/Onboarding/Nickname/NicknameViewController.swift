@@ -73,18 +73,20 @@ public final class NicknameViewController: BaseViewController<NicknameView> {
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
                 rootView.nicknameWarningLabel.attributedText = .pretendard(.body2_r_14, text: "닉네임은 한글, 영어, 숫자만 사용할 수 있어요.")
+                rootView.failureToast.show()
             case .duplicate:
                 rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = true
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
-                rootView.failureToast.show()
+                rootView.duplicatedFailureToast.show()
             case .incompleteHangul:
                 rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = false
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
-                rootView.nicknameWarningLabel.attributedText = .pretendard(.body2_r_14, text: "사용할 수 없는 닉네임이에요")
+                rootView.nicknameWarningLabel.attributedText = .pretendard(.body2_r_14, text: "한글 자음 또는 모음만 단독으로 사용할 수 없어요.")
+                rootView.failureToast.show()
             case .none:
                 rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = true
