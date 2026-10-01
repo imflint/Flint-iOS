@@ -149,8 +149,8 @@ public final class BaseBottomSheetView: BaseView {
         countSaveUser.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         contentContainerView.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(32)
-            
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(28)
+
             contentTopToGrabber = $0.top.equalTo(grabberView.snp.bottom).offset(16).constraint
             $0.leading.equalToSuperview().inset(32)
             $0.trailing.equalToSuperview().inset(24)
