@@ -186,6 +186,7 @@ public final class ProfileSettingViewController: BaseViewController<NicknameView
         profileSettingViewModel.modifyProfileImage()
         profileSettingViewModel.modifyNickname()
         navigationController?.popViewController(animated: true)
+        Toast.text("프로필을 수정했어요").show()
     }
 }
 
