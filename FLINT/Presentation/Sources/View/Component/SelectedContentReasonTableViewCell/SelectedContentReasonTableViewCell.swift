@@ -31,6 +31,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     public var onTapCloseWithDraft: (() -> Void)?
     public var onTapAddPhoto: (() -> Void)?
     public var onPhotosChanged: (() -> Void)?
+    public var onDeletePhoto: ((Int) -> Void)?
     
     public var currentReasonText: String { textView.text ?? "" }
     public var currentPhotos: [UIImage] { photos }
@@ -407,6 +408,7 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         guard index < photos.count else { return }
         photos.remove(at: index)
         configurePhotos(photos)
+        onDeletePhoto?(index)
         onPhotosChanged?()
     }
 }
