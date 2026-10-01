@@ -59,7 +59,7 @@ public final class HomeViewModel {
         fetchBookmarkedContentsUseCase: FetchBookmarkedContentsUseCase,
         fetchProfileUseCase: FetchProfileUseCase,
         fetchRecentViewedCollectionsUseCase: FetchRecentViewedCollectionsUseCase,
-        initialUserName: String = "얀비"
+        initialUserName: String = ""
     ) {
         self.fetchRecommendedCollectionsUseCase = fetchRecommendedCollectionsUseCase
         self.fetchPopularCollectionsUseCase = fetchPopularCollectionsUseCase

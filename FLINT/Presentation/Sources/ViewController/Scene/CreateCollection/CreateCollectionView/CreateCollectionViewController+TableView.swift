@@ -199,6 +199,15 @@ extension CreateCollectionViewController: UITableViewDataSource {
                     self.rootView.tableView.endUpdates()
                 }
 
+                cell.onDeletePhoto = { [weak self, weak cell] deletedIndex in
+                    guard let self, let cell,
+                          let indexPath = self.rootView.tableView.indexPath(for: cell) else { return }
+                    let reasonIndex = indexPath.row - 1
+                    guard deletedIndex < self.selectedReasonItems[reasonIndex].customImageKeys.count else { return }
+                    self.selectedReasonItems[reasonIndex].customImageKeys.remove(at: deletedIndex)
+                    self.updateCreatePayload()
+                }
+
                 return cell
             }
 

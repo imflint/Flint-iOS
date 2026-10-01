@@ -206,8 +206,9 @@ extension ContentSelectViewController {
     }
     
     private func contentCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard onboardingViewModel.selectedContents.value.count <= 6 else { return }
         guard case let .content(content) = contentCollectionViewDataSource?.itemIdentifier(for: indexPath) else { return }
+        let isAlreadySelected = onboardingViewModel.selectedContents.value.contains(content)
+        guard isAlreadySelected || onboardingViewModel.selectedContents.value.count <= 6 else { return }
         onboardingViewModel.clickContent(content)
     }
     

@@ -21,6 +21,7 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
     
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(resource: .imgProfileGray)
+        $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 64
         $0.layer.masksToBounds = true
     }
@@ -74,7 +75,7 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
         nameStack.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(16)
             $0.top.equalTo(profileImageView.snp.bottom)
-            $0.height.equalTo(42)
+            $0.height.equalTo(48)
 
             $0.bottom.equalToSuperview().inset(20)
         }

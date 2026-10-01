@@ -139,6 +139,7 @@ public final class BaseBottomSheetViewController: UIViewController {
         let grabberTop: CGFloat = 12
         let grabberHeight: CGFloat = 4
         let bottomPadding: CGFloat = 32
+        let safeAreaBottom = view.safeAreaInsets.bottom
 
         let hasTitle = (titleText != nil)
 
@@ -152,9 +153,9 @@ public final class BaseBottomSheetViewController: UIViewController {
             let spacing: CGFloat = 8
             let count = platforms.count
             let contentHeight = CGFloat(count) * rowHeight + CGFloat(max(count - 1, 0)) * spacing
-            return grabberTop + grabberHeight + titleAreaHeight + contentHeight + bottomPadding
+            return grabberTop + grabberHeight + titleAreaHeight + contentHeight + bottomPadding + safeAreaBottom
 
-       
+
         case .savedUsers(let users):
             let rowHeight: CGFloat = 44
             let spacing: CGFloat = 8
@@ -163,7 +164,7 @@ public final class BaseBottomSheetViewController: UIViewController {
             let contentHeight = CGFloat(visibleCount) * rowHeight
                 + CGFloat(max(visibleCount - 1, 0)) * spacing
 
-            return grabberTop + grabberHeight + titleAreaHeight + contentHeight + bottomPadding
+            return grabberTop + grabberHeight + titleAreaHeight + contentHeight + bottomPadding + safeAreaBottom
         }
     }
 }

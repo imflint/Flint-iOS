@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "img_backgorund_login.png",
+      "filename" : "ic_more_16.svg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "img_backgorund_login 2.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "img_backgorund_login 1.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

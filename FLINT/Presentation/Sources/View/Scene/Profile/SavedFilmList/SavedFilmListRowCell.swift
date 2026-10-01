@@ -44,9 +44,9 @@ public final class SavedFilmListRowCell: BaseTableViewCell {
         title.font = UIFont.pretendard(.body2_r_14)
         title.foregroundColor = .flintGray200
         config.attributedTitle = title
-        config.image = UIImage(resource: .icMore)
+        config.image = UIImage(resource: .icMore16)
         config.imagePlacement = .trailing
-        config.imagePadding = 4
+        config.imagePadding = 0
         config.contentInsets = .zero
         $0.configuration = config
         $0.tintColor = .flintGray200
