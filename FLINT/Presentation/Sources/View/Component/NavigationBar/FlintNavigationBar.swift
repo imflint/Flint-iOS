@@ -150,7 +150,7 @@ public final class FlintNavigationBar: BaseView {
         case .setting:
             let image = UIImage(named: "ic_setting", in: .module, with: nil) ?? UIImage()
             rightButton.tintColor = .flintWhite
-            setPadding(button: rightButton, padding: 12, image: image)
+            setPadding(button: rightButton, padding: 16, image: image)
 
         case .text(let title, let color):
             rightButton.setAttributedTitle(.pretendard(.body1_b_16, text: title, color: color, alignment: .center), for: .normal)
