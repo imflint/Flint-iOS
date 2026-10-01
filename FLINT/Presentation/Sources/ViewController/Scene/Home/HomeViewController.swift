@@ -262,7 +262,8 @@ extension HomeViewController: UITableViewDataSource {
             
             cell.onTapItem = { [weak self] content in
                 guard let self else { return }
-                AnalyticsService.shared.track(.clickHomeContent(contentType: .recentlySaved))
+                guard !content.ottList.isEmpty else { return }
+
                 let platforms: [OTTPlatform] = content.ottList.compactMap { ott in
                     OTTPlatform.fromServerName(ott.ottName)
                 }

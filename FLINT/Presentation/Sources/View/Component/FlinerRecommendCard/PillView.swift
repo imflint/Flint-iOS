@@ -15,9 +15,14 @@ final class PillView: BaseView {
     // MARK: - UI Component
     
     private let backgroundImageView = UIImageView().then {
-        $0.image = .userProfileBadge
-        $0.contentMode = .scaleToFill
-    }
+            let original = UIImage.userProfileBadge
+            let capWidth = original.size.height / 2 
+            $0.image = original.resizableImage(
+                withCapInsets: UIEdgeInsets(top: 0, left: capWidth, bottom: 0, right: capWidth),
+                resizingMode: .stretch
+            )
+            $0.contentMode = .scaleToFill
+        }
     
     // MARK: - Setup
     
