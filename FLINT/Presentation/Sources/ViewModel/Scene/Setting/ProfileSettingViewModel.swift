@@ -14,13 +14,13 @@ import Domain
 public protocol ProfileSettingViewModelInput {
     func uploadProfileImage(_ image: UIImage)
     func checkNickname(_ nickname: String)
-    func modifyProfileImage()
-    func modifyNickname()
+    func modify()
 }
 
 public protocol ProfileSettingViewModelOutput {
     var nickname: String? { get set }
     var nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> { get }
+    var modificationCompleted: PassthroughSubject<Void, Never> { get }
 }
 
 public typealias ProfileSettingViewModel = ProfileSettingViewModelInput & ProfileSettingViewModelOutput
@@ -34,8 +34,9 @@ public final class DefaultProfileSettingViewModel: ProfileSettingViewModel {
     
     public var nickname: String?
     public let nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
+    public let modificationCompleted: PassthroughSubject<Void, Never> = .init()
     private var profileImageKey: String?
-    
+
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     public init(
@@ -59,20 +60,26 @@ public final class DefaultProfileSettingViewModel: ProfileSettingViewModel {
             .store(in: &cancellables)
     }
     
-    public func modifyProfileImage() {
-        guard let profileImageKey else { return }
-        modifyProfileImageUseCase(key: profileImageKey)
-            .sinkHandledCompletion(receiveValue: { _ in
-                Log.d("Profile image modified")
-            })
-            .store(in: &cancellables)
-    }
-    
-    public func modifyNickname() {
-        guard let nickname else { return }
-        modifyNicknameUseCase(nickname: nickname)
-            .sinkHandledCompletion(receiveValue: { _ in
-                Log.d("Nickname modified")
+    public func modify() {
+        let imagePublisher: AnyPublisher<Void, Error>
+        if let profileImageKey {
+            imagePublisher = modifyProfileImageUseCase(key: profileImageKey).eraseToAnyPublisher()
+        } else {
+            imagePublisher = Just(()).setFailureType(to: Error.self).eraseToAnyPublisher()
+        }
+
+        let nicknamePublisher: AnyPublisher<Void, Error>
+        if let nickname {
+            nicknamePublisher = modifyNicknameUseCase(nickname: nickname).eraseToAnyPublisher()
+        } else {
+            nicknamePublisher = Just(()).setFailureType(to: Error.self).eraseToAnyPublisher()
+        }
+
+        Publishers.Zip(imagePublisher, nicknamePublisher)
+            .manageThread()
+            .sinkHandledCompletion(receiveValue: { [weak self] _, _ in
+                Log.d("Profile modifications completed")
+                self?.modificationCompleted.send(())
             })
             .store(in: &cancellables)
     }

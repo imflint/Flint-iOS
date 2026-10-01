@@ -13,6 +13,7 @@ import Domain
 // MARK: - SettingViewModelInput
 
 public protocol SettingViewModelInput {
+    func load()
     func editProfileTapped()
     func accountTapped()
     func privacyPolicyTapped()
@@ -68,6 +69,10 @@ public final class DefaultSettingViewModel: SettingViewModel {
     }
 
     // MARK: - Input
+
+    public func load() {
+        fetchUserProfile()
+    }
 
     public func editProfileTapped() {
         navigateToEditProfile.send()
