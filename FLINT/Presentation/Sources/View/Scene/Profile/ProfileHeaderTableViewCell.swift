@@ -74,7 +74,7 @@ public final class ProfileHeaderTableViewCell: BaseTableViewCell {
         nameStack.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(16)
             $0.top.equalTo(profileImageView.snp.bottom)
-            $0.height.equalTo(42)
+            $0.height.equalTo(48)
 
             $0.bottom.equalToSuperview().inset(20)
         }
