@@ -24,7 +24,7 @@ public final class CreateCollectionTitleInputCell: BaseTableViewCell {
     }
     
     private let titleTextView = FlintTextView(
-        placeholder: "컬렉션 제목을 입력해주세요",
+        placeholder: "컬렉션 제목을 입력해주세요.",
         maxLength: 20
         
     ).then {
