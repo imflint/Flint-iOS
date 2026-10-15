@@ -19,7 +19,7 @@ public class CollectionTitleTableViewCell: BaseTableViewCell {
         $0.attributedText = .pretendard(.head3_m_18, text: "컬렉션 제목")
     }
     
-    public let textField = FlintTextField(placeholder: "컬렉션 제목을 입력해주세요", maxLength: 20)
+    public let textField = FlintTextField(placeholder: "컬렉션 제목을 입력해주세요.", maxLength: 20)
     
     public let textFieldLengthLabel = UILabel().then {
         $0.textColor = .flintWhite
