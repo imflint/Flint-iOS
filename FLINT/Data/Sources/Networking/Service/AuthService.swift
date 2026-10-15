@@ -59,6 +59,8 @@ public final class DefaultAuthService: AuthService {
                     return socialVerifyResponseDTO
                 }
                 if !isRegister, let tempToken = socialVerifyResponseDTO.tempToken {
+                    tokenStorage.delete(type: .accessToken)
+                    tokenStorage.delete(type: .refreshToken)
                     tokenStorage.save(tempToken, type: .tempToken)
                 } else if let accessToken = socialVerifyResponseDTO.accessToken, let refreshToken = socialVerifyResponseDTO.refreshToken {
                     tokenStorage.save(accessToken, type: .accessToken)
@@ -91,6 +93,11 @@ public final class DefaultAuthService: AuthService {
         return authAPIProvider.requestPublisher(.refresh(refreshToken: refreshToken))
             .logged()
             .mapBaseResponseEmpty()
+            .handleEvents(receiveCompletion: { [weak self] completion in
+                if case .failure = completion {
+                    self?.tokenStorage.clearAll()
+                }
+            })
             .eraseToAnyPublisher()
     }
     

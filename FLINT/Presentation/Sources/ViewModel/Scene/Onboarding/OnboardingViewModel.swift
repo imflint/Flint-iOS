@@ -50,11 +50,12 @@ public protocol OnboardingViewModelOutput {
 public typealias OnboardingViewModel = OnboardingViewModelInput & OnboardingViewModelOutput
 
 public final class DefaultOnboardingViewModel: OnboardingViewModel {
-    
+
     private let uploadUserProfileUseCase: UploadUserProfileUseCase
     private let checkNicknameUseCase: CheckNicknameUseCase
     private let searchContentsUseCase: SearchContentsUseCase
     private let signupUseCase: SignupUseCase
+    private let modifyProfileImageUseCase: ModifyProfileImageUseCase
     
     public let agreedTerms: CurrentValueSubject<[SignUpTerm: Bool], Never> = .init([
         .service: false,
@@ -63,7 +64,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
     
     public let nickname: CurrentValueSubject<String, Never> = .init("")
     public let nicknameValidState: CurrentValueSubject<NicknameValidState?, Never> = .init(nil)
-    private var profileImageKey: String?
+    private var pendingProfileImage: UIImage?
     
     public let isLoading: CurrentValueSubject<Bool, Never> = .init(false)
     public var keyword: String? = nil
@@ -83,20 +84,17 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         checkNicknameUseCase: CheckNicknameUseCase,
         searchContentsUseCase: SearchContentsUseCase,
         signupUseCase: SignupUseCase,
+        modifyProfileImageUseCase: ModifyProfileImageUseCase
     ) {
         self.uploadUserProfileUseCase = uploadUserProfileUseCase
         self.checkNicknameUseCase = checkNicknameUseCase
         self.searchContentsUseCase = searchContentsUseCase
         self.signupUseCase = signupUseCase
+        self.modifyProfileImageUseCase = modifyProfileImageUseCase
     }
     
     public func uploadProfileImage(_ image: UIImage) {
-        uploadUserProfileUseCase(image)
-            .sinkHandledCompletion(receiveValue: { [weak self] imageKey in
-                self?.profileImageKey = imageKey
-                Log.d("Profile image uploaded")
-            })
-            .store(in: &cancellables)
+        pendingProfileImage = image
     }
     
     public func checkNickname(_ nickname: String) {
@@ -181,7 +179,7 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         signupUseCase(
             userInfo: SignupInfoEntity(
                 nickname: nickname.value,
-                profileImage: profileImageKey,
+                profileImage: nil,
                 favoriteContentIds: selectedContents.value.compactMap({ content in
                     Int(content.id)
                 }),
@@ -193,8 +191,28 @@ public final class DefaultOnboardingViewModel: OnboardingViewModel {
         )
         .manageThread()
         .sinkHandledCompletion { [weak self] userId in
-            self?.userId.send(userId)
+            self?.uploadStagedProfileImageIfNeeded(userId: userId)
         }
         .store(in: &cancellables)
+    }
+
+    private func uploadStagedProfileImageIfNeeded(userId: String) {
+        guard let image = pendingProfileImage else {
+            self.userId.send(userId)
+            return
+        }
+        uploadUserProfileUseCase(image)
+            .flatMap { [modifyProfileImageUseCase] key -> AnyPublisher<Void, Error> in
+                return modifyProfileImageUseCase(key: key)
+            }
+            .manageThread()
+            .sink(receiveCompletion: { [weak self] completion in
+                if case let .failure(error) = completion {
+                    Log.e("Staged profile image upload/modify failed: \(error.localizedDescription)")
+                }
+                self?.pendingProfileImage = nil
+                self?.userId.send(userId)
+            }, receiveValue: { _ in })
+            .store(in: &cancellables)
     }
 }

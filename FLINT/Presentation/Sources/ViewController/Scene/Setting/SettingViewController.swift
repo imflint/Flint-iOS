@@ -72,7 +72,7 @@ public final class SettingViewController: BaseViewController<SettingView> {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setNavigationBar(.init(
             left: .back,
             title: "설정",
@@ -80,6 +80,11 @@ public final class SettingViewController: BaseViewController<SettingView> {
         ))
         setupTableView()
         setupActions()
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        settingViewModel.load()
     }
     
     // MARK: - Bind
@@ -90,6 +95,7 @@ public final class SettingViewController: BaseViewController<SettingView> {
             .sink { [weak self] profile in
                 guard let self else { return }
                 updateSnapshot(profile: profile)
+                rootView.tableView.reloadData()
             }
             .store(in: &cancellables)
         

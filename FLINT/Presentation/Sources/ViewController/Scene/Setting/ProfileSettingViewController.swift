@@ -60,6 +60,14 @@ public final class ProfileSettingViewController: BaseViewController<NicknameView
     // MARK: - Bind
     
     public override func bind() {
+        profileSettingViewModel.modificationCompleted
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+                Toast.text("프로필을 수정했어요").show()
+            }
+            .store(in: &cancellables)
+
         profileSettingViewModel.nicknameValidState.sink(receiveValue: { [weak self] nicknameValidState in
             Log.d(nicknameValidState)
             guard let self else { return }
@@ -183,10 +191,7 @@ public final class ProfileSettingViewController: BaseViewController<NicknameView
     }
     
     private func touchUpInsideNextButton(_ action: UIAction) {
-        profileSettingViewModel.modifyProfileImage()
-        profileSettingViewModel.modifyNickname()
-        navigationController?.popViewController(animated: true)
-        Toast.text("프로필을 수정했어요").show()
+        profileSettingViewModel.modify()
     }
 }
 
