@@ -13,6 +13,7 @@ public struct ContentInfoEntity: Equatable {
     public let author: String
     public let imageUrl: String
     public let year: Int
+    public let bookmarkCount: Int?
     public let ottList: [OttSimpleEntity]
 
     public init(
@@ -21,6 +22,7 @@ public struct ContentInfoEntity: Equatable {
         author: String,
         imageUrl: String,
         year: Int,
+        bookmarkCount: Int? = nil,
         ottList: [OttSimpleEntity]
     ) {
         self.id = id
@@ -28,6 +30,7 @@ public struct ContentInfoEntity: Equatable {
         self.author = author
         self.imageUrl = imageUrl
         self.year = year
+        self.bookmarkCount = bookmarkCount
         self.ottList = ottList
     }
 }

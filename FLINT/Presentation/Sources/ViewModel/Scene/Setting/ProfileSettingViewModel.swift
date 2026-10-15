@@ -55,11 +55,10 @@ public final class DefaultProfileSettingViewModel: ProfileSettingViewModel {
         uploadUserProfileUseCase(image)
             .sinkHandledCompletion(receiveValue: { [weak self] imageKey in
                 self?.profileImageKey = imageKey
-                Log.d("Profile image uploaded")
             })
             .store(in: &cancellables)
     }
-    
+
     public func modify() {
         let imagePublisher: AnyPublisher<Void, Error>
         if let profileImageKey {
@@ -76,7 +75,7 @@ public final class DefaultProfileSettingViewModel: ProfileSettingViewModel {
         }
 
         Publishers.Zip(imagePublisher, nicknamePublisher)
-            .manageThread()
+            .receive(on: DispatchQueue.main)
             .sinkHandledCompletion(receiveValue: { [weak self] _, _ in
                 Log.d("Profile modifications completed")
                 self?.modificationCompleted.send(())

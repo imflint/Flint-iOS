@@ -9,9 +9,9 @@ import Foundation
 
 import Entity
 
-public struct StorageResponseDTO: Decodable {
-    package let uploadUrl: String?
-    package let key: String?
+public struct StorageResponseDTO: Codable {
+    public let uploadUrl: String?
+    public let key: String?
 }
 
 extension StorageResponseDTO {

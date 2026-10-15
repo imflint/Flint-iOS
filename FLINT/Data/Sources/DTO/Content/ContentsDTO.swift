@@ -58,6 +58,7 @@ extension ContentsDTO.ContentDTO {
                 author: author ?? "",
                 imageUrl: imageUrl ?? "",
                 year: year ?? 0,
+                bookmarkCount: bookmarkCount,
                 ottList: getOttSimpleList?.map { try $0.entity } ?? []
             )
         }

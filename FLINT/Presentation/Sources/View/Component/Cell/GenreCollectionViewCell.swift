@@ -12,8 +12,10 @@ import Domain
 public final class GenreCollectionViewCell: BaseCollectionViewCell {
     
     public override var isSelected: Bool {
-        didSet {
-            capsuleButton.style = isSelected ? .colored : .outlined
+        get { super.isSelected }
+        set {
+            super.isSelected = newValue
+            capsuleButton.style = newValue ? .colored : .outlined
         }
     }
     

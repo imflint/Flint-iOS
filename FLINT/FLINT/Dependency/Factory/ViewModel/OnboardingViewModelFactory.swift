@@ -9,7 +9,7 @@ import Foundation
 
 import Presentation
 
-protocol OnboardingViewModelFactory: UploadUserProfileUseCaseFactory, CheckNicknameUseCaseFactory, SearchContentsUseCaseFactory, FetchPopularContentsUseCaseFactory, SignupUseCaseFactory {
+protocol OnboardingViewModelFactory: UploadUserProfileUseCaseFactory, CheckNicknameUseCaseFactory, SearchContentsUseCaseFactory, FetchPopularContentsUseCaseFactory, SignupUseCaseFactory, ModifyProfileImageUseCaseFactory {
     func makeOnboardingViewModel() -> OnboardingViewModel
 }
 
@@ -20,7 +20,8 @@ extension OnboardingViewModelFactory {
             checkNicknameUseCase: makeCheckNicknameUseCase(),
 //            fetchPopularContentsUseCase: makeFetchPopularContentsUseCase(),
             searchContentsUseCase: makeSearchContentsUseCase(),
-            signupUseCase: makeSignupUseCase()
+            signupUseCase: makeSignupUseCase(),
+            modifyProfileImageUseCase: makeModifyProfileImageUseCase()
         )
     }
 }

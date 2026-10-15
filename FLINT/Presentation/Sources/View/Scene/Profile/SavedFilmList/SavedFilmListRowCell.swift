@@ -34,6 +34,11 @@ public final class SavedFilmListRowCell: BaseTableViewCell {
         $0.lineBreakMode = .byTruncatingTail
     }
 
+    private let directorLabel = UILabel().then {
+        $0.numberOfLines = 1
+        $0.lineBreakMode = .byTruncatingTail
+    }
+
     private let yearLabel = UILabel()
 
     private let bookmarkView = BookmarkView()
@@ -74,7 +79,7 @@ public final class SavedFilmListRowCell: BaseTableViewCell {
     }
 
     public override func setHierarchy() {
-        contentView.addSubviews(posterImageView, titleLabel, yearLabel, bookmarkView, ottButton)
+        contentView.addSubviews(posterImageView, titleLabel, directorLabel, yearLabel, bookmarkView, ottButton)
     }
 
     public override func setLayout() {
@@ -97,8 +102,14 @@ public final class SavedFilmListRowCell: BaseTableViewCell {
             $0.trailing.lessThanOrEqualTo(bookmarkView.snp.leading).offset(-12)
         }
 
-        yearLabel.snp.makeConstraints {
+        directorLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(4)
+            $0.leading.equalTo(titleLabel.snp.leading)
+            $0.trailing.lessThanOrEqualTo(bookmarkView.snp.leading).offset(-12)
+        }
+
+        yearLabel.snp.makeConstraints {
+            $0.top.equalTo(directorLabel.snp.bottom).offset(4)
             $0.leading.equalTo(titleLabel.snp.leading)
         }
 
@@ -113,6 +124,7 @@ public final class SavedFilmListRowCell: BaseTableViewCell {
         posterImageView.kf.cancelDownloadTask()
         posterImageView.image = nil
         titleLabel.attributedText = nil
+        directorLabel.attributedText = nil
         yearLabel.attributedText = nil
         onTapOTT = nil
         onTapBookmark = nil
@@ -140,14 +152,27 @@ public final class SavedFilmListRowCell: BaseTableViewCell {
             lineBreakMode: .byTruncatingTail
         )
 
-        yearLabel.attributedText = .pretendard(
+        directorLabel.attributedText = .pretendard(
             .body2_r_14,
-            text: "\(item.year)",
+            text: item.author,
             color: .flintGray300
         )
 
+        if item.year > 0 {
+            yearLabel.attributedText = .pretendard(
+                .body2_r_14,
+                text: "\(item.year)",
+                color: .flintGray300
+            )
+            yearLabel.isHidden = false
+        } else {
+            yearLabel.attributedText = nil
+            yearLabel.isHidden = true
+        }
+
         ottButton.isHidden = item.ottList.isEmpty
-        // 저장 리스트에 있는 작품은 모두 저장 상태 + 서버 카운트 정보가 없어 숨김
-        bookmarkView.configure(isBookmarked: true, countText: nil)
+
+        let countText = item.bookmarkCount.map { String($0) }
+        bookmarkView.configure(isBookmarked: true, countText: countText)
     }
 }
