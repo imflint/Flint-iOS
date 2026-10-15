@@ -23,7 +23,9 @@ public final class ProfileSettingViewController: BaseViewController<NicknameView
     // MARK: - ViewModel
     
     private let profileSettingViewModel: ProfileSettingViewModel
-    
+
+    private var hasImageChange: Bool = false
+
     // MARK: - Basic
     
     public init(userProfile: UserProfileEntity, profileSettingViewModel: ProfileSettingViewModel, viewControllerFactory: ViewControllerFactory) {
@@ -73,37 +75,40 @@ public final class ProfileSettingViewController: BaseViewController<NicknameView
             guard let self else { return }
             switch nicknameValidState {
             case .valid:
-                rootView.nextButton.isEnabled = true
                 rootView.nicknameWarningLabel.isHidden = true
                 rootView.nicknameTextField.layer.borderWidth = 0
                 rootView.nicknameTextField.layer.borderColor = nil
                 rootView.successToast.show()
             case .invalid:
-                rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = false
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
                 rootView.nicknameWarningLabel.attributedText = .pretendard(.body2_r_14, text: "닉네임은 한글, 영어, 숫자만 사용할 수 있어요.")
             case .duplicate:
-                rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = true
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
                 rootView.failureToast.show()
             case .incompleteHangul:
-                rootView.nextButton.isEnabled = false
                 rootView.nicknameWarningLabel.isHidden = false
                 rootView.nicknameTextField.layer.borderWidth = 1
                 rootView.nicknameTextField.layer.borderColor = DesignSystem.Color.error500.cgColor
                 rootView.nicknameWarningLabel.attributedText = .pretendard(.body2_r_14, text: "사용할 수 없는 닉네임이에요")
             case .none:
-                rootView.nextButton.isEnabled = true
                 rootView.nicknameWarningLabel.isHidden = true
                 rootView.nicknameTextField.layer.borderWidth = 0
                 rootView.nicknameTextField.layer.borderColor = nil
             }
+            updateCompleteButtonState()
         })
         .store(in: &cancellables)
+    }
+
+    private func updateCompleteButtonState() {
+        let state = profileSettingViewModel.nicknameValidState.value
+        let nicknameBlocks = (state == .invalid || state == .duplicate || state == .incompleteHangul)
+        let nicknameChanged = (state == .valid)
+        rootView.nextButton.isEnabled = !nicknameBlocks && (hasImageChange || nicknameChanged)
     }
     
     // MARK: - Private Function
@@ -134,6 +139,8 @@ public final class ProfileSettingViewController: BaseViewController<NicknameView
     
     private func deleteProfileImage(_ action: UIAlertAction) {
         rootView.profileImageSettingView.profileImageView.image = DesignSystem.Image.Common.profileGray
+        hasImageChange = true
+        updateCompleteButtonState()
     }
     
     private func getAlbumAuthorization() {
@@ -213,6 +220,8 @@ extension ProfileSettingViewController: PHPickerViewControllerDelegate {
             DispatchQueue.main.async { [weak self] in
                 self?.rootView.profileImageSettingView.profileImageView.image = image
                 self?.profileSettingViewModel.uploadProfileImage(image)
+                self?.hasImageChange = true
+                self?.updateCompleteButtonState()
             }
         }
     }

@@ -50,6 +50,20 @@ public final class FlintTextField: UITextField {
         padding.origin.x -= 12
         return padding
     }
+
+    public override var text: String? {
+        get { super.text }
+        set {
+            super.text = newValue
+            syncLengthLabel()
+        }
+    }
+
+    public func syncLengthLabel() {
+        guard let maxLength else { return }
+        lengthLabel.attributedText = .pretendard(.body2_r_14, text: "\(text?.count ?? 0)/\(maxLength)")
+        onLengthChanged?(text?.count ?? 0, maxLength)
+    }
     
     // MARK: - Setup
     

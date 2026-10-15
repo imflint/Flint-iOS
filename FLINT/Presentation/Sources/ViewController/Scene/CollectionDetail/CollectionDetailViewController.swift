@@ -400,7 +400,7 @@ public final class CollectionDetailViewController: BaseViewController<Collection
             return idx == contentsIndex
         }) else { return }
         
-        rootView.tableView.scrollToRow(at: IndexPath(row: tableIndex, section: 0), at: .top, animated: true)
+        rootView.tableView.scrollToRow(at: IndexPath(row: tableIndex, section: 0), at: .middle, animated: true)
     }
 }
 
