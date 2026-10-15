@@ -36,7 +36,7 @@ public final class OnboardingDoneViewController: BaseViewController<OnboardingDo
     public override func viewDidLoad() {
         super.viewDidLoad()
 
-        setNavigationBar(.init(left: .back))
+        setNavigationBar(.init(left: .none))
         rootView.startButton.addAction(UIAction(weak: self, handler: OnboardingDoneViewController.completeOnboarding(_:)), for: .touchUpInside)
 
         AnalyticsService.shared.track(.viewOnboardingDone)
