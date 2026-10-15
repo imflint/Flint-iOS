@@ -350,11 +350,15 @@ extension ContentSelectViewController {
     }
     
     public func genreCollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        onboardingViewModel.filterGenre.insert(Genre.allCases[indexPath.row])
+        for selectedIndexPath in collectionView.indexPathsForSelectedItems ?? [] where selectedIndexPath != indexPath {
+            collectionView.deselectItem(at: selectedIndexPath, animated: false)
+            (collectionView.cellForItem(at: selectedIndexPath) as? GenreCollectionViewCell)?.isSelected = false
+        }
+        onboardingViewModel.filterGenre = [Genre.allCases[indexPath.row]]
         onboardingViewModel.searchContents()
         rootView.contentCollectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
     }
-    
+
     public func genreCollectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         onboardingViewModel.filterGenre.remove(Genre.allCases[indexPath.row])
         onboardingViewModel.searchContents()
