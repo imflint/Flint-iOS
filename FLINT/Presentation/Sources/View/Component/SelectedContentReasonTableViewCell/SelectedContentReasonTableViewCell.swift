@@ -287,22 +287,26 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
     private func resetPhotos() {
         photos = []
         photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        applyPhotoLayout(hasPhotos: false)
+        applyPhotoLayout(hasPhotos: false, isMultiple: false)
         updateAddPhotoButton()
     }
     
     private func configurePhotos(_ newPhotos: [UIImage]) {
         photos = newPhotos
         photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        applyPhotoLayout(hasPhotos: !photos.isEmpty)
+
+        applyPhotoLayout(hasPhotos: !photos.isEmpty, isMultiple: photos.count > 1)
         updateAddPhotoButton()
         guard !photos.isEmpty else { return }
-        
+
         pageControl.numberOfPages = photos.count
         pageControl.currentPage = 0
-        
-        setupInfiniteScroll()
+
+        if photos.count > 1 {
+            setupInfiniteScroll()
+        } else {
+            photoStackView.addArrangedSubview(makePhotoWrapper(image: photos[0], realIndex: 0))
+        }
     }
     
     private func setupInfiniteScroll() {
@@ -326,13 +330,15 @@ public final class SelectedContentReasonTableViewCell: BaseTableViewCell {
         }
     }
     
-    private func applyPhotoLayout(hasPhotos: Bool) {
+    private func applyPhotoLayout(hasPhotos: Bool, isMultiple: Bool) {
+        let showIndicator = hasPhotos && isMultiple
         photoScrollView.isHidden = !hasPhotos
+        photoScrollView.isScrollEnabled = isMultiple
         photoScrollHeightConstraint?.update(offset: hasPhotos ? Metric.photoHeight : 0)
-        pageControl.isHidden = !hasPhotos
-        pageControlTopConstraint?.update(offset: hasPhotos ? 8 : 0)
-        pageControlHeightConstraint?.update(offset: hasPhotos ? 8 : 0)
-        
+        pageControl.isHidden = !showIndicator
+        pageControlTopConstraint?.update(offset: showIndicator ? 8 : 0)
+        pageControlHeightConstraint?.update(offset: showIndicator ? 8 : 0)
+
         sectionTitleLabel.snp.remakeConstraints {
             $0.top.equalTo(pageControl.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(Metric.horizontalInset)
