@@ -122,7 +122,14 @@ public final class SelectableContentTableViewCell: BaseTableViewCell {
         directorLabel.isHidden = model.director.isEmpty
         directorLabel.attributedText = .pretendard(.body1_r_16, text: model.director, color: .flintGray300)
 
-        yearLabel.attributedText = .pretendard(.body1_r_16, text: model.year, color: .flintGray300)
+        let hasYear = !model.year.isEmpty && model.year != "0"
+        if hasYear {
+            yearLabel.attributedText = .pretendard(.body1_r_16, text: model.year, color: .flintGray300)
+            yearLabel.isHidden = false
+        } else {
+            yearLabel.attributedText = nil
+            yearLabel.isHidden = true
+        }
         
         isSelectedItem = isSelected
         updateCheckbox(isSelected: isSelected)
