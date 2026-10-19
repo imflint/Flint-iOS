@@ -57,6 +57,7 @@ final class DIContainer: DependencyFactory {
     lazy var collectionAPIProvider = MoyaProvider<CollectionAPI>(session: session, plugins: plugins)
     lazy var contentAPIProvider = MoyaProvider<ContentAPI>(session: session, plugins: plugins)
     lazy var homeAPIProvider = MoyaProvider<HomeAPI>(session: session, plugins: plugins)
+    lazy var explorationAPIProvider = MoyaProvider<ExplorationAPI>(session: session, plugins: plugins)
     lazy var searchAPIProvider = MoyaProvider<SearchAPI>(session: session, plugins: plugins)
     lazy var storageAPIProvider = MoyaProvider<StorageAPI>(session: session, plugins: plugins)
     lazy var userAPIProvider = MoyaProvider<UserAPI>(session: session, plugins: plugins)
