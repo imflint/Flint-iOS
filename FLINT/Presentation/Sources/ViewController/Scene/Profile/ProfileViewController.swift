@@ -110,8 +110,7 @@ public final class ProfileViewController: BaseViewController<ProfileView> {
     }
     
     private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
-        let vc = BaseBottomSheetViewController(content: .ott(platforms: platforms))
-        present(vc, animated: false)
+        // OTT 기능 비활성 (UI 숨김)
     }
 
     private func pushCollectionDetail(collectionIdString: String, source: AnalyticsEvent.CollectionSource) {

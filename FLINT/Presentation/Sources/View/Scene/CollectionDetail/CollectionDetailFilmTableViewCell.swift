@@ -329,13 +329,19 @@ public extension CollectionDetailFilmTableViewCell {
 
         titleLabel.attributedText = .pretendard(.head2_sb_20, text: item.title, color: .white)
 
-        yearLabel.attributedText = .pretendard(
-            .body1_r_16,
-            text: "\(item.year)",
-            color: .flintGray300,
-            lineBreakMode: .byWordWrapping,
-            lineBreakStrategy: .hangulWordPriority
-        )
+        if item.year > 0 {
+            yearLabel.attributedText = .pretendard(
+                .body1_r_16,
+                text: "\(item.year)",
+                color: .flintGray300,
+                lineBreakMode: .byWordWrapping,
+                lineBreakStrategy: .hangulWordPriority
+            )
+            yearLabel.isHidden = false
+        } else {
+            yearLabel.attributedText = nil
+            yearLabel.isHidden = true
+        }
 
         directorLabel.attributedText = .pretendard(
             .body1_r_16,

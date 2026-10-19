@@ -96,16 +96,17 @@ public final class RecentSavedContentCardCollectionViewCell: BaseCollectionViewC
                                                 text: item.title,
                                                 color: .flintWhite)
         
-        yearLabel.attributedText = .pretendard(.caption1_r_12,
-                                               text: "\(item.year)",
-                                               color: .flintGray300)
+        if item.year > 0 {
+            yearLabel.attributedText = .pretendard(.caption1_r_12,
+                                                   text: "\(item.year)",
+                                                   color: .flintGray300)
+            yearLabel.isHidden = false
+        } else {
+            yearLabel.attributedText = nil
+            yearLabel.isHidden = true
+        }
         
-        let names = item.ottList.map { $0.ottName }
-        let leading = Array(names.prefix(2))
-        let remaining = max(names.count - leading.count, 0)
-        logoStripView.configure(leadingServerNames: leading, remainingCount: remaining)
-        
-        logoStripView.isHidden = leading.isEmpty && remaining == 0
+        logoStripView.isHidden = true
     }
 }
 

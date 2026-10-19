@@ -105,7 +105,13 @@ public final class OnboardingContentCollectionViewCell: BaseCollectionViewCell {
         overlayView.isHidden = !isSelected
         titleLabel.attributedText = .pretendard(.body1_r_16, text: content.title)
         directorLabel.attributedText = .pretendard(.caption1_r_12, text: content.author)
-        yearLabel.attributedText = .pretendard(.caption1_r_12, text: "\(content.year)")
+        if content.year > 0 {
+            yearLabel.attributedText = .pretendard(.caption1_r_12, text: "\(content.year)")
+            yearLabel.isHidden = false
+        } else {
+            yearLabel.attributedText = nil
+            yearLabel.isHidden = true
+        }
         imageView.kf.setImage(with: content.posterUrl)
     }
 }
