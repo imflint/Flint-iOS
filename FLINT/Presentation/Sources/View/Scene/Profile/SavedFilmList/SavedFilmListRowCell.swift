@@ -170,7 +170,7 @@ public final class SavedFilmListRowCell: BaseTableViewCell {
             yearLabel.isHidden = true
         }
 
-        ottButton.isHidden = item.ottList.isEmpty
+        ottButton.isHidden = true
 
         let countText = item.bookmarkCount.map { String($0) }
         bookmarkView.configure(isBookmarked: true, countText: countText)

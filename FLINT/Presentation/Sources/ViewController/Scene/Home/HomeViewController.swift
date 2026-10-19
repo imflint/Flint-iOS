@@ -117,11 +117,7 @@ public final class HomeViewController: BaseViewController<HomeView> {
     }
     
     private func presentOTTBottomSheet(platforms: [OTTPlatform]) {
-        let vc = BaseBottomSheetViewController(
-            title: "이 작품을 볼 수 있는 OTT",
-            content: .ott(platforms: platforms)
-        )
-        present(vc, animated: true)
+        // OTT 기능 비활성 (UI 숨김)
     }
     
     private func fetchAndPresentOTT(contentId: Int64) {
