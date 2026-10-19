@@ -9,12 +9,12 @@ import Foundation
 
 import Presentation
 
-protocol ExploreViewModelFactory: FetchExploreCollectionsUseCaseFactory {
+protocol ExploreViewModelFactory: FetchExploreCollectionsUseCaseFactory, FetchSessionUseCaseFactory, SaveSessionProgressUseCaseFactory {
     func makeExploreViewModel() -> ExploreViewModel
 }
 
 extension ExploreViewModelFactory {
     func makeExploreViewModel() -> ExploreViewModel {
-        return DefaultExploreViewModel(fetchExploreCollectionsUseCase: makeFetchExploreCollectionsUseCase())
+        return DefaultExploreViewModel(fetchSessionUseCase: makeFetchSessionUseCase(), saveSessionProgressUseCase: makeSaveSessionProgressUseCase())
     }
 }

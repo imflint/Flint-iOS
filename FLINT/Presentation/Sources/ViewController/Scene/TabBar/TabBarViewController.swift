@@ -105,6 +105,7 @@ public class TabBarViewController: UIViewController {
             newContainerViewController = homeViewController
         case .explore:
             newContainerViewController = exploreViewController
+            exploreViewController.refresh()
         case .my:
             newContainerViewController = myViewController
         }

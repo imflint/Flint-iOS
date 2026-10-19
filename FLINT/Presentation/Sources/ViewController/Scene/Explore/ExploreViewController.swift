@@ -61,6 +61,7 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
         
         setNavigationBar(.init(left: .logo))
         setupMainCollectionView()
+        exploreViewModel.fetchSession()
     }
     
     // MARK: - Setup
@@ -68,7 +69,9 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
     public override func bind() {
         exploreViewModel.collections.sink { [weak self] exploreInfoEntities in
             guard let self else { return }
-            mainCollectionViewDataSource?.apply(makeSnapshot(exploreInfoEntities: exploreInfoEntities, isCollectionsExhausted: exploreViewModel.cursor.value == nil), animatingDifferences: false)
+            mainCollectionViewDataSource?.apply(makeSnapshot(exploreInfoEntities: exploreInfoEntities), animatingDifferences: false) {
+                self.rootView.mainCollectionView.scrollToItem(at: IndexPath(item: self.exploreViewModel.index.value, section: MainCollectionViewSection.main.rawValue), at: .centeredVertically, animated: false)
+            }
             if !didTrackViewExplore, let first = exploreInfoEntities.first {
                 didTrackViewExplore = true
                 AnalyticsService.shared.track(.viewExplore)
@@ -76,12 +79,21 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
             }
         }
         .store(in: &cancellables)
+        
+//        exploreViewModel.index.sink { [weak self] index in
+//            guard let self else { return }
+//            Log.d("hosung.kim", index, exploreViewModel.collections.value.count)
+//            if !exploreViewModel.collections.value.isEmpty {
+//                rootView.mainCollectionView.scrollToItem(at: IndexPath(item: index, section: MainCollectionViewSection.main.rawValue), at: .centeredVertically, animated: false)
+//            }
+//        }
+//        .store(in: &cancellables)
 
-        exploreViewModel.cursor.sink(receiveValue: { [weak self] cursor in
-            guard let self else { return }
-            mainCollectionViewDataSource?.apply(makeSnapshot(exploreInfoEntities: exploreViewModel.collections.value, isCollectionsExhausted: cursor == nil), animatingDifferences: false)
-        })
-        .store(in: &cancellables)
+//        exploreViewModel.cursor.sink(receiveValue: { [weak self] cursor in
+//            guard let self else { return }
+//            mainCollectionViewDataSource?.apply(makeSnapshot(exploreInfoEntities: exploreViewModel.collections.value, isCollectionsExhausted: cursor == nil), animatingDifferences: false)
+//        })
+//        .store(in: &cancellables)
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -113,6 +125,15 @@ public final class ExploreViewController: BaseViewController<ExploreView> {
         super.setBaseLayout()
         gradientBackgroundView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+    }
+    
+    // MARK: - Public Function
+    
+    public func refresh() {
+        Log.d("refresh")
+        if exploreViewModel.hasNext {
+            exploreViewModel.fetchSession()
         }
     }
 }
@@ -157,6 +178,7 @@ extension ExploreViewController {
         mainCollectionViewDataSource?.apply(makeSnapshot(exploreInfoEntities: exploreViewModel.collections.value, isCollectionsExhausted: exploreViewModel.cursor.value == nil), animatingDifferences: false)
     }
     
+    // FIXME: Deprecated
     private func makeSnapshot(exploreInfoEntities: [ExploreInfoEntity], isCollectionsExhausted: Bool) -> NSDiffableDataSourceSnapshot<MainCollectionViewSection, MainCollectionViewItem> {
         var snapshot = NSDiffableDataSourceSnapshot<MainCollectionViewSection, MainCollectionViewItem>()
         snapshot.appendSections([.main])
@@ -166,6 +188,14 @@ extension ExploreViewController {
             snapshot.appendSections([.empty])
             snapshot.appendItems([MainCollectionViewItem.empty], toSection: .empty)
         }
+        return snapshot
+    }
+    
+    private func makeSnapshot(exploreInfoEntities: [ExploreInfoEntity]) -> NSDiffableDataSourceSnapshot<MainCollectionViewSection, MainCollectionViewItem> {
+        var snapshot = NSDiffableDataSourceSnapshot<MainCollectionViewSection, MainCollectionViewItem>()
+        snapshot.appendSections([.main, .empty])
+        snapshot.appendItems(exploreInfoEntities.map({ MainCollectionViewItem.collection($0) }), toSection: .main)
+        snapshot.appendItems([MainCollectionViewItem.empty], toSection: .empty)
         return snapshot
     }
     
@@ -197,10 +227,15 @@ extension ExploreViewController: UIScrollViewDelegate {
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard let collectionView = scrollView as? UICollectionView else { return }
         guard let indexPath = collectionView.indexPathForItem(at: CGPoint(x: collectionView.bounds.midX, y: collectionView.bounds.midY)) else { return }
-        exploreViewModel.indexUpdated(indexPath.item)
+        
         if indexPath.section == MainCollectionViewSection.main.rawValue,
            let entity = exploreViewModel.collections.value[safe: indexPath.item] {
             trackExploreContentImpression(collectionId: entity.collectionId)
+        }
+        if indexPath.section == MainCollectionViewSection.empty.rawValue {
+            exploreViewModel.indexUpdated(30)
+        } else {
+            exploreViewModel.indexUpdated(indexPath.item)
         }
         UIView.animate(withDuration: 0.25, animations: { [weak self] in
             guard let self else { return }

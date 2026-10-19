@@ -43,9 +43,11 @@ extension PagedCollectionsDTO {
 }
 
 extension PagedCollectionsDTO.CollectionDTO {
+    // FIXME: deprecated
     public var entity: ExploreInfoEntity {
         get throws {
             return try ExploreInfoEntity(
+                contentId: 0,
                 collectionId: unwrap(Int64(collectionId ?? "")),
                 imageUrl: URL(string: imageUrl ?? ""),
                 title: contentTitle ?? "",

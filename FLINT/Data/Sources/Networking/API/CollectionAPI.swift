@@ -13,7 +13,7 @@ import Domain
 import DTO
 
 public enum CollectionAPI {
-    case fetchCollections(cursor: Int64?, size: Int32)
+    case fetchCollections(cursor: Int64?, size: Int32) // deprecated
     case createCollection(collectionInfo: CreateCollectionEntity)
     case updateCollection(collectionId: Int64, collectionInfo: CreateCollectionEntity)
     case deleteCollection(collectionId: Int64)
