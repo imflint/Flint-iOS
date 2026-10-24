@@ -92,7 +92,12 @@ public final class DefaultAuthService: AuthService {
         }
         return authAPIProvider.requestPublisher(.refresh(refreshToken: refreshToken))
             .logged()
-            .mapBaseResponseEmpty()
+            .mapBaseResponseData(SignupDTO.self)
+            .tryMap({ [weak self] in
+                let loginEntity = try $0.loginEntity
+                self?.tokenStorage.save(loginEntity.accessToken, type: .accessToken)
+                self?.tokenStorage.save(loginEntity.refreshToken, type: .refreshToken)
+            })
             .handleEvents(receiveCompletion: { [weak self] completion in
                 if case .failure = completion {
                     self?.tokenStorage.clearAll()
